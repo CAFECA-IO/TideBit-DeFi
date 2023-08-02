@@ -48,12 +48,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     switch (shareType) {
       case ShareType.CFD:
         shareUrl = DOMAIN + `/share/cfd/${shareId}`;
-
-        const img = `${DOMAIN}/api/images/cfd/${shareId}?tz=0`;
-        // Deprecated: (2023-08-02 Shirley)
-        // eslint-disable-next-line no-console
-        console.log('log tz=0 img', img);
-
         return shareUrl;
 
       case ShareType.RANK:
@@ -157,8 +151,29 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const order = await getCFDOrder();
             if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
+            // eslint-disable-next-line no-console
+            console.log('order', order);
+
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+
+            // eslint-disable-next-line no-console
+            console.log('isOrderMatched', isOrderMatched);
+
+            // use fetch to access our image api
+            const res = await fetch(`${DOMAIN}/api/images/cfd/${shareId}?tz=0`);
+            // const res = await fetch(`${DOMAIN}/share/cfd/${shareId}?tz=0`);
+            // res.headers.set('Content-Type', 'image/png');
+            // res.headers.set('Accept', 'image/png');
+            // res.headers.set('Access-Control-Allow-Origin', '*');
+            // res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            // res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+            // res.headers.set('Access-Control-Allow-Credentials', 'true');
+            // res.headers.set('Access-Control-Max-Age', '86400');
+            // res.headers.set('Cache-Control', 'public, max-age=86400');
+
+            // eslint-disable-next-line no-console
+            console.log('res (tz=0 img)', res);
 
             shareOn({url, appUrl, text, type, size});
 
@@ -195,6 +210,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           break;
       }
     } catch (e: any) {
+      globalCtx.eliminateAllProcessModals();
+
       if (isCustomError(e)) {
         const str = e.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);

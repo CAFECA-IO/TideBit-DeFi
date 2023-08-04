@@ -194,7 +194,6 @@ const PositionClosedModal = ({
         typeOfPosition: cfd.typeOfPosition,
         spread: marketCtx.getTickerSpread(cfd.instId),
       });
-    // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
@@ -339,6 +338,9 @@ const PositionClosedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
+        // Deprecated: (20230802 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('history right after closing', historyData);
         globalCtx.dataHistoryPositionModalHandler(historyData);
         globalCtx.visibleHistoryPositionModalHandler();
       } else if (

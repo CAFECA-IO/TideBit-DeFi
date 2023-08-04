@@ -36,7 +36,6 @@ import {
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {OrderState} from '../../constants/order_state';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
@@ -270,7 +269,7 @@ const UpdateFormModal = ({
 
     // Info: (20230329 - Shirley) if tpValue has changed
     if (tpToggle) {
-      if (tpValue !== openCfdDetails?.takeProfit) {
+      if (!!tpValue && tpValue !== openCfdDetails?.takeProfit) {
         changedProperties = {
           ...changedProperties,
           takeProfit: tpValue,
@@ -285,7 +284,7 @@ const UpdateFormModal = ({
 
     // Info: (20230329 - Shirley) if spValue has changed
     if (slToggle) {
-      if (slValue !== openCfdDetails?.stopLoss) {
+      if (!!slValue && slValue !== openCfdDetails?.stopLoss) {
         changedProperties = {...changedProperties, stopLoss: slValue};
       }
     } else {
@@ -308,7 +307,7 @@ const UpdateFormModal = ({
       };
     }
 
-    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
+    if (Object.keys(changedProperties).filter(key => key !== 'referenceId').length > 0) {
       changedProperties = {...changedProperties};
     }
 
@@ -318,7 +317,7 @@ const UpdateFormModal = ({
   const buttonClickHandler = () => {
     const changedProperties: IApplyUpdateCFDOrder = toApplyUpdateOrder();
 
-    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length === 0) return;
+    if (Object.keys(changedProperties).filter(key => key !== 'referenceId').length === 0) return;
 
     setSubmitDisabled(true);
 
@@ -383,7 +382,7 @@ const UpdateFormModal = ({
             ({t('POSITION_MODAL.FEE')}:{' '}
             {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
           </span>
-          {/* tooltip */}
+          {/* Info: tooltip (20230802 - Shirley) */}
           <div className="ml-3">
             <div
               className="relative"

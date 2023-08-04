@@ -94,7 +94,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="og:title" content="TideBit DeFi CFD" />
         <meta name="og:type" content="website" />
         <meta name="og:url" content={share} />
-        <meta name="og:image" content={img} />
+        <meta name="og:image:secure" content={img} />
         <meta name="og:image:alt" content="TideBit DeFi CFD" />
         <meta name="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
         <meta name="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />

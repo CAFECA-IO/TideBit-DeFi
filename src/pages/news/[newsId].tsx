@@ -10,7 +10,7 @@ import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {MarketContext} from '../../contexts/market_context';
-import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
+import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER, USDC_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
 
@@ -107,10 +107,11 @@ export default NewsPage;
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
   const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
   const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
+  const usdcSlugs = await getSlugs(USDC_NEWS_FOLDER);
 
   const slugs =
-    ethSlugs && btcSlugs
-      ? [...ethSlugs, ...btcSlugs]
+    ethSlugs && btcSlugs && usdcSlugs
+      ? [...ethSlugs, ...btcSlugs, ...usdcSlugs]
       : ethSlugs && !btcSlugs
       ? ethSlugs
       : btcSlugs
@@ -132,7 +133,11 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.newsId.includes('eth') ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+  const dir = params.newsId.includes('eth')
+    ? ETH_NEWS_FOLDER
+    : params.newsId.includes('btc')
+    ? BTC_NEWS_FOLDER
+    : USDC_NEWS_FOLDER;
 
   const newsData = await getPost(dir, params.newsId);
   const allPost = await getFilteredPosts(dir, [params.newsId]);

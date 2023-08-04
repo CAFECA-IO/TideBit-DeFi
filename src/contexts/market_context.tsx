@@ -330,14 +330,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     await listMarketTrades(ticker.instId);
     syncCandlestickData(ticker.instId);
     // ++ TODO: get from api
-    const {success: isGetTickerStaticSuccess, data: tickerStatic} = await getTickerStatic(
-      ticker.instId
-    );
-    if (isGetTickerStaticSuccess) setTickerStatic(tickerStatic as ITickerStatic);
-    const {success: isGetTickerLiveStatisticsSuccess, data: tickerLiveStatistics} =
-      await getTickerLiveStatistics(ticker.instId);
-    if (isGetTickerLiveStatisticsSuccess)
-      setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
+    const getTickerStaticResult = await getTickerStatic(ticker.instId);
+    if (getTickerStaticResult?.success)
+      setTickerStatic(getTickerStaticResult.data as ITickerStatic);
+    const getTickerLiveStatisticsResult = await getTickerLiveStatistics(ticker.instId);
+    if (getTickerLiveStatisticsResult?.success)
+      setTickerLiveStatistics(getTickerLiveStatisticsResult.data as ITickerLiveStatistics);
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   }, []);

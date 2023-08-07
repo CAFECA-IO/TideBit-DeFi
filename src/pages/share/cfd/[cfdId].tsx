@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
@@ -45,21 +45,21 @@ const CfdSharing = (props: IPageProps) => {
   const displayImg = `/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
   const share = `${DOMAIN}/share/cfd/${props.cfdId}`;
 
-  const showUpSharingTab = () => {
-    const shareUrl = `${DOMAIN}/share/cfd/0x747218abddb931f3564ac7c18391a628`;
-
+  const showUpSharingTab = useCallback(() => {
     const encodedShareUrl = `https://www.facebook.com/sharer/sharer.php?u=
-    ${encodeURIComponent(shareUrl)}`;
+    ${encodeURIComponent(share)}`;
     // Deprecated: (20230807 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('window open second URL in share page', encodedShareUrl);
-    // https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftidebit-defi.com%2Fshare%2Fcfd%2F0x747218abddb931f3564ac7c18391a628
-    // window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
+    console.log('encodedShareUrl', encodedShareUrl);
+
     setTimeout(() => {
+      // Deprecated: (20230807 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('time is up, open fb sharing');
       window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
       // window.open(DOMAIN, '_self');
     }, 5000);
-  };
+  }, []);
 
   useEffect(() => {
     if (!appCtx.isInit) {

@@ -11,6 +11,7 @@ import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
 import {MOBILE_WIDTH} from '../../constants/display';
 import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
+import {useRouter} from 'next/router';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -41,13 +42,20 @@ interface IShare {
 const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
   const globalCtx = useGlobal();
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const route = useRouter();
+
+  let openPage: Window | null = null;
 
   const getPageUrl = (): string => {
     let shareUrl = '';
 
     switch (shareType) {
       case ShareType.CFD:
-        shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+        // shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+        shareUrl = `https:localhost:3000` + `/cfd/${shareId}`;
+        // Deprecated: (20230807 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('shareUrl in getPageUrl', shareUrl);
         return shareUrl;
 
       case ShareType.RANK:
@@ -165,6 +173,15 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             // eslint-disable-next-line no-console
             console.log('res (tz=0 img)', res);
 
+            const shareUrl = getPageUrl();
+            const shareImg = await res.blob();
+            const shareImgUrl = URL.createObjectURL(shareImg);
+            // Deprecated: (20230807 - Shirley)
+            // eslint-disable-next-line no-console
+            console.log('object url', shareImgUrl);
+
+            openPage = window.open(shareUrl, '_blank');
+
             shareOn({url, appUrl, text, type, size});
 
             globalCtx.eliminateAllProcessModals();
@@ -244,11 +261,65 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
       const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
       window.location.href = appShareUrl;
     } else {
-      window.open(
-        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-        `${type}`,
-        `${size}`
-      );
+      // window.location.replace(`${shareUrl}`);
+
+      // route.push(`${shareUrl}`);
+      // const openIt = window.open(`${shareUrl}`, '_blank');
+      // console.log('window open', openIt);
+
+      const encodedShareUrl = `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`;
+      // Deprecated: (20230807 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('encodedShareUrl', encodedShareUrl);
+      // // window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
+
+      // for (let i = 0; i < 2; i++) {
+      //   console.log('i', i);
+      //   if (i === 0) {
+      //     window.open(`${shareUrl}`);
+      //   } else if (i === 1) {
+      //     window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
+      //   }
+      // }
+
+      const openFirstURL = () => {
+        const openIt = window.open(`${shareUrl}`, '_blank');
+        // Deprecated: (20230807 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('window open first URL', openIt);
+
+        if (openIt) {
+          openIt.onload = openSecondURL;
+        }
+
+        if (openPage) {
+          // Deprecated: (20230807 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('openPage', openPage);
+          openPage.onload = openSecondURL;
+        }
+      };
+
+      const openSecondURL = () => {
+        const encodedShareUrl = `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`;
+        // Deprecated: (20230807 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('window open second URL', encodedShareUrl);
+
+        window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
+      };
+
+      // Call the function to start the process
+      openFirstURL();
+
+      // const page = window.open(`${shareUrl}`, '_blank');
+      // console.log('page', page, 'shareUrl', shareUrl);
+
+      // if (page) {
+      //   console.log('in page onload');
+      //   page.onload = () => window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
+      //   console.log('page onload', page.onload);
+      // }
     }
   };
 

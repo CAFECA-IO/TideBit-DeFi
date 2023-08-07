@@ -2,7 +2,7 @@ import {findCodeByReason, locker} from '../common';
 import {useTranslation} from 'react-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
-import {API_URL, DOMAIN} from '../../constants/config';
+import {API_URL, SHARE_DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CustomError, isCustomError} from '../custom_error';
@@ -51,7 +51,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
     switch (shareType) {
       case ShareType.CFD:
-        shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+        shareUrl = SHARE_DOMAIN + `/share/cfd/${shareId}`;
         // shareUrl = `https:localhost:3000` + `/share/cfd/${shareId}`;
         // Deprecated: (20230807 - Shirley)
         // eslint-disable-next-line no-console
@@ -64,11 +64,11 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         return shareUrl;
 
       case ShareType.BADGE:
-        shareUrl = DOMAIN + `/share/badge/${shareId}`;
+        shareUrl = SHARE_DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
       case ShareType.ARTICLE:
-        shareUrl = DOMAIN + `/news/${shareId}`;
+        shareUrl = SHARE_DOMAIN + `/news/${shareId}`;
         return shareUrl;
 
       default:
@@ -169,7 +169,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             console.log('isOrderMatched', isOrderMatched);
 
             // use fetch to access our image api
-            const res = await fetch(`${DOMAIN}/api/images/cfd/${shareId}?tz=0`);
+            const res = await fetch(`${SHARE_DOMAIN}/api/images/cfd/${shareId}?tz=0`);
             // eslint-disable-next-line no-console
             console.log('res (tz=0 img)', res);
 

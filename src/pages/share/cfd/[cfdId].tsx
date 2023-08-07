@@ -55,9 +55,21 @@ const CfdSharing = (props: IPageProps) => {
     setTimeout(() => {
       // Deprecated: (20230807 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('time is up, open fb sharing');
-      window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
-      // window.open(DOMAIN, '_self');
+      console.log('time is up, open fb and twitter sharing');
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=
+      ${encodeURIComponent(share)}`,
+        `facebook-share-dialog`,
+        `width=800,height=600`
+      );
+
+      window.open(
+        `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+          share
+        )}&text=Check%20this%20out!`,
+        `twitter-share-dialog`,
+        `width=800,height=600`
+      );
     }, 5000);
   }, []);
 

@@ -44,18 +44,12 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const route = useRouter();
 
-  let openPage: Window | null = null;
-
   const getPageUrl = (): string => {
     let shareUrl = '';
 
     switch (shareType) {
       case ShareType.CFD:
         shareUrl = SHARE_DOMAIN + `/share/cfd/${shareId}`;
-        // shareUrl = `https:localhost:3000` + `/share/cfd/${shareId}`;
-        // Deprecated: (20230807 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('shareUrl in getPageUrl', shareUrl);
         return shareUrl;
 
       case ShareType.RANK:
@@ -173,15 +167,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             // eslint-disable-next-line no-console
             console.log('res (tz=0 img)', res);
 
-            const shareUrl = getPageUrl();
-            const shareImg = await res.blob();
-            const shareImgUrl = URL.createObjectURL(shareImg);
-            // Deprecated: (20230807 - Shirley)
-            // eslint-disable-next-line no-console
-            console.log('object url', shareImgUrl);
-
-            openPage = window.open(shareUrl, '_blank');
-
             shareOn({url, appUrl, text, type, size});
 
             globalCtx.eliminateAllProcessModals();
@@ -271,16 +256,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
       // Deprecated: (20230807 - Shirley)
       // eslint-disable-next-line no-console
       console.log('encodedShareUrl', encodedShareUrl);
-      // // window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
-
-      // for (let i = 0; i < 2; i++) {
-      //   console.log('i', i);
-      //   if (i === 0) {
-      //     window.open(`${shareUrl}`);
-      //   } else if (i === 1) {
-      //     window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
-      //   }
-      // }
 
       const openFirstURL = () => {
         const openIt = window.open(`${shareUrl}`, '_blank');
@@ -290,13 +265,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
         if (openIt) {
           openIt.onload = openSecondURL;
-        }
-
-        if (openPage) {
-          // Deprecated: (20230807 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('openPage and the below is onload', openPage);
-          openPage.onload = openSecondURL;
         }
       };
 
@@ -314,15 +282,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       // Call the function to start the process
       openFirstURL();
-
-      // const page = window.open(`${shareUrl}`, '_blank');
-      // console.log('page', page, 'shareUrl', shareUrl);
-
-      // if (page) {
-      //   console.log('in page onload');
-      //   page.onload = () => window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
-      //   console.log('page onload', page.onload);
-      // }
     }
   };
 

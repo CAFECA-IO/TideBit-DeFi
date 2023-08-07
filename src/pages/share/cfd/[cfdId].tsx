@@ -65,10 +65,11 @@ const CfdSharing = (props: IPageProps) => {
       // eslint-disable-next-line no-console
       console.log('window open second URL in share page', encodedShareUrl);
       // https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftidebit-defi.com%2Fshare%2Fcfd%2F0x747218abddb931f3564ac7c18391a628
-      window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
+      // window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
       setTimeout(() => {
-        window.open(DOMAIN, '_self');
-      }, 3000);
+        window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
+        // window.open(DOMAIN, '_self');
+      }, 5000);
     } catch (error) {
       // TODO: error handling (20230524 - Shirley)
     }

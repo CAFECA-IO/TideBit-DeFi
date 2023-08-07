@@ -51,8 +51,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
     switch (shareType) {
       case ShareType.CFD:
-        // shareUrl = DOMAIN + `/share/cfd/${shareId}`;
-        shareUrl = `https:localhost:3000` + `/cfd/${shareId}`;
+        shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+        // shareUrl = `https:localhost:3000` + `/share/cfd/${shareId}`;
         // Deprecated: (20230807 - Shirley)
         // eslint-disable-next-line no-console
         console.log('shareUrl in getPageUrl', shareUrl);
@@ -286,7 +286,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         const openIt = window.open(`${shareUrl}`, '_blank');
         // Deprecated: (20230807 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('window open first URL', openIt);
+        console.log('openFirstURL after opening itself', openIt);
 
         if (openIt) {
           openIt.onload = openSecondURL;
@@ -295,7 +295,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         if (openPage) {
           // Deprecated: (20230807 - Shirley)
           // eslint-disable-next-line no-console
-          console.log('openPage', openPage);
+          console.log('openPage and the below is onload', openPage);
           openPage.onload = openSecondURL;
         }
       };
@@ -304,9 +304,12 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         const encodedShareUrl = `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`;
         // Deprecated: (20230807 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('window open second URL', encodedShareUrl);
+        console.log('openSecondURL before opening itself', encodedShareUrl);
 
         window.open(`${encodedShareUrl}`, `${type}`, `${size}`);
+        // Deprecated: (20230807 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('openSecondURL after opening itself', encodedShareUrl);
       };
 
       // Call the function to start the process

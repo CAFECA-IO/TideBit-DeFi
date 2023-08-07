@@ -36,6 +36,7 @@ const CfdSharing = (props: IPageProps) => {
   const router = useRouter();
 
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
+  const [mounted, setMounted] = useStateRef(false);
 
   const {query} = router;
 
@@ -43,6 +44,22 @@ const CfdSharing = (props: IPageProps) => {
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
   const displayImg = `/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
   const share = `${DOMAIN}/share/cfd/${props.cfdId}`;
+
+  const showUpSharingTab = () => {
+    const shareUrl = `${DOMAIN}/share/cfd/0x747218abddb931f3564ac7c18391a628`;
+
+    const encodedShareUrl = `https://www.facebook.com/sharer/sharer.php?u=
+    ${encodeURIComponent(shareUrl)}`;
+    // Deprecated: (20230807 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('window open second URL in share page', encodedShareUrl);
+    // https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftidebit-defi.com%2Fshare%2Fcfd%2F0x747218abddb931f3564ac7c18391a628
+    // window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
+    setTimeout(() => {
+      window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
+      // window.open(DOMAIN, '_self');
+    }, 5000);
+  };
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -56,24 +73,17 @@ const CfdSharing = (props: IPageProps) => {
       const timeDiff = -timezoneOffset / 60;
 
       setUserTz(timeDiff);
-
-      const shareUrl = `${DOMAIN}/share/cfd/0x747218abddb931f3564ac7c18391a628`;
-
-      const encodedShareUrl = `https://www.facebook.com/sharer/sharer.php?u=
-      ${encodeURIComponent(shareUrl)}`;
-      // Deprecated: (20230807 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('window open second URL in share page', encodedShareUrl);
-      // https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftidebit-defi.com%2Fshare%2Fcfd%2F0x747218abddb931f3564ac7c18391a628
-      // window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
-      setTimeout(() => {
-        window.open(`${encodedShareUrl}`, `facebook-share-dialog`, `width=800,height=600`);
-        // window.open(DOMAIN, '_self');
-      }, 5000);
+      setMounted(true);
     } catch (error) {
       // TODO: error handling (20230524 - Shirley)
     }
   }, [appCtx.isInit]);
+
+  useEffect(() => {
+    if (mounted) {
+      showUpSharingTab();
+    }
+  }, [mounted]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;

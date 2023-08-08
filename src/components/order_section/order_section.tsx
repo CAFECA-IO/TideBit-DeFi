@@ -30,7 +30,7 @@ const OrderSection = () => {
   const userCtx = useContext(UserContext);
   const {isCFDTradable} = useContext(MarketContext);
 
-  const [activeTab, setActiveTab] = useState('Trade');
+  const [activeTab, setActiveTab] = useState(ORDER_SECTION_TAB.TRADE);
 
   const [positionActiveTab, setPositionActiveTab] = useState(POSITION_TAB.OPEN);
   const [showPositionMenu, setShowPositionMenu] = useState(false);

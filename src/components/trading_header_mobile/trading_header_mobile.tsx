@@ -62,8 +62,8 @@ const TradingHeaderMobile = () => {
             <span className="relative h-40px w-40px">
               {/* ToDo (20230419 - Julian) default currency icon */}
               <Image
-                src={marketCtx.selectedTicker?.tokenImg ?? ''}
-                alt={marketCtx.selectedTicker?.currency ?? ''}
+                src={marketCtx.selectedTicker?.tokenImg ?? '/asset_icon/eth.svg'}
+                alt={marketCtx.selectedTicker?.currency ?? 'ETH'}
                 width={40}
                 height={40}
               />

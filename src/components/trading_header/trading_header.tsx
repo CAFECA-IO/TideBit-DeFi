@@ -4,13 +4,14 @@ import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {
   DEFAULT_FLUCTUATION,
+  DEFAULT_ICON,
   DEFAULT_PRICE_CHANGE,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import {useTranslation} from 'next-i18next';
-import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {DEFAULT_CRYPTO, FRACTION_DIGITS, unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -56,8 +57,8 @@ const TradingHeader = () => {
           >
             <span className="relative h-40px w-40px">
               <img
-                src={marketCtx.selectedTicker?.tokenImg}
-                alt={marketCtx.selectedTicker?.currency}
+                src={marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
+                alt={marketCtx.selectedTicker?.currency ?? DEFAULT_CRYPTO}
               />
             </span>
             {tickerTitle}

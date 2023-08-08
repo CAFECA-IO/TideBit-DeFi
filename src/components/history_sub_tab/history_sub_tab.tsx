@@ -4,9 +4,12 @@ import {UserContext} from '../../contexts/user_context';
 import {toDisplayCFDOrder} from '../../lib/common';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import {useGlobal} from '../../contexts/global_context';
 
 const HistorySubTab = () => {
   const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,10 +35,24 @@ const HistorySubTab = () => {
     return () => clearTimeout(timer);
   }, [cfds, userCtx.isLoadingCFDs]);
 
+  const desktopLayout = (
+    <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{historyPositionList}</div>
+  );
+
+  const mobileLayout = (
+    <div className="flex w-400px flex-col overflow-x-hidden px-8">
+      <div className="h-80vh overflow-y-auto px-4">{historyPositionList}</div>
+    </div>
+  );
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
+
   return (
     <>
       <SkeletonTheme baseColor="#202020" highlightColor="#444">
-        <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{historyPositionList}</div>
+        {displayedLayout}{' '}
+        {/* <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{historyPositionList}</div> */}
       </SkeletonTheme>
     </>
   );

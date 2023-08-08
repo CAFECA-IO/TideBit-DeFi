@@ -4,14 +4,14 @@ import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
 import {useContext, useEffect} from 'react';
 import {useGlobal} from '../contexts/global_context';
-import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {AppContext} from '../contexts/app_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';
+import {LayoutAssertion} from '../constants/layout_assertion';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);
 

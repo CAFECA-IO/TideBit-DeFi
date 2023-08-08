@@ -9,6 +9,9 @@ import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import {DEFAULT_ICON} from '../../constants/display';
+import {DEFAULT_CRYPTO} from '../../constants/config';
 
 interface IMarketSectionProps {
   briefs: IRecommendedNews[];
@@ -34,10 +37,10 @@ const MarketSection = (props: IMarketSectionProps) => {
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
   const displayedTickerHeader =
-    layoutAssertion === 'mobile' ? <TradingHeaderMobile /> : <TradingHeader />;
+    layoutAssertion === LayoutAssertion.MOBILE ? <TradingHeaderMobile /> : <TradingHeader />;
 
   const displayedTradingView =
-    layoutAssertion === 'mobile' ? <TradingViewMobile /> : <TradingView />;
+    layoutAssertion === LayoutAssertion.MOBILE ? <TradingViewMobile /> : <TradingView />;
 
   return (
     <div className="ml-5 py-100px">
@@ -70,8 +73,8 @@ const MarketSection = (props: IMarketSectionProps) => {
 
       <div className="mt-5 lg:mt-8 lg:pl-5">
         <CryptoSummary
-          icon={icon ?? marketCtx.selectedTicker?.tokenImg ?? ''}
-          label={label ?? ''}
+          icon={icon ?? marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
+          label={label ?? DEFAULT_CRYPTO}
           introduction={introduction ?? ''}
           whitePaperLink={whitePaperLink ?? ''}
           websiteLink={websiteLink ?? ''}

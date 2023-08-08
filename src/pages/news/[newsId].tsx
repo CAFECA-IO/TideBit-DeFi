@@ -2,7 +2,6 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsArticle from '../../components/news_article/news_article';
 import {useGlobal} from '../../contexts/global_context';
-import NavBarMobile from '../../components/nav_bar_mobile/nav_bar_mobile';
 import NavBar from '../../components/nav_bar/nav_bar';
 import Head from 'next/head';
 import {useContext, useEffect} from 'react';
@@ -13,6 +12,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface IPageProps {
   newsId: string;
@@ -22,7 +22,8 @@ interface IPageProps {
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
+
   const appCtx = useContext(AppContext);
   const marketCtx = useContext(MarketContext);
 

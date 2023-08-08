@@ -1,8 +1,8 @@
 import React, {Dispatch, SetStateAction} from 'react';
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import OpenSubTabMobile from '../open_sub_tab_mobile/open_sub_tab_mobile';
-import HistorySubTabMobile from '../history_sub_tab_mobile/history_sub_tab_mobile';
+import OpenSubTab from '../open_sub_tab/open_sub_tab';
+import HistorySubTab from '../history_sub_tab/history_sub_tab';
 
 interface PositionTabMobileProps {
   showSubMenu: boolean;
@@ -13,7 +13,7 @@ interface PositionTabMobileProps {
 const PositionTabMobile = ({showSubMenu, setShowSubMenu, activeTab}: PositionTabMobileProps) => {
   const subMenuHandler = () => setShowSubMenu(!showSubMenu);
 
-  const currentSubTab = activeTab === 'Open' ? <OpenSubTabMobile /> : <HistorySubTabMobile />;
+  const currentSubTab = activeTab === 'Open' ? <OpenSubTab /> : <HistorySubTab />;
 
   const subMenu = (
     <div

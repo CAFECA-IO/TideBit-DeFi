@@ -60,6 +60,7 @@ import BadgeModal from '../components/badge_modal/badge_modal';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import AnnouncementModal from '../components/announcement_modal/announcement_modal';
 import {MessageType, IMessageType} from '../constants/message_type';
+import {ILayoutAssertion, LayoutAssertion} from '../constants/layout_assertion';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -227,13 +228,12 @@ export interface IGlobalProvider {
   children: React.ReactNode;
 }
 
-export type LayoutAssertionUnion = 'mobile' | 'desktop';
 export type ColorModeUnion = 'light' | 'dark';
 
 export interface IGlobalContext {
   width: number;
   height: number;
-  layoutAssertion: LayoutAssertionUnion;
+  layoutAssertion: ILayoutAssertion;
   initialColorMode: ColorModeUnion;
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
@@ -372,7 +372,7 @@ export interface IGlobalContext {
 export const GlobalContext = createContext<IGlobalContext>({
   width: 0,
   height: 0,
-  layoutAssertion: '' as LayoutAssertionUnion,
+  layoutAssertion: '' as ILayoutAssertion,
   initialColorMode: '' as ColorModeUnion,
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
@@ -635,7 +635,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
 
-  const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
+  const layoutAssertion: ILayoutAssertion =
+    width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
 
   const toggleColorMode = () => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
@@ -1087,8 +1088,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const visibleSearchingModalHandler = () => {
     setVisibleSearchingModal(!visibleSearchingModal);
   };
-
-  // ------------------------------------------ //
 
   const defaultValue = {
     width,

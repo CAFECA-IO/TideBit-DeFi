@@ -27,14 +27,12 @@ interface IDepositModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
 const DepositModal = ({
   modalVisible,
   modalClickHandler,
-  getTransferData, // pass data to parent component
-  submitHandler, // submit information from parent component
+  getTransferData,
   ...otherProps
 }: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -78,7 +76,6 @@ const DepositModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto, amount: amountInput});
     const [lock, unlock] = locker('deposit_modal.submitClickHandler');
 
     if (!lock()) return;

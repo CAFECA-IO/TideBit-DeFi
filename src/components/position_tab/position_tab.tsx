@@ -28,17 +28,10 @@ const PositionTab = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
 
-  // const [activeTab, setActiveTab] = useState(POSITION_TAB.OPEN);
-
   const tabBodyWidth = 'w-320px';
 
-  // const openTabClickHandler = () => {
-  //   setActiveTab(POSITION_TAB.OPEN);
-  // };
-
-  // const historyTabClickHandler = () => {
-  //   setActiveTab(POSITION_TAB.HISTORY);
-  // };
+  // eslint-disable-next-line no-console
+  console.log('re run in position tab');
 
   const currentSubTab =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? (

@@ -17,9 +17,6 @@ const OpenSubTab = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
-  // eslint-disable-next-line no-console
-  console.log('re run in open sub tab');
-
   useEffect(() => {
     const cfdList = userCtx.openCFDs
       .map(cfd => {

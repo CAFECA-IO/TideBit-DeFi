@@ -30,9 +30,6 @@ const PositionTab = ({
 
   const tabBodyWidth = 'w-320px';
 
-  // eslint-disable-next-line no-console
-  console.log('re run in position tab');
-
   const currentSubTab =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? (
       activePositionTabMobile === POSITION_TAB.OPEN ? (

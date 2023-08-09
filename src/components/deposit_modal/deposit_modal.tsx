@@ -26,7 +26,6 @@ type TranslateFunction = (s: string) => string;
 interface IDepositModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
@@ -34,7 +33,6 @@ interface IDepositModal {
 const DepositModal = ({
   modalVisible,
   modalClickHandler,
-  getSubmissionState, // [process]
   getTransferData, // pass data to parent component
   submitHandler, // submit information from parent component
   ...otherProps
@@ -63,10 +61,6 @@ const DepositModal = ({
   const maxClickHandler = () => {
     setAmountInput(userAvailableBalance);
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
-  };
-
-  const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
-    getSubmissionState(props);
   };
 
   const submitClickHandler = async () => {

@@ -354,17 +354,6 @@ export interface IGlobalContext {
   dataBadgeModal: IBadgeModal | null;
   dataBadgeModalHandler: (data: IBadgeModal) => void;
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // visibleBadgeSharingModal: boolean;
-  // visibleBadgeSharingModalHandler: () => void;
-  // dataBadgeSharingModal: IBadgeSharingModal | null;
-  // dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
-
-  // visibleAchievementSharingModal: boolean;
-  // visibleAchievementSharingModalHandler: () => void;
-  // dataAchievementSharingModal: IAchievementSharingModal | null;
-  // dataAchievementSharingModalHandler: (data: IAchievementSharingModal) => void;
-
   visibleSearchingModal: boolean;
   visibleSearchingModalHandler: () => void;
 }
@@ -493,16 +482,6 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataBadgeModal: null,
   dataBadgeModalHandler: () => null,
 
-  // visibleBadgeSharingModal: false,
-  // visibleBadgeSharingModalHandler: () => null,
-  // dataBadgeSharingModal: null,
-  // dataBadgeSharingModalHandler: () => null,
-
-  // visibleAchievementSharingModal: false,
-  // visibleAchievementSharingModalHandler: () => null,
-  // dataAchievementSharingModal: null,
-  // dataAchievementSharingModalHandler: () => null,
-
   visibleSearchingModal: false,
   visibleSearchingModalHandler: () => null,
 });
@@ -510,9 +489,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
-  const userCtx = useContext(UserContext);
-  const marketCtx = useContext(MarketContext);
-
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
@@ -563,8 +539,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleHelloModal, setVisibleHelloModal] = useState(false);
 
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
-  // const [dataSignatureProcessModal, setDataSignatureProcessModal] =
-  //   useState<IDataSignatrueProcessModal | null>();
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
   const [dataHistoryPositionModal, setDataHistoryPositionModal] = useState<IDisplayCFDOrder>(
@@ -612,31 +586,13 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
   const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
-  // const [dataBadgeSharingModal, setDataBadgeSharingModal] = useState<IBadgeSharingModal>(dummyBadgeSharingModal);
-
-  // const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
-  // const [dataAchievementSharingModal, setDataAchievementSharingModal] =useState<IAchievementSharingModal>(dummyAchievementSharingModal);
-
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
-
-  // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
-  const [depositProcess, setDepositProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
-  const [withdrawProcess, setWithdrawProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
-
-  // const layoutAssertion: ILayoutAssertion =
-  //   width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
 
   const layoutAssertion = useMemo(() => {
     return width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
@@ -1008,37 +964,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataBadgeModal(data);
   };
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // const visibleBadgeSharingModalHandler = () => {
-  //   setVisibleBadgeSharingModal(!visibleBadgeSharingModal);
-  // };
-
-  // const dataBadgeSharingModalHandler = (data: IBadgeSharingModal) => {
-  //   setDataBadgeSharingModal(data);
-  // };
-
-  // const visibleAchievementSharingModalHandler = () => {
-  //   setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
-  // };
-
-  // const dataAchievementSharingModalHandler = (data: IAchievementSharingModal) => {
-  //   setDataAchievementSharingModal(data);
-  // };
-
-  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    setWithdrawProcess(state);
-  };
-
   const getDepositData = (props: {asset: string; amount: number}) => {
     setDepositData(props);
   };
 
   const getWithdrawData = (props: {asset: string; amount: number}) => {
     setWithdrawData(props);
-  };
-
-  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    setDepositProcess(state);
   };
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
@@ -1275,14 +1206,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <DepositModal
         getTransferData={getDepositData}
         submitHandler={depositSubmitHandler}
-        getSubmissionState={getDepositSubmissionState}
         modalVisible={visibleDepositModal}
         modalClickHandler={visibleDepositModalHandler}
       />
       <WithdrawalModal
         getTransferData={getWithdrawData}
         submitHandler={withdrawSubmitHandler}
-        getSubmissionState={getWithdrawSubmissionState}
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
       />

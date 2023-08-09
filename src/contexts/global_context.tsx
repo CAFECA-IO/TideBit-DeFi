@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext} from 'react';
+import React, {createContext, useState, useContext, useMemo} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
@@ -635,8 +635,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
 
-  const layoutAssertion: ILayoutAssertion =
-    width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
+  // const layoutAssertion: ILayoutAssertion =
+  //   width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
+
+  const layoutAssertion = useMemo(() => {
+    return width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
+  }, [width]);
 
   const toggleColorMode = () => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');

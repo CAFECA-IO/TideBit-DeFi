@@ -1,11 +1,15 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {accountTruncate, numberFormatted} from '../../lib/common';
+import {accountTruncate, numberFormatted, roundToDecimalPlaces} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {
+  TypeOfPnLColor,
+  SKELETON_DISPLAY_TIME,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {ProfitState} from '../../constants/profit_state';
@@ -84,7 +88,12 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
         ? myPnl.value - previousPnl.value
         : 0;
 
-    return gapPnl !== 0 ? gapPnl.toFixed(2) : '-';
+    const abGapPnl = Math.abs(roundToDecimalPlaces(gapPnl, 2)).toLocaleString(
+      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+      FRACTION_DIGITS
+    );
+
+    return gapPnl !== 0 ? abGapPnl : '-';
   };
 
   const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;

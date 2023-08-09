@@ -6,6 +6,7 @@ import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
 import {DEFAULT_BALANCE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {roundToDecimalPlaces} from '../../lib/common';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 
@@ -71,15 +72,24 @@ const BalanceSection = () => {
 
   const displayedBalance = hidden
     ? '********'
-    : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : roundToDecimalPlaces(totalBalance, 2).toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      );
 
   const displayedAvalibleBalance = hidden
     ? '*****'
-    : avalibleBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : roundToDecimalPlaces(avalibleBalance, 2).toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      );
 
   const displayedLockedBalance = hidden
     ? '*****'
-    : lockedBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : roundToDecimalPlaces(lockedBalance, 2).toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      );
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();

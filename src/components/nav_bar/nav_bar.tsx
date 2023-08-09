@@ -23,7 +23,6 @@ const NavBar = () => {
   const notificationCtx = useContext(NotificationContext);
   const router = useRouter();
   const tradeLink = isValidURL(router.asPath) ? router.asPath : TBDURL.TRADE;
-
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {

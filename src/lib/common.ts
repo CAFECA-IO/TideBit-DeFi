@@ -734,7 +734,8 @@ export function isValidURL(url: string): boolean {
   }
 
   for (const instId of instIds) {
-    if (url.endsWith(instId)) {
+    const expectedURL = `/trade/cfd/${instId}`;
+    if (url === expectedURL) {
       result = true;
       return result;
     }

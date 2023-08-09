@@ -506,7 +506,7 @@ const TradingChartSwitch = ({
   const displayedLayout =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
 
-  return <div className="w-full">{displayedLayout}</div>;
+  return <div>{displayedLayout}</div>;
 };
 
 export default TradingChartSwitch;

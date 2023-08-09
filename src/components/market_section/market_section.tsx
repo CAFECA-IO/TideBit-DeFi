@@ -2,14 +2,11 @@ import {useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
 import {useGlobal} from '../../contexts/global_context';
-import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
-import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
-import {LayoutAssertion} from '../../constants/layout_assertion';
 import {DEFAULT_ICON} from '../../constants/display';
 import {DEFAULT_CRYPTO} from '../../constants/config';
 
@@ -19,7 +16,6 @@ interface IMarketSectionProps {
 
 const MarketSection = (props: IMarketSectionProps) => {
   const marketCtx = useContext(MarketContext);
-  const {layoutAssertion} = useGlobal();
 
   const {
     icon,
@@ -36,11 +32,9 @@ const MarketSection = (props: IMarketSectionProps) => {
     tradingValue,
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
-  const displayedTickerHeader =
-    layoutAssertion === LayoutAssertion.MOBILE ? <TradingHeaderMobile /> : <TradingHeader />;
+  const displayedTickerHeader = <TradingHeader />;
 
-  const displayedTradingView =
-    layoutAssertion === LayoutAssertion.MOBILE ? <TradingViewMobile /> : <TradingView />;
+  const displayedTradingView = <TradingView />;
 
   return (
     <div className="ml-5 py-100px">

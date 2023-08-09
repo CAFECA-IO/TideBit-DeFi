@@ -52,7 +52,6 @@ const HistorySubTab = () => {
     <>
       <SkeletonTheme baseColor="#202020" highlightColor="#444">
         {displayedLayout}{' '}
-        {/* <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{historyPositionList}</div> */}
       </SkeletonTheme>
     </>
   );

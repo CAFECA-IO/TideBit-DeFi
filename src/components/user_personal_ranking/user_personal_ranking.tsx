@@ -77,23 +77,18 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     const myPnl = myRanking.cumulativePnl;
 
     const gapPnl =
-      // Info: (20230626 - Julian) 如果前一名和我的 PNL 都是正的，則 previousPnl.value - myPnl.value
-      previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.PROFIT
-        ? previousPnl.value - myPnl.value
-        : // Info: (20230626 - Julian) 如果前一名是正的，我的 PNL 是負的，則 previousPnl.value - (-myPnl.value) ，也就是 previousPnl.value + myPnl.value)
-        previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.LOSS
-        ? previousPnl.value + myPnl.value
-        : // Info: (20230626 - Julian) 如果兩者都是負的，則(-previousPnl.value) - (-myPnl.value) ，也就是 myPnl.value - previousPnl.value
-        previousPnl.type === ProfitState.LOSS && myPnl.type === ProfitState.LOSS
-        ? myPnl.value - previousPnl.value
-        : 0;
+      // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
+      previousPnl.type === myPnl.type
+        ? Math.abs(previousPnl.value - myPnl.value)
+        : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
+          Math.abs(previousPnl.value + myPnl.value);
 
-    const abGapPnl = Math.abs(roundToDecimalPlaces(gapPnl, 2)).toLocaleString(
+    const gapPnlFormatted = roundToDecimalPlaces(gapPnl, 2).toLocaleString(
       UNIVERSAL_NUMBER_FORMAT_LOCALE,
       FRACTION_DIGITS
     );
 
-    return gapPnl !== 0 ? abGapPnl : '-';
+    return gapPnl !== 0 ? gapPnlFormatted : '-';
   };
 
   const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;

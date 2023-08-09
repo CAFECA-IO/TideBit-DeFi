@@ -11,6 +11,7 @@ import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
+import {roundToDecimalPlaces} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -70,7 +71,7 @@ const CryptoCard = ({
   const marketCtx = useContext(MarketContext);
   fluctuating = Number(fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
-  const fluctuatingAbs = Math.abs(fluctuating);
+  const fluctuatingAbs = Math.abs(roundToDecimalPlaces(fluctuating, 2));
   const fluctuatingRate = priceRise
     ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
     : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;

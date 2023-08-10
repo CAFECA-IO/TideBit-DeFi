@@ -6,7 +6,6 @@ import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
 import {useGlobal} from '../../../contexts/global_context';
-import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
@@ -36,8 +35,6 @@ const CfdSharing = (props: IPageProps) => {
   const router = useRouter();
 
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
-
-  const {query} = router;
 
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;

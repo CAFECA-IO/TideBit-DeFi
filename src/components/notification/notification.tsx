@@ -68,7 +68,7 @@ export default function Notification({
 
   const displayedNotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
-      <div key={v.id} className={`${readAllanim} transition-all duration-300 ease-in-out`}>
+      <div key={v.id + v} className={`${readAllanim} transition-all duration-300 ease-in-out`}>
         <NotificationItem
           id={v.id}
           title={v.title}

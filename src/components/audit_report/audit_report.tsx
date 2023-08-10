@@ -47,7 +47,7 @@ const AuditReport = () => {
                   height={80}
                   alt="Income Statement"
                 />
-                <p className=" text-xs lg:text-lg text-center">
+                <p className=" text-center text-xs lg:text-lg">
                   {t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT')}
                 </p>
               </Link>

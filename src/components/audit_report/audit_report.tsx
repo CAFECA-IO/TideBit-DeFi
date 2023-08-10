@@ -22,7 +22,8 @@ const AuditReport = () => {
 
       <div className="mx-20">
         <div className="mb-5 flex w-full justify-center text-lightGray lg:mb-10">
-          {t('HOME_PAGE.LAST_UPDATED')} <span className="text-lightWhite">&nbsp;July 27, 2023</span>
+          {t('HOME_PAGE.LAST_UPDATED')}{' '}
+          <span className="text-lightWhite">&nbsp;August 04, 2023</span>
         </div>
 
         <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end xl:pr-1/10">
@@ -46,7 +47,7 @@ const AuditReport = () => {
                   height={80}
                   alt="Income Statement"
                 />
-                <p className=" text-xs lg:text-lg text-center">
+                <p className=" text-center text-xs lg:text-lg">
                   {t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT')}
                 </p>
               </Link>

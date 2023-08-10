@@ -11,6 +11,7 @@ import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 type TranslateFunction = (s: string) => string;
 
@@ -204,7 +205,7 @@ const CryptoCard = ({
           series={dataSample.series}
           type="line"
           width={lineGraphWidth}
-          height="40px"
+          height={`${globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? '20px' : '40px'}`}
         />
       </div>
     );
@@ -296,11 +297,11 @@ const CryptoCard = ({
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
+            <div className="pointer-events-none absolute right-2 top-1 bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
+                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '120',
               })}
             </div>
             <div className="absolute bottom-0 flex w-134px justify-between">

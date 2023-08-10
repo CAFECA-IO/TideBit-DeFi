@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {accountTruncate, numberFormatted, roundToDecimalPlaces} from '../../lib/common';
+import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ import {ProfitState} from '../../constants/profit_state';
 import {ImArrowUp} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
@@ -26,12 +27,17 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
 
+  const {
+    targetRef: shareListRef,
+    componentVisible: shareListVisible,
+    setComponentVisible: setShareListVisible,
+  } = useOuterClick<HTMLDivElement>(false);
+
   /* Info: (20230626 - Julian) 找到當前使用者的排行資料 */
   const myRanking = rankingData.find(data => data.userId === userCtx.user?.id) ?? defaultRanking;
   const userId = userCtx.user?.id ?? '';
 
   const [isLoading, setIsLoading] = useState(true);
-  const [showShareList, setShowShareList] = useState(false);
 
   let timer: NodeJS.Timeout;
 
@@ -46,7 +52,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const rankingNumber = myRanking.rank;
   const pnl = myRanking.cumulativePnl;
 
-  const shareClickHandler = () => setShowShareList(!showShareList);
+  const shareClickHandler = () => setShareListVisible(!shareListVisible);
 
   const personalInfoClickHandler = () => {
     globalCtx.dataPersonalAchievementModalHandler(userId);
@@ -83,10 +89,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
         : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
           Math.abs(previousPnl.value + myPnl.value);
 
-    const gapPnlFormatted = roundToDecimalPlaces(gapPnl, 2).toLocaleString(
-      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-      FRACTION_DIGITS
-    );
+    const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
     return gapPnl !== 0 ? gapPnlFormatted : '-';
   };
@@ -96,8 +99,9 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
     <div
+      ref={shareListRef}
       className={`absolute bottom-10 right-0 inline-flex md:-right-28 md:bottom-16 ${
-        showShareList ? 'visible opacity-100' : 'invisible opacity-0'
+        shareListVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <a>

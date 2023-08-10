@@ -72,24 +72,15 @@ const BalanceSection = () => {
 
   const displayedBalance = hidden
     ? '********'
-    : roundToDecimalPlaces(totalBalance, 2).toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      );
+    : totalBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedAvalibleBalance = hidden
     ? '*****'
-    : roundToDecimalPlaces(avalibleBalance, 2).toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      );
+    : avalibleBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedLockedBalance = hidden
     ? '*****'
-    : roundToDecimalPlaces(lockedBalance, 2).toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      );
+    : lockedBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();

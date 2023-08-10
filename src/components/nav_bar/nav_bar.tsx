@@ -13,6 +13,8 @@ import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 import {useRouter} from 'next/router';
+import {isValidURL} from '../../lib/common';
+import {instIds} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
@@ -24,9 +26,7 @@ const NavBar = () => {
   const notificationCtx = useContext(NotificationContext);
   const router = useRouter();
   const globalCtx = useGlobal();
-
-  const tradeLink = router.asPath.includes('trade') ? router.asPath : TBDURL.TRADE;
-
+  const tradeLink = isValidURL(router.asPath) ? router.asPath : TBDURL.TRADE;
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {
@@ -177,6 +177,7 @@ const NavBar = () => {
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
+
                     <Link href={tradeLink} className="hover:cursor-pointer hover:text-tidebitTheme">
                       {t('NAV_BAR.TRADE')}
                     </Link>

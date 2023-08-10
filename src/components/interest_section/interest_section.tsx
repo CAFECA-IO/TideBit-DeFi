@@ -6,6 +6,7 @@ import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 type TranslateFunction = (s: string) => string;
 
@@ -106,7 +107,7 @@ const InterestSection = () => {
       </h1>
 
       <div className="mx-20 pb-16 xl:mx-40">
-        {layoutAssertion === 'mobile' ? <>{mobileLayout}</> : <>{desktopLayout}</>}
+        {layoutAssertion === LayoutAssertion.MOBILE ? <>{mobileLayout}</> : <>{desktopLayout}</>}
       </div>
     </div>
   );

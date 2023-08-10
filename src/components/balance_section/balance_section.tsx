@@ -6,7 +6,6 @@ import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
 import {DEFAULT_BALANCE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
-import {roundToDecimalPlaces} from '../../lib/common';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 
@@ -72,7 +71,7 @@ const BalanceSection = () => {
 
   const displayedBalance = hidden
     ? '********'
-    : totalBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedAvalibleBalance = hidden
     ? '*****'

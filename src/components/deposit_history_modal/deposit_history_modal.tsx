@@ -6,7 +6,7 @@ import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {timestampToString, roundToDecimalPlaces} from '../../lib/common';
+import {timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 
@@ -31,17 +31,14 @@ const DepositHistoryModal = ({
   const displayedDepositTime = timestampToString(createTimestamp);
   const displayedDepositType = t('D_W_MODAL.DEPOSIT');
   const displayedDepositAsset = order.targetAsset;
-  const displayedDepositAmount = roundToDecimalPlaces(order.targetAmount, 2).toLocaleString(
+  const displayedDepositAmount = order.targetAmount.toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     FRACTION_DIGITS
   );
   const displayedDepositFee =
     order.fee === 0
       ? '-'
-      : roundToDecimalPlaces(order.fee, 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        );
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedDepositHeaderAsset = (
     <>
@@ -60,10 +57,7 @@ const DepositHistoryModal = ({
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
-        {roundToDecimalPlaces(balance?.available ?? 0, 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}
+        {balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
       </div>
     );
 

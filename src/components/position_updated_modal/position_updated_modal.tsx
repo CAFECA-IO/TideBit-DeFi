@@ -211,12 +211,13 @@ const PositionUpdatedModal = ({
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    (updatedProps.takeProfit === 0 && openCfdDetails.takeProfit === undefined) ||
+    // 如果原本是０、undefined，updatedProps也是０、undefined，則不顯示
+    (!openCfdDetails.takeProfit && !!updatedProps.takeProfit === !!openCfdDetails.takeProfit) ||
     updatedProps.takeProfit === openCfdDetails?.takeProfit
       ? setTpTextStyle('text-lightWhite')
       : setTpTextStyle('text-lightYellow2');
 
-    (updatedProps.stopLoss === 0 && openCfdDetails.stopLoss === undefined) ||
+    (!openCfdDetails.stopLoss && !!updatedProps.stopLoss === !!openCfdDetails.stopLoss) ||
     updatedProps.stopLoss === openCfdDetails?.stopLoss
       ? setSlTextStyle('text-lightWhite')
       : setSlTextStyle('text-lightYellow2');
@@ -232,33 +233,30 @@ const PositionUpdatedModal = ({
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
+  // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit
-    ? updatedProps.takeProfit === 0
-      ? '-'
-      : updatedProps.takeProfit !== 0
+    ? openCfdDetails.takeProfit !== updatedProps.takeProfit
       ? `$ ${updatedProps.takeProfit.toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         )}`
-      : undefined
-    : openCfdDetails?.takeProfit
-    ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      )}`
+      : `$ ${openCfdDetails.takeProfit.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}`
+    : !!openCfdDetails.takeProfit !== !!updatedProps?.takeProfit
+    ? '-'
     : '-';
 
   const displayedStopLoss = !!updatedProps?.stopLoss
-    ? updatedProps.stopLoss === 0
-      ? '-'
-      : updatedProps.stopLoss !== 0
+    ? openCfdDetails.stopLoss !== updatedProps.stopLoss
       ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`
-      : undefined
-    : openCfdDetails?.stopLoss
-    ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      )}`
+      : `$ ${openCfdDetails.stopLoss.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}`
+    : !!openCfdDetails.stopLoss !== !!updatedProps?.stopLoss
+    ? '-'
     : '-';
 
   const displayedTypeOfPosition =
@@ -296,11 +294,9 @@ const PositionUpdatedModal = ({
           className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-              {/* TODO: color variable */}
+
               <div className={`${displayedPositionColor}`}>
                 {displayedTypeOfPosition}
                 <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>

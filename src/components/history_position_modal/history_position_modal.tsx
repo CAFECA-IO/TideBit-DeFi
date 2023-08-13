@@ -72,6 +72,12 @@ const HistoryPositionModal = ({
 
   const displayedPnLSymbol = pnl.type === 'PROFIT' ? '+' : pnl.type === 'LOSS' ? '-' : '';
 
+  // TODO: Discuss the pnl value should include the symbol or not (20230804 - Shirley)
+  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    FRACTION_DIGITS
+  );
+
   const displayedTypeOfPosition =
     closedCfdDetails?.typeOfPosition === 'BUY'
       ? t('POSITION_MODAL.TYPE_UP')
@@ -142,8 +148,7 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
-              {displayedPnLSymbol} ${' '}
-              {pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              {displayedPnLSymbol} $ {displayedPnLValue}
             </div>
           </div>
 

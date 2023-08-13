@@ -288,3 +288,4 @@ export const NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH = 200;
 export const NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH = 400;
 export const TYPING_KEYUP_DELAY = 5000;
 export const NEWS_AMOUNT_ON_TRADE_PAGE = 3;
+export const DEFAULT_ICON = '/asset_icon/eth.svg';

@@ -10,6 +10,9 @@ import {useRouter} from 'next/router';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {NotificationContext} from '../../contexts/notification_context';
 import {ICurrency} from '../../constants/currency';
+import {ImCross} from 'react-icons/im';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import {useGlobal} from '../../contexts/global_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -41,6 +44,7 @@ const TickerSelectorBox = ({
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
   const notificationCtx = useContext(NotificationContext);
+  const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -307,7 +311,72 @@ const TickerSelectorBox = ({
     </>
   ) : null;
 
-  return <div>{isDisplayedTickerSelectorBox}</div>;
+  const isDisplayedTickerSelectorBoxMobile = tickerSelectorBoxVisible ? (
+    <>
+      <div className="fixed inset-0 z-80 flex items-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+        {/* Info: (20230427 - Julian) The position of the box */}
+        <div
+          className="relative mx-auto my-10px min-w-fit"
+          id="tickerSelectorModal"
+          ref={tickerSelectorBoxRef}
+        >
+          {/* Info: (20230427 - Julian) ticker cards section */}
+          <div className="flex h-95vh w-90vw flex-col items-center rounded-xl border-0 bg-darkGray1 px-4 shadow-lg shadow-black/80 outline-none focus:outline-none">
+            {/* Info: (20230427 - Julian) header */}
+            <button
+              className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+              onClick={tickerSelectorBoxClickHandler}
+            >
+              <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <ImCross />
+              </span>
+            </button>
+
+            {/* Info: (20230427 - Julian) ----- body ----- */}
+
+            {/* Info: (20230427 - Julian) tab section */}
+            <div className="w-full">{tabPart}</div>
+
+            <div className="relative mt-10 flex w-full">
+              <input
+                type="search"
+                value={searches}
+                className="block w-full rounded-full bg-darkGray2 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+                placeholder={t('TRADE_PAGE.TICKER_SELECTOR_TAB_SEARCH_PLACEHOLDER')}
+                required
+                onChange={onSearchChange}
+              />
+              <button
+                type="button"
+                className="absolute top-0 right-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+              >
+                <CgSearch size={30} />
+              </button>
+            </div>
+
+            {/* Info: (20230427 - Julian) Card section */}
+            <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-start sm:h-3/4">
+              <div className="mb-5 mr-4 grid h-full auto-rows-min grid-cols-2 space-y-4 space-x-4 overflow-y-auto overflow-x-hidden md:grid-cols-3">
+                {displayedCryptoCards}
+              </div>
+            </div>
+            {/* Info: (20230427 - Julian) footer */}
+            <div className="flex items-center justify-end rounded-b p-2"></div>
+          </div>
+        </div>
+      </div>
+      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+    </>
+  ) : null;
+
+  const desktopLayout = <>{isDisplayedTickerSelectorBox}</>;
+
+  const mobileLayout = <>{isDisplayedTickerSelectorBoxMobile}</>;
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
+
+  return <div>{displayedLayout}</div>;
 };
 
 export default TickerSelectorBox;

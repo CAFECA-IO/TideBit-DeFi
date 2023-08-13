@@ -4,14 +4,19 @@ import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {
+  TypeOfPnLColor,
+  SKELETON_DISPLAY_TIME,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {ProfitState} from '../../constants/profit_state';
 import {ImArrowUp} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
@@ -22,12 +27,17 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
 
+  const {
+    targetRef: shareListRef,
+    componentVisible: shareListVisible,
+    setComponentVisible: setShareListVisible,
+  } = useOuterClick<HTMLDivElement>(false);
+
   /* Info: (20230626 - Julian) 找到當前使用者的排行資料 */
   const myRanking = rankingData.find(data => data.userId === userCtx.user?.id) ?? defaultRanking;
   const userId = userCtx.user?.id ?? '';
 
   const [isLoading, setIsLoading] = useState(true);
-  const [showShareList, setShowShareList] = useState(false);
 
   let timer: NodeJS.Timeout;
 
@@ -42,7 +52,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const rankingNumber = myRanking.rank;
   const pnl = myRanking.cumulativePnl;
 
-  const shareClickHandler = () => setShowShareList(!showShareList);
+  const shareClickHandler = () => setShareListVisible(!shareListVisible);
 
   const personalInfoClickHandler = () => {
     globalCtx.dataPersonalAchievementModalHandler(userId);
@@ -73,18 +83,15 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     const myPnl = myRanking.cumulativePnl;
 
     const gapPnl =
-      // Info: (20230626 - Julian) 如果前一名和我的 PNL 都是正的，則 previousPnl.value - myPnl.value
-      previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.PROFIT
-        ? previousPnl.value - myPnl.value
-        : // Info: (20230626 - Julian) 如果前一名是正的，我的 PNL 是負的，則 previousPnl.value - (-myPnl.value) ，也就是 previousPnl.value + myPnl.value)
-        previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.LOSS
-        ? previousPnl.value + myPnl.value
-        : // Info: (20230626 - Julian) 如果兩者都是負的，則(-previousPnl.value) - (-myPnl.value) ，也就是 myPnl.value - previousPnl.value
-        previousPnl.type === ProfitState.LOSS && myPnl.type === ProfitState.LOSS
-        ? myPnl.value - previousPnl.value
-        : 0;
+      // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
+      previousPnl.type === myPnl.type
+        ? Math.abs(previousPnl.value - myPnl.value)
+        : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
+          Math.abs(previousPnl.value + myPnl.value);
 
-    return gapPnl !== 0 ? gapPnl.toFixed(2) : '-';
+    const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+
+    return gapPnl !== 0 ? gapPnlFormatted : '-';
   };
 
   const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;
@@ -92,8 +99,9 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
     <div
+      ref={shareListRef}
       className={`absolute bottom-10 right-0 inline-flex md:-right-28 md:bottom-16 ${
-        showShareList ? 'visible opacity-100' : 'invisible opacity-0'
+        shareListVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <a>

@@ -52,6 +52,7 @@ import {
   randomFloatFromInterval,
   randomIntFromInterval,
   timestampToString,
+  roundToDecimalPlaces,
 } from '../../lib/common';
 import {
   ICandlestickData,
@@ -71,6 +72,7 @@ import {normalize} from 'path';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'react-i18next';
 import {create} from 'domain';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -266,7 +268,7 @@ export default function CandlestickChart({
   let tuned: CandlestickData[];
 
   const width =
-    globalCtx.layoutAssertion === 'desktop'
+    globalCtx.layoutAssertion === LayoutAssertion.DESKTOP
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
       : globalCtx.width * 0.9;
 
@@ -341,7 +343,7 @@ export default function CandlestickChart({
       priceLineStyle: LineStyle.Dashed,
       crosshairMarkerVisible: false,
       lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.LONG')} ${buyPrice.toFixed(2)}`,
+      title: `${t('CANDLESTICK_CHART.LONG')} ${roundToDecimalPlaces(buyPrice, 2)}`,
       baseLineVisible: true,
     });
 
@@ -353,7 +355,7 @@ export default function CandlestickChart({
       priceLineStyle: LineStyle.Dashed,
       crosshairMarkerVisible: false,
       lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.SHORT')} ${sellPrice.toFixed(2)}`,
+      title: `${t('CANDLESTICK_CHART.SHORT')} ${roundToDecimalPlaces(sellPrice, 2)}`,
       baseLineVisible: true,
     });
 
@@ -401,7 +403,7 @@ export default function CandlestickChart({
         priceLineStyle: LineStyle.Solid,
         crosshairMarkerVisible: false,
         lastValueVisible: false,
-        title: `Position: ${price.toFixed(2)}　Close`,
+        title: `Position: ${roundToDecimalPlaces(price, 2)}　Close`,
         baseLineVisible: true,
       });
 

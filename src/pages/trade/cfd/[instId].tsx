@@ -6,7 +6,6 @@ import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
 import {useGlobal} from '../../../contexts/global_context';
-import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
@@ -28,10 +27,9 @@ interface IPageProps {
 
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
-  const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
 
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
 
   const router = useRouter();
   const instId = router.query?.instId as string;

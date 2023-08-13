@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext} from 'react';
+import React, {createContext, useState, useContext, useMemo, useCallback} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
@@ -60,6 +60,7 @@ import BadgeModal from '../components/badge_modal/badge_modal';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import AnnouncementModal from '../components/announcement_modal/announcement_modal';
 import {MessageType, IMessageType} from '../constants/message_type';
+import {ILayoutAssertion, LayoutAssertion} from '../constants/layout_assertion';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -227,13 +228,12 @@ export interface IGlobalProvider {
   children: React.ReactNode;
 }
 
-export type LayoutAssertionUnion = 'mobile' | 'desktop';
 export type ColorModeUnion = 'light' | 'dark';
 
 export interface IGlobalContext {
   width: number;
   height: number;
-  layoutAssertion: LayoutAssertionUnion;
+  layoutAssertion: ILayoutAssertion;
   initialColorMode: ColorModeUnion;
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
@@ -354,17 +354,6 @@ export interface IGlobalContext {
   dataBadgeModal: IBadgeModal | null;
   dataBadgeModalHandler: (data: IBadgeModal) => void;
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // visibleBadgeSharingModal: boolean;
-  // visibleBadgeSharingModalHandler: () => void;
-  // dataBadgeSharingModal: IBadgeSharingModal | null;
-  // dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
-
-  // visibleAchievementSharingModal: boolean;
-  // visibleAchievementSharingModalHandler: () => void;
-  // dataAchievementSharingModal: IAchievementSharingModal | null;
-  // dataAchievementSharingModalHandler: (data: IAchievementSharingModal) => void;
-
   visibleSearchingModal: boolean;
   visibleSearchingModalHandler: () => void;
 }
@@ -372,7 +361,7 @@ export interface IGlobalContext {
 export const GlobalContext = createContext<IGlobalContext>({
   width: 0,
   height: 0,
-  layoutAssertion: '' as LayoutAssertionUnion,
+  layoutAssertion: '' as ILayoutAssertion,
   initialColorMode: '' as ColorModeUnion,
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
@@ -493,16 +482,6 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataBadgeModal: null,
   dataBadgeModalHandler: () => null,
 
-  // visibleBadgeSharingModal: false,
-  // visibleBadgeSharingModalHandler: () => null,
-  // dataBadgeSharingModal: null,
-  // dataBadgeSharingModalHandler: () => null,
-
-  // visibleAchievementSharingModal: false,
-  // visibleAchievementSharingModalHandler: () => null,
-  // dataAchievementSharingModal: null,
-  // dataAchievementSharingModalHandler: () => null,
-
   visibleSearchingModal: false,
   visibleSearchingModalHandler: () => null,
 });
@@ -510,9 +489,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
-  const userCtx = useContext(UserContext);
-  const marketCtx = useContext(MarketContext);
-
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
@@ -563,8 +539,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleHelloModal, setVisibleHelloModal] = useState(false);
 
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
-  // const [dataSignatureProcessModal, setDataSignatureProcessModal] =
-  //   useState<IDataSignatrueProcessModal | null>();
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
   const [dataHistoryPositionModal, setDataHistoryPositionModal] = useState<IDisplayCFDOrder>(
@@ -612,22 +586,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
   const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
-  // const [dataBadgeSharingModal, setDataBadgeSharingModal] = useState<IBadgeSharingModal>(dummyBadgeSharingModal);
-
-  // const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
-  // const [dataAchievementSharingModal, setDataAchievementSharingModal] =useState<IAchievementSharingModal>(dummyAchievementSharingModal);
-
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
-
-  // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
-  const [depositProcess, setDepositProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
-  const [withdrawProcess, setWithdrawProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
@@ -635,175 +594,172 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
 
-  const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
+  const layoutAssertion = useMemo(() => {
+    return width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
+  }, [width]);
 
-  const toggleColorMode = () => {
+  const toggleColorMode = useCallback(() => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
-  };
+  }, []);
 
-  const toast = ({
-    type,
-    message,
-    toastId,
-    autoClose,
-    isLoading,
-    typeText,
-    modalReOpenData,
-  }: IToastify) => {
-    const toastBodyStyle =
-      'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
+  const toast = useCallback(
+    ({type, message, toastId, autoClose, isLoading, typeText, modalReOpenData}: IToastify) => {
+      const toastBodyStyle =
+        'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
-    const isToastId = toastId ? toastId : type + message;
+      const isToastId = toastId ? toastId : type + message;
 
-    const isLoadingMessage = isLoading ? (
-      <div className="inline-flex">
-        {message}
-        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
-      </div>
-    ) : (
-      <>{message}</>
-    );
+      const isLoadingMessage = isLoading ? (
+        <div className="inline-flex">
+          {message}
+          <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+        </div>
+      ) : (
+        <>{message}</>
+      );
 
-    const modalReOpenHandler = modalReOpenData
-      ? () => {
-          setDataLoadingModal(modalReOpenData),
-            setVisibleLoadingModal(true),
+      const modalReOpenHandler = modalReOpenData
+        ? () => {
+            setDataLoadingModal(modalReOpenData),
+              setVisibleLoadingModal(true),
+              toastify.dismiss(isToastId);
+          }
+        : () => {
             toastify.dismiss(isToastId);
-        }
-      : () => {
-          toastify.dismiss(isToastId);
-        };
+          };
 
-    switch (type) {
-      case ToastType.ERROR:
-        try {
-          toastify.error(isLoadingMessage, {
-            toastId: isToastId,
-            icon: (
-              <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
-                <FaRegTimesCircle className="h-15px w-15px" />
-                <span className="ml-2">{typeText}</span>
-              </div>
-            ),
-            bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-            autoClose: autoClose ?? 3000,
-            closeOnClick: modalReOpenData ? false : true,
-            onClick: modalReOpenHandler,
-            delay: 150,
-          });
-          break;
-        } catch (error) {
-          /* Info: (20230510 - Julian) if toastify error */
-          dataFailedModalHandler({
-            modalTitle: 'Toastify Error',
-            failedTitle: 'Toastify Error',
-            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
-              Code.THIRD_PARTY_LIBRARY_ERROR
-            })`,
-            btnMsg: 'OK',
-          });
-          visibleFailedModalHandler();
-        }
-      case ToastType.WARNING:
-        try {
-          toastify.warning(isLoadingMessage, {
-            toastId: isToastId,
-            icon: (
-              <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
-                <ImWarning className="h-15px w-15px " />
-                <span className="ml-2">{typeText}</span>
-              </div>
-            ),
-            bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-            autoClose: autoClose ?? 3000,
-            closeOnClick: modalReOpenData ? false : true,
-            onClick: modalReOpenHandler,
-            delay: 150,
-          });
-          break;
-        } catch (error) {
-          /* Info: (20230510 - Julian) if toastify error */
-          dataFailedModalHandler({
-            modalTitle: 'Toastify Error',
-            failedTitle: 'Toastify Error',
-            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
-              Code.THIRD_PARTY_LIBRARY_ERROR
-            })`,
-            btnMsg: 'OK',
-          });
-          visibleFailedModalHandler();
-        }
-      case ToastType.INFO:
-        try {
-          toastify.info(isLoadingMessage, {
-            toastId: isToastId,
-            icon: (
-              <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
-                <ImInfo className="h-15px w-15px" />
-                <span className="ml-2">{typeText}</span>
-              </div>
-            ),
-            bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-            autoClose: autoClose ?? 3000,
-            closeOnClick: modalReOpenData ? false : true,
-            onClick: modalReOpenHandler,
-            delay: 150,
-          });
-          break;
-        } catch (error) {
-          /* Info: (20230510 - Julian) if toastify error */
-          dataFailedModalHandler({
-            modalTitle: 'Toastify Error',
-            failedTitle: 'Toastify Error',
-            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
-              Code.THIRD_PARTY_LIBRARY_ERROR
-            })`,
-            btnMsg: 'OK',
-          });
-          visibleFailedModalHandler();
-        }
-      case ToastType.SUCCESS:
-        try {
-          toastify.success(isLoadingMessage, {
-            toastId: isToastId,
-            icon: (
-              <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
-                <FaRegCheckCircle className="h-15px w-15px" />
-                <span className="ml-2">{typeText}</span>
-              </div>
-            ),
-            bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-            autoClose: autoClose ?? 3000,
-            closeOnClick: modalReOpenData ? false : true,
-            onClick: modalReOpenHandler,
-            delay: 150,
-          });
-          break;
-        } catch (error) {
-          /* Info: (20230510 - Julian) if toastify error */
-          dataFailedModalHandler({
-            modalTitle: 'Error',
-            failedTitle: 'Toastify Error',
-            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
-              Code.THIRD_PARTY_LIBRARY_ERROR
-            })`,
-            btnMsg: 'OK',
-          });
-          visibleFailedModalHandler();
-        }
-      default:
-        return;
-    }
-  };
+      switch (type) {
+        case ToastType.ERROR:
+          try {
+            toastify.error(isLoadingMessage, {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+                  <FaRegTimesCircle className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
+              autoClose: autoClose ?? 3000,
+              closeOnClick: modalReOpenData ? false : true,
+              onClick: modalReOpenHandler,
+              delay: 150,
+            });
+            break;
+          } catch (error) {
+            /* Info: (20230510 - Julian) if toastify error */
+            dataFailedModalHandler({
+              modalTitle: 'Toastify Error',
+              failedTitle: 'Toastify Error',
+              failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+                Code.THIRD_PARTY_LIBRARY_ERROR
+              })`,
+              btnMsg: 'OK',
+            });
+            visibleFailedModalHandler();
+          }
+        case ToastType.WARNING:
+          try {
+            toastify.warning(isLoadingMessage, {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+                  <ImWarning className="h-15px w-15px " />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
+              autoClose: autoClose ?? 3000,
+              closeOnClick: modalReOpenData ? false : true,
+              onClick: modalReOpenHandler,
+              delay: 150,
+            });
+            break;
+          } catch (error) {
+            /* Info: (20230510 - Julian) if toastify error */
+            dataFailedModalHandler({
+              modalTitle: 'Toastify Error',
+              failedTitle: 'Toastify Error',
+              failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+                Code.THIRD_PARTY_LIBRARY_ERROR
+              })`,
+              btnMsg: 'OK',
+            });
+            visibleFailedModalHandler();
+          }
+        case ToastType.INFO:
+          try {
+            toastify.info(isLoadingMessage, {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+                  <ImInfo className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
+              autoClose: autoClose ?? 3000,
+              closeOnClick: modalReOpenData ? false : true,
+              onClick: modalReOpenHandler,
+              delay: 150,
+            });
+            break;
+          } catch (error) {
+            /* Info: (20230510 - Julian) if toastify error */
+            dataFailedModalHandler({
+              modalTitle: 'Toastify Error',
+              failedTitle: 'Toastify Error',
+              failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+                Code.THIRD_PARTY_LIBRARY_ERROR
+              })`,
+              btnMsg: 'OK',
+            });
+            visibleFailedModalHandler();
+          }
+        case ToastType.SUCCESS:
+          try {
+            toastify.success(isLoadingMessage, {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+                  <FaRegCheckCircle className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
+              autoClose: autoClose ?? 3000,
+              closeOnClick: modalReOpenData ? false : true,
+              onClick: modalReOpenHandler,
+              delay: 150,
+            });
+            break;
+          } catch (error) {
+            /* Info: (20230510 - Julian) if toastify error */
+            dataFailedModalHandler({
+              modalTitle: 'Error',
+              failedTitle: 'Toastify Error',
+              failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+                Code.THIRD_PARTY_LIBRARY_ERROR
+              })`,
+              btnMsg: 'OK',
+            });
+            visibleFailedModalHandler();
+          }
+        default:
+          return;
+      }
+    },
+    []
+  );
 
-  const eliminateAllProcessModals = () => {
+  const eliminateAllProcessModals = useCallback(() => {
     setVisibleLoadingModal(false);
     setVisibleFailedModal(false);
     setVisibleCanceledModal(false);
     setVisibleSuccessfulModal(false);
-  };
+  }, []);
 
-  const eliminateAllModals = () => {
+  const eliminateAllModals = useCallback(() => {
     setVisibleDepositModal(false);
     setVisibleWithdrawalModal(false);
 
@@ -821,274 +777,200 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
-  };
+  }, []);
 
-  const eliminateToasts = (id: string) => {
+  const eliminateToasts = useCallback((id: string) => {
     /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
     if (id === 'all') {
       toastify.dismiss();
     } else {
       toastify.dismiss(id);
     }
-  };
+  }, []);
 
-  const displayedToast = (id: string) => {
+  const displayedToast = useCallback((id: string) => {
     return toastify?.isActive(id);
-  };
+  }, []);
 
-  const visibleUpdateFormModalHandler = () => {
-    setVisibleUpdateFormModal(!visibleUpdateFormModal);
-  };
-  const dataUpdateFormModalHandler = (data: IDisplayCFDOrder) => {
+  const visibleUpdateFormModalHandler = useCallback(() => {
+    setVisibleUpdateFormModal(prev => !prev);
+  }, []);
+
+  const dataUpdateFormModalHandler = useCallback((data: IDisplayCFDOrder) => {
     setDataUpdateFormModal(data);
-  };
+  }, []);
 
-  const visibleDepositModalHandler = () => {
-    setVisibleDepositModal(!visibleDepositModal);
-  };
+  const visibleDepositModalHandler = useCallback(() => {
+    setVisibleDepositModal(prev => !prev);
+  }, []);
 
-  const visibleWithdrawalModalHandler = () => {
-    setVisibleWithdrawalModal(!visibleWithdrawalModal);
-  };
+  const visibleWithdrawalModalHandler = useCallback(() => {
+    setVisibleWithdrawalModal(prev => !prev);
+  }, []);
 
-  const visibleDepositHistoryModalHandler = () => {
-    setVisibleDepositHistoryModal(!visibleDepositHistoryModal);
-  };
+  const visibleDepositHistoryModalHandler = useCallback(() => {
+    setVisibleDepositHistoryModal(prev => !prev);
+  }, []);
 
-  const dataDepositHistoryModalHandler = (data: IAcceptedDepositOrder) => {
+  const dataDepositHistoryModalHandler = useCallback((data: IAcceptedDepositOrder) => {
     setDataDepositHistoryModal(data);
-  };
+  }, []);
 
-  const visibleWithdrawalHistoryModalHandler = () => {
-    setVisibleWithdrawalHistoryModal(!visibleWithdrawalHistoryModal);
-  };
+  const visibleWithdrawalHistoryModalHandler = useCallback(() => {
+    setVisibleWithdrawalHistoryModal(prev => !prev);
+  }, []);
 
-  const dataWithdrawalHistoryModalHandler = (data: IAcceptedWithdrawOrder) => {
+  const dataWithdrawalHistoryModalHandler = useCallback((data: IAcceptedWithdrawOrder) => {
     setDataWithdrawalHistoryModal(data);
-  };
+  }, []);
 
-  const visibleLoadingModalHandler = () => {
-    setVisibleLoadingModal(!visibleLoadingModal);
-  };
+  const visibleLoadingModalHandler = useCallback(() => {
+    setVisibleLoadingModal(prev => !prev);
+  }, []);
 
-  const dataLoadingModalHandler = (data: IProcessDataModal) => {
+  const dataLoadingModalHandler = useCallback((data: IProcessDataModal) => {
     setDataLoadingModal(data);
-  };
+  }, []);
 
-  const visibleFailedModalHandler = () => {
-    setVisibleFailedModal(!visibleFailedModal);
-  };
+  const visibleFailedModalHandler = useCallback(() => {
+    setVisibleFailedModal(prev => !prev);
+  }, []);
 
-  const dataFailedModalHandler = (data: IFailedModal) => {
+  const dataFailedModalHandler = useCallback((data: IFailedModal) => {
     setDataFailedModal(data);
-  };
+  }, []);
 
-  const visibleSuccessfulModalHandler = () => {
-    setVisibleSuccessfulModal(!visibleSuccessfulModal);
-  };
+  const visibleSuccessfulModalHandler = useCallback(() => {
+    setVisibleSuccessfulModal(prev => !prev);
+  }, []);
 
-  const dataSuccessfulModalHandler = (data: ISuccessfulModal) => {
+  const dataSuccessfulModalHandler = useCallback((data: ISuccessfulModal) => {
     setDataSuccessfulModal(data);
-  };
+  }, []);
 
-  const visibleCanceledModalHandler = () => {
-    setVisibleCanceledModal(!visibleCanceledModal);
-  };
+  const visibleCanceledModalHandler = useCallback(() => {
+    setVisibleCanceledModal(prev => !prev);
+  }, []);
 
-  const dataCanceledModalHandler = (data: IProcessDataModal) => {
+  const dataCanceledModalHandler = useCallback((data: IProcessDataModal) => {
     setDataCanceledModal(data);
-  };
+  }, []);
 
-  const visibleWalletPanelHandler = () => {
-    setVisibleWalletPanel(!visibleWalletPanel);
-  };
+  const visibleWalletPanelHandler = useCallback(() => {
+    setVisibleWalletPanel(prev => !prev);
+  }, []);
 
-  const visibleSignatureProcessModalHandler = () => {
-    setVisibleSignatureProcessModal(!visibleSignatureProcessModal);
-  };
+  const visibleSignatureProcessModalHandler = useCallback(() => {
+    setVisibleSignatureProcessModal(prev => !prev);
+  }, []);
 
-  const visibleHelloModalHandler = () => {
-    setVisibleHelloModal(!visibleHelloModal);
-  };
+  const visibleHelloModalHandler = useCallback(() => {
+    setVisibleHelloModal(prev => !prev);
+  }, []);
 
-  const visibleHistoryPositionModalHandler = () => {
-    setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
-  };
+  const visibleHistoryPositionModalHandler = useCallback(() => {
+    setVisibleHistoryPositionModal(prev => !prev);
+  }, []);
 
-  const dataHistoryPositionModalHandler = (data: IDisplayCFDOrder) => {
+  const dataHistoryPositionModalHandler = useCallback((data: IDisplayCFDOrder) => {
     setDataHistoryPositionModal(data);
-  };
+  }, []);
 
-  const visiblePositionClosedModalHandler = () => {
-    setVisiblePositionClosedModal(!visiblePositionClosedModal);
-  };
+  const visiblePositionClosedModalHandler = useCallback(() => {
+    setVisiblePositionClosedModal(prev => !prev);
+  }, []);
 
-  const dataPositionClosedModalHandler = (data: IDisplayCFDOrder) => {
+  const dataPositionClosedModalHandler = useCallback((data: IDisplayCFDOrder) => {
     setDataPositionClosedModal(data);
-  };
+  }, []);
 
-  const visiblePositionOpenModalHandler = () => {
-    setVisiblePositionOpenModal(!visiblePositionOpenModal);
-  };
+  const visiblePositionOpenModalHandler = useCallback(() => {
+    setVisiblePositionOpenModal(prev => !prev);
+  }, []);
 
-  const dataPositionOpenModalHandler = (data: IDataPositionOpenModal) => {
+  const dataPositionOpenModalHandler = useCallback((data: IDataPositionOpenModal) => {
     setDataPositionOpenModal(data);
-  };
+  }, []);
 
-  const visiblePositionUpdatedModalHandler = () => {
-    setVisiblePositionUpdatedModal(!visiblePositionUpdatedModal);
-  };
+  const visiblePositionUpdatedModalHandler = useCallback(() => {
+    setVisiblePositionUpdatedModal(prev => !prev);
+  }, []);
 
-  const dataPositionUpdatedModalHandler = (data: IDataPositionUpdatedModal) => {
+  const dataPositionUpdatedModalHandler = useCallback((data: IDataPositionUpdatedModal) => {
     setDataPositionUpdatedModal(data);
-  };
+  }, []);
 
-  const visibleMyAccountModalHandler = () => {
-    setVisibleMyAccountModal(!visibleMyAccountModal);
-  };
+  const visibleMyAccountModalHandler = useCallback(() => {
+    setVisibleMyAccountModal(prev => !prev);
+  }, []);
 
-  const visibleTideBitConnectingModalHandler = () => {
-    setVisibleTideBitConnectingModal(!visibleTideBitConnectingModal);
-  };
+  const visibleTideBitConnectingModalHandler = useCallback(() => {
+    setVisibleTideBitConnectingModal(prev => !prev);
+  }, []);
 
-  const visibleEmailConnectingModalHandler = () => {
-    setVisibleEmailConnectingModal(!visibleEmailConnectingModal);
-  };
+  const visibleEmailConnectingModalHandler = useCallback(() => {
+    setVisibleEmailConnectingModal(prev => !prev);
+  }, []);
 
-  const visibleBravoModalHandler = () => {
-    setVisibleBravoModal(!visibleBravoModal);
-  };
+  const visibleBravoModalHandler = useCallback(() => {
+    setVisibleBravoModal(prev => !prev);
+  }, []);
 
-  const visibleProfileSettingModalHandler = () => {
-    setVisibleProfileSettingModal(!visibleProfileSettingModal);
-  };
+  const visibleProfileSettingModalHandler = useCallback(() => {
+    setVisibleProfileSettingModal(prev => !prev);
+  }, []);
 
-  const visibleRecordSharingModalHandler = () => {
-    setVisibleRecordSharingModal(!visibleRecordSharingModal);
-  };
+  const visibleRecordSharingModalHandler = useCallback(() => {
+    setVisibleRecordSharingModal(prev => !prev);
+  }, []);
 
-  const dataRecordSharingModalHandler = (data: IRecordSharingModal) => {
+  const dataRecordSharingModalHandler = useCallback((data: IRecordSharingModal) => {
     setDataRecordSharingModal(data);
-  };
+  }, []);
 
-  const visibleWarningModalHandler = () => {
-    setVisibleWarningModal(!visibleWarningModal);
-  };
+  const visibleWarningModalHandler = useCallback(() => {
+    setVisibleWarningModal(prev => !prev);
+  }, []);
 
-  const dataWarningModalHandler = (data: IWarningModal) => {
+  const dataWarningModalHandler = useCallback((data: IWarningModal) => {
     setDataWarningModal(data);
-  };
+  }, []);
 
-  const visibleAnnouncementModalHandler = () => {
-    setVisibleAnnouncementModal(!visibleAnnouncementModal);
-  };
+  const visibleAnnouncementModalHandler = useCallback(() => {
+    setVisibleAnnouncementModal(prev => !prev);
+  }, []);
 
-  const dataAnnouncementModalHandler = (data: IAnnouncementModal) => {
+  const dataAnnouncementModalHandler = useCallback((data: IAnnouncementModal) => {
     setDataAnnouncementModal(data);
-  };
+  }, []);
 
-  const visiblePersonalAchievementModalHandler = () => {
-    setVisiblePersonalAchievementModal(!visiblePersonalAchievementModal);
-  };
+  const visiblePersonalAchievementModalHandler = useCallback(() => {
+    setVisiblePersonalAchievementModal(prev => !prev);
+  }, []);
 
-  const dataPersonalAchievementModalHandler = (userId: string) => {
+  const dataPersonalAchievementModalHandler = useCallback((userId: string) => {
     setDataPersonalAchievementModal(userId);
-  };
+  }, []);
 
-  const visibleBadgeModalHandler = () => {
-    setVisibleBadgeModal(!visibleBadgeModal);
-  };
+  const visibleBadgeModalHandler = useCallback(() => {
+    setVisibleBadgeModal(prev => !prev);
+  }, []);
 
-  const dataBadgeModalHandler = (data: IBadgeModal) => {
+  const dataBadgeModalHandler = useCallback((data: IBadgeModal) => {
     setDataBadgeModal(data);
-  };
+  }, []);
 
-  // Deprecated: to be removed (20230517 - Julian)
-  // const visibleBadgeSharingModalHandler = () => {
-  //   setVisibleBadgeSharingModal(!visibleBadgeSharingModal);
-  // };
-
-  // const dataBadgeSharingModalHandler = (data: IBadgeSharingModal) => {
-  //   setDataBadgeSharingModal(data);
-  // };
-
-  // const visibleAchievementSharingModalHandler = () => {
-  //   setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
-  // };
-
-  // const dataAchievementSharingModalHandler = (data: IAchievementSharingModal) => {
-  //   setDataAchievementSharingModal(data);
-  // };
-
-  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    setWithdrawProcess(state);
-  };
-
-  const getDepositData = (props: {asset: string; amount: number}) => {
+  const getDepositData = useCallback((props: {asset: string; amount: number}) => {
     setDepositData(props);
-  };
+  }, []);
 
-  const getWithdrawData = (props: {asset: string; amount: number}) => {
+  const getWithdrawData = useCallback((props: {asset: string; amount: number}) => {
     setWithdrawData(props);
-  };
+  }, []);
 
-  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    setDepositProcess(state);
-  };
-
-  const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
-    // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230413 - Shirley)
-    /* Deprecated: (20230413 - Shirley)
-    // userCtx
-    //   .deposit({
-    //     orderType: OrderType.DEPOSIT,
-    //     createTimestamp: getTimestamp(),
-    //     targetAsset: props.asset.symbol,
-    //     decimals: props.asset.decimals,
-    //     to: props.asset.contract,
-    //     targetAmount: props.amount,
-    //     remark: '',
-    //     fee: 0,
-    //   })
-    //   .then(result => {
-    //     // Deprecate: after Julian confirm result format (20230329 - tzuhan)
-    //     // eslint-disable-next-line no-console
-    //     console.log(`userCtx.deposit result:`, result);
-    //     setDepositProcess('success');
-    //   });
-    */
-  };
-
-  const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
-    /*
-    // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
-    // setWithdrawProcess('loading');
-    */
-    /* Deprecated: (20230413 - Shirley)
-    // userCtx
-    //   .withdraw({
-    //     orderType: OrderType.WITHDRAW,
-    //     createTimestamp: getTimestamp(),
-    //     targetAsset: props.asset.symbol,
-    //     to: props.asset.contract,
-    //     targetAmount: props.amount,
-    //     remark: '',
-    //     fee: 0,
-    //   })
-    //   .then(result => {
-    //     // Deprecate: after Julian confirm result format (20230329 - tzuhan)
-    //     // eslint-disable-next-line no-console
-    //     console.log(`userCtx.deposit result:`, result);
-    //     setDepositProcess('success');
-    //   });
-    */
-  };
-
-  const visibleSearchingModalHandler = () => {
-    setVisibleSearchingModal(!visibleSearchingModal);
-  };
-
-  // ------------------------------------------ //
+  const visibleSearchingModalHandler = useCallback(() => {
+    setVisibleSearchingModal(prev => !prev);
+  }, []);
 
   const defaultValue = {
     width,
@@ -1217,17 +1099,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataBadgeModal,
     dataBadgeModalHandler,
 
-    // Deprecated: to be removed (20230517 - Julian)
-    // visibleBadgeSharingModal,
-    // visibleBadgeSharingModalHandler,
-    // dataBadgeSharingModal,
-    // dataBadgeSharingModalHandler,
-
-    // visibleAchievementSharingModal,
-    // visibleAchievementSharingModalHandler,
-    // dataAchievementSharingModal,
-    // dataAchievementSharingModalHandler,
-
     visibleSearchingModal,
     visibleSearchingModalHandler,
   };
@@ -1271,15 +1142,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       />
       <DepositModal
         getTransferData={getDepositData}
-        submitHandler={depositSubmitHandler}
-        getSubmissionState={getDepositSubmissionState}
         modalVisible={visibleDepositModal}
         modalClickHandler={visibleDepositModalHandler}
       />
       <WithdrawalModal
         getTransferData={getWithdrawData}
-        submitHandler={withdrawSubmitHandler}
-        getSubmissionState={getWithdrawSubmissionState}
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
       />

@@ -151,8 +151,19 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const order = await getCFDOrder();
             if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
+            // eslint-disable-next-line no-console
+            console.log('order', order);
+
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+
+            // eslint-disable-next-line no-console
+            console.log('isOrderMatched', isOrderMatched);
+
+            // use fetch to access our image api
+            const res = await fetch(`${DOMAIN}/api/images/cfd/${shareId}?tz=0`);
+            // eslint-disable-next-line no-console
+            console.log('res (tz=0 img)', res);
 
             shareOn({url, appUrl, text, type, size});
 
@@ -189,6 +200,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           break;
       }
     } catch (e: any) {
+      globalCtx.eliminateAllProcessModals();
+
       if (isCustomError(e)) {
         const str = e.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);

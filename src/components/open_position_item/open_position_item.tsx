@@ -179,6 +179,10 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
    * 3. Take Profit Price
    * 4. Open price
    * VALUE -> 數值(Number), STRING -> 參考線上的文字(String) */
+  const displayedPositionPrice =
+    typeOfPosition === TypeOfPosition.BUY
+      ? +SafeMath.plus(openPrice, SafeMath.mult(openPrice, spread))
+      : +SafeMath.minus(openPrice, SafeMath.mult(openPrice, spread));
   const lineGraphAnnotation = {
     LIQUIDATION: {
       VALUE: liquidationPrice,
@@ -193,8 +197,11 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_TP'),
     },
     OPEN_PRICE: {
-      VALUE: openPrice,
-      STRING: `$ ${openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`,
+      VALUE: displayedPositionPrice,
+      STRING: `$ ${displayedPositionPrice.toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      )}`,
     },
   };
 

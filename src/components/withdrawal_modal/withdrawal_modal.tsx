@@ -24,17 +24,13 @@ type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
 const WithdrawalModal = ({
   modalVisible,
   modalClickHandler,
-  getSubmissionState, // [process]
-  getTransferData, // pass data to parent component
-  submitHandler, // submit information from parent component
+  getTransferData,
   ...otherProps
 }: IWithdrawalModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -63,10 +59,6 @@ const WithdrawalModal = ({
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
   };
 
-  const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
-    getSubmissionState(props);
-  };
-
   // TODO: send withdrawal request
   const submitClickHandler = async () => {
     if (globalCtx.displayedToast(ToastId.WITHDRAW) || globalCtx.visibleLoadingModal) {
@@ -83,7 +75,6 @@ const WithdrawalModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto, amount: amountInput});
     const [lock, unlock] = locker('withdrawal_modal.submitClickHandler');
 
     if (!lock()) return;

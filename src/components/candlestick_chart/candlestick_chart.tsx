@@ -52,6 +52,7 @@ import {
   randomFloatFromInterval,
   randomIntFromInterval,
   timestampToString,
+  roundToDecimalPlaces,
 } from '../../lib/common';
 import {
   ICandlestickData,
@@ -342,7 +343,7 @@ export default function CandlestickChart({
       priceLineStyle: LineStyle.Dashed,
       crosshairMarkerVisible: false,
       lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.LONG')} ${buyPrice.toFixed(2)}`,
+      title: `${t('CANDLESTICK_CHART.LONG')} ${roundToDecimalPlaces(buyPrice, 2)}`,
       baseLineVisible: true,
     });
 
@@ -354,7 +355,7 @@ export default function CandlestickChart({
       priceLineStyle: LineStyle.Dashed,
       crosshairMarkerVisible: false,
       lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.SHORT')} ${sellPrice.toFixed(2)}`,
+      title: `${t('CANDLESTICK_CHART.SHORT')} ${roundToDecimalPlaces(sellPrice, 2)}`,
       baseLineVisible: true,
     });
 
@@ -402,7 +403,7 @@ export default function CandlestickChart({
         priceLineStyle: LineStyle.Solid,
         crosshairMarkerVisible: false,
         lastValueVisible: false,
-        title: `Position: ${price.toFixed(2)}　Close`,
+        title: `Position: ${roundToDecimalPlaces(price, 2)}　Close`,
         baseLineVisible: true,
       });
 

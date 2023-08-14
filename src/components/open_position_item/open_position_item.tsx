@@ -10,7 +10,6 @@ import {
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
-import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
@@ -218,9 +217,9 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedColorHex =
     remainSecs <= POSITION_CLOSE_COUNTDOWN_SECONDS
       ? TypeOfPnLColorHex.LIQUIDATION
-      : pnl?.type === ProfitState.PROFIT
+      : pnl > 0
       ? TypeOfPnLColorHex.PROFIT
-      : pnl?.type === ProfitState.LOSS
+      : pnl < 0
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
@@ -238,14 +237,10 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    pnl?.type === ProfitState.PROFIT
-      ? 'text-lightGreen5'
-      : pnl?.type === ProfitState.LOSS
-      ? 'text-lightRed'
-      : 'text-lightWhite';
+    pnl > 0 ? 'text-lightGreen5' : pnl < 0 ? 'text-lightRed' : 'text-lightWhite';
 
   const displayedCrossColor =
-    pnl?.type === ProfitState.PROFIT
+    pnl > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
@@ -253,15 +248,15 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
     ? ''
-    : pnl?.type === ProfitState.PROFIT
+    : pnl > 0
     ? '+'
-    : pnl?.type === ProfitState.LOSS
+    : pnl < 0
     ? '-'
     : '';
 
   const displayedPnLValue = !!!marketCtx.selectedTicker?.price
     ? '- -'
-    : pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : Math.abs(pnl).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedCreateTime = timestampToString(createTimestamp ?? 0);
   return (

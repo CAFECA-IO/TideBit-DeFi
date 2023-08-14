@@ -3,7 +3,6 @@ import {IAcceptedOrder} from './accepted_order';
 import {IBalance} from './balance';
 import {ICandlestick, ITrade} from './candlestickData';
 import {ICFDOrder} from './order';
-import {IPnL} from './pnl';
 import {ITickerData} from './ticker_data';
 
 export type IPusherData = ICandlestick | ITickerData | ITrade;
@@ -16,7 +15,7 @@ export interface IPusherPrivateData {
     | {
         available: number;
         locked: number;
-        PnL?: {amount: IPnL; percentage: IPnL};
+        PnL?: {amount: number; percentage: number};
       };
 }
 

@@ -5,7 +5,6 @@ import {IOrderStatusUnion} from '../../constants/order_status_union';
 import {IOrderType} from '../../constants/order_type';
 import {ITypeOfPosition} from '../../constants/type_of_position';
 import {IMargin} from './margin';
-import {IPnL} from './pnl';
 
 export interface IOrder {
   id: string;
@@ -39,7 +38,7 @@ export interface ICFDOrder extends IOrder {
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;
-  pnl?: IPnL;
+  pnl?: number;
 }
 
 export interface IDepositOrder extends IOrder {

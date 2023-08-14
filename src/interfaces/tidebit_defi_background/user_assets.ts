@@ -1,5 +1,3 @@
-import {IPnL} from './pnl';
-import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 export interface IUserAssets {
   currency: string;
@@ -9,16 +7,16 @@ export interface IUserAssets {
   };
   pnl: {
     today: {
-      amount: IPnL;
-      percentage: IPnL;
+      amount: number;
+      percentage: number;
     };
     monthly: {
-      amount: IPnL;
-      percentage: IPnL;
+      amount: number;
+      percentage: number;
     };
     cumulative: {
-      amount: IPnL;
-      percentage: IPnL;
+      amount: number;
+      percentage: number;
     };
   };
   interest: {
@@ -32,15 +30,12 @@ export const getDummyUserAssets = (currency: string) => {
   const avbl = parseFloat((Math.random() * 1000).toFixed(2));
   const locked = parseFloat((Math.random() * 1000).toFixed(2));
 
-  const pnlTodayType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
   const pnlTodayAmount = parseFloat((Math.random() * 100).toFixed(2));
   const pnlTodayPercentage = parseFloat((Math.random() * 10).toFixed(2));
 
-  const pnlMonthlyType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
   const pnlMonthlyAmount = parseFloat((Math.random() * 500).toFixed(2));
   const pnlMonthlyPercentage = parseFloat((Math.random() * 50).toFixed(2));
 
-  const pnlCumulativeType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
   const pnlCumulativeAmount = parseFloat((Math.random() * 1000).toFixed(2));
   const pnlCumulativePercentage = parseFloat((Math.random() * 500).toFixed(2));
 
@@ -56,16 +51,16 @@ export const getDummyUserAssets = (currency: string) => {
     },
     pnl: {
       today: {
-        amount: {type: pnlTodayType, value: pnlTodayAmount},
-        percentage: {type: pnlTodayType, value: pnlTodayPercentage},
+        amount: pnlTodayAmount,
+        percentage: pnlTodayPercentage,
       },
       monthly: {
-        amount: {type: pnlMonthlyType, value: pnlMonthlyAmount},
-        percentage: {type: pnlMonthlyType, value: pnlMonthlyPercentage},
+        amount: pnlMonthlyAmount,
+        percentage: pnlMonthlyPercentage,
       },
       cumulative: {
-        amount: {type: pnlCumulativeType, value: pnlCumulativeAmount},
-        percentage: {type: pnlCumulativeType, value: pnlCumulativePercentage},
+        amount: pnlCumulativeAmount,
+        percentage: pnlCumulativePercentage,
       },
     },
     interest: {

@@ -53,10 +53,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
         ? SafeMath.gt(
-            SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0),
+            SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl ?? 0),
             0
           )
-          ? SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0)
+          ? SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl ?? 0)
           : 0
         : +SafeMath.mult((order as ICFDOrder).margin.amount, -1)
       : orderType === OrderType.DEPOSIT

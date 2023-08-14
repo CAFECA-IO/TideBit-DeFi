@@ -1,5 +1,3 @@
-import {IPnL} from './pnl';
-import {ProfitState} from '../../constants/profit_state';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 
 export interface IRanking {
@@ -7,7 +5,7 @@ export interface IRanking {
   userId: string;
   userName: string;
   userAvatar?: string;
-  cumulativePnl: IPnL;
+  cumulativePnl: number;
 }
 
 export interface ILeaderboard {
@@ -20,7 +18,7 @@ export const defaultRanking: IRanking = {
   rank: -1,
   userId: '-',
   userName: '-',
-  cumulativePnl: {type: ProfitState.EQUAL, value: 0},
+  cumulativePnl: 0,
 };
 
 export const defaultLeaderboard: ILeaderboard = {
@@ -86,7 +84,7 @@ export const getDummyLeaderboard = (timeSpan: IRankingTimeSpan) => {
           : userName.slice(0, 1) === 'L'
           ? `/leaderboard/dummy_avatar_4.svg`
           : `/leaderboard/default_avatar.svg`;
-      const cumulativePnl = {type: ProfitState.PROFIT, value: pnls[index]};
+      const cumulativePnl = pnls[index];
       return {rank, userId, userName, userAvatar, cumulativePnl};
     }),
   ];

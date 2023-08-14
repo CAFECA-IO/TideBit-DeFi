@@ -12,7 +12,6 @@ import {
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
-import {ProfitState} from '../../constants/profit_state';
 import {ImArrowUp} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
@@ -65,29 +64,30 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const displayedPnl =
     rankingNumber <= 0 ? (
       '-'
-    ) : pnl.type === ProfitState.PROFIT ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl.type === ProfitState.LOSS ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
+    ) : pnl > 0 ? (
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
+    ) : pnl < 0 ? (
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
     );
 
   const displayedGapPnl = () => {
-    const previousPnl = (myRanking.rank > 1
-      ? rankingData[myRanking.rank - 2]?.cumulativePnl
-      : rankingData[0]?.cumulativePnl) ?? {
-      type: ProfitState.EQUAL,
-      value: 0,
-    };
+    const previousPnl =
+      (myRanking.rank > 1
+        ? rankingData[myRanking.rank - 2]?.cumulativePnl
+        : rankingData[0]?.cumulativePnl) ?? 0;
+
     const myPnl = myRanking.cumulativePnl;
+
+    const isPnlTypeTheSame = (previousPnl > 0 && myPnl > 0) || (previousPnl < 0 && myPnl < 0);
 
     const gapPnl =
       // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
-      previousPnl.type === myPnl.type
-        ? Math.abs(previousPnl.value - myPnl.value)
+      isPnlTypeTheSame
+        ? Math.abs(previousPnl - myPnl)
         : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
-          Math.abs(previousPnl.value + myPnl.value);
+          Math.abs(previousPnl + myPnl);
 
     const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 

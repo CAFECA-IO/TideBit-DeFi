@@ -1,5 +1,4 @@
 import {ICFDSuggestion} from './cfd_suggestion';
-import {IPnL} from './pnl';
 import {getDummyApplyCreateCFDOrder} from './apply_create_cfd_order';
 import {convertApplyCreateCFDToAcceptedCFD} from './apply_cfd_order';
 import {randomHex, toDisplayCFDOrder} from '../../lib/common';
@@ -9,7 +8,7 @@ import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
 import {ICurrency} from '../../constants/currency';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
-  pnl?: IPnL;
+  pnl?: number;
   /** Deprecated: (20230608 - tzuhan)
   positionLineGraph: number[];
   */

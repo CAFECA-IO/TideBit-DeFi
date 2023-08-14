@@ -6,7 +6,6 @@ import {defaultBadges} from '../../interfaces/tidebit_defi_background/badge';
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {unitAsset} from '../../constants/config';
-import {ProfitState} from '../../constants/profit_state';
 import {numberFormatted, timestampToString, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
@@ -172,12 +171,12 @@ const PersonalAchievementModal = ({
     const displayedPnl =
       ranking <= 0 ? (
         <div>-</div>
-      ) : PnL.type === ProfitState.PROFIT ? (
-        <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(PnL.value)}`}</div>
-      ) : PnL.type === ProfitState.LOSS ? (
-        <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(PnL.value)}`}</div>
+      ) : PnL > 0 ? (
+        <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(PnL)}`}</div>
+      ) : PnL < 0 ? (
+        <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(PnL)}`}</div>
       ) : (
-        <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(PnL.value)}</div>
+        <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(PnL)}</div>
       );
 
     return (

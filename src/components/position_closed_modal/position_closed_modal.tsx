@@ -34,12 +34,10 @@ import {
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
-import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
-import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
@@ -101,12 +99,13 @@ const PositionClosedModal = ({
 
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
-  const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLSymbol = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl > 0
       ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl < 0
       ? '-'
-      : '';
+      : ''
+    : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -118,19 +117,21 @@ const PositionClosedModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLColor = !!openCfdDetails?.pnl
+    ? openCfdDetails?.pnl > 0
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl < 0
       ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+      : TypeOfPnLColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedBorderColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedBorderColor = !!openCfdDetails?.pnl
+    ? openCfdDetails?.pnl > 0
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl < 0
       ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+      : TypeOfBorderColor.EQUAL
+    : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -184,7 +185,7 @@ const PositionClosedModal = ({
 
     const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
 
-    const pnl: IPnL =
+    const pnl =
       cfd?.pnl ||
       toPnl({
         openPrice: openPrice,
@@ -551,7 +552,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(
+                {Math.abs(openCfdDetails?.pnl ?? 0).toLocaleString(
                   UNIVERSAL_NUMBER_FORMAT_LOCALE,
                   FRACTION_DIGITS
                 )}

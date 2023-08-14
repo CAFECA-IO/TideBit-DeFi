@@ -39,11 +39,13 @@ const NavBar = () => {
     setNotifyVisible(!notifyVisible);
   };
 
+  const userAssets = userCtx.userAssets;
+
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
-      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
-      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+      depositAvailable={userAssets?.balance?.available ?? 0}
+      marginLocked={userAssets?.balance?.locked ?? 0}
+      profitOrLossAmount={userAssets?.pnl?.cumulative?.amount ?? 0}
     />
   ) : null;
 
@@ -133,13 +135,6 @@ const NavBar = () => {
     /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="px-3 py-2 text-sm" />
   );
-
-  // const isDisplayedUnreadnumber =
-  //   notificationCtx.unreadNotifications.length > 0 ? (
-  //     <span className="absolute right-0 top-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
-  //       <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
-  //     </span>
-  //   ) : null;
 
   const desktopLayout = (
     <>

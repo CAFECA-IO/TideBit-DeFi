@@ -6,12 +6,10 @@ import Skeleton from 'react-loading-skeleton';
 import {GlobalContext} from '../../contexts/global_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
-import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
-import {ProfitState} from '../../constants/profit_state';
 
 type TranslateFunction = (s: string) => string;
 
@@ -65,7 +63,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
     rankings.sort((a, b) => {
-      return b.cumulativePnl.value - a.cumulativePnl.value;
+      return b.cumulativePnl - a.cumulativePnl;
     }) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
@@ -97,13 +95,13 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     return () => clearTimeout(timer);
   }, [timeSpan]);
 
-  const displayPnl = (pnl: IPnL) =>
-    pnl?.type === ProfitState.PROFIT ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl?.type === ProfitState.LOSS ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
+  const displayPnl = (pnl: number) =>
+    pnl > 0 ? (
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
+    ) : pnl < 0 ? (
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value || 0)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl || 0)}</div>
     );
 
   const defaultTop3Data = {

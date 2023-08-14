@@ -1,7 +1,6 @@
 import IEIP712Data from '../interfaces/ieip712data';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {getProfitState} from '../constants/profit_state';
 import {cfdStateCode} from '../constants/cfd_state_code';
 import {
   DeWT_VALIDITY_PERIOD,
@@ -270,32 +269,13 @@ export const toPnl = (data: {
       (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
     2
   );
-  const pnlType = getProfitState(pnlValue);
-  const pnl = {
-    type: pnlType,
-    value: Math.abs(pnlValue),
-  };
+  const pnl = pnlValue;
+
   return pnl;
 };
 
 export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
-  /** Deprecated: (20230608 - tzuhan)
-  const spreadValue = spread ? spread : 0;
-  const closeValue =
-    cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
-      ? roundToDecimalPlaces(cfdOrder.closePrice * cfdOrder.amount, 2)
-      : closePrice || 0;
-  const currentValue = currentPrice
-    ? roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2)
-    : positionLineGraph.length > 0
-    ? roundToDecimalPlaces(
-        Number(positionLineGraph[positionLineGraph.length - 1]) * cfdOrder.amount,
-        2
-      )
-    : roundToDecimalPlaces(Number(cfdOrder.openPrice) * cfdOrder.amount, 2);
-    */
-
   /* Info: (20230602 - Julian) pnl with spread
    * BUY -> closeValue - openValue
    * SELL -> openValue - closeValue */
@@ -362,16 +342,7 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
   const displayCFDOrder: IDisplayCFDOrder = {
     ...cfdOrder,
     openValue: openValue,
-    /** 
-    pnl: {
-      type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
-      value: Math.abs(pnl),
-    },
-    closeValue: closeValue,
-    positionLineGraph: positionLineGraphWithSpread,
-    */
     suggestion,
-    // stateCode: stateCode,
   };
   return displayCFDOrder;
 };

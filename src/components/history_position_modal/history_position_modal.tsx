@@ -70,10 +70,9 @@ const HistoryPositionModal = ({
       spread: spread,
     });
 
-  const displayedPnLSymbol = pnl.type === 'PROFIT' ? '+' : pnl.type === 'LOSS' ? '-' : '';
+  const displayedPnLSymbol = pnl > 0 ? '+' : pnl < 0 ? '-' : '';
 
-  // TODO: Discuss the pnl value should include the symbol or not (20230804 - Shirley)
-  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
+  const displayedPnLValue = Math.abs(pnl).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     FRACTION_DIGITS
   );
@@ -89,18 +88,10 @@ const HistoryPositionModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    pnl.type === 'PROFIT'
-      ? TypeOfPnLColor.PROFIT
-      : pnl.type === 'LOSS'
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+    pnl > 0 ? TypeOfPnLColor.PROFIT : pnl < 0 ? TypeOfPnLColor.LOSS : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    pnl.type === 'PROFIT'
-      ? TypeOfBorderColor.PROFIT
-      : pnl.type === 'LOSS'
-      ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+    pnl > 0 ? TypeOfBorderColor.PROFIT : pnl < 0 ? TypeOfBorderColor.LOSS : TypeOfBorderColor.EQUAL;
 
   const displayedPositionState =
     closedCfdDetails.state === OrderState.OPENING

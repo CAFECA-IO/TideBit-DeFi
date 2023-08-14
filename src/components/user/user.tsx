@@ -31,6 +31,7 @@ const User = () => {
   const globalCtx = useGlobal();
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
+  const userAssets = userCtx.userAssets;
 
   const avatarClickHandler = () => {
     setUserVisible(!userVisible);
@@ -108,12 +109,10 @@ const User = () => {
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
-            {/* <Link href=""> */}
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />
               <p>{t('USER.ACCOUNT')}</p>
             </div>
-            {/* </Link> */}
           </button>
         </li>
         <li>
@@ -144,9 +143,9 @@ const User = () => {
 
   const isDisplayedUserOverviewMobile = userCtx.enableServiceTerm ? (
     <UserOverview
-      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
-      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+      depositAvailable={userAssets?.balance?.available ?? 0}
+      marginLocked={userAssets?.balance?.locked ?? 0}
+      profitOrLossAmount={userAssets?.pnl?.cumulative?.amount ?? 0}
     />
   ) : null;
 

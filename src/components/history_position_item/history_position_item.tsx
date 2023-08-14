@@ -2,7 +2,6 @@ import React, {useContext} from 'react';
 import Image from 'next/image';
 import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {ProfitState} from '../../constants/profit_state';
 import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
@@ -41,15 +40,14 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
       spread: spread,
     });
 
-  const displayedTextColor = pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+  const displayedTextColor = pnl > 0 ? 'text-lightGreen5' : 'text-lightRed';
 
-  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
+  const displayedPnLValue = Math.abs(pnl).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     FRACTION_DIGITS
   );
 
-  const displayedPnLSymbol =
-    pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';
+  const displayedPnLSymbol = pnl > 0 ? '+' : pnl < 0 ? '-' : '';
 
   const itemClickHandler = () => {
     globalCtx.dataHistoryPositionModalHandler(closedCfdDetails);

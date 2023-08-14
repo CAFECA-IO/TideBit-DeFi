@@ -55,7 +55,6 @@ import {IUser} from '../interfaces/tidebit_defi_background/user';
 import {IUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
 import {IPersonalAchievement} from '../interfaces/tidebit_defi_background/personal_achievement';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
-import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {OrderType} from '../constants/order_type';
 import {ICFDReceipt} from '../interfaces/tidebit_defi_background/receipt';
 
@@ -1395,7 +1394,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     (userAssetsBrief: {
       available: number;
       locked: number;
-      PnL?: {amount: IPnL; percentage: IPnL};
+      PnL?: {amount: number; percentage: number};
     }) => {
       if (!userAssetsRef.current) return;
       const userAssets = {...userAssetsRef.current};

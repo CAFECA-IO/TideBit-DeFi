@@ -2,7 +2,6 @@ import {ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderState} from '../../constants/order_state';
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
-import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp, randomHex, roundToDecimalPlaces} from '../../lib/common';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
@@ -159,10 +158,7 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     closeTimestamp: applyCFDData.closeTimestamp,
     closedType: applyCFDData.closedType,
     forcedClose: false,
-    pnl: {
-      type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
-      value: pnl,
-    },
+    pnl: pnl,
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {
     id,

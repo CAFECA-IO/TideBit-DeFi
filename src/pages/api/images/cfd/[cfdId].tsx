@@ -23,7 +23,6 @@ import {
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
   unitAsset,
 } from '../../../../constants/config';
-import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
 import {
@@ -140,12 +139,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     FRACTION_DIGITS
   );
 
-  const profitState = pnlPercent > 0 ? ProfitState.PROFIT : ProfitState.LOSS;
-
   const displayedTypeOfPosition =
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
-  const displayedTextColor =
-    profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
+  const displayedTextColor = pnlPercent > 0 ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
 
   const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC${tz}`;
 
@@ -171,7 +167,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </svg>
   );
 
-  const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
+  const displayedArrow = pnlPercent > 0 ? upArrow : downArrow;
 
   const imageResponse = new ImageResponse(
     (

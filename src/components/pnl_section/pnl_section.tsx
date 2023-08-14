@@ -3,7 +3,6 @@ import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
 import {numberFormatted} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
-import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
@@ -25,26 +24,26 @@ const PnlSection = () => {
   ].map(({amount, percentage, ...rest}) => {
     const result = {
       content:
-        amount.type === ProfitState.PROFIT
-          ? `+${numberFormatted(amount.value)} ${unitAsset}`
-          : amount.type === ProfitState.LOSS
-          ? `-${numberFormatted(amount.value)} ${unitAsset}`
-          : amount.type === ProfitState.EQUAL
-          ? `${numberFormatted(amount.value)} ${unitAsset}`
+        amount > 0
+          ? `+${numberFormatted(amount)} ${unitAsset}`
+          : amount < 0
+          ? `-${numberFormatted(amount)} ${unitAsset}`
+          : amount === 0
+          ? `${numberFormatted(amount)} ${unitAsset}`
           : '-',
       remarks:
         /* Info: (20230602 - Julian) 調整 format (e.g. 0.012 -> 1.2%)  */
-        percentage.type === ProfitState.PROFIT
-          ? `▴ ${numberFormatted(percentage.value * 100)} %`
-          : percentage.type === ProfitState.LOSS
-          ? `▾ ${numberFormatted(percentage.value * 100)} %`
-          : percentage.type === ProfitState.EQUAL
-          ? `${numberFormatted(percentage.value * 100)} %`
+        percentage > 0
+          ? `▴ ${numberFormatted(percentage * 100)} %`
+          : percentage < 0
+          ? `▾ ${numberFormatted(percentage * 100)} %`
+          : percentage === 0
+          ? `${numberFormatted(percentage * 100)} %`
           : '-',
       textColor:
-        percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT
+        percentage > 0 && amount > 0
           ? TypeOfPnLColor.PROFIT
-          : percentage.type === ProfitState.LOSS && amount.type === ProfitState.LOSS
+          : percentage < 0 && amount < 0
           ? TypeOfPnLColor.LOSS
           : TypeOfPnLColor.EQUAL,
       ...rest,

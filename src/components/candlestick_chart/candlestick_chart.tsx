@@ -64,7 +64,6 @@ import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {freemem} from 'os';

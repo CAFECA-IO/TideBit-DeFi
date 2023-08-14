@@ -62,7 +62,6 @@ interface IPositionClosedModal {
   openCfdDetails: IDisplayCFDOrder;
 }
 
-// TODO: replace all hardcode options with variables
 const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
@@ -321,7 +320,6 @@ const PositionClosedModal = ({
           isShowZoomOutBtn: false,
         });
 
-        // ToDo: Need to get a singnal from somewhere to show the successful modal
         await wait(DELAYED_HIDDEN_SECONDS);
 
         globalCtx.eliminateAllModals();
@@ -338,9 +336,6 @@ const PositionClosedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
-        // Deprecated: (20230802 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('history right after closing', historyData);
         globalCtx.dataHistoryPositionModalHandler(historyData);
         globalCtx.visibleHistoryPositionModalHandler();
       } else if (

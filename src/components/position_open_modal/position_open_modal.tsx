@@ -16,6 +16,7 @@ import {
   validateCFD,
   toDisplayCFDOrder,
   toPnl,
+  roundToDecimalPlaces,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -317,14 +318,16 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    // Info: if it's comments, it couldn't renew the quotation
     const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
     const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
 
-    const newMargin = +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5);
+    const newMargin = roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5),
+      2
+    );
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
         ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
@@ -475,7 +478,10 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.margin.amount}
+                {openCfdRequest.margin.amount.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

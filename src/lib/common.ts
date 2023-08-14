@@ -726,12 +726,8 @@ export const toChecksumAddress = (address: string) => {
   return checksumAddress;
 };
 
-export function isValidURL(url: string): boolean {
+export function isValidTradeURL(url: string): boolean {
   let result = false;
-  if (Object.values(TBDURL).includes(url)) {
-    result = true;
-    return result;
-  }
 
   for (const instId of instIds) {
     const expectedURL = `/trade/cfd/${instId}`;

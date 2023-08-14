@@ -13,7 +13,7 @@ import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 import {useRouter} from 'next/router';
-import {isValidURL} from '../../lib/common';
+import {isValidTradeURL} from '../../lib/common';
 import {instIds} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {LayoutAssertion} from '../../constants/layout_assertion';
@@ -26,7 +26,7 @@ const NavBar = () => {
   const notificationCtx = useContext(NotificationContext);
   const router = useRouter();
   const globalCtx = useGlobal();
-  const tradeLink = isValidURL(router.asPath) ? router.asPath : TBDURL.TRADE;
+  const tradeLink = isValidTradeURL(router.asPath) ? router.asPath : TBDURL.TRADE;
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {

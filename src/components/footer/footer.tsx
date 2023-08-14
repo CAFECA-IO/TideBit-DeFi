@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {TBDURL} from '../../constants/api_request';
 import {COPYRIGHT} from '../../constants/config';
 import {useRouter} from 'next/router';
-import {isValidURL} from '../../lib/common';
+import {isValidTradeURL} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -15,7 +15,7 @@ const Footer = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const router = useRouter();
 
-  const tradeLink = isValidURL(router.asPath) ? router.asPath : TBDURL.TRADE;
+  const tradeLink = isValidTradeURL(router.asPath) ? router.asPath : TBDURL.TRADE;
 
   const ICON_SIZE = 30;
   const socialMediaLinks = [

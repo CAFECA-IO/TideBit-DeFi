@@ -49,7 +49,6 @@ export default function HeroDescription() {
         <StatisticBlock />
         <div className="py-10"></div>
 
-        {/* <MarketProvider> */}
         <ReserveRatio />
         <div className="py-10"></div>
 
@@ -57,13 +56,12 @@ export default function HeroDescription() {
         <div className="py-10"></div>
 
         <CryptoCategory />
-        {/* </MarketProvider> */}
         <div className="py-10 lg:py-20"></div>
 
         <Banner />
         <div className="py-16 lg:pb-2/5 lg:pt-20"></div>
 
-        {/* Web3.0 */}
+        {/* Info: (20230814 - Shirley) Web3.0 */}
         <HeroReverse
           heading={t('HOME_PAGE.WEB_3_TITLE')}
           highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
@@ -72,7 +70,7 @@ export default function HeroDescription() {
         />
         <div className="py-5 lg:py-40"></div>
 
-        {/* Easy Trade */}
+        {/* Info: (20230814 - Shirley) Easy Trade */}
         <Hero
           heading={
             <div className="font-bold">
@@ -85,7 +83,7 @@ export default function HeroDescription() {
         />
         <div className="py-5 lg:py-40"></div>
 
-        {/* Secure System */}
+        {/* Info: (20230814 - Shirley) Secure System */}
         <HeroReverse1
           heading={
             <div className="font-bold">
@@ -100,7 +98,7 @@ export default function HeroDescription() {
         />
         <div className="py-5 lg:py-40"></div>
 
-        {/* Free Online Courses */}
+        {/* Info: (20230814 - Shirley) Free Online Courses */}
         <Hero1
           heading={
             <div className="font-bold">
@@ -115,7 +113,7 @@ export default function HeroDescription() {
         />
         <div className="py-5 lg:py-10"></div>
 
-        {/* App download */}
+        {/* Info: (20230814 - Shirley) App download */}
         <div className="flex w-full justify-center">
           <AppDowloadContainer />
         </div>

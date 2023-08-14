@@ -290,5 +290,6 @@ export const INITIAL_TRADES_INTERVAL = 1000 * 60 * 15; // Info: 15 minutes in mi
 export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)
 export const ETH_NEWS_FOLDER = 'src/news/eth';
 export const BTC_NEWS_FOLDER = 'src/news/btc';
+export const USDC_NEWS_FOLDER = 'src/news/usdc';
 export const NEWS_FOLDER = './src/news';
 // export const

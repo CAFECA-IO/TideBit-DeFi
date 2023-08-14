@@ -10,15 +10,15 @@ export interface IPersonalAchievement {
   ranking: {
     daily: {
       PnL: IPnL;
-      rank: number;
+      ranking: number;
     };
     weekly: {
       PnL: IPnL;
-      rank: number;
+      ranking: number;
     };
     monthly: {
       PnL: IPnL;
-      rank: number;
+      ranking: number;
     };
   };
   tradingVolume: number;
@@ -35,15 +35,15 @@ export const defaultPersonalAchievement: IPersonalAchievement = {
   ranking: {
     daily: {
       PnL: {value: 0, type: ProfitState.EQUAL},
-      rank: -1,
+      ranking: -1,
     },
     weekly: {
       PnL: {value: 0, type: ProfitState.EQUAL},
-      rank: -1,
+      ranking: -1,
     },
     monthly: {
       PnL: {value: 0, type: ProfitState.EQUAL},
-      rank: -1,
+      ranking: -1,
     },
   },
   userAvatar: '/leaderboard/default_avatar.svg',
@@ -62,21 +62,21 @@ export const getDummyPersonalAchievements = (userId: string): IPersonalAchieveme
   const randomFloat = randomFloatFromInterval(10, 90, 2);
   const randomBadges = getDummyBadges(userId);
 
-  const personalAchievements = {
+  const personalAchievements: IPersonalAchievement = {
     userId: userId,
     userName: userId,
     ranking: {
       daily: {
         PnL: {value: 0, type: ProfitState.EQUAL},
-        rank: -1,
+        ranking: -1,
       },
       weekly: {
         PnL: {value: 0, type: ProfitState.EQUAL},
-        rank: -1,
+        ranking: -1,
       },
       monthly: {
         PnL: {value: 0, type: ProfitState.EQUAL},
-        rank: -1,
+        ranking: -1,
       },
     },
     userAvatar: randomUserAvatar,

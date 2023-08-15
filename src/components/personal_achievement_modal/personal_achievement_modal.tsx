@@ -166,11 +166,11 @@ const PersonalAchievementModal = ({
     },
   ];
 
-  const displayedPersonalRankingList = personalRankingContent.map(({title, rank, PnL}) => {
-    const displayedRank = rank <= 0 ? '-' : rank;
+  const displayedPersonalRankingList = personalRankingContent.map(({title, ranking, PnL}) => {
+    const displayedRank = ranking <= 0 ? '-' : ranking;
 
     const displayedPnl =
-      rank <= 0 ? (
+      ranking <= 0 ? (
         <div>-</div>
       ) : PnL.type === ProfitState.PROFIT ? (
         <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(PnL.value)}`}</div>
@@ -181,8 +181,8 @@ const PersonalAchievementModal = ({
       );
 
     return (
-      <div key={title} className="flex items-center justify-between">
-        <div className="flex w-120px flex-col items-center">
+      <div key={title} className="flex w-1/3 items-center justify-center">
+        <div className="flex flex-col items-center">
           <div className="text-sm text-lightGray4">{title}</div>
           <div className="inline-flex items-center">
             {displayedPnl}
@@ -333,7 +333,7 @@ const PersonalAchievementModal = ({
           <div className="relative mx-auto my-6 w-auto max-w-xl">
             <div
               id="personalInfoModal"
-              className="relative flex h-530px w-screen flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
+              className="relative flex h-530px w-screen flex-col overflow-hidden rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
             >
               {/* Info:(20230515 - Julian) Header */}
               <div className="flex items-center justify-between rounded-t pt-9">

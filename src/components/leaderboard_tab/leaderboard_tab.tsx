@@ -98,9 +98,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>
-    pnl?.type === ProfitState.PROFIT ? (
+    pnl?.value > 0 ? (
       <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl?.type === ProfitState.LOSS ? (
+    ) : pnl?.value < 0 ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
       <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value || 0)}</div>

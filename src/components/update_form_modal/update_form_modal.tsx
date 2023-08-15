@@ -18,6 +18,7 @@ import {
   getEstimatedPnL,
   getNowSeconds,
   getTimestamp,
+  numberFormatted,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -192,17 +193,18 @@ const UpdateFormModal = ({
     }
   };
 
-  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
-    ? ''
-    : openCfdDetails?.pnl?.type === ProfitState.PROFIT
-    ? '+'
-    : openCfdDetails?.pnl?.type === ProfitState.LOSS
-    ? '-'
-    : '';
+  const displayedPnLSymbol =
+    !marketCtx.selectedTicker?.price && !openCfdDetails?.pnl?.value
+      ? ''
+      : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value > 0
+      ? '+'
+      : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
+      ? '-'
+      : '';
 
-  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
-    ? '- -'
-    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+    ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
+    : '- -';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -216,29 +218,32 @@ const UpdateFormModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLColor = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+      : TypeOfPnLColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedBorderColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedBorderColor = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+      : TypeOfBorderColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedColorHex =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedColorHex = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColorHex.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColorHex.LOSS
-      : TypeOfPnLColorHex.EQUAL;
+      : TypeOfPnLColorHex.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
   const displayedCrossColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
 

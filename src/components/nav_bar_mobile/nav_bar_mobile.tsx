@@ -124,7 +124,7 @@ const NavBarMobile = () => {
                 </div>
               </button>
             </div>
-            <div className="z-50 ml-4 flex">
+            <div className="z-20 ml-4 flex">
               <Image src="/elements/testnet_mobile@2x.png" width={33} height={33} alt="testnet" />
             </div>
 

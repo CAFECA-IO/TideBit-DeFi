@@ -323,19 +323,25 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     );
   };
 
-  /* Info: (20230814 - Julian) 找到當前使用者的排名 */
+  /* Info: (20230814 - Julian) 找到當前使用者的排名，未登入則 0  */
   const userRankingNumber = rankingData.find(data => data.userId === userCtx.user?.id)?.rank ?? 0;
 
-  /* Info: (20230814 - Julian) 從第四名起，排名在當前使用者前面的名單 */
+  /* Info: (20230814 - Julian)
+   * 有登入：從第四名起，排名在當前使用者前面的名單，並排除前三名
+   * 未登入：從第四名起的所有名單 */
   const rankingDataBeforeUser = userCtx.user?.address
-    ? rankingData.slice(3, userRankingNumber - 1)
+    ? rankingData.slice(3, userRankingNumber - 1).filter(item => item.rank > 3)
     : rankingData.slice(3);
   const displayedListBeforeUser = rankingDataBeforeUser.map((item, index) => (
     <div key={index}>{rankingItem(item)}</div>
   ));
 
-  /* Info: (20230814 - Julian) 從第四名起，排名在當前使用者後面的名單 */
-  const rankingDataAfterUser = userCtx.user?.address ? rankingData.slice(userRankingNumber) : null;
+  /* Info: (20230814 - Julian)
+   * 有登入：從第四名起，排名在當前使用者後面的名單，並排除前三名
+   * 未登入：null */
+  const rankingDataAfterUser = userCtx.user?.address
+    ? rankingData.slice(userRankingNumber).filter(item => item.rank > 3)
+    : null;
   const displayedListAfterUser = rankingDataAfterUser
     ? rankingDataAfterUser.map((item, index) => <div key={index}>{rankingItem(item)}</div>)
     : null;

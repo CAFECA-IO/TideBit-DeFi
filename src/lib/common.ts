@@ -591,7 +591,7 @@ export function getChainNameByCurrency(
   }
 }
 
-export const numberFormatted = (n: number | string) => {
+export const numberFormatted = (n: number | string | undefined) => {
   const result =
     !n || n === '0'
       ? '0'

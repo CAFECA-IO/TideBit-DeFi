@@ -7,7 +7,7 @@ import {
 } from '../../constants/display';
 import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
 import {useContext} from 'react';
-import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
+import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -73,10 +73,7 @@ const HistoryPositionModal = ({
   const displayedPnLSymbol = pnl.type === 'PROFIT' ? '+' : pnl.type === 'LOSS' ? '-' : '';
 
   // TODO: Discuss the pnl value should include the symbol or not (20230804 - Shirley)
-  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnLValue = numberFormatted(pnl.value);
 
   const displayedTypeOfPosition =
     closedCfdDetails?.typeOfPosition === 'BUY'
@@ -137,10 +134,7 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
             <div className="">
-              {closedCfdDetails?.amount?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
+              {numberFormatted(closedCfdDetails?.amount)}
               <span className="ml-1 text-lightGray">{closedCfdDetails.targetAsset}</span>
             </div>
           </div>
@@ -154,31 +148,18 @@ const HistoryPositionModal = ({
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
-            <div className="">
-              ${' '}
-              {closedCfdDetails?.openValue?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
-            </div>
+            <div className="">$ {numberFormatted(closedCfdDetails?.openValue)}</div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
-            <div className="">
-              ${' '}
-              {(closeValue ?? 0)?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ??
-                0}
-            </div>
+            <div className="">$ {numberFormatted(closeValue)}</div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.openPrice?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
+              {numberFormatted(closedCfdDetails?.openPrice)}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -186,10 +167,7 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.closePrice?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
+              {numberFormatted(closedCfdDetails?.closePrice ?? 0)}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -212,17 +190,11 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.takeProfit?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? '-'}
+                {numberFormatted(closedCfdDetails?.takeProfit)}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.stopLoss?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? '-'}
+                {numberFormatted(closedCfdDetails?.stopLoss)}
               </span>
             </div>
           </div>

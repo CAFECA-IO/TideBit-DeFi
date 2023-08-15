@@ -82,7 +82,7 @@ const NavBarMobile = () => {
     <div
       className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed left-20 top-0 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
+      } fixed left-20 top-0 z-30 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
     >
       <p className="pl-5">{menuText}</p>
     </div>

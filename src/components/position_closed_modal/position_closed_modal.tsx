@@ -101,12 +101,13 @@ const PositionClosedModal = ({
 
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
-  const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLSymbol = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl?.value > 0
       ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? '-'
-      : '';
+      : ''
+    : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -118,19 +119,21 @@ const PositionClosedModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLColor = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+      : TypeOfPnLColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedBorderColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedBorderColor = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+      : TypeOfBorderColor.EQUAL
+    : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
 

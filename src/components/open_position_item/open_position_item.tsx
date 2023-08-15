@@ -218,9 +218,9 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedColorHex =
     remainSecs <= POSITION_CLOSE_COUNTDOWN_SECONDS
       ? TypeOfPnLColorHex.LIQUIDATION
-      : pnl?.type === ProfitState.PROFIT
+      : pnl?.value > 0
       ? TypeOfPnLColorHex.PROFIT
-      : pnl?.type === ProfitState.LOSS
+      : pnl?.value < 0
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
@@ -238,14 +238,10 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    pnl?.type === ProfitState.PROFIT
-      ? 'text-lightGreen5'
-      : pnl?.type === ProfitState.LOSS
-      ? 'text-lightRed'
-      : 'text-lightWhite';
+    pnl?.value > 0 ? 'text-lightGreen5' : pnl?.value < 0 ? 'text-lightRed' : 'text-lightWhite';
 
   const displayedCrossColor =
-    pnl?.type === ProfitState.PROFIT
+    pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
@@ -253,9 +249,9 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
     ? ''
-    : pnl?.type === ProfitState.PROFIT
+    : pnl?.value > 0
     ? '+'
-    : pnl?.type === ProfitState.LOSS
+    : pnl?.value < 0
     ? '-'
     : '';
 

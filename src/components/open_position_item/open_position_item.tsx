@@ -12,7 +12,7 @@ import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {timestampToString, toPnl} from '../../lib/common';
+import {numberFormatted, timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
@@ -257,7 +257,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const displayedPnLValue = !!!marketCtx.selectedTicker?.price
     ? '- -'
-    : pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : numberFormatted(pnl?.value);
 
   const displayedCreateTime = timestampToString(createTimestamp ?? 0);
   return (

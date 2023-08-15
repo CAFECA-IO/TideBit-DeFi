@@ -17,6 +17,7 @@ import {
   toDisplayCFDOrder,
   toPnl,
   roundToDecimalPlaces,
+  numberFormatted,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -44,9 +45,8 @@ import useStateRef from 'react-usestateref';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError, isCustomError} from '../../lib/custom_error';
+import {isCustomError} from '../../lib/custom_error';
 import {ICFDOrder, IOrder} from '../../interfaces/tidebit_defi_background/order';
-import {OrderState} from '../../constants/order_state';
 import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
@@ -135,22 +135,9 @@ const PositionOpenModal = ({
         const receipt = result.data as {order: ICFDOrder};
         const cfd = userCtx.getCFD(receipt.order.id) ?? {
           ...openCfdRequest,
-          // openPrice: openCfdRequest.price,
           ...receipt.order,
-          // state: OrderState.OPENING,
         };
 
-        // console.log('cfd from getCFD', userCtx.getCFD(receipt.order.id), 'scrambled cfd', {
-        //   ...openCfdRequest,
-        //   ...receipt.order,
-        // });
-
-        // const cfd: ICFDOrder = {
-        //   ...openCfdRequest,
-        //   // openPrice: openCfdRequest.price,
-        //   ...receipt.order,
-        //   // state: OrderState.OPENING,
-        // };
         const closePrice = marketCtx.predictCFDClosePrice(cfd.instId, cfd.typeOfPosition);
         const spread = marketCtx.getTickerSpread(cfd.instId);
 
@@ -459,10 +446,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.price)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -523,19 +507,13 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
-              <div className="">
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
-                {t('POSITION_MODAL.LIQUIDATION_TIME')}
-              </div>
+              <div className="">{t('POSITION_MODAL.LIQUIDATION_TIME')}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.liquidationPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.liquidationPrice)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

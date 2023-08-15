@@ -18,6 +18,7 @@ import {
   getEstimatedPnL,
   getNowSeconds,
   getTimestamp,
+  numberFormatted,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -201,9 +202,9 @@ const UpdateFormModal = ({
       ? '-'
       : '';
 
-  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
-    ? '- -'
-    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+    ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
+    : '- -';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY

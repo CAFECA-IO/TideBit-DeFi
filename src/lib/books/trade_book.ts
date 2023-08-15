@@ -1,3 +1,18 @@
+/** TODO: (20230815 - Shirley)
+ * Data:
+ * 1. trades: 用來存放所有的交易資料
+ * 2. predictedTrades: 用來存放預測的交易資料
+ * **3. candlestickChart: 依照時間間隔存放蠟燭圖資料**
+ * 4. isPredicting: 用來判斷是否正在預測
+ * 5. predictionTimers: 用來存放預測的 timer
+ * 6. config: 用來存放設定
+ * 7. model: 用來存放預測模型
+ * Time span:
+ * Live: 用 trades 形成 predictedTrades 再用 predictedTrades 形成蠟燭圖資料後，再存到 candlestickChart；定期檢查trades跟predictedTrades的資料需小於100筆，只保留最新的100筆
+ * 5m, 15m, 30m, 1h, 4h, 12h, 1d: 直接 call API 拿到蠟燭圖的資料
+ * 1.
+ */
+
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
@@ -19,14 +34,27 @@ type ILine = {
   timestamp: number;
 };
 
-type ICandlestick = {
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  timestamp: number;
+type ICandlestickDataWithTimeSpan = {
+  LIVE: ICandlestickData[];
+  FIVE_MINUTES: ICandlestickData[];
+  FIFTEEN_MINUTES: ICandlestickData[];
+  THIRTY_MINUTES: ICandlestickData[];
+  ONE_HOUR: ICandlestickData[];
+  FOUR_HOURS: ICandlestickData[];
+  TWELVE_HOURS: ICandlestickData[];
+  ONE_DAY: ICandlestickData[];
 };
+
+enum CandlestickDataWithTimeSpan {
+  LIVE = 'LIVE',
+  FIVE_MINUTES = 'FIVE_MINUTES',
+  FIFTEEN_MINUTES = 'FIFTEEN_MINUTES',
+  THIRTY_MINUTES = 'THIRTY_MINUTES',
+  ONE_HOUR = 'ONE_HOUR',
+  FOUR_HOURS = 'FOUR_HOURS',
+  TWELVE_HOURS = 'TWELVE_HOURS',
+  ONE_DAY = 'ONE_DAY',
+}
 
 interface ITradeBookConfig {
   model?: string;
@@ -49,6 +77,7 @@ function ensureTickerExistsDecorator(target: any, key: string, descriptor: Prope
 class TradeBook {
   private trades: Map<string, ITrade[]>;
   private predictedTrades: Map<string, ITrade[]>;
+  private candlestickChart: Map<string, ICandlestickDataWithTimeSpan>;
   private isPredicting: Map<string, boolean>;
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
@@ -58,6 +87,7 @@ class TradeBook {
     this.config = config;
     this.trades = new Map();
     this.predictedTrades = new Map();
+    this.candlestickChart = new Map();
     this.isPredicting = new Map();
     this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
@@ -138,6 +168,13 @@ class TradeBook {
       }`;
 
       this.predictedTrades.get(instId)!.push({...trade, tradeId});
+
+      this.ensureCandlestickDataExists(instId);
+      this.convertTradesToCandlestickData(
+        instId,
+        predictedTrades,
+        CandlestickDataWithTimeSpan.LIVE
+      );
     }
   }
 
@@ -184,10 +221,13 @@ class TradeBook {
           .filter(trade => {
             return trade.timestampMs >= cutoffTime;
           })
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITrade}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.trades.set(instId, trimmedTrades);
@@ -195,10 +235,13 @@ class TradeBook {
       const trimmedPredictedTrades = Object.values(
         predictedTrades
           .filter(trade => trade.timestampMs >= cutoffTime)
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITrade}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
@@ -267,6 +310,24 @@ class TradeBook {
         if (predictedTrades !== undefined) this.predictedTrades.set(instId, predictedTrades);
       }
     }
+  }
+
+  private convertTradesToCandlestickData(
+    instId: string,
+    trades: ITrade[],
+    timeSpan: keyof ICandlestickDataWithTimeSpan // TODO: use time_span_union instead (20230815 - Shirley)
+  ) {
+    const candlestickData = this.toCandlestick(instId, 0.1, 100);
+
+    for (let i = 0; i < candlestickData.length; i++) {
+      this.candlestickChart.get(instId)![timeSpan].push(candlestickData[i]);
+    }
+
+    // TODO: dev (20230815 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('candlestickData in convertTradesToCandlestickData', candlestickData);
+    // eslint-disable-next-line no-console
+    console.log('this.candlestickChart in convertTradesToCandlestickData', this.candlestickChart);
   }
 
   linearRegression(trades: ITrade[], periodMs: number, length: number): ITrade[] | undefined {
@@ -510,6 +571,21 @@ class TradeBook {
   private getLastPredictedTrade(instId: string) {
     const predictedTrades = this.predictedTrades.get(instId);
     return predictedTrades![predictedTrades!.length - 1];
+  }
+
+  private ensureCandlestickDataExists(instId: string) {
+    if (!this.candlestickChart.has(instId)) {
+      this.candlestickChart.set(instId, {
+        LIVE: [],
+        FIVE_MINUTES: [],
+        FIFTEEN_MINUTES: [],
+        THIRTY_MINUTES: [],
+        ONE_HOUR: [],
+        FOUR_HOURS: [],
+        TWELVE_HOURS: [],
+        ONE_DAY: [],
+      });
+    }
   }
 }
 

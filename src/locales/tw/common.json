@@ -83,7 +83,10 @@
     "BALANCE_SHEET": "資產負債表",
     "CASH_FLOW_STATEMENT": "現金流量表",
     "RED_FLAG_ANALYSIS": "風險分析",
-    "POWERED_BY": "技術支持"
+    "POWERED_BY": "技術支持",
+    "ISUNONE_PROMOTION_TITLE_1": "使用",
+    "ISUNONE_PROMOTION_TITLE_2": "付款",
+    "ISUNONE_PROMOTION_DESCRIPTION": "iSunOne Visa 金融卡"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "連接錢包",

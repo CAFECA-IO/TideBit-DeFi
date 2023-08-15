@@ -391,6 +391,10 @@ module.exports = {
 
         lightGray5: '#D4D4D4',
         lightYellow2: '#F8E71C',
+
+        lightGreen6: '#41FEA2',
+        lightBlue: '#4DBFFF',
+        lightYellow3: '#F9C53D',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

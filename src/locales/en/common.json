@@ -83,7 +83,10 @@
     "BALANCE_SHEET": "Balance Sheet",
     "CASH_FLOW_STATEMENT": "Cash Flow Statement",
     "RED_FLAG_ANALYSIS": "Red Flag Analysis",
-    "POWERED_BY": "Powered by"
+    "POWERED_BY": "Powered by",
+    "ISUNONE_PROMOTION_TITLE_1": "Pay with",
+    "ISUNONE_PROMOTION_TITLE_2": "",
+    "ISUNONE_PROMOTION_DESCRIPTION": "iSunOne Visa Card"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "Wallet Connect",

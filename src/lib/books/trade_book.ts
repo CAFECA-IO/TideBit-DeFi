@@ -17,6 +17,7 @@ import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candles
 import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
+import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 
 interface ITrade {
   tradeId: string;
@@ -35,26 +36,8 @@ type ILine = {
 };
 
 type ICandlestickDataWithTimeSpan = {
-  LIVE: ICandlestickData[];
-  FIVE_MINUTES: ICandlestickData[];
-  FIFTEEN_MINUTES: ICandlestickData[];
-  THIRTY_MINUTES: ICandlestickData[];
-  ONE_HOUR: ICandlestickData[];
-  FOUR_HOURS: ICandlestickData[];
-  TWELVE_HOURS: ICandlestickData[];
-  ONE_DAY: ICandlestickData[];
+  [key in ITimeSpanUnion]: ICandlestickData[];
 };
-
-enum CandlestickDataWithTimeSpan {
-  LIVE = 'LIVE',
-  FIVE_MINUTES = 'FIVE_MINUTES',
-  FIFTEEN_MINUTES = 'FIFTEEN_MINUTES',
-  THIRTY_MINUTES = 'THIRTY_MINUTES',
-  ONE_HOUR = 'ONE_HOUR',
-  FOUR_HOURS = 'FOUR_HOURS',
-  TWELVE_HOURS = 'TWELVE_HOURS',
-  ONE_DAY = 'ONE_DAY',
-}
 
 interface ITradeBookConfig {
   model?: string;
@@ -78,6 +61,7 @@ class TradeBook {
   private trades: Map<string, ITrade[]>;
   private predictedTrades: Map<string, ITrade[]>;
   private candlestickChart: Map<string, ICandlestickDataWithTimeSpan>;
+  private convertedTradeIds: Set<string> = new Set();
   private isPredicting: Map<string, boolean>;
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
@@ -136,7 +120,8 @@ class TradeBook {
 
     this._add(instId, trade);
 
-    this.startPredictionLoop(instId);
+    // FIXME: temporarily comment out (20230816 - Shirley)
+    // this.startPredictionLoop(instId);
   }
 
   @ensureTickerExistsDecorator
@@ -149,13 +134,17 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   private _add(instId: string, trade: ITrade): void {
-    const isPredictedData = trade.tradeId.includes('-');
+    let newTrade: ITrade = {...trade};
+
+    const isPredictedData = newTrade.tradeId.includes('-');
+
     const trades = this.trades.get(instId)!;
     const predictedTrades = this.predictedTrades.get(instId)!;
 
+    // Info: 檢查這筆trade是預測的還是真實的，然後存進不同變數裡 (20230816 - Shirley)
     if (!isPredictedData) {
-      trades.push(trade);
-      predictedTrades.push(trade);
+      trades.push(newTrade);
+      predictedTrades.push(newTrade);
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
@@ -167,15 +156,27 @@ class TradeBook {
           : `${lastTradeId[0]}-1`
       }`;
 
-      this.predictedTrades.get(instId)!.push({...trade, tradeId});
+      newTrade = {...trade, tradeId};
 
-      this.ensureCandlestickDataExists(instId);
-      this.convertTradesToCandlestickData(
-        instId,
-        predictedTrades,
-        CandlestickDataWithTimeSpan.LIVE
-      );
+      this.predictedTrades.get(instId)!.push(newTrade);
     }
+
+    // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
+    if (!this.isTradeConvertedToCandlestick(newTrade.tradeId)) {
+      this.ensureCandlestickDataExists(instId);
+      this.convertTradesToCandlestickData(instId, [trade], TimeSpanUnion._1s);
+      this.convertedTradeIds.add(newTrade.tradeId);
+    }
+
+    // TODO: dev (20230816 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('this.candlestickChart in _add', this.candlestickChart);
+    // console.log('this.convertedTradeIds in _add', this.convertedTradeIds);
+
+    // TODO: dev
+    // console.log('trades in _add', trades);
+    // console.log('predictedTrades in _add', predictedTrades);
+    // console.log('new trade to be added', trade);
   }
 
   /* Deprecated: replaced by _trim() (20230703 - Shirley)
@@ -317,7 +318,7 @@ class TradeBook {
     trades: ITrade[],
     timeSpan: keyof ICandlestickDataWithTimeSpan // TODO: use time_span_union instead (20230815 - Shirley)
   ) {
-    const candlestickData = this.toCandlestick(instId, 0.1, 100);
+    const candlestickData = this.toCandlestick(instId, 0.1, 100, trades);
 
     for (let i = 0; i < candlestickData.length; i++) {
       this.candlestickChart.get(instId)![timeSpan].push(candlestickData[i]);
@@ -494,8 +495,14 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  toCandlestick(instId: string, interval: number, length: number): ICandlestickData[] {
-    const trades = this.predictedTrades.get(instId)!;
+  toCandlestick(
+    instId: string,
+    interval: number,
+    length: number,
+    tradesArray?: ITrade[]
+  ): ICandlestickData[] {
+    const trades =
+      !tradesArray || tradesArray.length === 0 ? this.predictedTrades.get(instId)! : tradesArray;
 
     if (trades.length === 0) return [];
 
@@ -551,6 +558,24 @@ class TradeBook {
     );
   }
 
+  getCandlestickData(instId: string): ICandlestickDataWithTimeSpan | undefined {
+    this.ensureCandlestickDataExists(instId);
+
+    return this.candlestickChart.get(instId);
+  }
+
+  addCandlestickData(instId: string, timeSpan: ITimeSpanUnion, data: ICandlestickData[]): void {
+    this.ensureCandlestickDataExists(instId);
+
+    // 獲取該instId的candlestick資料
+    const instData = this.candlestickChart.get(instId);
+
+    if (instData) {
+      // 將新的candlestick資料寫入指定的時間跨度
+      instData[timeSpan] = data;
+    }
+  }
+
   private ensureTickerExists(instId: string) {
     if (!this.trades.has(instId)) {
       this.trades.set(instId, []);
@@ -575,17 +600,22 @@ class TradeBook {
 
   private ensureCandlestickDataExists(instId: string) {
     if (!this.candlestickChart.has(instId)) {
-      this.candlestickChart.set(instId, {
-        LIVE: [],
-        FIVE_MINUTES: [],
-        FIFTEEN_MINUTES: [],
-        THIRTY_MINUTES: [],
-        ONE_HOUR: [],
-        FOUR_HOURS: [],
-        TWELVE_HOURS: [],
-        ONE_DAY: [],
-      });
+      const initialData: ICandlestickDataWithTimeSpan = {
+        '1s': [],
+        '5m': [],
+        '15m': [],
+        '30m': [],
+        '1h': [],
+        '4h': [],
+        '12h': [],
+        '1d': [],
+      };
+      this.candlestickChart.set(instId, initialData);
     }
+  }
+
+  private isTradeConvertedToCandlestick(tradeId: string): boolean {
+    return this.convertedTradeIds.has(tradeId);
   }
 }
 

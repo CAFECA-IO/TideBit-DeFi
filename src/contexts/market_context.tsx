@@ -20,6 +20,7 @@ import {
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
+  ICandle,
   ICandlestickData,
   ITrade,
   TradeSideText,
@@ -594,7 +595,48 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           query: {...options},
         })) as IResult;
         if (result.success) {
-          const candlesticks = result.data as ICandlestick;
+          // const candlesticks = result.data as ICandlestick;
+          const candlesticks = result.data as {
+            instId: string;
+            candlesticks: {x: string; y: ICandle}[];
+          };
+
+          const dataWithDate = candlesticks.candlesticks.map(candlestick => ({
+            x: new Date(candlestick.x),
+            y: candlestick.y,
+          }));
+
+          const rawData = !!candlestickChartDataRef.current
+            ? [...candlestickChartDataRef.current, ...dataWithDate]
+            : dataWithDate;
+
+          const uniqueData = rawData
+            .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
+              const xtime = current.x.getTime();
+              if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
+                acc.push(current);
+              }
+              return acc;
+            }, [])
+            .sort((a, b) => a.x.getTime() - b.x.getTime());
+
+          tradeBook.addCandlestickData(instId, options.timeSpan, uniqueData);
+
+          // TODO: dev (20230816 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('addCandlestickData in listCandlesticks');
+
+          const candlestickDataGot = tradeBook.getCandlestickData(instId);
+
+          // TODO: dev (20230816 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('candlestickDataGot', candlestickDataGot);
+
+          setCandlestickChartData(prev => candlestickDataGot?.[options.timeSpan] || null);
+
+          // TODO: dev (20230816 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('candlestickChartDataRef.current', candlestickChartDataRef.current);
         }
       } catch (error) {
         if (!isCustomError(error)) {
@@ -607,10 +649,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
+  // const addCandlestickData
+
   const syncCandlestickData = useCallback((instId: string, timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
+    }
+
+    if (timeSpan) {
+      listCandlesticks(instId, {
+        timeSpan,
+      });
+      // FIXME: temp solution (20230816 - Shirley)
+      return;
+      // tradeBook.addCandlestickData(instId, timeSpan, []);
+      // setCandlestickChartData
     }
 
     const candlestickInterval = setInterval(() => {
@@ -744,25 +798,25 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
-        for (const trade of trades) {
-          if (trade.instId === selectedTickerRef.current?.instId) {
-            tradeBook.add(trade.instId, {
-              tradeId: trade.tradeId,
-              targetAsset: trade.baseUnit,
-              unitAsset: trade.quoteUnit,
-              direct: TradeSideText[trade.side],
-              price: trade.price,
-              timestampMs: trade.timestamp,
-              quantity: trade.amount,
-            });
-          }
-        }
-      }),
-    []
-  );
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+  //       for (const trade of trades) {
+  //         if (trade.instId === selectedTickerRef.current?.instId) {
+  //           tradeBook.add(trade.instId, {
+  //             tradeId: trade.tradeId,
+  //             targetAsset: trade.baseUnit,
+  //             unitAsset: trade.quoteUnit,
+  //             direct: TradeSideText[trade.side],
+  //             price: trade.price,
+  //             timestampMs: trade.timestamp,
+  //             quantity: trade.amount,
+  //           });
+  //         }
+  //       }
+  //     }),
+  //   []
+  // );
 
   const defaultValue = {
     isInit,

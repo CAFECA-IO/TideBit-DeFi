@@ -9,6 +9,7 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import {DEFAULT_INSTID} from '../../constants/config';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -64,7 +65,7 @@ const TradingChartSwitch = ({
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const globalCtx = useGlobal();
-  const {selectTimeSpanHandler} = useContext(MarketContext);
+  const {selectTimeSpanHandler, listCandlesticks, selectedTicker} = useContext(MarketContext);
   const [activeButton, setActiveButton] = useState('live');
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);

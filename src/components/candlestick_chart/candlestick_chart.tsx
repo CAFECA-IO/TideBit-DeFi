@@ -446,6 +446,9 @@ export default function CandlestickChart({
 
   const fetchCandlestickData = () => {
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
+    // TODO: dev (20230816 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('originRaw', originRaw);
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
     const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
@@ -519,6 +522,9 @@ export default function CandlestickChart({
   };
 
   useEffect(() => {
+    // TODO: dev (20230816 - Shirley)
+    // eslint-disable-next-line no-console
+    // console.log('drawn candlestickChartData of marketCtx', marketCtx.candlestickChartData);
     return drawChart();
   }, [marketCtx.candlestickChartData]);
 

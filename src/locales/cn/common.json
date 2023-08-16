@@ -322,7 +322,8 @@
     "SUCCESS": "成功",
     "WARNING": "警告",
     "INFO": "信息",
-    "PROGRESSING_MESSAGE": "处理中，请稍候..."
+    "PROGRESSING_MESSAGE": "处理中，请稍候...",
+    "COPY_SUCCESS": "已复制到剪贴簿！"
   },
   "SHARING_BOX": {
     "TYPE_UP": "看涨",

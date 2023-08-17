@@ -18,6 +18,7 @@ import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
+import {CANDLESTICK_SIZE} from '../../constants/display';
 
 interface ITrade {
   tradeId: string;
@@ -162,44 +163,8 @@ class TradeBook {
     }
 
     // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
-    if (!this.isTradeConvertedToCandlestick(newTrade.tradeId)) {
-      this.ensureCandlestickDataExists(instId);
-      this.convertTradesToCandlestickData(instId, [trade], TimeSpanUnion._1s);
-      this.convertedTradeIds.add(newTrade.tradeId);
-    }
-
-    // TODO: dev (20230816 - Shirley)
-    // eslint-disable-next-line no-console
+    // processTradesToCandlestickData()
   }
-
-  /* Deprecated: replaced by _trim() (20230703 - Shirley)
-  private _trim(): void {
-    const now = Date.now();
-    const cutoffTime = now - this.config.holdingTradesMs;
-    if (
-      this.trades[0].timestampMs < cutoffTime ||
-      this.predictedTrades[0].timestampMs < cutoffTime
-    ) {
-      this.trades = Object.values(
-        this.trades
-          .filter(trade => trade.timestampMs >= cutoffTime) // Info: 保留 15 分鐘內的資料 (20230601 - Tzuhan)
-          .reduce((acc, cur) => {
-            // Info: remove duplicate tradeId (20230601 - Tzuhan)
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
-      ).sort((a, b) => +a.tradeId - +b.tradeId); // Info: sort by tradeId (20230601 - Tzuhan)
-      this.predictedTrades = Object.values(
-        this.predictedTrades
-          .filter(trade => trade.timestampMs >= cutoffTime)
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
-      ).sort((a, b) => +a.tradeId - +b.tradeId);
-    }
-  }
-  */
 
   @ensureTickerExistsDecorator
   private _trim(instId: string): void {
@@ -213,16 +178,17 @@ class TradeBook {
       const trimmedTrades = Object.values(
         trades
           .filter(trade => {
-            return trade.timestampMs >= cutoffTime;
+            return trade.timestampMs >= cutoffTime; // Info: 保留 15 分鐘內的資料 (20230601 - Tzuhan)
           })
           .reduce(
             (acc, cur) => {
+              // Info: remove duplicate tradeId (20230601 - Tzuhan)
               acc[cur.tradeId] = cur;
               return acc;
             },
             {} as {[key: string]: ITrade}
           )
-      ).sort((a, b) => +a.tradeId - +b.tradeId);
+      ).sort((a, b) => +a.tradeId - +b.tradeId); // Info: sort by tradeId (20230601 - Tzuhan)
 
       this.trades.set(instId, trimmedTrades);
 
@@ -309,22 +275,13 @@ class TradeBook {
   private convertTradesToCandlestickData(
     instId: string,
     trades: ITrade[],
-    timeSpan: keyof ICandlestickDataWithTimeSpan // TODO: use time_span_union instead (20230815 - Shirley)
+    timeSpan: keyof ICandlestickDataWithTimeSpan
   ) {
-    const candlestickData = this.toCandlestick(instId, 0.1, 100, trades);
-
+    const interval = this.config.intervalMs / 1000;
+    const candlestickData = this.toCandlestick(instId, interval, CANDLESTICK_SIZE, trades);
     for (let i = 0; i < candlestickData.length; i++) {
       this.candlestickChart.get(instId)![timeSpan].push(candlestickData[i]);
     }
-
-    // TODO: dev (20230816 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log(
-      'convertTradesToCandlestickData timeSpan',
-      timeSpan,
-      'timeSpan of this.candlestickChart',
-      this.candlestickChart.get(instId)![timeSpan]
-    );
   }
 
   linearRegression(trades: ITrade[], periodMs: number, length: number): ITrade[] | undefined {
@@ -563,14 +520,22 @@ class TradeBook {
   addCandlestickData(instId: string, timeSpan: ITimeSpanUnion, data: ICandlestickData[]): void {
     this.ensureCandlestickDataExists(instId);
 
-    // 獲取該instId的candlestick資料
-    const instData = this.candlestickChart.get(instId);
+    const instData = this.getCandlestickData(instId);
 
     if (instData) {
-      // 將新的candlestick資料寫入指定的時間跨度
       instData[timeSpan] = data;
     }
   }
+
+  // TODO: 即時將 trades 轉成 candlestickChart 的資料 (20230817 - Shirley)
+  // processTradesToCandlestickData(instId: string, timeSpan: ITimeSpanUnion): void {
+  //   // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
+  //   if (!this.isTradeConvertedToCandlestick(newTrade.tradeId)) {
+  //     this.ensureCandlestickDataExists(instId);
+  //     this.convertTradesToCandlestickData(instId, [trade], TimeSpanUnion._1s);
+  //     this.convertedTradeIds.add(newTrade.tradeId);
+  //   }
+  // }
 
   private ensureTickerExists(instId: string) {
     if (!this.trades.has(instId)) {

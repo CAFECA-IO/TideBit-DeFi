@@ -595,22 +595,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           query: {...options},
         })) as IResult;
         if (result.success) {
-          // const candlesticks = result.data as ICandlestick;
+          // Info: call API 拿到資料
           const candlesticks = result.data as {
             instId: string;
             candlesticks: {x: string; y: ICandle}[];
           };
 
+          // Info: 轉換成 chart 要的格式
           const dataWithDate = candlesticks.candlesticks.map(candlestick => ({
             x: new Date(candlestick.x),
             y: candlestick.y,
           }));
 
-          const rawData = !!candlestickChartDataRef.current
-            ? [...candlestickChartDataRef.current, ...dataWithDate]
-            : dataWithDate;
+          // Info: 避免重複的資料並從舊到新排序資料
+          // const rawData = !!candlestickChartDataRef.current
+          //   ? [...candlestickChartDataRef.current, ...dataWithDate]
+          //   : dataWithDate;
 
-          const uniqueData = rawData
+          const uniqueData = dataWithDate
             .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
               const xtime = current.x.getTime();
               if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
@@ -620,23 +622,38 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             }, [])
             .sort((a, b) => a.x.getTime() - b.x.getTime());
 
-          tradeBook.addCandlestickData(instId, options.timeSpan, uniqueData);
+          // Info: 如果該時間密度的資料是空白的，就將整理好的蠟燭圖資料放進去
+          let candlestickDataGot = tradeBook.getCandlestickData(instId);
 
-          // TODO: dev (20230816 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('addCandlestickData in listCandlesticks');
+          const targetedCandlestick = candlestickDataGot?.[options.timeSpan] || null;
 
-          const candlestickDataGot = tradeBook.getCandlestickData(instId);
+          // // TODO: dev (20230816 - Shirley)
+          // // eslint-disable-next-line no-console
+          // console.log('candlestickDataGot', candlestickDataGot);
+          // console.log('targetedCandlestick', targetedCandlestick);
 
-          // TODO: dev (20230816 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('candlestickDataGot', candlestickDataGot);
+          if (!targetedCandlestick || targetedCandlestick?.length === 0) {
+            tradeBook.addCandlestickData(instId, options.timeSpan, uniqueData);
+
+            candlestickDataGot = tradeBook.getCandlestickData(instId);
+
+            // // TODO: dev (20230816 - Shirley)
+            // // eslint-disable-next-line no-console
+            // console.log('addCandlestickData in listCandlesticks');
+          }
+
+          // Info: 如果該時間密度的資料不是空白的，就直接切換蠟燭圖資料
 
           setCandlestickChartData(prev => candlestickDataGot?.[options.timeSpan] || null);
 
           // TODO: dev (20230816 - Shirley)
           // eslint-disable-next-line no-console
-          console.log('candlestickChartDataRef.current', candlestickChartDataRef.current);
+          console.log(
+            'candlestickChartDataRef.current',
+            candlestickChartDataRef.current,
+            'timeSpan',
+            options.timeSpan
+          );
         }
       } catch (error) {
         if (!isCustomError(error)) {

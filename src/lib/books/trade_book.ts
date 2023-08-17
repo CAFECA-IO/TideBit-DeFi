@@ -170,13 +170,6 @@ class TradeBook {
 
     // TODO: dev (20230816 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('this.candlestickChart in _add', this.candlestickChart);
-    // console.log('this.convertedTradeIds in _add', this.convertedTradeIds);
-
-    // TODO: dev
-    // console.log('trades in _add', trades);
-    // console.log('predictedTrades in _add', predictedTrades);
-    // console.log('new trade to be added', trade);
   }
 
   /* Deprecated: replaced by _trim() (20230703 - Shirley)
@@ -324,11 +317,14 @@ class TradeBook {
       this.candlestickChart.get(instId)![timeSpan].push(candlestickData[i]);
     }
 
-    // TODO: dev (20230815 - Shirley)
+    // TODO: dev (20230816 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('candlestickData in convertTradesToCandlestickData', candlestickData);
-    // eslint-disable-next-line no-console
-    console.log('this.candlestickChart in convertTradesToCandlestickData', this.candlestickChart);
+    console.log(
+      'convertTradesToCandlestickData timeSpan',
+      timeSpan,
+      'timeSpan of this.candlestickChart',
+      this.candlestickChart.get(instId)![timeSpan]
+    );
   }
 
   linearRegression(trades: ITrade[], periodMs: number, length: number): ITrade[] | undefined {

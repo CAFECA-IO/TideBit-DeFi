@@ -115,40 +115,30 @@ const TradingInput = ({
     setValidationTimeout(newTimeout);
   };
 
-  const onKeyDown = () => {
+  const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
-
     setIsTyping(true);
-  };
-
-  const onKeyUp = () => {
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
 
     const newTimeout = setTimeout(() => {
       setIsTyping(false);
     }, TYPING_KEYUP_DELAY);
-
     setTypingTimeout(newTimeout);
-  };
 
-  const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
+    const numberValue = Number(value);
+    // if (regex.test(value)) {
+    //   const numberValue = Number(value);
+    //   if (numberValue === upperLimit && numberValue === lowerLimit) {
+    //     return;
+    //   }
 
-    if (regex.test(value)) {
-      const numberValue = Number(value);
-      if (numberValue === upperLimit && numberValue === lowerLimit) {
-        return;
-      }
+    setInputValue(numberValue);
+    passValueHandler(numberValue);
 
-      setInputValue(numberValue);
-      passValueHandler(numberValue);
-
-      debounceValidation(numberValue);
-    }
+    debounceValidation(numberValue);
+    // }
   };
 
   const incrementClickHandler = () => {
@@ -251,8 +241,6 @@ const TradingInput = ({
             name={inputName}
             onChange={inputChangeHandler}
             placeholder={inputPlaceholder}
-            onKeyDown={onKeyDown}
-            onKeyUp={onKeyUp}
           />
         </div>
 

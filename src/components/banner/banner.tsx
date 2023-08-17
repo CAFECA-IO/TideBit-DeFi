@@ -15,15 +15,15 @@ const Banner = () => {
   return (
     <>
       <div className="">
-        <section className="">
+        <section className="w-full">
           <div
-            className="w-full flex flex-col items-center pt-5 lg:pt-10 pl-1/4 bg-center bg-no-repeat bg-cover"
+            className="w-screen flex flex-col items-start pt-5 xl:pt-20 lg:pt-10 pl-1/4 md:pl-2/5 xl:pl-1/2 bg-center bg-no-repeat bg-cover"
             style={{
               backgroundImage: 'url(/elements/isunone_banner_bg@2x.png)',
               height: `${layoutAssertion === LayoutAssertion.MOBILE ? '200px' : '356px'}`,
             }}
           >
-            <p className="text-white text-2xl md:text-4xl lg:text-6xl font-bold tracking-normal">
+            <p className="text-white text-2xl md:text-4xl lg:text-5.5xl font-bold tracking-normal">
               {t('HOME_PAGE.ISUNONE_PROMOTION_TITLE_1')}{' '}
               <span className="text-lightGreen6">USDT</span>
               <span className="text-lg lg:text-4xl mx-2">&</span>

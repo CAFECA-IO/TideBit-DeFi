@@ -42,7 +42,7 @@ export default function HeroDescription() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
       {/* Body */}
-      <div className="">
+      <div className="w-full">
         <Cta />
         <div className="py-0"></div>
 

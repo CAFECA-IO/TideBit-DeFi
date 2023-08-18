@@ -72,6 +72,7 @@ import {normalize} from 'path';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'react-i18next';
 import {create} from 'domain';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -267,7 +268,7 @@ export default function CandlestickChart({
   let tuned: CandlestickData[];
 
   const width =
-    globalCtx.layoutAssertion === 'desktop'
+    globalCtx.layoutAssertion === LayoutAssertion.DESKTOP
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
       : globalCtx.width * 0.9;
 

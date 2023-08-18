@@ -8,6 +8,7 @@ import {MarketContext} from '../../contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -62,15 +63,15 @@ const TradingChartSwitch = ({
   getTradingViewInterval,
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
+  const globalCtx = useGlobal();
   const {selectTimeSpanHandler} = useContext(MarketContext);
   const [activeButton, setActiveButton] = useState('live');
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);
+  const [activeChartTypeMobile, setActiveChartTypeMobile] = useState('candlestick');
 
-  const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
-  // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
     getDisplayedPositionLabel(bool);
   };
@@ -80,7 +81,6 @@ const TradingChartSwitch = ({
 
   const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
-  // TODO: Refactor to object type (easier to read)
   const liveButtonStyle =
     activeButton === 'live' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fiveMinButtonStyle =
@@ -98,17 +98,29 @@ const TradingChartSwitch = ({
   const oneDayButtonStyle =
     activeButton === '1d' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
 
+  const stickSwitchHandler = () => {
+    if (activeChartTypeMobile === 'candlestick') {
+      setActiveChartTypeMobile('line');
+      getLineGraphOn(true);
+      getCandlestickOn(false);
+      getTradingViewType('line');
+    } else {
+      setActiveChartTypeMobile('candlestick');
+      getCandlestickOn(true);
+      getLineGraphOn(false);
+      getTradingViewType('candlestick');
+    }
+  };
+
   const candlestickClickHandler = () => {
     setCandlestickOn(!candlestickOn);
     getCandlestickOn(!candlestickOn);
-    // setActiveChartType('candlestick');
     getTradingViewType('candlestick');
   };
 
   const lineClickHandler = () => {
     setLineGraphOn(!lineGraphOn);
     getLineGraphOn(!lineGraphOn);
-    // setActiveChartType('line');
     getTradingViewType('line');
   };
 
@@ -298,91 +310,203 @@ const TradingChartSwitch = ({
     </div>
   );
 
-  return (
-    <>
-      <div
-        style={{width: `${Number(switchSize.width) - 100}px`}}
-        className="flex items-center space-x-1 md:space-x-5 xl:w-full"
+  const stickSwitchButton = (
+    <div>
+      <button
+        onClick={stickSwitchHandler}
+        type="button"
+        className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {/* Switch chart types */}
-        <div className="flex space-x-2">
-          {candlestickChartButton}
-          {lineGraphChartButton}
-        </div>
+        {activeChartTypeMobile === 'candlestick' ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            data-name="Group 2293"
+            viewBox="0 0 22.703 30"
+          >
+            <path
+              fill="#29c1e1"
+              d="M3.243 25.135V21.08H0V6.486h3.243V.811a.811.811 0 111.621 0v5.675h3.245V21.08H4.864v4.054a.811.811 0 11-1.621 0z"
+              data-name="Union 35"
+            ></path>
+            <path
+              fill="#29c1e1"
+              d="M3.243 25.135V20.27H0V5.676h3.243V.811a.811.811 0 111.621 0v4.865h3.245V20.27H4.864v4.864a.811.811 0 11-1.621 0z"
+              data-name="Union 36"
+              transform="translate(14.594 4.054)"
+            ></path>
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            viewBox="0 0 31.403 30.697"
+          >
+            <defs>
+              <linearGradient
+                id="linear-gradient"
+                x1="0.5"
+                x2="0.5"
+                y1="0.019"
+                y2="1"
+                gradientUnits="objectBoundingBox"
+              >
+                <stop offset="0" stopColor="#29c1e1"></stop>
+                <stop offset="1" stopColor="#121214" stopOpacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <g data-name="Group 15162" transform="translate(-41.294 -205.625)">
+              <path
+                fill="url(#linear-gradient)"
+                d="M-3222 349.957v-5.068l10.292-10.759 11 5.374 8.71-13.075v29.808h-30z"
+                data-name="Path 26342"
+                transform="translate(3264 -119.915)"
+              ></path>
+              <path
+                fill="none"
+                stroke="#29c1e1"
+                strokeLinecap="round"
+                strokeWidth="1"
+                d="M42 225.516l10.038-11.212 10.828 4.934L72 206.322"
+                data-name="Path 503"
+              ></path>
+            </g>
+          </svg>
+        )}
+      </button>
+    </div>
+  );
 
-        {/* Diplaying position info toggle */}
-        <div className="hidden items-center space-x-5 md:flex">
-          <p className="text-lightGray">Positions</p>
-          <div className="pt-1">
-            {' '}
-            <Toggle
-              initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
-              getToggledState={getDisplayedPositionsState}
-            />
-          </div>
-        </div>
+  const desktopLayout = (
+    <div
+      style={{width: `${Number(switchSize.width) - 100}px`}}
+      className="flex items-center space-x-1 md:space-x-5 xl:w-full"
+    >
+      {/* Info: (20230809 - Shirley) Switch chart types */}
+      <div className="flex space-x-2">
+        {candlestickChartButton}
+        {lineGraphChartButton}
+      </div>
 
-        {/* Switch time interval */}
-        <div
-          className="flex rounded-sm bg-darkGray6 py-2 px-2"
-          style={{
-            width: '95%',
-            justifyContent: 'space-between',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
-            Live
-          </button>
-          <button
-            type="button"
-            className={`${fiveMinButtonStyle}`}
-            onClick={fiveMinButtonClickHandler}
-          >
-            5 m
-          </button>
-          <button
-            type="button"
-            className={`${fifteenMinButtonStyle}`}
-            onClick={fifteenMinButtonClickHandler}
-          >
-            15 m
-          </button>
-          <button
-            type="button"
-            className={`${thirtyMinButtonStyle}`}
-            onClick={thirtyMinButtonClickHandler}
-          >
-            30 m
-          </button>
-          <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
-            1 h
-          </button>
-          <button
-            type="button"
-            className={`${fourHrButtonStyle}`}
-            onClick={fourHrButtonClickHandler}
-          >
-            4 h
-          </button>
-          <button
-            type="button"
-            className={`${twelveHrButtonStyle}`}
-            onClick={twelveHrButtonClickHandler}
-          >
-            12 h
-          </button>
-          <button
-            type="button"
-            className={`${oneDayButtonStyle}`}
-            onClick={oneDayButtonClickHandler}
-          >
-            1 d
-          </button>
+      {/* Info: (20230809 - Shirley) Displaying position info toggle */}
+      <div className="hidden items-center space-x-5 md:flex">
+        <p className="text-lightGray">Positions</p>
+        <div className="pt-1">
+          {' '}
+          <Toggle
+            initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
+            getToggledState={getDisplayedPositionsState}
+          />
         </div>
       </div>
-    </>
+
+      {/* Info: (20230809 - Shirley) Switch time interval */}
+      <div
+        className="hidden rounded-sm bg-darkGray6 py-2 px-2 lg:flex"
+        style={{
+          width: '95%',
+          justifyContent: 'space-between',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
+          Live
+        </button>
+        <button
+          type="button"
+          className={`${fiveMinButtonStyle}`}
+          onClick={fiveMinButtonClickHandler}
+        >
+          5 m
+        </button>
+        <button
+          type="button"
+          className={`${fifteenMinButtonStyle}`}
+          onClick={fifteenMinButtonClickHandler}
+        >
+          15 m
+        </button>
+        <button
+          type="button"
+          className={`${thirtyMinButtonStyle}`}
+          onClick={thirtyMinButtonClickHandler}
+        >
+          30 m
+        </button>
+        <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
+          1 h
+        </button>
+        <button type="button" className={`${fourHrButtonStyle}`} onClick={fourHrButtonClickHandler}>
+          4 h
+        </button>
+        <button
+          type="button"
+          className={`${twelveHrButtonStyle}`}
+          onClick={twelveHrButtonClickHandler}
+        >
+          12 h
+        </button>
+        <button type="button" className={`${oneDayButtonStyle}`} onClick={oneDayButtonClickHandler}>
+          1 d
+        </button>
+      </div>
+    </div>
   );
+
+  const mobileLayout = (
+    <div className="flex w-full items-center justify-between space-x-1 md:space-x-5">
+      <div className="flex space-x-2">{stickSwitchButton}</div>
+      <div className="hidden items-center space-x-5 md:flex">
+        <p className="text-lightGray">Positions</p>
+        <div className="pt-1">
+          {' '}
+          <Toggle
+            initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
+            getToggledState={getDisplayedPositionsState}
+          />
+        </div>
+      </div>
+      <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 p-2">
+        <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
+          Live
+        </button>
+        <button
+          type="button"
+          className={`${fiveMinButtonStyle}`}
+          onClick={fiveMinButtonClickHandler}
+        >
+          5 m
+        </button>
+        <button
+          type="button"
+          className={`${fifteenMinButtonStyle}`}
+          onClick={fifteenMinButtonClickHandler}
+        >
+          15 m
+        </button>
+        <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
+          1 h
+        </button>
+        <button
+          type="button"
+          className={`${twelveHrButtonStyle}`}
+          onClick={twelveHrButtonClickHandler}
+        >
+          12 h
+        </button>
+        <button type="button" className={`${oneDayButtonStyle}`} onClick={oneDayButtonClickHandler}>
+          1 d
+        </button>
+      </div>
+    </div>
+  );
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
+
+  return <div>{displayedLayout}</div>;
 };
 
 export default TradingChartSwitch;

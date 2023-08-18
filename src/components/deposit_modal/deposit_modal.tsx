@@ -26,17 +26,13 @@ type TranslateFunction = (s: string) => string;
 interface IDepositModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
 const DepositModal = ({
   modalVisible,
   modalClickHandler,
-  getSubmissionState, // [process]
-  getTransferData, // pass data to parent component
-  submitHandler, // submit information from parent component
+  getTransferData,
   ...otherProps
 }: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -65,10 +61,6 @@ const DepositModal = ({
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
   };
 
-  const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
-    getSubmissionState(props);
-  };
-
   const submitClickHandler = async () => {
     if (globalCtx.displayedToast(ToastId.DEPOSIT) || globalCtx.visibleLoadingModal) {
       globalCtx.dataWarningModalHandler({
@@ -84,7 +76,6 @@ const DepositModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto, amount: amountInput});
     const [lock, unlock] = locker('deposit_modal.submitClickHandler');
 
     if (!lock()) return;

@@ -3,7 +3,6 @@ import NewsPageBody from '../components/news_page_body/news_page_body';
 import Head from 'next/head';
 import {useGlobal} from '../contexts/global_context';
 import {AppContext} from '../contexts/app_context';
-import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
@@ -14,6 +13,7 @@ import {GetStaticProps} from 'next';
 import {IRecommendedNews} from '../interfaces/tidebit_defi_background/news';
 import {truncateText} from '../lib/common';
 import {NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH} from '../constants/display';
+import {LayoutAssertion} from '../constants/layout_assertion';
 
 interface IPageProps {
   briefs: IRecommendedNews[];
@@ -21,7 +21,7 @@ interface IPageProps {
 
 const News = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);
 

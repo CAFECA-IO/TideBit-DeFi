@@ -2,7 +2,6 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsArticle from '../../components/news_article/news_article';
 import {useGlobal} from '../../contexts/global_context';
-import NavBarMobile from '../../components/nav_bar_mobile/nav_bar_mobile';
 import NavBar from '../../components/nav_bar/nav_bar';
 import Head from 'next/head';
 import {useContext, useEffect} from 'react';
@@ -10,9 +9,10 @@ import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {MarketContext} from '../../contexts/market_context';
-import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
+import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER, USDC_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface IPageProps {
   newsId: string;
@@ -22,7 +22,8 @@ interface IPageProps {
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
+
   const appCtx = useContext(AppContext);
   const marketCtx = useContext(MarketContext);
 
@@ -107,10 +108,11 @@ export default NewsPage;
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
   const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
   const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
+  const usdcSlugs = await getSlugs(USDC_NEWS_FOLDER);
 
   const slugs =
-    ethSlugs && btcSlugs
-      ? [...ethSlugs, ...btcSlugs]
+    ethSlugs && btcSlugs && usdcSlugs
+      ? [...ethSlugs, ...btcSlugs, ...usdcSlugs]
       : ethSlugs && !btcSlugs
       ? ethSlugs
       : btcSlugs
@@ -132,7 +134,11 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.newsId.includes('eth') ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+  const dir = params.newsId.includes('eth')
+    ? ETH_NEWS_FOLDER
+    : params.newsId.includes('btc')
+    ? BTC_NEWS_FOLDER
+    : USDC_NEWS_FOLDER;
 
   const newsData = await getPost(dir, params.newsId);
   const allPost = await getFilteredPosts(dir, [params.newsId]);

@@ -20,7 +20,7 @@ import {
   LIQUIDATION_FIVE_LEVERAGE,
   FRACTION_DIGITS,
   TP_SL_LIMIT_RATIO,
-  DEFAULT_TICKER,
+  DEFAULT_INSTID,
   DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
   TARGET_MIN_DIGITS,
@@ -46,6 +46,9 @@ import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/app
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {TypeOfValidation} from '../../constants/validation';
 import SafeMath from '../../lib/safe_math';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import UserOverview from '../user_overview/user_overview';
+import {ImCross} from 'react-icons/im';
 
 type TranslateFunction = (s: string) => string;
 
@@ -197,6 +200,9 @@ const TradeTab = () => {
     shortSl: false,
   });
 
+  const [isActiveTabLong, setIsActiveTabLong] = useState(true);
+  const [openSubMenu, setOpenSubMenu] = useState(false);
+
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
@@ -335,7 +341,7 @@ const TradeTab = () => {
       ) {
       } else {
         const buyQuotation: IQuotation = {
-          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
@@ -355,7 +361,7 @@ const TradeTab = () => {
       ) {
       } else {
         const sellQuotation: IQuotation = {
-          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
@@ -369,7 +375,7 @@ const TradeTab = () => {
       }
     } catch (err) {
       const buyQuotation: IQuotation = {
-        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
@@ -380,7 +386,7 @@ const TradeTab = () => {
       };
 
       const sellQuotation: IQuotation = {
-        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
@@ -702,7 +708,7 @@ const TradeTab = () => {
 
   const toApplyCreateOrder = async () => {
     const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER
+      marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID
     );
 
     const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
@@ -711,7 +717,7 @@ const TradeTab = () => {
     const short = shortQuotation.data as IQuotation;
 
     const share = {
-      instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+      instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
       targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,
@@ -1117,7 +1123,237 @@ const TradeTab = () => {
     </div>
   );
 
-  return (
+  // Info: -----The below is mobile specific part (20230808 - Shirley)-----
+
+  const displayedTargetSetting = (
+    <TradingInput
+      lowerLimit={TARGET_MIN_DIGITS}
+      upperLimit={TARGET_MAX_DIGITS}
+      getInputValue={getTargetInputValue}
+      inputInitialValue={targetInputValueRef.current}
+      inputValueFromParent={targetInputValueRef.current}
+      setInputValueFromParent={setTargetInputValue}
+      inputPlaceholder="target amount input"
+      inputName="targetInput"
+      inputSize="h-44px w-160px text-xl"
+      decrementBtnSize="44"
+      incrementBtnSize="44"
+    />
+  );
+
+  const longSectionClickHandler = async () => {
+    setIsActiveTabLong(true);
+    const {longOrder} = await toApplyCreateOrder();
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        globalCtx.dataPositionOpenModalHandler({
+          openCfdRequest: longOrder,
+        });
+        globalCtx.visiblePositionOpenModalHandler();
+        return;
+      }
+    }
+  };
+
+  const shortSectionClickHandler = async () => {
+    setIsActiveTabLong(false);
+    const {shortOrder} = await toApplyCreateOrder();
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        globalCtx.dataPositionOpenModalHandler({
+          openCfdRequest: shortOrder,
+        });
+        globalCtx.visiblePositionOpenModalHandler();
+        return;
+      }
+    }
+  };
+
+  const longSetting = (
+    <div
+      className={`${
+        isActiveTabLong ? 'flex' : 'hidden'
+      } w-full flex-col items-center justify-center space-y-5`}
+    >
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
+      <div className="flex w-full flex-col items-center">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
+          {displayedLongTpSetting}
+          <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
+        </div>
+        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedLongProfit}</div>
+      </div>
+
+      {/* Info: (20230725 - Julian) Stop Loss Setting */}
+      <div className="flex w-full flex-col items-center space-y-5">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
+          {displayedLongSlSetting}
+          <Toggle initialToggleState={longSlToggle} getToggledState={getToggledLongSlSetting} />
+        </div>
+        <div className="w-full">{displayedExpectedLongLoss}</div>
+
+        {/* Info: (20230725 - Julian) Guaranteed stop */}
+        {longGuaranteedStop}
+      </div>
+    </div>
+  );
+
+  const shortSetting = (
+    <div
+      className={`${
+        isActiveTabLong ? 'hidden' : 'flex'
+      } w-full flex-col items-center justify-center space-y-5`}
+    >
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
+      <div className="flex w-full flex-col items-center">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
+          {displayedShortTpSetting}
+          <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
+        </div>
+        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedShortProfit}</div>
+      </div>
+
+      {/* Stop Loss Setting */}
+      <div className="flex w-full flex-col items-center space-y-5">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
+          {displayedShortSlSetting}
+          <Toggle initialToggleState={shortSlToggle} getToggledState={getToggledShortSlSetting} />
+        </div>
+        <div className="w-full">{displayedExpectedShortLoss}</div>
+
+        {/* Guaranteed stop */}
+        {shortGuaranteedStop}
+      </div>
+    </div>
+  );
+
+  const subMenu = (
+    <div
+      className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
+        openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-36 transition-all duration-150`}
+    >
+      <div className="flex self-end px-30px py-20px">
+        <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
+      </div>
+
+      {/* Info: (20230725 - Julian) ---------- margin setting ---------- */}
+      <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
+        <div className="flex flex-col items-center justify-between space-y-7">
+          <div className="flex w-full items-center justify-center">
+            <UserOverview
+              depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+              marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+              profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+            />
+          </div>
+          <div className="flex w-full items-center justify-center">{displayedTargetSetting}</div>
+
+          {/* ---universal trading info area--- */}
+          <div className="flex w-full flex-col items-center justify-center text-lightGray">
+            <div className="flex justify-center text-sm">{ticker}</div>
+            <div className="mt-2 flex flex-col items-center justify-center space-y-2">
+              <div className="text-sm">{t('TRADE_PAGE.TRADE_TAB_LEVERAGE')}</div>
+              <div className="text-base text-lightWhite">1:{leverage}</div>
+            </div>
+          </div>
+
+          {/* ---custom trading info area--- */}
+          <div className="flex w-full justify-center text-center text-base tracking-wide">
+            <div className="w-1/2">
+              <div className="text-sm text-lightGray">
+                {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
+              </div>
+              {isActiveTabLong
+                ? displayedRequiredMarginLongStyle
+                : displayedRequiredMarginShortStyle}
+            </div>
+
+            <div>
+              <span className="mx-5 inline-block h-14 w-px rounded bg-lightGray/50"></span>
+            </div>
+
+            <div className="w-1/2">
+              <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
+              {isActiveTabLong ? (
+                <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
+                  {valueOfPositionLongRef.current?.toLocaleString(
+                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                    FRACTION_DIGITS
+                  )}{' '}
+                  {unitAsset}
+                </div>
+              ) : (
+                <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
+                  {valueOfPositionShortRef.current?.toLocaleString(
+                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                    FRACTION_DIGITS
+                  )}{' '}
+                  {unitAsset}
+                </div>
+              )}
+            </div>
+          </div>
+          {longSetting}
+          {shortSetting}
+        </div>
+      </div>
+    </div>
+  );
+
+  const expandedButton = (
+    <div
+      className={`absolute z-20 w-320px bg-black/100 ${
+        openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
+      } transition-all duration-500 ease-in-out`}
+    >
+      <RippleButton
+        disabled={
+          (openSubMenu && marginWarningShortRef.current) ||
+          longBtnDisabledRef.current ||
+          shortBtnDisabledRef.current
+        }
+        buttonType="button"
+        className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
+          isActiveTabLong
+            ? 'bg-lightGreen5 hover:bg-lightGreen5/80'
+            : 'bg-lightRed hover:bg-lightRed/80'
+        } transition-colors duration-300 disabled:bg-lightGray`}
+        onClick={isActiveTabLong ? longSectionClickHandler : shortSectionClickHandler}
+      >
+        <b>
+          {isActiveTabLong
+            ? t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')
+            : t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}
+        </b>{' '}
+        <br />
+        <p className="text-xs">
+          ₮{' '}
+          {isActiveTabLong
+            ? Number(longPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )
+            : Number(shortPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+        </p>
+      </RippleButton>
+    </div>
+  );
+
+  const desktopLayout = (
     <div
       className={`pointer-events-none fixed right-0 top-82px z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
     >
@@ -1225,8 +1461,8 @@ const TradeTab = () => {
 
             {/* Divider between long and short */}
             {/* <span
-                className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-              ></span> */}
+              className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
+            ></span> */}
 
             {/* ---Short Section--- */}
             <div className="pb-24">
@@ -1308,6 +1544,58 @@ const TradeTab = () => {
       </div>
     </div>
   );
+
+  const mobileLayout = (
+    <>
+      <div className="relative flex items-center">
+        {/* Info: (20230725 - Julian) Expanded Button (for open position) */}
+        {expandedButton}
+        {/* Info: (20230725 - Julian) Long Button */}
+        <div className={`w-120px bg-black/100`}>
+          <RippleButton
+            disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
+            buttonType="button"
+            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
+            onClick={longSectionClickHandler}
+          >
+            <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
+            <p className="text-xs">
+              ₮{' '}
+              {Number(longPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+            </p>
+          </RippleButton>
+        </div>
+
+        {/* Info: (20230725 - Julian) Short Button */}
+        <div className={`ml-4 w-120px bg-black/100`}>
+          <RippleButton
+            disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
+            buttonType="button"
+            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
+            onClick={shortSectionClickHandler}
+          >
+            <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
+            <p className="text-xs">
+              ₮{' '}
+              {Number(shortPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+            </p>
+          </RippleButton>
+        </div>
+      </div>
+      {subMenu}
+    </>
+  );
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
+
+  return <>{displayedLayout}</>;
 };
 
 export default TradeTab;

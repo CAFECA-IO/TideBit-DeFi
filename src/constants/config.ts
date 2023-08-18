@@ -280,7 +280,7 @@ export const PRIVATE_POLICY = DOMAIN + '{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 604800;
 export const TP_SL_LIMIT_RATIO = 0;
-export const DEFAULT_TICKER = 'ETH-USDT';
+export const DEFAULT_CRYPTO = 'ETH';
 export const DEFAULT_INSTID = 'ETH-USDT';
 export const DEFAULT_CURRENCY = Currency.ETH;
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
@@ -290,4 +290,6 @@ export const INITIAL_TRADES_INTERVAL = 1000 * 60 * 15; // Info: 15 minutes in mi
 export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)
 export const ETH_NEWS_FOLDER = 'src/news/eth';
 export const BTC_NEWS_FOLDER = 'src/news/btc';
+export const USDC_NEWS_FOLDER = 'src/news/usdc';
 export const NEWS_FOLDER = './src/news';
+// export const

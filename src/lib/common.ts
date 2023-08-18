@@ -17,6 +17,7 @@ import {
   TARGET_MIN_DIGITS,
   MAX_FEE_RATE,
   MIN_FEE_RATE,
+  instIds,
 } from '../constants/config';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
@@ -27,6 +28,7 @@ import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
+import {TBDURL} from '../constants/api_request';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
 
@@ -720,3 +722,21 @@ export const toChecksumAddress = (address: string) => {
 
   return checksumAddress;
 };
+
+export function isValidURL(url: string): boolean {
+  let result = false;
+  if (Object.values(TBDURL).includes(url)) {
+    result = true;
+    return result;
+  }
+
+  for (const instId of instIds) {
+    const expectedURL = `/trade/cfd/${instId}`;
+    if (url === expectedURL) {
+      result = true;
+      return result;
+    }
+  }
+
+  return result;
+}

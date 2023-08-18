@@ -91,7 +91,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
 
     const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
-    return gapPnl !== 0 ? gapPnlFormatted : '-';
+    return gapPnl !== 0 ? `+ ${gapPnlFormatted}` : '-';
   };
 
   const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;
@@ -125,9 +125,10 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     );
 
   const isDisplayedLiveRank =
-    timeSpan === RankingInterval.LIVE ? (
+    /* Info: (20230818 - Julian) 第一名不用顯示 */
+    timeSpan === RankingInterval.LIVE && rankingNumber > 1 ? (
       <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-        <div>+ {displayedGapPnl()}</div>
+        <div>{displayedGapPnl()}</div>
         <div>
           <ImArrowUp width={20} height={26} />
         </div>

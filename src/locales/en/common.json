@@ -322,7 +322,8 @@
     "SUCCESS": "Success",
     "WARNING": "Warning",
     "INFO": "Info",
-    "PROGRESSING_MESSAGE": "is still in progress, please wait..."
+    "PROGRESSING_MESSAGE": "is still in progress, please wait...",
+    "COPY_SUCCESS": "Copied to clipboard!"
   },
   "SHARING_BOX": {
     "TYPE_UP": "Up",

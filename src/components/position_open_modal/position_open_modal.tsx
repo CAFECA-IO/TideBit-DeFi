@@ -16,6 +16,8 @@ import {
   validateCFD,
   toDisplayCFDOrder,
   toPnl,
+  roundToDecimalPlaces,
+  numberFormatted,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -324,7 +326,11 @@ const PositionOpenModal = ({
 
     const newPrice = newQuotation.price;
 
-    const newMargin = +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5);
+    const newMargin = roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5),
+      2
+    );
+
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
         ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
@@ -456,10 +462,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.price)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -517,19 +520,13 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
-              <div className="">
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
-                {t('POSITION_MODAL.LIQUIDATION_TIME')}
-              </div>
+              <div className="">{t('POSITION_MODAL.LIQUIDATION_TIME')}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.liquidationPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.liquidationPrice)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

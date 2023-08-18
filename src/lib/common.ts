@@ -273,7 +273,7 @@ export const toPnl = (data: {
   const pnlType = getProfitState(pnlValue);
   const pnl = {
     type: pnlType,
-    value: Math.abs(pnlValue),
+    value: pnlValue,
   };
   return pnl;
 };
@@ -591,9 +591,11 @@ export function getChainNameByCurrency(
   }
 }
 
-export const numberFormatted = (n: number) => {
+export const numberFormatted = (n: number | string | undefined) => {
   const result =
-    n === 0 ? '0' : Math.abs(n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    !n || n === '0'
+      ? '0'
+      : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 

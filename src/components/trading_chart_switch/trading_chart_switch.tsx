@@ -404,7 +404,7 @@ const TradingChartSwitch = ({
 
       {/* Info: (20230809 - Shirley) Switch time interval */}
       <div
-        className="hidden lg:flex rounded-sm bg-darkGray6 py-2 px-2"
+        className="hidden rounded-sm bg-darkGray6 py-2 px-2 lg:flex"
         style={{
           width: '95%',
           justifyContent: 'space-between',

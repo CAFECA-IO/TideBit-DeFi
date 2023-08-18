@@ -137,7 +137,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
 
   const personalRanking = userCtx.user?.address ? (
     isLoading ? (
-      <div className="flex items-center bg-darkGray3 px-4 py-2 md:px-8">
+      <div className="flex h-90px items-center bg-darkGray3 px-4 py-2 md:px-8">
         <div className="flex flex-1 items-center space-x-4">
           <Skeleton width={60} height={25} />
           <Skeleton width={60} height={60} circle />

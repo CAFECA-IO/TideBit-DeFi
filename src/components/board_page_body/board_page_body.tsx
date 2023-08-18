@@ -102,7 +102,7 @@ const BoardPageBody = () => {
     isTimeSpanLoading || isLoading ? <Skeleton width={300} height={25} /> : subtitle;
 
   return (
-    <div className="pt-12 md:pt-20">
+    <div className="overflow-x-clip overflow-y-visible pt-12 md:pt-20">
       <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
         <div className="min-h-screen">
           <div className="mx-auto my-10 flex w-screen flex-col items-center space-y-4">

@@ -53,7 +53,7 @@ const AuditReport = () => {
               </Link>
             </div>
 
-            <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+            <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.BALANCE_SHEET_LINK')}
@@ -72,7 +72,7 @@ const AuditReport = () => {
               </Link>
             </div>
 
-            <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+            <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}
@@ -87,9 +87,11 @@ const AuditReport = () => {
                   height={80}
                   alt="Cash Flow Statement"
                 />
-                <p className="text-xxs xs:text-xs lg:text-lg">
-                  {t('HOME_PAGE.CASH_FLOW_STATEMENT')}
-                </p>
+                <div className="flex flex-col items-center justify-center w-full">
+                  <p className="text-xxs xs:text-xs lg:text-lg text-center">
+                    {t('HOME_PAGE.CASH_FLOW_STATEMENT')}
+                  </p>
+                </div>
               </Link>
             </div>
 

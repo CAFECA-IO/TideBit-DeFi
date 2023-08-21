@@ -325,7 +325,8 @@
     "SUCCESS": "成功",
     "WARNING": "警告",
     "INFO": "訊息",
-    "PROGRESSING_MESSAGE": "處理中，請稍候..."
+    "PROGRESSING_MESSAGE": "處理中，請稍候...",
+    "COPY_SUCCESS": "已複製到剪貼簿！"
   },
   "SHARING_BOX": {
     "TYPE_UP": "看漲",

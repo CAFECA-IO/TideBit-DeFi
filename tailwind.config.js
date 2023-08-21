@@ -19,6 +19,7 @@ module.exports = {
       '3xl': ['30px', '36px'],
       '4xl': ['36px', '40px'],
       '5xl': ['48px', 1],
+      '5.5xl': ['54px', 1],
       '6xl': ['60px', 1],
       '7xl': ['72px', 1],
       '8xl': ['96px', 1],
@@ -391,6 +392,10 @@ module.exports = {
 
         lightGray5: '#D4D4D4',
         lightYellow2: '#F8E71C',
+
+        lightGreen6: '#41FEA2',
+        lightBlue: '#4DBFFF',
+        lightYellow3: '#F9C53D',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

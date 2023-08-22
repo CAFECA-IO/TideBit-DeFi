@@ -247,12 +247,14 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedCrossStyle =
     'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 
-  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
+  const displayedPnLSymbol = !marketCtx.selectedTicker?.price
     ? ''
     : pnl?.value > 0
     ? '+'
     : pnl?.value < 0
     ? '-'
+    : openPrice !== closePrice && Math.abs(pnl?.value ?? 0) === 0
+    ? '≈'
     : '';
 
   const displayedPnLValue = !!!marketCtx.selectedTicker?.price

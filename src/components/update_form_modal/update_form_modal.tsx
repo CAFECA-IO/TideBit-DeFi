@@ -200,6 +200,8 @@ const UpdateFormModal = ({
       ? '+'
       : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
       ? '-'
+      : openCfdDetails?.pnl?.value !== undefined && Math.abs(openCfdDetails?.pnl?.value) === 0
+      ? '≈'
       : '';
 
   const displayedPnLValue = !!marketCtx.selectedTicker?.price

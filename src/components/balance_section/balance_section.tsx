@@ -20,11 +20,11 @@ const BalanceSection = () => {
   const {userAssets} = userCtx;
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const avalibleBalance = userAssets?.balance.available ?? DEFAULT_BALANCE.available;
+  const availableBalance = userAssets?.balance.available ?? DEFAULT_BALANCE.available;
   const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE.locked;
-  const totalBalance = SafeMath.plus(avalibleBalance, lockedBalance);
+  const totalBalance = SafeMath.plus(availableBalance, lockedBalance);
 
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(true);
 
   const circleSize = '380';
   const eyeIconSize = 30;
@@ -75,7 +75,7 @@ const BalanceSection = () => {
 
   const displayedAvalibleBalance = hidden
     ? '*****'
-    : avalibleBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : availableBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedLockedBalance = hidden
     ? '*****'
@@ -97,7 +97,7 @@ const BalanceSection = () => {
         <div className="relative pt-20 text-center">
           <CircularProgressBar
             progressBarColor={['#29C1E1']}
-            numerator={avalibleBalance}
+            numerator={availableBalance}
             denominator={totalBalance}
             hollowSize="85%"
             circularBarSize={circleSize}

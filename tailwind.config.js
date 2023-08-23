@@ -328,6 +328,7 @@ module.exports = {
         '3/5': '60%',
       },
       borderRadius: {
+        '10px': '10px',
         '12px': '12px',
       },
       rotate: {

@@ -88,6 +88,7 @@ const TickerSelectorBox = ({
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
   const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setAvailableTickers(marketCtx.listAvailableTickers());
@@ -225,6 +226,13 @@ const TickerSelectorBox = ({
 
   const displayedCryptoCards = activeTab === 'All' ? displayedAllCryptoCards : displayedFavorites;
 
+  const dropdownMenuClickHandler = () => setMenuOpen(!menuOpen);
+
+  const dropdownMenuText =
+    activeTab === 'All'
+      ? t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')
+      : t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE');
+
   const tabPart = (
     <>
       <div className="z-10 hidden w-90vw max-w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
@@ -252,6 +260,52 @@ const TickerSelectorBox = ({
         )}
 
         {/* Other tabs */}
+      </div>
+    </>
+  );
+
+  const tabPartMobile = (
+    <>
+      <div
+        onClick={dropdownMenuClickHandler}
+        className="mt-10 flex h-48px flex-col rounded-lg bg-darkGray8 text-base font-medium text-lightWhite"
+      >
+        <button className="flex w-full items-center justify-between px-5 py-3 text-left">
+          {dropdownMenuText}
+
+          <div
+            className={`h-10px w-10px border-b-2 border-r-2 border-lightWhite transition-all duration-200 ${
+              menuOpen ? '-rotate-45' : 'rotate-45'
+            }`}
+          ></div>
+        </button>
+
+        <div
+          className={`z-60 flex w-full flex-col bg-darkGray8 shadow-lg shadow-black/30 transition-all duration-200 ${
+            menuOpen ? 'overflow-visible opacity-100' : 'overflow-hidden opacity-0'
+          }`}
+        >
+          <button
+            type="button"
+            className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
+            onClick={allTabClickHandler}
+          >
+            {t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')}
+          </button>
+
+          {userCtx.enableServiceTerm ? (
+            <button
+              type="button"
+              onClick={favoriteTabClickHandler}
+              className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
+            >
+              {t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')}
+            </button>
+          ) : (
+            <></>
+          )}
+          {/* Info: (20230427 - Julian) Other tabs */}
+        </div>
       </div>
     </>
   );
@@ -335,7 +389,7 @@ const TickerSelectorBox = ({
             {/* Info: (20230427 - Julian) ----- body ----- */}
 
             {/* Info: (20230427 - Julian) tab section */}
-            <div className="w-full">{tabPart}</div>
+            <div className="w-full">{tabPartMobile}</div>
 
             <div className="relative mt-10 flex w-full">
               <input
@@ -355,8 +409,8 @@ const TickerSelectorBox = ({
             </div>
 
             {/* Info: (20230427 - Julian) Card section */}
-            <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-start sm:h-3/4">
-              <div className="mb-5 mr-4 grid h-full auto-rows-min grid-cols-2 space-y-4 space-x-4 overflow-y-auto overflow-x-hidden md:grid-cols-3">
+            <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-center md:justify-start sm:h-3/4">
+              <div className="mb-5 mr-2 grid h-full auto-rows-min grid-cols-2 space-y-4 space-x-2 md:space-x-4 overflow-y-auto overflow-x-hidden md:grid-cols-3">
                 {displayedCryptoCards}
               </div>
             </div>

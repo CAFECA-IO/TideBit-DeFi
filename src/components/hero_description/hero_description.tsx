@@ -120,11 +120,6 @@ export default function HeroDescription() {
           <AppDowloadContainer />
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="">
-        <Footer />
-      </div>
     </div>
   );
 }

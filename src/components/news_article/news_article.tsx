@@ -57,7 +57,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
     );
 
   return (
-    <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
+    <div className="w-full flex flex-col bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
       <div className="ml-5 h-10 w-6 pt-24 pb-14 transition-all duration-200 hover:opacity-70 lg:hidden">
         <Link href="/news">
           <BiArrowBack size={25} />
@@ -65,17 +65,20 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
       </div>
 
       <div className="flex w-full justify-center lg:pt-36">
-        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 lg:-ml-10 lg:mr-20 lg:flex">
+        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 -ml-0 mr-0 lg:-ml-10 lg:mr-20 lg:flex">
           <Link href="/news">
             <BiArrowBack size={25} />
           </Link>
         </div>
-        <div className="w-full px-5 md:w-90vw lg:w-80vw xl:w-70vw">
+
+        <div className="px-1 w-90vw md:w-80vw lg:w-70vw">
           <Image
             src={img}
-            style={{objectFit: 'cover'}}
-            width={NEWS_IMG_WIDTH}
-            height={NEWS_IMG_HEIGHT}
+            // fill={true}
+            style={{width: '100%', height: 'auto'}}
+            sizes="80vw"
+            width={0}
+            height={0}
             alt="image"
           />
           <div className="my-8 flex justify-between">
@@ -84,7 +87,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
             <p className="mt-2 text-xs text-lightGray lg:text-sm">{displayedDate}</p>
           </div>
 
-          <div className="prose mt-5 max-w-none leading-10 tracking-normal">
+          <div className="prose mt-5 leading-10 tracking-normal text-ellipsis overflow-hidden">
             <article dangerouslySetInnerHTML={{__html: parsedBody}} />
           </div>
 
@@ -108,7 +111,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
       </div>
       {recommendations && recommendations?.length > 0 ? (
         <>
-          <div className="mx-10 border-b border-dashed border-white/50"></div>
+          <div className="lg:mx-10 border-b border-dashed border-white/50"></div>
 
           <div className="md:mx-20">
             <div className="mx-5 my-10 text-base text-lightGray md:mx-0">

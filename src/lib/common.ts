@@ -40,7 +40,7 @@ interface IValidateInput {
 }
 
 export const roundToDecimalPlaces = (number: number, decimal: number): number => {
-  return Math.ceil((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+  return Math.floor((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
 };
 
 export function randomIntFromInterval(min: number, max: number) {

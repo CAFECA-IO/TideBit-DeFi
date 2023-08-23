@@ -243,7 +243,10 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedCrossColor =
     pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
-      : 'hover:before:bg-lightRed hover:after:bg-lightRed';
+      : pnl?.value < 0
+      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
+
   const displayedCrossStyle =
     'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 

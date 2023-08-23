@@ -204,6 +204,7 @@ export const TypeOfPnLColorHex = {
 export const TypeOfPnLColor = {
   PROFIT: 'text-lightGreen5',
   LOSS: 'text-lightRed',
+  // EQUAL: 'text-lightGreen5',
   EQUAL: 'text-lightWhite',
 };
 

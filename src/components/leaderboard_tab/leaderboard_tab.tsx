@@ -12,14 +12,13 @@ import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
-type TranslateFunction = (s: string) => string;
-
-type LeaderboardTabProps = {
+interface LeaderboardTabProps {
   timeSpan: IRankingTimeSpan;
   setTimeSpan: Dispatch<SetStateAction<IRankingTimeSpan>>;
   rankings: IRanking[];
-};
+}
 
 const MIN_SCREEN_WIDTH = 1024;
 const DEFAULT_PODIUM_WIDTH = 960;

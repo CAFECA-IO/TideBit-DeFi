@@ -12,7 +12,6 @@ import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
-import {ProfitState} from '../../constants/profit_state';
 
 type TranslateFunction = (s: string) => string;
 

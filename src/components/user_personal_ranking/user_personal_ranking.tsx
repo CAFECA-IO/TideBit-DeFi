@@ -85,9 +85,9 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     const gapPnl =
       // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
       previousPnl.type === myPnl.type
-        ? Math.abs(previousPnl.value - myPnl.value)
-        : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
-          Math.abs(previousPnl.value + myPnl.value);
+        ? Math.abs(+previousPnl.value - +myPnl.value)
+        : // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
+          Math.abs(+previousPnl.value + +myPnl.value);
 
     const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 

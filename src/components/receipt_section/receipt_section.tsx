@@ -7,7 +7,7 @@ import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
 import {FiChevronDown} from 'react-icons/fi';
-import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {SKELETON_DISPLAY_TIME, DEFAULT_RECEIPTS_SHOW_ROW} from '../../constants/display';
 import Skeleton from 'react-loading-skeleton';
 import {
   ICFDOrder,
@@ -37,15 +37,15 @@ const ReceiptSection = () => {
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Info: (20230829 - Julian) 用於顯示的 receipts
   const [sliceReceipts, setSliceReceipts] = useState<IAcceptedOrder[]>([]);
-
   // Info: (20230829 - Julian) receipts 顯示行數
-  const [showRow, setShowRow] = useState(10);
+  const [showRow, setShowRow] = useState(DEFAULT_RECEIPTS_SHOW_ROW);
   // Info: (20230829 - Julian) 是否顯示 See more 按鈕
   const [isShowMore, setIsShowMore] = useState(true);
 
-  // Info: (20230829 - Julian) 每次增加 10 行
-  const seeMoreHandler = () => setShowRow(showRow + 10);
+  // Info: (20230829 - Julian) 增加顯示行數
+  const seeMoreHandler = () => setShowRow(showRow + DEFAULT_RECEIPTS_SHOW_ROW);
 
   let timer: NodeJS.Timeout;
 
@@ -82,7 +82,7 @@ const ReceiptSection = () => {
 
   useEffect(() => {
     // Info: (20230829 - Julian) 每次搜尋都重置 showRow
-    setShowRow(10);
+    setShowRow(DEFAULT_RECEIPTS_SHOW_ROW);
 
     const searchResult = receipts
       .filter(v => {
@@ -253,7 +253,7 @@ const ReceiptSection = () => {
           onClick={seeMoreHandler}
           className={`${
             isShowMore ? 'flex' : 'hidden'
-          } items-center justify-center space-x-2 text-base uppercase text-tidebitTheme`}
+          } mb-2 items-center justify-center space-x-2 text-base uppercase text-tidebitTheme`}
         >
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEE_MORE')}</p>
           <FiChevronDown className="text-xl" />

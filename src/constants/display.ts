@@ -3,7 +3,6 @@
 // };
 
 import {Badges} from './badges';
-import {Currency} from './currency';
 
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';
@@ -289,3 +288,4 @@ export const NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH = 400;
 export const TYPING_KEYUP_DELAY = 5000;
 export const NEWS_AMOUNT_ON_TRADE_PAGE = 3;
 export const DEFAULT_ICON = '/asset_icon/eth.svg';
+export const DEFAULT_RECEIPTS_SHOW_ROW = 10;

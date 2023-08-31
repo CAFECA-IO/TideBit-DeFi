@@ -13,7 +13,7 @@ const NewsItem = ({
   img,
   ...otherProps
 }: IRecommendedNews) => {
-  const overallWidth = 'mx-20';
+  const overallWidth = 'mx-10 lg:mx-20';
 
   const displayedHeading = <div className="">{title}</div>;
 

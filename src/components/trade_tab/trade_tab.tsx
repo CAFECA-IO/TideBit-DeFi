@@ -877,8 +877,8 @@ const TradeTab = () => {
   const displayedExpectedLongProfit = (
     <div
       className={`${
-        longTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
-      } -mt-5 items-center transition-all`}
+        longTpToggle ? `translate-y-2` : `invisible translate-y-0`
+      } transition-all duration-150 ease-in-out`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
@@ -914,8 +914,8 @@ const TradeTab = () => {
   const displayedExpectedLongLoss = (
     <div
       className={`${
-        longSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
-      } -mt-0 items-center transition-all`}
+        longSlToggle ? `translate-y-2` : `invisible translate-y-0`
+      } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedLongLossValueRef.current.symbol} ${' '}
@@ -928,11 +928,10 @@ const TradeTab = () => {
   );
 
   const longGuaranteedStop = (
-    // <div className={`${isDisplayedLongSlSetting} mt-0 h-14 items-center`}>
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mb-10 mt-0 flex items-center transition-all`}
+      } flex items-center transition-all duration-150 ease-in-out`}
     >
       <input
         type="checkbox"
@@ -1020,9 +1019,7 @@ const TradeTab = () => {
 
   const displayedExpectedShortProfit = (
     <div
-      className={`${
-        shortTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
-      } -mt-5 items-center transition-all`}
+      className={`${shortTpToggle ? `translate-y-2` : `invisible translate-y-0`} transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
@@ -1058,8 +1055,8 @@ const TradeTab = () => {
   const displayedExpectedShortLoss = (
     <div
       className={`${
-        shortSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
-      } -mt-0 items-center transition-all`}
+        shortSlToggle ? `translate-y-2` : `invisible translate-y-0`
+      } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedShortLossValueRef.current.symbol} ${' '}
@@ -1179,7 +1176,7 @@ const TradeTab = () => {
     <div
       className={`${
         isActiveTabLong ? 'flex' : 'hidden'
-      } w-full flex-col items-center justify-center space-y-5`}
+      } w-full flex-col items-center justify-center space-y-2`}
     >
       {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
@@ -1188,11 +1185,11 @@ const TradeTab = () => {
           {displayedLongTpSetting}
           <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
         </div>
-        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedLongProfit}</div>
+        <div className="mb-3 w-full">{displayedExpectedLongProfit}</div>
       </div>
 
       {/* Info: (20230725 - Julian) Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center space-y-5">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedLongSlSetting}
@@ -1210,7 +1207,7 @@ const TradeTab = () => {
     <div
       className={`${
         isActiveTabLong ? 'hidden' : 'flex'
-      } w-full flex-col items-center justify-center space-y-5`}
+      } w-full flex-col items-center justify-center space-y-2`}
     >
       {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
@@ -1219,11 +1216,11 @@ const TradeTab = () => {
           {displayedShortTpSetting}
           <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
         </div>
-        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedShortProfit}</div>
+        <div className="mb-3 w-full">{displayedExpectedShortProfit}</div>
       </div>
 
       {/* Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center space-y-5">
+      <div className="flex w-full flex-col items-center space-y-2">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedShortSlSetting}
@@ -1239,17 +1236,17 @@ const TradeTab = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
+      className={`flex h-screen w-screen flex-col items-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-36 transition-all duration-150`}
     >
-      <div className="flex self-end px-30px py-20px">
+      <div className="flex self-end px-30px pt-4">
         <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 
       {/* Info: (20230725 - Julian) ---------- margin setting ---------- */}
-      <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
-        <div className="flex flex-col items-center justify-between space-y-7">
+      <div className="w-screen flex-1 overflow-hidden px-8 sm:w-1/2">
+        <div className="flex flex-col items-center justify-between space-y-4">
           <div className="flex w-full items-center justify-center">
             <UserOverview
               depositAvailable={userCtx.userAssets?.balance?.available ?? 0}

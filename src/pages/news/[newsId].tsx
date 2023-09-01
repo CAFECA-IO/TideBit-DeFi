@@ -82,8 +82,8 @@ const NewsPage = (props: IPageProps) => {
       {appCtx.isInit ? (
         <>
           <nav className="">{displayedNavBar}</nav>
-          <main className="">
-            <div>
+          <main className="w-full">
+            <div className="w-full">
               <NewsArticle
                 post={props.newsData}
                 shareId={props.newsId}
@@ -91,8 +91,12 @@ const NewsPage = (props: IPageProps) => {
                 recommendations={props.brief}
               />
             </div>
-            <Footer />
           </main>
+
+          <div className="w-full mx-0">
+            {' '}
+            <Footer />
+          </div>
         </>
       ) : (
         <div>Loading...</div>

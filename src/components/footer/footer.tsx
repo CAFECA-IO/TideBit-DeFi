@@ -176,8 +176,8 @@ const Footer = () => {
       </div>
 
       {/* Info: (20230328 - Julian) Mobile */}
-      <div className={`${mobileVersionBreakpoint}`}>
-        <footer className="mx-auto w-screen justify-center bg-darkGray text-base">
+      <div className={`${mobileVersionBreakpoint} w-full`}>
+        <footer className="mx-0 lg:mx-auto w-full justify-center bg-darkGray text-base">
           <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
             {/* Info: (20230328 - Julian) LOGO & Social media */}
             <div className="mx-auto w-full shrink-0 text-center">

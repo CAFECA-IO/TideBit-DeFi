@@ -307,7 +307,8 @@
     "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "Processing",
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "Failed",
     "RECEIPT_SECTION_FEE": "Fee",
-    "RECEIPT_SECTION_AVAILABLE": "Available"
+    "RECEIPT_SECTION_AVAILABLE": "Available",
+    "RECEIPT_SECTION_SEE_MORE": "See more"
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "Oops! Page can not be found."

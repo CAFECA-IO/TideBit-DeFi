@@ -66,12 +66,10 @@ const Cta = () => {
 
       {/* Info: Mobile version (width < 1024 px) (20230628 - Shirley) */}
       <div className="w-full lg:hidden">
-        <div className="mb-10 flex justify-center">
+        <div className="mb-20 flex flex-col justify-center items-center">
           <Image src="/elements/nav_logo.svg" height={50} width={150} alt="TideBit_logo" />
+          <p className="-mt-2 ml-90px text-center text-xs text-lightGray">v {version}</p>
         </div>
-        <p className="-mt-20 mb-20 flex justify-end pr-1/11 text-end text-xs text-lightGray">
-          v {version}
-        </p>
       </div>
 
       <section className="mb-1/10 flex flex-col items-center justify-center lg:hidden">

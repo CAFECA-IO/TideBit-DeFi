@@ -40,7 +40,7 @@ interface IValidateInput {
 }
 
 export const roundToDecimalPlaces = (number: number, decimal: number): number => {
-  return Math.ceil((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+  return Math.floor((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -624,10 +624,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {

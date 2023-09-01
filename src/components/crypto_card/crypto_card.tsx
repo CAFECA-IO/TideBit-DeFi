@@ -279,7 +279,7 @@ const CryptoCard = ({
 
       {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
-        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
+        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-10px border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();

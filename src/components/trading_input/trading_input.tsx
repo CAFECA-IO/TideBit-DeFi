@@ -207,9 +207,7 @@ const TradingInput = ({
   return (
     <>
       {' '}
-      {/* ---margin input area--- */}
       <div className="flex items-center justify-center">
-        {/* '-.svg' symbol */}
         <button type="button" onClick={decrementClickHandler}>
           <svg
             id="Group_15147"
@@ -241,7 +239,7 @@ const TradingInput = ({
         <div className="">
           <input
             type="number"
-            className={`${inputSize} bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
+            className={`${inputSize} rounded-none bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
             disabled={
               disabledStateRef.current ||
               (Number(inputValueRef.current) === upperLimit &&
@@ -256,7 +254,6 @@ const TradingInput = ({
           />
         </div>
 
-        {/* '+.svg' symbol */}
         <button type="button" onClick={incrementClickHandler} className="">
           <svg
             id="Group_15149"

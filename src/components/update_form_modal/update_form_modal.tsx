@@ -200,6 +200,8 @@ const UpdateFormModal = ({
       ? '+'
       : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
       ? '-'
+      : openCfdDetails?.pnl?.value !== undefined && Math.abs(openCfdDetails?.pnl?.value) === 0
+      ? '≈'
       : '';
 
   const displayedPnLValue = !!marketCtx.selectedTicker?.price
@@ -232,7 +234,7 @@ const UpdateFormModal = ({
       : openCfdDetails?.pnl?.value < 0
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL
-    : TypeOfPnLColor.EQUAL;
+    : TypeOfBorderColor.EQUAL;
 
   const displayedColorHex = !!openCfdDetails?.pnl?.value
     ? openCfdDetails?.pnl?.value > 0
@@ -240,12 +242,14 @@ const UpdateFormModal = ({
       : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL
-    : TypeOfPnLColor.EQUAL;
+    : TypeOfPnLColorHex.EQUAL;
 
   const displayedCrossColor =
     !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
-      : 'hover:before:bg-lightRed hover:after:bg-lightRed';
+      : !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value < 0
+      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
 
   const displayedCrossStyle =
     'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';

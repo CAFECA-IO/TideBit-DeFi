@@ -8,6 +8,7 @@ import {AppContext} from '../contexts/app_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';
 import {LayoutAssertion} from '../constants/layout_assertion';
+import Footer from '../components/footer/footer';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();
@@ -32,6 +33,8 @@ const Home = () => {
       <main>
         <HeroDescription />
       </main>
+
+      <Footer />
     </>
   ) : (
     <div>Loading...</div>

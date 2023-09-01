@@ -55,6 +55,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
+import {open} from 'fs/promises';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -103,11 +104,16 @@ const PositionClosedModal = ({
 
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
-  const displayedPnLSymbol = !!openCfdDetails.pnl
-    ? openCfdDetails?.pnl?.value > 0
+  const displayedPnLSymbol = !!openCfdDetails.pnl?.value
+    ? (openCfdDetails.pnl as IPnL).value > 0
       ? '+'
-      : openCfdDetails?.pnl?.value < 0
+      : (openCfdDetails.pnl as IPnL).value < 0
       ? '-'
+      : ''
+    : openCfdDetails.pnl !== undefined && Math.abs((openCfdDetails.pnl as IPnL).value) === 0
+    ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
+      openCfdDetails.openPrice !== gQuotationRef.current.price
+      ? '≈'
       : ''
     : '';
 
@@ -346,9 +352,6 @@ const PositionClosedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
-        // Deprecated: (20230802 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('history right after closing', historyData);
         globalCtx.dataHistoryPositionModalHandler(historyData);
         globalCtx.visibleHistoryPositionModalHandler();
       } else if (

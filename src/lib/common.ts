@@ -53,7 +53,7 @@ export const roundToDecimalPlaces = (
 
   if (condition) {
     if (SafeMath.lt(number, 0)) {
-      return (Math.floor((Math.abs(number) + Number.EPSILON) * factor) / factor) * -1;
+      return (Math.ceil((Math.abs(number) + Number.EPSILON) * factor) / factor) * -1;
     } else if (SafeMath.gt(number, 0)) {
       return Math.floor((number + Number.EPSILON) * factor) / factor;
     }

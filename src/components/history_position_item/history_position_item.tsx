@@ -28,7 +28,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   const closeValue = roundToDecimalPlaces(
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
-    2
+    2,
+    true
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl =

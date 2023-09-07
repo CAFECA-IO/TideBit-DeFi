@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {useGlobal} from '../../contexts/global_context';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 

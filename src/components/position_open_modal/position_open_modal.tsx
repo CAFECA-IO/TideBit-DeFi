@@ -29,12 +29,12 @@ import {
   CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   FRACTION_DIGITS,
-  LIQUIDATION_FIVE_LEVERAGE,
+  LIQUIDATION_PERCENTAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {
   defaultResultSuccess,
   defaultResultFailed,
@@ -333,8 +333,8 @@ const PositionOpenModal = ({
 
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
-        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE));
+        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE))
+        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE));
     const gslFee = +SafeMath.mult(gsl ?? 0, SafeMath.mult(openCfdRequest.amount, newPrice));
 
     globalCtx.dataPositionOpenModalHandler({

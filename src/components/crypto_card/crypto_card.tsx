@@ -9,7 +9,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 

@@ -8,7 +8,7 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {numberFormatted, timestampToString, accountTruncate} from '../../lib/common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {
   IPersonalAchievement,
   defaultPersonalAchievement,

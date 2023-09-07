@@ -12,12 +12,12 @@ import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {numberFormatted, timestampToString, toPnl} from '../../lib/common';
+import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {ToastTypeAndText} from '../../constants/toast_type';
@@ -314,7 +314,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
-            $ {openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+            $ {numberFormatted(roundToDecimalPlaces(openValue, 2, true))}
           </div>
         </div>
 

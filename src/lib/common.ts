@@ -29,6 +29,7 @@ import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
 import {TBDURL} from '../constants/api_request';
+import SafeMath from './safe_math';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
 
@@ -39,8 +40,26 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
-export const roundToDecimalPlaces = (number: number, decimal: number): number => {
-  return Math.floor((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+export const roundToDecimalPlaces = (
+  number: number,
+  decimal: number,
+  condition = false
+): number => {
+  const factor = Math.pow(10, decimal);
+
+  if (SafeMath.eq(number, 0)) {
+    return Number(`0.${'0'.repeat(decimal)}`);
+  }
+
+  if (condition) {
+    if (SafeMath.lt(number, 0)) {
+      return (Math.floor((Math.abs(number) + Number.EPSILON) * factor) / factor) * -1;
+    } else if (SafeMath.gt(number, 0)) {
+      return Math.floor((number + Number.EPSILON) * factor) / factor;
+    }
+  }
+
+  return Math.ceil((number + Number.EPSILON) * factor) / factor;
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -268,7 +287,8 @@ export const toPnl = (data: {
     (data.closePrice - data.openPrice) *
       data.amount *
       (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
-    2
+    2,
+    true
   );
   const pnlType = getProfitState(pnlValue);
   const pnl = {
@@ -279,7 +299,7 @@ export const toPnl = (data: {
 };
 
 export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
-  const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
+  const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2, true);
   /** Deprecated: (20230608 - tzuhan)
   const spreadValue = spread ? spread : 0;
   const closeValue =

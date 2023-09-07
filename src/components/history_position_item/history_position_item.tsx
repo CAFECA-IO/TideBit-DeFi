@@ -7,7 +7,7 @@ import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import SafeMath from '../../lib/safe_math';
 

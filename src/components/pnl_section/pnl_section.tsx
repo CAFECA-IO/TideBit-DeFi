@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {UserContext} from '../../contexts/user_context';
 import {numberFormatted} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';

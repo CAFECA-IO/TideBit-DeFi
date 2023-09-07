@@ -6,7 +6,7 @@ import {IBadgeModal} from '../../contexts/global_context';
 import {BADGE_LIST} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {ShareSettings, SocialMediaConstant} from '../../constants/social_media';

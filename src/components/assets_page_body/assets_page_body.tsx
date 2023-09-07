@@ -10,7 +10,7 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 // import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 */
 import Footer from '../footer/footer';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import {Code} from '../../constants/code';
 

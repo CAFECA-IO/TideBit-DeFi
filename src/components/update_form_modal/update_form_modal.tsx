@@ -35,7 +35,7 @@ import {
   TP_SL_LIMIT_RATIO,
 } from '../../constants/config';
 import useStateRef from 'react-usestateref';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
@@ -146,9 +146,11 @@ const UpdateFormModal = ({
     >
       <div className="text-xs text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedProfitValueRef.current.number),
+          2,
+          true
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>

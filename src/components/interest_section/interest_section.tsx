@@ -5,7 +5,7 @@ import {DEFAULT_INTEREST_RATE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../const
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 
 type TranslateFunction = (s: string) => string;

@@ -14,7 +14,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
 const ReceiptSection = () => {

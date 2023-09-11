@@ -11,7 +11,7 @@ import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '.
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {UserContext} from '../../contexts/user_context';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
@@ -57,7 +57,8 @@ const HistoryPositionModal = ({
 
   const closeValue = roundToDecimalPlaces(
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
-    2
+    2,
+    true
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl =

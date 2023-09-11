@@ -4,7 +4,7 @@ import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
 import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 const CryptoCategory = ({...otherProps}) => {

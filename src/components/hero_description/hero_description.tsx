@@ -10,7 +10,7 @@ import HeroReverse from '../hero_reverse/hero_reverse';
 import HeroReverse1 from '../hero_reverse1/hero_reverse1';
 import StatisticBlock from '../statistic/statistic';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import AuditReport from '../audit_report/audit_report';
 

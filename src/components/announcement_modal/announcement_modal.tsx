@@ -4,7 +4,7 @@ import {IAnnouncementModal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {ImCross} from 'react-icons/im';
 import {MessageType} from '../../constants/message_type';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 

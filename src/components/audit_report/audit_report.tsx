@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {BiLinkAlt} from 'react-icons/bi';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 const AuditReport = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');

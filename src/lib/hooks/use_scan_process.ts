@@ -2,7 +2,7 @@ import {useContext, useState} from 'react';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {wait} from '../common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 

@@ -6,7 +6,7 @@ import {INotificationItem} from '../../interfaces/tidebit_defi_background/notifi
 import {timestampToString} from '../../lib/common';
 import {MessageType} from '../../constants/message_type';
 import {NotificationLevel} from '../../constants/notification_level';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 

@@ -10,7 +10,7 @@ import {
 import Image from 'next/image';
 import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {findCodeByReason, locker, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';

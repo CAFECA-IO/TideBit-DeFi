@@ -2,7 +2,7 @@ import Lottie from 'lottie-react';
 import failedAnimation from '../../../public/animation/Lottie_Main_Comp.json';
 import RippleButton from '../ripple_button/ripple_button';
 import {ImCross} from 'react-icons/im';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 

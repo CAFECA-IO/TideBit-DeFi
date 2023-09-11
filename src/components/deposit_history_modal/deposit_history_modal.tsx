@@ -8,7 +8,7 @@ import {OrderStatusUnion} from '../../constants/order_status_union';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {timestampToString} from '../../lib/common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {ToastId} from '../../constants/toast_id';
 import {ToastTypeAndText} from '../../constants/toast_type';

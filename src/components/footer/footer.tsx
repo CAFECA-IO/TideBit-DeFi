@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {TBDURL} from '../../constants/api_request';
 import {COPYRIGHT} from '../../constants/config';
 import {useRouter} from 'next/router';

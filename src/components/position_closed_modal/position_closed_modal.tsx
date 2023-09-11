@@ -37,7 +37,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
@@ -197,7 +197,7 @@ const PositionClosedModal = ({
     const closePrice = quotation.price;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
+    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2, true);
 
     const pnl: IPnL =
       cfd?.pnl ||

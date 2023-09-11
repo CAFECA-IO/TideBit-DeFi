@@ -70,7 +70,7 @@ import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {freemem} from 'os';
 import {normalize} from 'path';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {create} from 'domain';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 

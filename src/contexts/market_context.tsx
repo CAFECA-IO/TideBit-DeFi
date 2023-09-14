@@ -655,7 +655,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const dummy = dummyWebsiteReserve;
         setWebsiteReserve(dummy);
 
-        // Deprecate: error handle (Tzuhan - 20230321)
+        // Deprecate: error handle (Shirley - 20230914)
         // eslint-disable-next-line no-console
         console.error(`getWebsiteReserve invalid data interface`);
       } else {

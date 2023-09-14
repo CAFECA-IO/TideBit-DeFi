@@ -46,6 +46,7 @@ import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
+  isIWebsiteReserve,
 } from '../interfaces/tidebit_defi_background/website_reserve';
 import {
   INews,
@@ -58,6 +59,11 @@ import {
 } from '../interfaces/tidebit_defi_background/news';
 import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestick';
 import SafeMath from '../lib/safe_math';
+import {useGlobal} from './global_context';
+import {ToastTypeAndText} from '../constants/toast_type';
+import {ToastId} from '../constants/toast_id';
+import {useTranslation} from 'react-i18next';
+import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -184,6 +190,9 @@ export const MarketContext = createContext<IMarketContext>({
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+  const globalCtx = useGlobal();
+
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
@@ -642,7 +651,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
     if (result.success) {
-      setWebsiteReserve(result.data as IWebsiteReserve);
+      if (!isIWebsiteReserve(result.data)) {
+        const dummy = dummyWebsiteReserve;
+        setWebsiteReserve(dummy);
+
+        // Deprecate: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`getWebsiteReserve invalid data interface`);
+      } else {
+        setWebsiteReserve(result.data as IWebsiteReserve);
+      }
     }
     return result;
   }, []);

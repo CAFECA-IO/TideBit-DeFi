@@ -19,8 +19,10 @@ const ReserveRatio = () => {
   // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
   const usdtUserHolding = websiteReserve.usersHolding;
   const usdtReserve = websiteReserve.tidebitReserve;
+
   const ethUserHolding = websiteReserve.usersHolding;
   const ethReserve = websiteReserve.tidebitReserve;
+
   const btcUserHolding = websiteReserve.usersHolding;
   const btcReserve = websiteReserve.tidebitReserve;
 

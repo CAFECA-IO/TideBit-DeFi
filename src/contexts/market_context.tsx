@@ -651,8 +651,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
     if (result.success) {
-      if (!isIWebsiteReserve(result.data)) {
-        const dummy = dummyWebsiteReserve;
+      // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
+      const valid = isIWebsiteReserve(result.data);
+      if (!valid) {
+        const dummy = {...dummyWebsiteReserve};
         setWebsiteReserve(dummy);
 
         // Deprecate: error handle (Shirley - 20230914)

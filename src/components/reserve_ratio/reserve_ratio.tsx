@@ -8,33 +8,23 @@ import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale
 import Link from 'next/link';
 import ReserveCard from '../reserve_card/reserve_card';
 import {FiDownload} from 'react-icons/fi';
+import {useGlobal} from '../../contexts/global_context';
+import {ToastTypeAndText} from '../../constants/toast_type';
 
 const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const {websiteReserve} = useContext(MarketContext);
 
-  const usdtUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
-    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.usersHolding;
-  const usdtReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
-    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.tidebitReserve;
+  // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
+  const usdtUserHolding = websiteReserve.usersHolding;
+  const usdtReserve = websiteReserve.tidebitReserve;
 
-  // TODO: ETH reserve ratio from context (20230619 - Shirley)
-  const ethUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
-    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.usersHolding;
-  const ethReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
-    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.tidebitReserve;
+  const ethUserHolding = websiteReserve.usersHolding;
+  const ethReserve = websiteReserve.tidebitReserve;
 
-  // TODO: BTC reserve ratio from context (20230619 - Shirley)
-  const btcUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
-    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.usersHolding;
-  const btcReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
-    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : websiteReserve.tidebitReserve;
+  const btcUserHolding = websiteReserve.usersHolding;
+  const btcReserve = websiteReserve.tidebitReserve;
 
   const mobileCardLayout =
     'mx-auto flex w-full flex-col items-center justify-center bg-center pb-40 lg:flex-row';

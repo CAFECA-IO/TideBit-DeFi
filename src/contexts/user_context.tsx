@@ -823,7 +823,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('error in updateBalance in ctx', error);
-        throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
+        throw new CustomError(Code.FAIL_TO_UPDATE_BALANCE);
       }
     }
   }, []);
@@ -846,8 +846,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         );
         if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-        if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        if (!applyCreateCFDOrder) throw new CustomError(Code.INVALID_ORDER_INPUTS);
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+        // TODO: check if avbl balance enough for gsl fee (20230915 - Shirley)
         if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
           throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
@@ -889,7 +890,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         };
         const index = openCFDsRef.current.findIndex(cfd => cfd.id === CFDOrder.id);
         if (index === -1) setOpenedCFDs(prev => [...prev, CFDOrder]);
-        result.code = Code.FAILE_TO_UPDATE_BALANCE;
+        result.code = Code.FAIL_TO_UPDATE_BALANCE;
         updateBalance(balanceSnapshot);
         result.code = Code.SUCCESS;
         result = {
@@ -962,7 +963,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       let result: IResult;
       try {
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-        if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        if (!applyCloseCFDOrder) throw new CustomError(Code.INVALID_ORDER_INPUTS);
         const closeAppliedCFD = getCFD(applyCloseCFDOrder.referenceId);
         if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
         if (closeAppliedCFD.state !== OrderState.OPENING)
@@ -1081,11 +1082,14 @@ export const UserProvider = ({children}: IUserProvider) => {
       let result: IResult;
       try {
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-        if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        if (!applyUpdateCFDOrder) throw new CustomError(Code.INVALID_ORDER_INPUTS);
         const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
         if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
         if (updateAppliedCFD.state !== OrderState.OPENING)
           throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
+
+        // TODO: check if avbl balance enough for gsl fee (20230915 - Shirley)
+
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
         if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
         // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)

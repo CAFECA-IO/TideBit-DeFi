@@ -615,7 +615,11 @@ export const numberFormatted = (n: number | string | undefined) => {
   const result =
     !n || n === '0'
       ? '0'
-      : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        );
+  // : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 

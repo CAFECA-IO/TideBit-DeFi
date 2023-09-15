@@ -434,6 +434,7 @@ const PositionClosedModal = ({
   // Info: Get quotation before the modal is shown (20230329 - Shirley)
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) return;
+
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
@@ -574,7 +575,7 @@ const PositionClosedModal = ({
               <div className={`${layoutInsideBorder}`}>
                 <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
                 <div className={`${TypeOfPnLColor.LOSS}`}>
-                  {`- $ ${roundToDecimalPlaces(openCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+                  {`- $ ${numberFormatted(openCfdDetails?.guaranteedStopFee)}`}
                 </div>
               </div>
             )}

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {
+  DEFAULT_USER_BALANCE,
   TypeOfBorderColor,
   TypeOfPnLColor,
   TypeOfPnLColorHex,
@@ -47,6 +48,7 @@ import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
+import {UserContext} from '../../contexts/user_context';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -65,6 +67,7 @@ const UpdateFormModal = ({
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
@@ -72,6 +75,7 @@ const UpdateFormModal = ({
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
   const gsl = marketCtx.guaranteedStopFeePercentage;
+  const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const initialTpInput = cfdTp ?? openCfdDetails?.suggestion?.takeProfit;
   const initialSlInput = cfdSl ?? openCfdDetails?.suggestion?.takeProfit;
@@ -85,7 +89,7 @@ const UpdateFormModal = ({
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedCheckedRef] = useState(
     openCfdDetails.guaranteedStop
   );
 
@@ -164,7 +168,7 @@ const UpdateFormModal = ({
     >
       <div className="text-xs text-lightWhite">
         *
-        {guaranteedpCheckedRef.current
+        {guaranteedCheckedRef.current
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
@@ -181,11 +185,37 @@ const UpdateFormModal = ({
   const guaranteedCheckedChangeHandler = () => {
     validateInput();
 
-    if (!openCfdDetails.guaranteedStop) {
-      setGuaranteedChecked(!guaranteedChecked);
-      setSlToggle(true);
+    const adequateBalanceForGSL = SafeMath.gt(availableBalance, guaranteedStopFeeRef.current);
 
-      return;
+    // INFO: 之前沒有設定GSL，停在update form modal太久，當 GSL fee 變動時，會出現 GSL fee 不足的情況 (20230915 - Shirley)
+    if (!openCfdDetails.guaranteedStop) {
+      if (!adequateBalanceForGSL) {
+        setGuaranteedChecked(prev => {
+          if (prev === true) {
+            globalCtx.toast({
+              type: ToastTypeAndText.WARNING.type,
+              toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+              message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+                Code.INADEQUATE_AVAILABLE_BALANCE
+              })`,
+              typeText: t(ToastTypeAndText.WARNING.text),
+              isLoading: false,
+              autoClose: false,
+            });
+
+            return false;
+          } else {
+            return prev;
+          }
+        });
+
+        return;
+      } else {
+        setGuaranteedChecked(!guaranteedChecked);
+        setSlToggle(true);
+
+        return;
+      }
     } else {
       setGuaranteedChecked(true);
 
@@ -385,7 +415,8 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          checked={guaranteedpCheckedRef.current}
+          disabled={!SafeMath.gt(availableBalance, guaranteedStopFeeRef.current)}
+          checked={guaranteedCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
@@ -491,7 +522,7 @@ const UpdateFormModal = ({
     } else if (
       tpToggleRef.current !== initialTpToggle ||
       slToggleRef.current !== initialSlToggle ||
-      guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop
+      guaranteedCheckedRef.current !== openCfdDetails?.guaranteedStop
     ) {
       setSubmitDisabled(false);
     }
@@ -708,12 +739,14 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
+    if (!gsl) {
+      setSubmitDisabled(true);
+      return;
+    }
+
     setGuaranteedStopFee(
       roundToDecimalPlaces(
-        +SafeMath.mult(
-          Number(gsl),
-          SafeMath.mult(openCfdDetails?.openPrice, openCfdDetails?.amount)
-        ),
+        +SafeMath.mult(gsl, SafeMath.mult(openCfdDetails?.openPrice, openCfdDetails?.amount)),
         2
       )
     );
@@ -731,7 +764,7 @@ const UpdateFormModal = ({
     slValueRef.current,
     tpToggleRef.current,
     slToggleRef.current,
-    guaranteedpCheckedRef.current,
+    guaranteedCheckedRef.current,
   ]);
 
   useEffect(() => {

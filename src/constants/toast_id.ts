@@ -6,6 +6,7 @@ export type IToastId = {
   INCONSISTENT_TICKER_OF_QUOTATION: string;
   UNKNOWN_ERROR_IN_COMPONENT: string;
   COPY_SUCCESS: string;
+  INADEQUATE_AVAILABLE_BALANCE: string;
 };
 
 export const ToastId: IToastId = {
@@ -16,4 +17,5 @@ export const ToastId: IToastId = {
   INCONSISTENT_TICKER_OF_QUOTATION: 'InconsistentTickerOfQuotation',
   UNKNOWN_ERROR_IN_COMPONENT: 'UnknownErrorInComponent',
   COPY_SUCCESS: 'CopySuccess',
+  INADEQUATE_AVAILABLE_BALANCE: 'InadequateAvailableBalance',
 };

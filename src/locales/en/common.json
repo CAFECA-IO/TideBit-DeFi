@@ -346,12 +346,12 @@
     "FUNCTION_NOT_IMPLEMENTED": "Function not implemented",
     "CANNOT_GET_QUOTATION_FROM_CONTEXT": "Cannot get quotation",
     "ORDER_NOT_OPENING": "Order is not opening",
-    "INVAILD_ORDER_INPUTS": "Invalid order inputs",
+    "INVALID_ORDER_INPUTS": "Invalid order inputs",
     "EXPIRED_QUOTATION_CANCELED": "Deal canceled due to expired quotation",
     "EXPIRED_QUOTATION_FAILED": "An order cannot be created from an expired quotation",
-    "INVAILD_INPUTS": "Invalid inputs",
+    "INVALID_INPUTS": "Invalid inputs",
     "BALANCE_NOT_FOUND": "Balance not found",
-    "FAILE_TO_UPDATE_BALANCE": "Failed to update balance",
+    "FAIL_TO_UPDATE_BALANCE": "Failed to update balance",
     "WALLET_IS_NOT_CONNECT": "Wallet is not connected",
     "SERVICE_TERM_DISABLE": "Service term is not enabled",
     "DEWT_IS_NOT_LEGIT": "DEWT is not legit",
@@ -359,7 +359,8 @@
     "INTERNAL_SERVER_ERROR": "Internal server error",
     "THIRD_PARTY_LIBRARY_ERROR": "Third party library error",
     "DEPOSIT_INTERVAL_TOO_SHORT": "you can deposit at most 1 times in 24 hours, next available deposit time is: {{nextAvailableTime}}",
-    "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid"
+    "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid",
+    "INADEQUATE_AVAILABLE_BALANCE": "Inadequate available balance"
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "Leaderboard",

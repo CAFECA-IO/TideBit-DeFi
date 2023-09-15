@@ -209,7 +209,7 @@ const HistoryPositionModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
               <div className={`${TypeOfPnLColor.LOSS}`}>
-                {`- $ ${roundToDecimalPlaces(closedCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+                {`- $ ${numberFormatted(closedCfdDetails?.guaranteedStopFee)}`}
               </div>
             </div>
           )}

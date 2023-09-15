@@ -225,6 +225,7 @@
     "EXPECTED_PROFIT": "預期利潤",
     "EXPECTED_LOSS": "預期損失",
     "GUARANTEED_STOP": "保證止損",
+    "GUARANTEED_STOP_FEE": "保證止損手續費",
     "GUARANTEED_STOP_HINT": "保證止損可強制關倉於您選定的價格，即使市場價格超過此價格也一樣。",
     "GUARANTEED_STOP_YES": "是",
     "GUARANTEED_STOP_NO": "否",
@@ -346,12 +347,12 @@
     "FUNCTION_NOT_IMPLEMENTED": "功能尚未實作",
     "CANNOT_GET_QUOTATION_FROM_CONTEXT": "無法取得報價",
     "ORDER_NOT_OPENING": "訂單未開啟",
-    "INVAILD_ORDER_INPUTS": "訂單輸入無效",
+    "INVALID_ORDER_INPUTS": "訂單輸入無效",
     "EXPIRED_QUOTATION_CANCELED": "因報價過期而取消訂單",
     "EXPIRED_QUOTATION_FAILED": "無法從過期的報價單建立訂單",
-    "INVAILD_INPUTS": "無效的輸入",
+    "INVALID_INPUTS": "無效的輸入",
     "BALANCE_NOT_FOUND": "餘額不存在",
-    "FAILE_TO_UPDATE_BALANCE": "更新餘額失敗",
+    "FAIL_TO_UPDATE_BALANCE": "更新餘額失敗",
     "WALLET_IS_NOT_CONNECT": "錢包未連線",
     "SERVICE_TERM_DISABLE": "服務條款已停用",
     "DEWT_IS_NOT_LEGIT": "DEWT 不合法",
@@ -359,7 +360,8 @@
     "INTERNAL_SERVER_ERROR": "內部伺服器錯誤",
     "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤",
     "DEPOSIT_INTERVAL_TOO_SHORT": "24hrs 內只能入金一次， 下次可入金時間為： {{nextAvailableTime}}",
-    "INVALID_CFD_OPEN_REQUEST": "CFD 內容無效"
+    "INVALID_CFD_OPEN_REQUEST": "CFD 內容無效",
+    "INADEQUATE_AVAILABLE_BALANCE": "可用餘額不足"
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "排行榜",

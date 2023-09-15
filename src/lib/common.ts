@@ -611,10 +611,11 @@ export function getChainNameByCurrency(
   }
 }
 
-export const numberFormatted = (n: number | string | undefined) => {
+export const numberFormatted = (n: number | string | undefined, dash = false) => {
+  const zero = dash ? '-' : '0';
   const result =
     !n || n === '0'
-      ? '0'
+      ? zero
       : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS

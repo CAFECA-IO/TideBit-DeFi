@@ -191,11 +191,11 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {numberFormatted(closedCfdDetails?.takeProfit)}
+                {numberFormatted(closedCfdDetails?.takeProfit, true)}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {numberFormatted(closedCfdDetails?.stopLoss)}
+                {numberFormatted(closedCfdDetails?.stopLoss, true)}
               </span>
             </div>
           </div>

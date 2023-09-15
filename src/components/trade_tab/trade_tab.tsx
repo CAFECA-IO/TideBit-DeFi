@@ -900,7 +900,7 @@ const TradeTab = () => {
     <div
       className={`${
         longTpToggle ? `translate-y-2` : `invisible translate-y-0`
-      } transition-all duration-150 ease-in-out`}
+      } lg:-mt-5 transition-all duration-150 ease-in-out`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
@@ -956,7 +956,7 @@ const TradeTab = () => {
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } flex items-center transition-all duration-150 ease-in-out`}
+      } lg:mb-10 lg:mt-0 flex items-center transition-all duration-150 ease-in-out`}
     >
       <input
         type="checkbox"
@@ -1044,7 +1044,9 @@ const TradeTab = () => {
 
   const displayedExpectedShortProfit = (
     <div
-      className={`${shortTpToggle ? `translate-y-2` : `invisible translate-y-0`} transition-all`}
+      className={`${
+        shortTpToggle ? `translate-y-2` : `invisible translate-y-0`
+      } lg:-mt-5 transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
@@ -1100,7 +1102,7 @@ const TradeTab = () => {
     <div
       className={`${
         shortSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mb-10 mt-0 items-center transition-all`}
+      }  lg:mb-10 lg:mt-0 items-center transition-all`}
     >
       <div className="mt-0 flex items-center">
         <input
@@ -1482,11 +1484,6 @@ const TradeTab = () => {
 
             {/* Divider: border-bottom */}
             <div className="mt-3 border-b-1px border-lightGray"></div>
-
-            {/* Divider between long and short */}
-            {/* <span
-              className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-            ></span> */}
 
             {/* ---Short Section--- */}
             <div className="pb-24">

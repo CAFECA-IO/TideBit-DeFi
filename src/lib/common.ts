@@ -611,6 +611,7 @@ export function getChainNameByCurrency(
   }
 }
 
+// TODO: 用 SafeMath isNumber 判斷數字 (20230919 - Shirley)
 export const numberFormatted = (n: number | string | undefined, dash = false) => {
   const zero = dash ? '-' : '0';
   const result =

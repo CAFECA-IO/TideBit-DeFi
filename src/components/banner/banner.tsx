@@ -3,14 +3,19 @@ import React from 'react';
 import {useTranslation} from 'next-i18next';
 import {useGlobal} from '../../contexts/global_context';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import useCheckLink from '../../lib/hooks/use_check_link';
+import {I_SUN_ONE_LINK} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
+
 const Banner = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {layoutAssertion} = useGlobal();
   const iSunOneIconSize = layoutAssertion === LayoutAssertion.MOBILE ? 35 : 50;
   const shrink = 0.7;
+
+  const iSunOneLink = useCheckLink(I_SUN_ONE_LINK, I_SUN_ONE_LINK);
 
   return (
     <>
@@ -33,7 +38,7 @@ const Banner = () => {
             <div className="pt-5 lg:pt-12 group">
               <a
                 className="flex text-center items-center tracking-wider"
-                href="https://www.isun1.com/"
+                href={iSunOneLink}
                 target="_blank"
               >
                 <Image

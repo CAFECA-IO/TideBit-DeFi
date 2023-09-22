@@ -3,9 +3,17 @@ import Link from 'next/link';
 import {BiLinkAlt} from 'react-icons/bi';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
+import {BAIFA_LINK} from '../../constants/config';
+import {useEffect, useState} from 'react';
+import useStateRef from 'react-usestateref';
+import useCheckLink from '../../lib/hooks/use_check_link';
 
 const AuditReport = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const {i18n} = useTranslation('common');
+
+  const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
 
   return (
     <section>
@@ -119,7 +127,7 @@ const AuditReport = () => {
         <div className="flex w-full justify-center space-x-3 pt-10">
           <p className=""> {t('HOME_PAGE.POWERED_BY')}</p>
           <a
-            href={`https://baifa.io`}
+            href={baifaLink}
             target="_blank"
             className={`flex w-100px items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
           >

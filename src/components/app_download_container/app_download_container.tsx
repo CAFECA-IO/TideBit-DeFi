@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import {useTranslation} from 'next-i18next';
+import Link from 'next/link';
 
 type TranslateFunction = (s: string) => string;
 
@@ -38,23 +39,23 @@ const AppDowloadContainer = () => {
               </div>
 
               <div className="mx-auto mt-10 flex shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
-                <button type="button" className="hover:opacity-80">
+                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
                   <Image
                     src="/elements/app_store_badge@2x.png"
                     width={120}
                     height={40}
                     alt="app-store"
                   />
-                </button>
+                </Link>
 
-                <button type="button" className="hover:opacity-80">
+                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
                   <Image
                     src={'/elements/google_play_badge@2x.png'}
                     width={155}
                     height={40}
                     alt="google play"
                   />
-                </button>
+                </Link>
               </div>
             </div>
             <div className="mx-auto flex w-full flex-col flex-wrap items-center justify-center pt-20 pl-1/10 md:w-3/5 lg:pl-0 lg:pt-0">
@@ -117,23 +118,23 @@ const AppDowloadContainer = () => {
               </div>
 
               <div className="mx-auto mt-5 flex shrink-0 flex-wrap items-center justify-center space-x-3 sm:mt-10 sm:space-x-4 md:ml-auto md:mr-0">
-                <button type="button" className="hover:opacity-80">
+                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
                   <Image
                     src="/elements/group_15225@2x.png"
                     width={134}
                     height={40}
                     alt="app-store"
                   />
-                </button>
+                </Link>
 
-                <button type="button" className="hover:opacity-80">
+                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
                   <Image
                     src={'/elements/group_15232@2x.png'}
                     width={135}
                     height={40}
                     alt="google play"
                   />
-                </button>
+                </Link>
               </div>
             </div>
           </div>

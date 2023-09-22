@@ -68,7 +68,7 @@ const CryptoCategory = ({...otherProps}) => {
   return (
     <div className="container mx-auto flex shrink-0 flex-wrap justify-center space-y-1">
       <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
-        <div className="mb-0 items-center text-2xl font-medium text-white xs:text-3xl sm:text-4xl">
+        <div className="mb-0 items-center font-medium text-white text-2xl xs:text-3xl sm:text-4xl">
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
             <h1 className="mx-1 text-center xl:w-410px">

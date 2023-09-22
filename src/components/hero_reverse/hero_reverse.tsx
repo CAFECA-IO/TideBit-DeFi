@@ -63,7 +63,7 @@ chambray.`;
         <div className="flex flex-col items-center">
           <div className="mb-10 w-2/3">{displayedImg}</div>
 
-          <div className="mx-auto mt-5 flex max-w-lg flex-col items-center justify-center text-center align-baseline xs:mt-10 sm:mt-14">
+          <div className="mx-4 mt-5 flex max-w-lg flex-col items-center justify-center text-center align-baseline xs:mt-10 sm:mt-14">
             <h1 className="mx-auto mb-5 text-center text-2xl font-medium text-white sm:text-4xl">
               {displayedHeading}
             </h1>

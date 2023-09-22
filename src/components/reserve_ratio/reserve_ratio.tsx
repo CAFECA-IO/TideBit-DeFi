@@ -27,15 +27,15 @@ const ReserveRatio = () => {
   const btcReserve = websiteReserve.tidebitReserve;
 
   const mobileCardLayout =
-    'mx-auto flex w-full flex-col items-center justify-center bg-center pb-40 lg:flex-row';
+    'mx-auto flex w-full flex-col items-center justify-center bg-center pb-0 lg:flex-row';
 
   return (
     <>
       <section className="text-white">
-        <div className="mb-10 items-center text-2xl font-medium text-white lg:text-3xl xl:text-4xl">
+        <div className="mb-10 items-center font-medium text-white text-2xl xs:text-3xl sm:text-4xl">
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
-            <h1 className="mx-1 text-center">
+            <h1 className="mx-0 sm:mx-1 w-220px xs:w-340px md:w-auto text-center">
               {t('HOME_PAGE.RESERVE_RATIO_BLOCK_TITLE')}
               <span className="text-tidebitTheme">
                 {' '}
@@ -46,8 +46,8 @@ const ReserveRatio = () => {
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
           </div>
         </div>
-        <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/8 2xl:pr-1/5">
-          <Link
+        <div className="flex w-full justify-center lg:justify-end pr-0 transition-all duration-150 lg:pr-1/8 2xl:pr-1/5">
+          <a
             // TODO: Report updated from context (20230619 - Shirley)
             href={t('HOME_PAGE.REPORTS_LINK')}
             download
@@ -56,7 +56,7 @@ const ReserveRatio = () => {
           >
             <p className="text-sm">{t('HOME_PAGE.DOWNLOAD_REPORT')}</p>
             <FiDownload size={20} />
-          </Link>
+          </a>
         </div>
 
         {/* Info: desktop (20230620 - Shirley) */}

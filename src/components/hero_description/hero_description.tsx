@@ -49,7 +49,7 @@ export default function HeroDescription() {
         <div className="py-10"></div>
 
         <ReserveRatio />
-        <div className="py-10"></div>
+        <div className="py-10 lg:py-0"></div>
 
         <AuditReport />
         <div className="py-10"></div>

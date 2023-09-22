@@ -41,7 +41,6 @@ export default function HeroDescription() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
-      {/* Body */}
       <div className="w-full">
         <Cta />
         <div className="py-0"></div>
@@ -49,7 +48,6 @@ export default function HeroDescription() {
         <StatisticBlock />
         <div className="py-10"></div>
 
-        {/* <MarketProvider> */}
         <ReserveRatio />
         <div className="py-10"></div>
 
@@ -57,11 +55,10 @@ export default function HeroDescription() {
         <div className="py-10"></div>
 
         <CryptoCategory />
-        {/* </MarketProvider> */}
-        <div className="py-10 lg:py-20"></div>
+        <div className="py-10 lg:py-144px"></div>
 
         <Banner />
-        <div className="py-16 lg:pb-2/5 lg:pt-20"></div>
+        <div className="py-20 lg:py-200px"></div>
 
         {/* Web3.0 */}
         <HeroReverse
@@ -70,7 +67,7 @@ export default function HeroDescription() {
           content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
           img="/elements/2634@2x.png"
         />
-        <div className="py-5 lg:py-40"></div>
+        <div className="py-20 lg:py-40"></div>
 
         {/* Easy Trade */}
         <Hero
@@ -83,7 +80,7 @@ export default function HeroDescription() {
           content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
           img="/elements/group_15200@2x.png"
         />
-        <div className="py-5 lg:py-40"></div>
+        <div className="py-20 lg:py-40"></div>
 
         {/* Secure System */}
         <HeroReverse1
@@ -98,7 +95,7 @@ export default function HeroDescription() {
           content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
           img="/elements/group_15145@2x.png"
         />
-        <div className="py-5 lg:py-40"></div>
+        <div className="py-20 lg:py-40"></div>
 
         {/* Free Online Courses */}
         <Hero1
@@ -113,12 +110,14 @@ export default function HeroDescription() {
           content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
           img={`/elements/group_15201.svg`}
         />
-        <div className="py-5 lg:py-10"></div>
+        <div className="py-20 lg:py-40"></div>
 
         {/* App download */}
         <div className="flex w-full justify-center">
           <AppDowloadContainer />
         </div>
+
+        <div className="py-20 lg:py-40"></div>
       </div>
     </div>
   );

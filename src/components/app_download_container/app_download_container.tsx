@@ -8,16 +8,15 @@ type TranslateFunction = (s: string) => string;
 const AppDowloadContainer = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  // const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
   const desktopVersionBreakpoint = 'hidden lg:flex';
   const mobileVersionBreakpoint = 'flex lg:hidden';
 
   return (
     <>
-      {/* Desktop */}
+      {/* Info: Desktop (20230922 - Shirley) */}
       <div className={`${desktopVersionBreakpoint}`}>
-        <section className={`bg-black py-24`}>
-          <h1 className="flex shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
+        <section className={`bg-black`}>
+          <h1 className="flex shrink-0 items-center justify-center pb-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
             {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
             <span className="text-cyan-400">
               {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
@@ -26,7 +25,7 @@ const AppDowloadContainer = () => {
             {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}
           </h1>
 
-          <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
+          <div className="mx-auto flex flex-wrap items-center space-y-2 md:flex-row">
             <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
               <div className="flex justify-center">
                 <Image
@@ -71,7 +70,7 @@ const AppDowloadContainer = () => {
         </section>
       </div>
 
-      {/* Mobile */}
+      {/* Info: Mobile (20230922 - Shirley) */}
       <div className={`${mobileVersionBreakpoint}`}>
         <section className={`bg-black`}>
           <div className="flex shrink-0 flex-col items-center justify-center space-y-2 px-2 pt-0 pb-10 text-2xl font-bold text-white sm:space-y-5 sm:text-3xl md:px-20 md:pb-20 md:text-4xl">
@@ -84,7 +83,7 @@ const AppDowloadContainer = () => {
             <div>{t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}</div>
           </div>
 
-          <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
+          <div className="mx-auto flex flex-wrap items-center space-y-2 md:flex-row">
             <div className="mx-auto flex w-4/5 flex-col flex-wrap items-center justify-center py-5 pl-1/10 md:w-4/5">
               <Image
                 className="flex justify-center rounded object-contain"
@@ -96,7 +95,6 @@ const AppDowloadContainer = () => {
             </div>
 
             <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
-              {/* QR Code Size Automatic Toggle */}
               <div className="hidden justify-center md:flex">
                 <Image
                   className="rounded object-cover object-center"

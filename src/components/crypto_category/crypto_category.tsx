@@ -82,7 +82,7 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
       </div>
       <div className="flex w-full items-center justify-center">
-        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
           {renderCryptoCard}
         </div>
       </div>

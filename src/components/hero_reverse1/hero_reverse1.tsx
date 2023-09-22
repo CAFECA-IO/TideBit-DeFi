@@ -40,11 +40,11 @@ chambray.`;
 
   return (
     <>
-      {/* Desktop */}
+      {/* Info: Desktop (20230922 - Shirley) */}
       <section
         className={`${desktopVersionBreakpoint} container mx-auto w-screen justify-center bg-black text-gray-400`}
       >
-        <div className="flex flex-col items-center pb-24 lg:flex-row">
+        <div className="flex flex-col items-center lg:flex-row">
           <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
 
           <div className="mt-1 flex max-w-md flex-col items-center text-center md:mt-10 md:w-1/2 lg:mt-0 lg:items-start lg:pl-8 lg:text-left xl:mt-5 xl:ml-20">
@@ -56,11 +56,11 @@ chambray.`;
         </div>
       </section>
 
-      {/* Mobile */}
+      {/* Info: Mobile (20230922 - Shirley) */}
       <section
         className={`${mobileVersionBreakpoint} container mx-auto w-screen justify-center bg-black text-gray-400`}
       >
-        <div className="flex flex-col items-center pb-24">
+        <div className="flex flex-col items-center">
           <div className="mb-0 w-5/6">{displayedImg}</div>
 
           <div className="mx-auto mt-0 flex max-w-lg flex-col items-center justify-center text-center align-baseline">
@@ -72,16 +72,6 @@ chambray.`;
             </p>
           </div>
         </div>
-        {/* <div className="flex flex-col items-center pb-24">
-          <div className="w-5/6">{displayedImg}</div>
-
-          <div className="mt-0 flex max-w-lg flex-col items-center justify-center text-center">
-            <h1 className="mb-8 text-center text-3xl font-medium text-white xs:text-4xl">
-              {displayedHeading}
-            </h1>
-            <p className="mb-8 text-lg leading-8 text-blue-400">{displayedContent}</p>
-          </div>
-        </div> */}
       </section>
     </>
   );

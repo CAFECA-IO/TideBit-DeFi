@@ -33,7 +33,7 @@ const AuditReport = () => {
         <div className="flex w-full justify-around">
           <div className="mx-0 grid grid-cols-2 items-center justify-center gap-x-5 gap-y-5 lg:mx-0 lg:flex lg:w-full lg:flex-row lg:items-center lg:justify-center lg:space-x-12 lg:space-y-0">
             <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
-              <Link
+              <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}
                 download
@@ -50,11 +50,11 @@ const AuditReport = () => {
                 <p className=" text-center text-xs lg:text-lg">
                   {t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT')}
                 </p>
-              </Link>
+              </a>
             </div>
 
             <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
-              <Link
+              <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.BALANCE_SHEET_LINK')}
                 download
@@ -69,11 +69,11 @@ const AuditReport = () => {
                   alt="Balance Sheet"
                 />
                 <p className="text-xs lg:text-lg">{t('HOME_PAGE.BALANCE_SHEET')}</p>
-              </Link>
+              </a>
             </div>
 
             <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
-              <Link
+              <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}
                 download
@@ -92,11 +92,11 @@ const AuditReport = () => {
                     {t('HOME_PAGE.CASH_FLOW_STATEMENT')}
                   </p>
                 </div>
-              </Link>
+              </a>
             </div>
 
             <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
-              <Link
+              <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
                 download
@@ -111,7 +111,7 @@ const AuditReport = () => {
                   alt="Red Flag Analysis"
                 />
                 <p className="text-xs lg:text-lg">{t('HOME_PAGE.RED_FLAG_ANALYSIS')}</p>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

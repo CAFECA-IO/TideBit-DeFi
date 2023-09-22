@@ -3,7 +3,6 @@ import AppDowloadContainer from '../app_download_container/app_download_containe
 import Banner from '../banner/banner';
 import CryptoCategory from '../crypto_category/crypto_category';
 import Cta from '../cta/cta';
-import Footer from '../footer/footer';
 import Hero from '../hero/hero';
 import Hero1 from '../hero1/hero1';
 import HeroReverse from '../hero_reverse/hero_reverse';

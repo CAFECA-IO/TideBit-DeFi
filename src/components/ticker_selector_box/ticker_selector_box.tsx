@@ -1,6 +1,6 @@
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {CgSearch} from 'react-icons/cg';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
@@ -67,7 +67,7 @@ const TickerSelectorBox = ({
   };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
-    const cryptoCardsData: ICryptoCardData[] = availableTickers?.map((each, index) => {
+    const cryptoCardsData: ICryptoCardData[] = availableTickers?.map(each => {
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
       const addCallbackFunc: ICryptoCardData = {
         ...each,
@@ -145,7 +145,7 @@ const TickerSelectorBox = ({
         <CryptoCard
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
-          className="mt-4 ml-4"
+          className="ml-4 mt-4"
           instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
@@ -188,7 +188,7 @@ const TickerSelectorBox = ({
         <CryptoCard
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
-          className="mt-4 ml-4"
+          className="ml-4 mt-4"
           instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
@@ -314,7 +314,7 @@ const TickerSelectorBox = ({
     <>
       <div className="fixed inset-0 z-80 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
         <div
-          className="relative my-6 mx-auto min-w-fit"
+          className="relative mx-auto my-6 min-w-fit"
           id="tickerSelectorModal"
           ref={tickerSelectorBoxRef}
         >
@@ -325,7 +325,7 @@ const TickerSelectorBox = ({
           <div className="mx-auto flex h-640px w-90vw max-w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/* Info: ----- body ----- (20230620 - Shirley) */}
 
-            <div className="relative mr-60px mt-5 mb-5">
+            <div className="relative mb-5 mr-60px mt-5">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
               <input
                 type="search"
@@ -349,7 +349,7 @@ const TickerSelectorBox = ({
                 <div className="mx-auto flex flex-col items-center">
                   <div className="flex w-full items-center justify-center">
                     {/* Info: 多出來的高度不會出現y卷軸 (20230620 - Shirley) */}
-                    <div className="mb-5 grid grid-cols-4 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip xl:grid-cols-5">
+                    <div className="mb-5 grid grid-cols-4 space-x-4 space-y-4 overflow-x-hidden overflow-y-clip xl:grid-cols-5">
                       {displayedCryptoCards}
                     </div>
                   </div>
@@ -381,7 +381,7 @@ const TickerSelectorBox = ({
               className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
               onClick={tickerSelectorBoxClickHandler}
             >
-              <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+              <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                 <ImCross />
               </span>
             </button>
@@ -402,15 +402,15 @@ const TickerSelectorBox = ({
               />
               <button
                 type="button"
-                className="absolute top-0 right-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+                className="absolute right-0 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
               >
                 <CgSearch size={30} />
               </button>
             </div>
 
             {/* Info: (20230427 - Julian) Card section */}
-            <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-center md:justify-start sm:h-3/4">
-              <div className="mb-5 mr-2 grid h-full auto-rows-min grid-cols-2 space-y-4 space-x-2 md:space-x-4 overflow-y-auto overflow-x-hidden md:grid-cols-3">
+            <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-center sm:h-3/4 md:justify-start">
+              <div className="mb-5 mr-2 grid h-full auto-rows-min grid-cols-2 space-x-2 space-y-4 overflow-y-auto overflow-x-hidden md:grid-cols-3 md:space-x-4">
                 {displayedCryptoCards}
               </div>
             </div>

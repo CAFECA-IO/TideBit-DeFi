@@ -19,7 +19,7 @@ import {
   MIN_FEE_RATE,
   instIds,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -649,10 +649,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {

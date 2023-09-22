@@ -19,7 +19,7 @@ import {
   MIN_FEE_RATE,
   instIds,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';

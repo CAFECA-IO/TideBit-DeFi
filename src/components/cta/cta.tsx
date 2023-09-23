@@ -87,10 +87,10 @@ const Cta = () => {
             </span>{' '}
             {t('HOME_PAGE.CTA_REST_TITLE')}
           </div>
-          <div className="mx-5 mt-4 max-w-md text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
+          <div className="mx-5 mt-4 w-278px text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
             {t('HOME_PAGE.CTA_DESCRIPTION')}
           </div>
-          <div className="flex flex-col items-center space-y-4 pt-4">
+          <div className="flex flex-col items-center space-y-4 pt-10">
             <a
               href={t('HOME_PAGE.WHITEPAPER_LINK')}
               className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}

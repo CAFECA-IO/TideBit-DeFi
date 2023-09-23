@@ -611,11 +611,16 @@ export function getChainNameByCurrency(
 }
 
 // TODO: 用 SafeMath isNumber 判斷數字 (20230919 - Shirley)
-export const numberFormatted = (n: number | string | undefined) => {
+export const numberFormatted = (n: number | string | undefined, dash = false) => {
+  const zero = dash ? '-' : '0';
   const result =
     !n || n === '0'
-      ? '0'
-      : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      ? zero
+      : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        );
+  // : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 
@@ -644,10 +649,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {

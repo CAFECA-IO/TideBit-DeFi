@@ -7,7 +7,7 @@ import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale
 
 const ReserveCard = ({
   name,
-  percentage,
+  ratio,
   userHoldings,
   walletAssets,
   icon,
@@ -15,7 +15,7 @@ const ReserveCard = ({
   color,
 }: {
   name: string;
-  percentage: string;
+  ratio: string;
   userHoldings: string;
   walletAssets: string;
   icon: string;
@@ -48,7 +48,7 @@ const ReserveCard = ({
 
             <div className="grow">
               <p className="font-bold">
-                <span className="pr-2 text-6xl font-bold leading-relaxed">{percentage}</span> %
+                <span className="pr-2 text-6xl font-bold leading-relaxed">{ratio}</span> %
               </p>
 
               <Link

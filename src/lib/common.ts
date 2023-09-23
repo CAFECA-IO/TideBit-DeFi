@@ -19,7 +19,7 @@ import {
   MIN_FEE_RATE,
   instIds,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -28,7 +28,6 @@ import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
-import {TBDURL} from '../constants/api_request';
 import SafeMath from './safe_math';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
@@ -611,11 +610,17 @@ export function getChainNameByCurrency(
   }
 }
 
-export const numberFormatted = (n: number | string | undefined) => {
+// TODO: 用 SafeMath isNumber 判斷數字 (20230919 - Shirley)
+export const numberFormatted = (n: number | string | undefined, dash = false) => {
+  const zero = dash ? '-' : '0';
   const result =
     !n || n === '0'
-      ? '0'
-      : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      ? zero
+      : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        );
+  // : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 

@@ -47,7 +47,9 @@ const StatisticBlock = () => {
   return (
     <section className={`bg-black text-gray-400`}>
       <div className="mx-10">
-        <div className="flex flex-wrap justify-center">{statisticContentList}</div>
+        <div className="flex flex-wrap justify-center flex-col lg:flex-wrap lg:flex-row">
+          {statisticContentList}
+        </div>
       </div>
     </section>
   );

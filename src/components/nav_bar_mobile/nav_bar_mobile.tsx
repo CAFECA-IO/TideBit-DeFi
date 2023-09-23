@@ -25,14 +25,9 @@ const NavBarMobile = () => {
 
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen, sidebarOpenRef] = useStateRef(false);
-
   const [langIsOpen, setLangIsOpen] = useState(false);
 
-  const {
-    targetRef: notifyRef,
-    componentVisible,
-    setComponentVisible,
-  } = useOuterClick<HTMLDivElement>(false);
+  const {componentVisible, setComponentVisible} = useOuterClick<HTMLDivElement>(false);
 
   const tradeLink = router.asPath.includes('trade') ? router.asPath : TBDURL.TRADE;
 
@@ -74,7 +69,6 @@ const NavBarMobile = () => {
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
-
   const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
 
   /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 5/10 讓頭貼可以被看到 */

@@ -7,13 +7,16 @@ import {BAIFA_LINK} from '../../constants/config';
 import {useEffect, useState} from 'react';
 import useStateRef from 'react-usestateref';
 import useCheckLink from '../../lib/hooks/use_check_link';
+import {getTimestamp, timestampToString} from '../../lib/common';
+import {ONE_DAY_IN_SECONDS} from '../../constants/display';
+
+const yesterday = getTimestamp() - ONE_DAY_IN_SECONDS;
+const reportDate = timestampToString(yesterday);
 
 const AuditReport = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  const {i18n} = useTranslation('common');
-
   const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
+  const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
   return (
     <section>
@@ -31,7 +34,9 @@ const AuditReport = () => {
       <div className="lg:mx-20">
         <div className="mb-5 flex w-full justify-center text-lightGray lg:mb-10">
           {t('HOME_PAGE.LAST_UPDATED')}{' '}
-          <span className="text-lightWhite">&nbsp;August 04, 2023</span>
+          <span className="text-lightWhite">
+            &nbsp;{reportDate.monthName} {reportDate.day}, {reportDate.year}
+          </span>
         </div>
 
         <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end xl:pr-1/10">
@@ -43,8 +48,9 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
-                href={t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}
-                download
+                href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t(
+                  'HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK'
+                )}`}
                 target="_blank"
                 className="flex flex-col items-center justify-center space-y-5"
               >
@@ -64,8 +70,9 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
-                href={t('HOME_PAGE.BALANCE_SHEET_LINK')}
-                download
+                href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t(
+                  'HOME_PAGE.BALANCE_SHEET_LINK'
+                )}`}
                 target="_blank"
                 className="flex flex-col items-center justify-center space-y-5"
               >
@@ -83,8 +90,9 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
-                href={t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}
-                download
+                href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t(
+                  'HOME_PAGE.CASH_FLOW_STATEMENT_LINK'
+                )}`}
                 target="_blank"
                 className="flex flex-col items-center justify-center space-y-5"
               >

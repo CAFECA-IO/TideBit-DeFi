@@ -32,6 +32,21 @@ export const MONTH_FULL_NAME_LIST = [
   'December',
 ];
 
+export const MONTH_SHORT_NAME_LIST = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 export const WEEK_LIST = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 export const FRACTION_DIGITS = {

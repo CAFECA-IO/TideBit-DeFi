@@ -40,52 +40,6 @@ const CryptoSummary = ({
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
 
-  const cryptoIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43">
-      <g data-name="Group 2330">
-        <circle cx="21.5" cy="21.5" r="21.5" fill="#627eea" data-name="Ellipse 12"></circle>
-        <g data-name="Group 2325" transform="translate(12.198 5.422)">
-          <path
-            fill="rgba(255,255,255,0.6)"
-            d="M226.9 67.826v12.021l10.161 4.541z"
-            data-name="Path 25757"
-            transform="translate(-216.741 -67.826)"
-          ></path>
-          <path
-            fill="#fff"
-            d="M219.81 67.826l-10.162 16.562 10.162-4.541z"
-            data-name="Path 25758"
-            transform="translate(-209.648 -67.826)"
-          ></path>
-          <path
-            fill="rgba(255,255,255,0.6)"
-            d="M226.9 105.059v8.169l10.171-14.068z"
-            data-name="Path 25759"
-            transform="translate(-216.741 -80.706)"
-          ></path>
-          <path
-            fill="#fff"
-            d="M219.81 113.227v-8.17l-10.162-5.9z"
-            data-name="Path 25760"
-            transform="translate(-209.648 -80.706)"
-          ></path>
-          <path
-            fill="rgba(255,255,255,0.2)"
-            d="M226.9 98.68l10.161-5.9-10.161-4.537z"
-            data-name="Path 25761"
-            transform="translate(-216.741 -76.219)"
-          ></path>
-          <path
-            fill="rgba(255,255,255,0.6)"
-            d="M209.648 92.781l10.162 5.9V88.243z"
-            data-name="Path 25762"
-            transform="translate(-209.648 -76.219)"
-          ></path>
-        </g>
-      </g>
-    </svg>
-  );
-
   return (
     <>
       <div className="flex-col justify-start">
@@ -121,6 +75,7 @@ const CryptoSummary = ({
                   </Link>
 
                   <Link
+                    locale={'zh-tw'}
                     href={websiteLink}
                     target="_blank"
                     className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}

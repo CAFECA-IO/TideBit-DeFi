@@ -917,8 +917,8 @@ const TradeTab = () => {
   const displayedExpectedLongProfit = (
     <div
       className={`${
-        longTpToggle ? `translate-y-2` : `invisible translate-y-0`
-      } lg:-mt-5 transition-all duration-150 ease-in-out`}
+        longTpToggle ? `translate-y-2 lg:h-30px` : `invisible translate-y-0`
+      }  transition-all duration-150 ease-in-out`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
@@ -955,7 +955,7 @@ const TradeTab = () => {
   const displayedExpectedLongLoss = (
     <div
       className={`${
-        longSlToggle ? `translate-y-2` : `invisible translate-y-0`
+        longSlToggle ? `translate-y-2 lg:h-20px` : `invisible translate-y-0`
       } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
@@ -973,8 +973,8 @@ const TradeTab = () => {
   const longGuaranteedStop = (
     <div
       className={`${
-        longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } lg:mb-10 lg:mt-0 flex items-center transition-all duration-150 ease-in-out`}
+        longSlToggle ? `translate-y-5 lg:h-70px` : `invisible translate-y-0`
+      } lg:mb-10 lg:mt-0 flex items-start transition-all duration-150 ease-in-out`}
     >
       <input
         type="checkbox"
@@ -1063,8 +1063,8 @@ const TradeTab = () => {
   const displayedExpectedShortProfit = (
     <div
       className={`${
-        shortTpToggle ? `translate-y-2` : `invisible translate-y-0`
-      } lg:-mt-5 transition-all`}
+        shortTpToggle ? `translate-y-2 lg:h-30px` : `invisible translate-y-0`
+      } transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
@@ -1101,7 +1101,7 @@ const TradeTab = () => {
   const displayedExpectedShortLoss = (
     <div
       className={`${
-        shortSlToggle ? `translate-y-2` : `invisible translate-y-0`
+        shortSlToggle ? `translate-y-2 lg:h-20px` : `invisible translate-y-0`
       } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
@@ -1119,7 +1119,7 @@ const TradeTab = () => {
   const shortGuaranteedStop = (
     <div
       className={`${
-        shortSlToggle ? `translate-y-5` : `invisible translate-y-0`
+        shortSlToggle ? `translate-y-5 lg:h-70px` : `invisible translate-y-0`
       } lg:mb-10 lg:mt-0 mb-10 mt-0 items-center transition-all`}
     >
       <div className="mt-0 flex items-center">
@@ -1219,7 +1219,7 @@ const TradeTab = () => {
     }
   };
 
-  const longSetting = (
+  const mobileLongSetting = (
     <div
       className={`${
         isActiveTabLong ? 'flex' : 'hidden'
@@ -1250,7 +1250,7 @@ const TradeTab = () => {
     </div>
   );
 
-  const shortSetting = (
+  const mobileShortSetting = (
     <div
       className={`${
         isActiveTabLong ? 'hidden' : 'flex'
@@ -1348,8 +1348,8 @@ const TradeTab = () => {
               )}
             </div>
           </div>
-          {longSetting}
-          {shortSetting}
+          {mobileLongSetting}
+          {mobileShortSetting}
         </div>
       </div>
     </div>
@@ -1405,16 +1405,14 @@ const TradeTab = () => {
       <div className="relative mx-auto my-6 w-auto max-w-xl">
         {' '}
         <div className={`relative`}>
-          {/* ---sidebar self--- */}
+          {/* Info: (20230925 - Shirley) ---sidebar self--- */}
           <div
             className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
           >
-            {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
-
-            {/* ---target input area--- */}
+            {/* Info: (20230925 - Shirley) ---target input area--- */}
             {displayedTargetAmountSetting}
 
-            {/* ---universal trading info area--- */}
+            {/* Info: (20230925 - Shirley) ---universal trading info area--- */}
             <div className="mt-2 text-lightGray">
               <div className="flex justify-center text-xs">{ticker}</div>
               <div className="mt-2">
@@ -1425,9 +1423,9 @@ const TradeTab = () => {
               </div>
             </div>
 
-            {/* ---Long Section--- */}
+            {/* Info: (20230925 - Shirley) ---Long Section--- */}
             <div className="">
-              {/* ---custom trading info area--- */}
+              {/* Info: (20230925 - Shirley) ---custom trading info area--- */}
               <div className="mt-2 flex justify-center text-center text-base tracking-normal">
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">
@@ -1435,7 +1433,7 @@ const TradeTab = () => {
                   </div>
                   {displayedRequiredMarginLongStyle}
                 </div>
-                {/* Left Divider */}
+                {/* Info: (20230925 - Shirley) Left Divider */}
                 <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
                 <div className="w-1/2 space-y-1">
@@ -1451,9 +1449,9 @@ const TradeTab = () => {
               </div>
 
               <div className="">
-                {/* Take Profit Setting */}
-                <div className="h-60px">
-                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
+                {/* Info: (20230925 - Shirley) Take Profit Setting */}
+                <div className="">
+                  <div className="flex items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
@@ -1464,9 +1462,9 @@ const TradeTab = () => {
                   {displayedExpectedLongProfit}
                 </div>
 
-                {/* Stop Loss Setting */}
+                {/* Info: (20230925 - Shirley) Stop Loss Setting */}
                 <div>
-                  <div className="flex h-25px items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                     </div>
@@ -1476,13 +1474,13 @@ const TradeTab = () => {
 
                   {displayedExpectedLongLoss}
 
-                  {/* Guaranteed stop */}
+                  {/* Info: (20230925 - Shirley) Guaranteed stop */}
                   {longGuaranteedStop}
                 </div>
               </div>
 
-              {/* Long Button */}
-              <div className="flex justify-center">
+              {/* Info: (20230925 - Shirley) Long Button */}
+              <div className={`flex justify-center -mt-14`}>
                 <RippleButton
                   disabled={
                     marginWarningLongRef.current ||
@@ -1505,17 +1503,11 @@ const TradeTab = () => {
               </div>
             </div>
 
-            {/* Divider: border-bottom */}
             <div className="mt-3 border-b-1px border-lightGray"></div>
 
-            {/* Divider between long and short */}
-            {/* <span
-              className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-            ></span> */}
-
-            {/* ---Short Section--- */}
+            {/* Info: (20230925 - Shirley) ---Short Section--- */}
             <div className="pb-24">
-              {/* ---custom trading info--- */}
+              {/* Info: (20230925 - Shirley) ---custom trading info--- */}
               <div className="mt-5 flex justify-center text-center text-base tracking-normal">
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">
@@ -1523,7 +1515,7 @@ const TradeTab = () => {
                   </div>
                   {displayedRequiredMarginShortStyle}
                 </div>
-                {/* Left Divider */}
+                {/* Info: (20230925 - Shirley) Left Divider */}
                 <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
                 <div className="w-1/2 space-y-1">
@@ -1539,9 +1531,9 @@ const TradeTab = () => {
               </div>
 
               <div className="">
-                {/* Take Profit Setting */}
-                <div className="h-60px">
-                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
+                {/* Info: (20230925 - Shirley) Take Profit Setting */}
+                <div className="">
+                  <div className="flex items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
@@ -1551,9 +1543,9 @@ const TradeTab = () => {
                   {displayedExpectedShortProfit}
                 </div>
 
-                {/* Stop Loss Setting */}
+                {/* Info: (20230925 - Shirley) Stop Loss Setting */}
                 <div>
-                  <div className="flex h-25px items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                     </div>
@@ -1564,13 +1556,13 @@ const TradeTab = () => {
 
                   {displayedExpectedShortLoss}
 
-                  {/* Guaranteed stop */}
+                  {/* Info: (20230925 - Shirley) Guaranteed stop */}
                   {shortGuaranteedStop}
                 </div>
               </div>
 
-              {/* Short Button */}
-              <div className="flex justify-center">
+              {/* Info: (20230925 - Shirley) Short Button */}
+              <div className={`flex justify-center -mt-14`}>
                 <RippleButton
                   disabled={
                     marginWarningShortRef.current ||

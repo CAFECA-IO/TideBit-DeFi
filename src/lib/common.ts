@@ -744,3 +744,7 @@ export function isValidTradeURL(url: string): boolean {
 
   return result;
 }
+
+export function ratioToPercentage(decimal: number): string {
+  return `${(decimal * 100).toFixed(2)}`;
+}

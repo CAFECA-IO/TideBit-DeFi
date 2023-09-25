@@ -627,13 +627,10 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce(
-    (acc, [key, value]) => {
-      acc[value] = key;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {} as Record<string, string>);
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {
@@ -744,3 +741,20 @@ export function isValidTradeURL(url: string): boolean {
 
   return result;
 }
+
+// Info:(20230925 - Julian) i18n URL workaround
+export const getI18nLink = (link: string, locale: string) => {
+  if (link.toLowerCase().includes('bitcoin')) {
+    const bitcoinText = locale === 'tw' ? 'zh_TW' : locale === 'cn' ? 'zh_CN' : 'en';
+    const bitcoinLink = link.includes('en')
+      ? link.replace('en', bitcoinText)
+      : `${link}/${bitcoinText}`;
+    return bitcoinLink;
+  } else if (link.toLowerCase().includes('ethereum')) {
+    const ethereumText = locale === 'tw' ? 'zh-tw' : locale === 'cn' ? 'zh' : 'en';
+    const ethereumLink = link.includes('en')
+      ? link.replace('en', ethereumText)
+      : `${link}/${ethereumText}`;
+    return ethereumLink;
+  }
+};

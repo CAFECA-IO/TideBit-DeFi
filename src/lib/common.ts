@@ -745,6 +745,23 @@ export function isValidTradeURL(url: string): boolean {
   return result;
 }
 
+// Info:(20230925 - Julian) i18n URL workaround
+export const getI18nLink = (link: string, locale: string) => {
+  if (link.toLowerCase().includes('bitcoin')) {
+    const bitcoinText = locale === 'tw' ? 'zh_TW' : locale === 'cn' ? 'zh_CN' : 'en';
+    const bitcoinLink = link.includes('en')
+      ? link.replace('en', bitcoinText)
+      : `${link}/${bitcoinText}`;
+    return bitcoinLink;
+  } else if (link.toLowerCase().includes('ethereum')) {
+    const ethereumText = locale === 'tw' ? 'zh-tw' : locale === 'cn' ? 'zh' : 'en';
+    const ethereumLink = link.includes('en')
+      ? link.replace('en', ethereumText)
+      : `${link}/${ethereumText}`;
+    return ethereumLink;
+  }
+};
+
 export function ratioToPercentage(decimal: number): string {
   return `${(decimal * 100).toFixed(2)}`;
 }

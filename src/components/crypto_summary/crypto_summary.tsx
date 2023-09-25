@@ -1,8 +1,10 @@
 import React from 'react';
+import {useRouter} from 'next/router';
 import Image from 'next/image';
 import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
+import {getI18nLink} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 interface ICryptoSummary {
@@ -36,9 +38,13 @@ const CryptoSummary = ({
   tradingValue,
 }: ICryptoSummary) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
+  const {locale} = useRouter();
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
+
+  // Info: (20230925 - Julian) i18n URL workaround
+  const whitePaperLinkWithI18n = getI18nLink(whitePaperLink, locale ?? '') ?? whitePaperLink;
+  const websiteLinkWithI18n = getI18nLink(websiteLink, locale ?? '') ?? websiteLink;
 
   return (
     <>
@@ -66,7 +72,7 @@ const CryptoSummary = ({
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
                   <Link
-                    href={whitePaperLink}
+                    href={whitePaperLinkWithI18n}
                     target="_blank"
                     className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
                   >
@@ -75,8 +81,7 @@ const CryptoSummary = ({
                   </Link>
 
                   <Link
-                    locale={'zh-tw'}
-                    href={websiteLink}
+                    href={websiteLinkWithI18n}
                     target="_blank"
                     className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
                   >

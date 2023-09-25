@@ -3,7 +3,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
+import {BAIFA_LINK, FRACTION_DIGITS} from '../../constants/config';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import Link from 'next/link';
 import ReserveCard from '../reserve_card/reserve_card';
@@ -17,6 +17,8 @@ const ReserveRatio = () => {
 
   const {websiteReserve} = useContext(MarketContext);
   const {BTC, ETH, USDT} = websiteReserve;
+
+  const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
   // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
   const usdtReserveRatio = numberFormatted(USDT.reserveRatio);
@@ -54,7 +56,7 @@ const ReserveRatio = () => {
         <div className="flex w-full justify-center lg:justify-end pr-0 transition-all duration-150 lg:pr-1/8 2xl:pr-1/5">
           <a
             // TODO: Report updated from context (20230619 - Shirley)
-            href={t('HOME_PAGE.REPORTS_LINK')}
+            href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t('HOME_PAGE.REPORTS_LINK')}`}
             download
             target="_blank"
             className="flex space-x-2 hover:text-tidebitTheme"

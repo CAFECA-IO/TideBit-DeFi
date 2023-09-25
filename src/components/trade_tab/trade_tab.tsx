@@ -212,6 +212,8 @@ const TradeTab = () => {
     (async () => {
       setPrice();
 
+      validateTargetInput();
+
       setTpSlBounds();
       setSuggestions();
       renewPosition();
@@ -227,6 +229,8 @@ const TradeTab = () => {
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
+    validateTargetInput();
+
     setPrice();
     setTpSlBounds();
 
@@ -248,6 +252,8 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
+      validateTargetInput();
+
       setPrice();
       setTpSlBounds();
       setSuggestions();
@@ -260,7 +266,7 @@ const TradeTab = () => {
   }, [marketCtx.selectedTicker]);
 
   useEffect(() => {
-    validateTpSlInput();
+    validateTpSlInputs();
   }, [
     longTpValueRef.current,
     longSlValueRef.current,
@@ -454,6 +460,8 @@ const TradeTab = () => {
     setTargetInputValue(value);
     targetAmountDetection(value);
 
+    validateTargetInput();
+
     calculateLongProfit();
     calculateLongLoss();
     calculateShortProfit();
@@ -484,7 +492,17 @@ const TradeTab = () => {
     calculateShortLoss();
   };
 
-  const validateTpSlInput = () => {
+  const validateTargetInput = () => {
+    if (!targetInputValueRef.current || +targetInputValueRef.current < TARGET_MIN_DIGITS) {
+      setLongBtnDisabled(true);
+      setShortBtnDisabled(true);
+    } else {
+      setLongBtnDisabled(false);
+      setShortBtnDisabled(false);
+    }
+  };
+
+  const validateTpSlInputs = () => {
     const longTpValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
       value: longTpValueRef.current,
@@ -849,7 +867,7 @@ const TradeTab = () => {
       inputInitialValue={targetInputValueRef.current}
       inputValueFromParent={targetInputValueRef.current}
       setInputValueFromParent={setTargetInputValue}
-      inputPlaceholder="target amount input"
+      inputPlaceholder="amount"
       inputName="targetInput"
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"
@@ -886,7 +904,7 @@ const TradeTab = () => {
         inputValueFromParent={longTpValue}
         setInputValueFromParent={setLongTpValue}
         getInputValue={getLongTpValue}
-        inputPlaceholder="profit-taking setting"
+        inputPlaceholder="takes profit at"
         inputName="tpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -923,7 +941,7 @@ const TradeTab = () => {
         inputValueFromParent={longSlValue}
         setInputValueFromParent={setLongSlValue}
         getInputValue={getLongSlValue}
-        inputPlaceholder="stop-loss setting"
+        inputPlaceholder="stops loss at"
         inputInitialValue={longSlValue}
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
@@ -1032,7 +1050,7 @@ const TradeTab = () => {
         setInputValueFromParent={setShortTpValue}
         getInputValue={getShortTpValue}
         inputInitialValue={shortTpValue}
-        inputPlaceholder="profit-taking setting"
+        inputPlaceholder="takes profit at"
         inputName="shortTpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -1068,7 +1086,7 @@ const TradeTab = () => {
         inputValueFromParent={shortSlValue}
         setInputValueFromParent={setShortSlValue}
         getInputValue={getShortSlValue}
-        inputPlaceholder="stop-loss setting"
+        inputPlaceholder="stop loss at"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -1157,7 +1175,7 @@ const TradeTab = () => {
       inputInitialValue={targetInputValueRef.current}
       inputValueFromParent={targetInputValueRef.current}
       setInputValueFromParent={setTargetInputValue}
-      inputPlaceholder="target amount input"
+      inputPlaceholder="amount"
       inputName="targetInput"
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"

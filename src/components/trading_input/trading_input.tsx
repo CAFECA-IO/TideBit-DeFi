@@ -6,6 +6,8 @@ import {
   TYPING_KEYUP_DELAY,
 } from '../../constants/display';
 import useStateRef from 'react-usestateref';
+import SafeMath from '../../lib/safe_math';
+import {TARGET_MIN_DIGITS} from '../../constants/config';
 
 interface ITradingInputProps {
   inputInitialValue: number;
@@ -57,7 +59,9 @@ const TradingInput = ({
   ...otherProps
 }: ITradingInputProps) => {
   const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
-  const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
+  const [inputValue, setInputValue, inputValueRef] = useStateRef<number | string>(
+    inputInitialValue
+  );
 
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout
@@ -69,6 +73,7 @@ const TradingInput = ({
   const [isTyping, setIsTyping, isTypingRef] = useStateRef<boolean>(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
+  // const regex = /^\d+(\.\d{1,2})?$/;
 
   const passValueHandler = useCallback(
     (data: number) => {
@@ -103,13 +108,18 @@ const TradingInput = ({
     }
   };
 
-  const debounceValidation = (value: number) => {
+  const debounceValidation = (value: number | string) => {
     if (validationTimeout) {
       clearTimeout(validationTimeout);
     }
 
     const newTimeout = setTimeout(() => {
-      validateInput(value);
+      if (SafeMath.isNumber(value)) {
+        validateInput(+value);
+      } else {
+        setInputValue(TARGET_MIN_DIGITS);
+        passValueHandler(TARGET_MIN_DIGITS);
+      }
     }, INPUT_VALIDATION_DELAY);
 
     setValidationTimeout(newTimeout);
@@ -127,22 +137,26 @@ const TradingInput = ({
     setTypingTimeout(newTimeout);
 
     const value = event.target.value;
-    const numberValue = Number(value);
-    // if (regex.test(value)) {
-    //   const numberValue = Number(value);
-    //   if (numberValue === upperLimit && numberValue === lowerLimit) {
-    //     return;
-    //   }
+    const numberValue = event.target.value;
+    // const numberValue = Number(value);
 
-    setInputValue(numberValue);
-    passValueHandler(numberValue);
+    if (regex.test(value)) {
+      const numberValue = event.target.value;
 
-    debounceValidation(numberValue);
-    // }
+      // const numberValue = Number(value);
+      if (+numberValue === upperLimit && +numberValue === lowerLimit) {
+        return;
+      }
+
+      setInputValue(numberValue);
+      passValueHandler(+numberValue);
+
+      debounceValidation(numberValue);
+    }
   };
 
   const incrementClickHandler = () => {
-    const change = inputValue + TRADING_INPUT_STEP;
+    const change = +inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     if (upperLimit && changeRounded >= upperLimit) {
@@ -158,11 +172,11 @@ const TradingInput = ({
   };
 
   const decrementClickHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
+    const change = +inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     // Info: minimum margin is 0.01 (20230714 - Shirley)
-    if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
+    if (+inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
       return;
     }
     setInputValue(changeRounded);

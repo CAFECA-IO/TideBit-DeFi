@@ -4,11 +4,11 @@ import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_
 import {timestampToString} from '../../lib/common';
 interface IReceiptListProps {
   monthData: string;
-  filteredReceipts: IAcceptedOrder[];
+  sliceReceipts: IAcceptedOrder[];
 }
 
-const ReceiptList = ({monthData, filteredReceipts}: IReceiptListProps) => {
-  const historyList = filteredReceipts.map(history => {
+const ReceiptList = ({monthData, sliceReceipts}: IReceiptListProps) => {
+  const historyList = sliceReceipts.map(history => {
     const monthAndYear = timestampToString(history.createTimestamp).monthAndYear;
 
     if (monthAndYear == monthData) {

@@ -72,9 +72,9 @@
     "APP_DOWLOAD_CONTAINER_TITLE_2": "anywhere, anytime",
     "DOWNLOAD_REPORT": "Download Report",
     "REPORTS_LINK": "/whitepaper/tidebit_tech_whitepaper_v2.0.4_en.pdf",
-    "COMPREHENSIVE_INCOME_STATEMENT_LINK": "/reports/comprehensive_income_statements.pdf",
-    "BALANCE_SHEET_LINK": "/reports/balance_sheets.pdf",
-    "CASH_FLOW_STATEMENT_LINK": "/reports/cash_flows_statements.pdf",
+    "COMPREHENSIVE_INCOME_STATEMENT_LINK": "/comprehensive-income",
+    "BALANCE_SHEET_LINK": "/balance",
+    "CASH_FLOW_STATEMENT_LINK": "/cash-flow",
     "RED_FLAG_ANALYSIS_LINK": "/reports/red_flag_analysis.pdf",
     "SMART": "AI",
     "AUDITING_REPORTS": "Supervision Reports",
@@ -83,7 +83,10 @@
     "BALANCE_SHEET": "Balance Sheet",
     "CASH_FLOW_STATEMENT": "Cash Flow Statement",
     "RED_FLAG_ANALYSIS": "Red Flag Analysis",
-    "POWERED_BY": "Powered by"
+    "POWERED_BY": "Powered by",
+    "ISUNONE_PROMOTION_TITLE_1": "Pay with",
+    "ISUNONE_PROMOTION_TITLE_2": "",
+    "ISUNONE_PROMOTION_DESCRIPTION": "iSunOne Visa Card"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "Wallet Connect",
@@ -304,7 +307,8 @@
     "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "Processing",
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "Failed",
     "RECEIPT_SECTION_FEE": "Fee",
-    "RECEIPT_SECTION_AVAILABLE": "Available"
+    "RECEIPT_SECTION_AVAILABLE": "Available",
+    "RECEIPT_SECTION_SEE_MORE": "See more"
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "Oops! Page can not be found."
@@ -322,7 +326,8 @@
     "SUCCESS": "Success",
     "WARNING": "Warning",
     "INFO": "Info",
-    "PROGRESSING_MESSAGE": "is still in progress, please wait..."
+    "PROGRESSING_MESSAGE": "is still in progress, please wait...",
+    "COPY_SUCCESS": "Copied to clipboard!"
   },
   "SHARING_BOX": {
     "TYPE_UP": "Up",

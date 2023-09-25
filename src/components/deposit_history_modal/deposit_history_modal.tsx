@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
+import {GlobalContext} from '../../contexts/global_context';
 import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {timestampToString} from '../../lib/common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {ToastId} from '../../constants/toast_id';
+import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositHistoryModal {
@@ -22,11 +25,11 @@ const DepositHistoryModal = ({
   modalClickHandler,
   getDepositHistoryData,
 }: IDepositHistoryModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const {receipt, createTimestamp} = getDepositHistoryData;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
   const balance = balanceSnapshot.shift();
-
-  const {t}: {t: TranslateFunction} = useTranslation('common');
+  const globalCtx = useContext(GlobalContext);
 
   const displayedDepositTime = timestampToString(createTimestamp);
   const displayedDepositType = t('D_W_MODAL.DEPOSIT');
@@ -61,6 +64,19 @@ const DepositHistoryModal = ({
       </div>
     );
 
+  const copyClickHandler = () => {
+    navigator.clipboard.writeText(order.txhash);
+
+    globalCtx.toast({
+      type: ToastTypeAndText.INFO.type,
+      message: t('TOAST.COPY_SUCCESS'),
+      toastId: ToastId.COPY_SUCCESS,
+      autoClose: 300,
+      isLoading: false,
+      typeText: t(ToastTypeAndText.INFO.text),
+    });
+  };
+
   const displayedDepositDetail =
     order.orderStatus === OrderStatusUnion.WAITING ? (
       <div className="text-lightGreen5">{t('D_W_MODAL.STATUS_PROCESSING')}</div>
@@ -69,7 +85,9 @@ const DepositHistoryModal = ({
     ) : (
       <div className="inline-flex text-tidebitTheme">
         <div className="mr-2">{order.txhash}</div>
-        <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+        <button className="w-max" onClick={copyClickHandler}>
+          <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+        </button>
       </div>
     );
 

@@ -1,5 +1,5 @@
 import {findCodeByReason, locker} from '../common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
 import {API_URL, DOMAIN} from '../../constants/config';

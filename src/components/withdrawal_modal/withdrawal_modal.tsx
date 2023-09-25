@@ -15,7 +15,7 @@ import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../cons
 import {FRACTION_DIGITS} from '../../constants/config';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {Code} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError} from '../../lib/custom_error';

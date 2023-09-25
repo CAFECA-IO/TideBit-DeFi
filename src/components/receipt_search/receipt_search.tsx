@@ -1,8 +1,7 @@
-import {useState, Dispatch, SetStateAction, useCallback} from 'react';
+import {useState, Dispatch, SetStateAction, useCallback, useEffect} from 'react';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {CgSearch} from 'react-icons/cg';
-import Image from 'next/image';
 import DatePicker from '../date_picker/date_picker';
 import {useTranslation} from 'next-i18next';
 
@@ -34,7 +33,11 @@ const ReceiptSearch = ({
   const [dateEnd, setDateEnd] = useState(
     new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
   );
-  //const [tickersSettings, setTickersSettings] = useState(null);
+
+  // Info: (20230921 - Julian) Set default date to today
+  useEffect(() => {
+    setFilteredDate([dateStart.toLocaleDateString(), dateEnd.toLocaleDateString()]);
+  }, []);
 
   const tradingTypeMenuText =
     filteredTradingType === OrderType.DEPOSIT
@@ -78,8 +81,6 @@ const ReceiptSearch = ({
     setTradingTypeMenuOpen(false);
   };
 
-  /* Todo: (20230412 - Julian)
-   * date to timestamp #289 */
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
@@ -107,12 +108,19 @@ const ReceiptSearch = ({
     setSearches(searchString);
   };
 
-  const displayedFilterBar = (
-    <div className="hidden space-x-10 text-lightWhite sm:flex">
-      {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
-      <div className="flex flex-col items-start">
-        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}
-        <div className="relative mt-2 w-160px">
+  return (
+    <div className="flex flex-col items-center sm:items-stretch">
+      <div className="mb-12 grid w-full grid-cols-1 grid-rows-1 items-end gap-y-2 lg:grid-cols-4 lg:grid-rows-2">
+        {/* Info: (20230921 - Julian) ------------- Text Row ------------- */}
+        {/* Info: (20230921 - Julian) Trading Type Title */}
+        <p className="hidden lg:block">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}</p>
+        {/* Info: (20230921 - Julian) Date Title */}
+        <p className="hidden lg:block">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}</p>
+        {/* Info: (20230921 - Julian) Search Title (No text) */}
+        <p className="col-span-2 hidden lg:block"></p>
+        {/* Info: (20230921 - Julian) ------------- Function Row ------------- */}
+        {/* Info: (20230921 - Julian) Trading Type Dropdown Menu */}
+        <div className="relative mt-2 hidden w-160px lg:block">
           <button
             className={`flex w-full items-center justify-between px-5 py-3 text-left text-lightGray4 transition-all duration-200 ease-in-out hover:cursor-pointer ${
               tradingTypeMenuOpen ? 'bg-darkGray2' : 'bg-darkGray7'
@@ -150,54 +158,28 @@ const ReceiptSearch = ({
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Info: (20230316 - Julian) Date Picker */}
-      <div className="flex flex-col items-start">
-        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
-        <div className="mt-2 flex items-center space-x-2">
+        {/* Info: (20230921 - Julian) Date Picker */}
+        <div className="mt-2 hidden items-center space-x-2 lg:flex">
           <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <DatePicker date={dateEnd} setDate={dateEndUpdateHandler} minDate={dateStart} />
         </div>
-      </div>
-    </div>
-  );
-
-  const displayedSearchBar = (
-    <div className="relative w-300px">
-      <input
-        type="search"
-        className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-        placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
-        required
-        onChange={onSearchChange}
-      />
-      <button
-        type="button"
-        className="absolute right-1 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
-      >
-        <CgSearch size={30} />
-      </button>
-    </div>
-  );
-
-  const displayedTicker = (
-    <div className="flex items-center space-x-2">
-      <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
-      <div className="flex flex-col items-start">
-        <p className="text-xl">Tether</p>
-        <p className="text-lg">USDT</p>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col items-center sm:items-stretch">
-      {/* displayedTicker */}
-      <div className="flex items-center justify-between py-6">
-        {displayedFilterBar}
-        {displayedSearchBar}
+        {/* Info: (20230921 - Julian) Search Bar */}
+        <div className="relative w-full lg:col-span-2 lg:ml-auto lg:w-300px">
+          <input
+            type="search"
+            className="block w-full rounded-full bg-darkGray7 p-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+            placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
+            required
+            onChange={onSearchChange}
+          />
+          <button
+            type="button"
+            className="absolute right-1 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+          >
+            <CgSearch size={30} />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,15 +1,6 @@
 import React, {useContext} from 'react';
-import CryptoNewsItem from '../crypto_news_item/crypto_news_item';
-import {MarketContext} from '../../contexts/market_context';
-import {dummyTickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
 import NewsItem from '../news_item/news_item';
-import Link from 'next/link';
-import Pagination from '../pagination/pagination';
-import {
-  IRecommendedNews,
-  getDummyRecommendationNews,
-} from '../../interfaces/tidebit_defi_background/news';
-import {Currency} from '../../constants/currency';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
 
 const NewsSection = ({

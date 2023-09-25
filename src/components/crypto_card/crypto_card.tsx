@@ -9,7 +9,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 
@@ -279,7 +279,7 @@ const CryptoCard = ({
 
       {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
-        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
+        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-10px border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();

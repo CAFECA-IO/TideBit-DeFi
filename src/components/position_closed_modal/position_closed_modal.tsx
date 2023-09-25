@@ -19,6 +19,7 @@ import {
   roundToDecimalPlaces,
   findCodeByReason,
   toPnl,
+  numberFormatted,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -36,7 +37,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
@@ -54,6 +55,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
+import {open} from 'fs/promises';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -102,12 +104,22 @@ const PositionClosedModal = ({
 
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
-  const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLSymbol = !!openCfdDetails.pnl?.value
+    ? (openCfdDetails.pnl as IPnL).value > 0
       ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : (openCfdDetails.pnl as IPnL).value < 0
       ? '-'
-      : '';
+      : ''
+    : openCfdDetails.pnl !== undefined && Math.abs((openCfdDetails.pnl as IPnL).value) === 0
+    ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
+      openCfdDetails.openPrice !== gQuotationRef.current.price
+      ? '≈'
+      : ''
+    : '';
+
+  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+    ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
+    : '- -';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -119,19 +131,21 @@ const PositionClosedModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLColor = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+      : TypeOfPnLColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedBorderColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedBorderColor = !!openCfdDetails.pnl
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+      : TypeOfBorderColor.EQUAL
+    : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -183,7 +197,7 @@ const PositionClosedModal = ({
     const closePrice = quotation.price;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
+    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2, true);
 
     const pnl: IPnL =
       cfd?.pnl ||
@@ -338,9 +352,6 @@ const PositionClosedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
-        // Deprecated: (20230802 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('history right after closing', historyData);
         globalCtx.dataHistoryPositionModalHandler(historyData);
         globalCtx.visibleHistoryPositionModalHandler();
       } else if (
@@ -517,10 +528,7 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails?.openPrice.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {numberFormatted(openCfdDetails?.openPrice)}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -528,10 +536,7 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails?.amount.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                )}{' '}
+                {numberFormatted(openCfdDetails?.amount)}{' '}
                 <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
               </div>
             </div>
@@ -540,14 +545,8 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {openCfdDetails.closePrice
-                  ? openCfdDetails.closePrice.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )
-                  : gQuotationRef.current.price?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    ) ?? 0}{' '}
+                  ? numberFormatted(openCfdDetails.closePrice)
+                  : numberFormatted(gQuotationRef.current.price)}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -555,11 +554,7 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
-                {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                )}
+                {displayedPnLSymbol} $ {displayedPnLValue}
               </div>
             </div>
 
@@ -579,7 +574,7 @@ const PositionClosedModal = ({
               <div className={`${layoutInsideBorder}`}>
                 <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
                 <div className={`${TypeOfPnLColor.LOSS}`}>
-                  {`- $ ${roundToDecimalPlaces(openCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+                  {`- $ ${numberFormatted(openCfdDetails?.guaranteedStopFee)}`}{' '}
                 </div>
               </div>
             )}

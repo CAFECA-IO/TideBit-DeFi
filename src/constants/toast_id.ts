@@ -5,6 +5,7 @@ export type IToastId = {
   INVALID_CFD_OPEN_REQUEST: string;
   INCONSISTENT_TICKER_OF_QUOTATION: string;
   UNKNOWN_ERROR_IN_COMPONENT: string;
+  COPY_SUCCESS: string;
 };
 
 export const ToastId: IToastId = {
@@ -14,4 +15,5 @@ export const ToastId: IToastId = {
   INVALID_CFD_OPEN_REQUEST: 'InvalidCFDOpenRequest',
   INCONSISTENT_TICKER_OF_QUOTATION: 'InconsistentTickerOfQuotation',
   UNKNOWN_ERROR_IN_COMPONENT: 'UnknownErrorInComponent',
+  COPY_SUCCESS: 'CopySuccess',
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 interface ITradeStatistics {

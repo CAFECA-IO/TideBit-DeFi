@@ -4,6 +4,7 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
 import Skeleton from 'react-loading-skeleton';
 import {GlobalContext} from '../../contexts/global_context';
+import {UserContext} from '../../contexts/user_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
@@ -11,15 +12,13 @@ import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
-import {ProfitState} from '../../constants/profit_state';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
-type TranslateFunction = (s: string) => string;
-
-type LeaderboardTabProps = {
+interface LeaderboardTabProps {
   timeSpan: IRankingTimeSpan;
   setTimeSpan: Dispatch<SetStateAction<IRankingTimeSpan>>;
   rankings: IRanking[];
-};
+}
 
 const MIN_SCREEN_WIDTH = 1024;
 const DEFAULT_PODIUM_WIDTH = 960;
@@ -41,6 +40,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const [isLoading, setIsLoading] = useState(true);
   const windowSize = useWindowSize();
   const globalCtx = useContext(GlobalContext);
+  const userCtx = useContext(UserContext);
 
   const podiumWidth =
     windowSize.width > DEFAULT_PODIUM_WIDTH ? windowSize.width : DEFAULT_PODIUM_WIDTH;
@@ -98,9 +98,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>
-    pnl?.type === ProfitState.PROFIT ? (
+    pnl?.value > 0 ? (
       <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl?.type === ProfitState.LOSS ? (
+    ) : pnl?.value < 0 ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
       <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value || 0)}</div>
@@ -270,59 +270,79 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     );
   });
 
-  /* Info: (20230511 - Julian) Leaderboard List (4th ~) */
-  const displayedleaderboardList = rankingData
-    .slice(3)
-    .map(({rank, userName, userAvatar, cumulativePnl, userId}) => {
-      const clickHandler = () => {
-        globalCtx.dataPersonalAchievementModalHandler(userId);
-        globalCtx.visiblePersonalAchievementModalHandler();
-      };
+  /* Info: (20230814 - Julian) Ranking row  */
+  const rankingItem = ({rank, userName, userAvatar, cumulativePnl, userId}: IRanking) => {
+    const displayedRank = rank <= 0 ? '-' : rank;
+    const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
+    const displayedName = rank <= 0 ? 'N/A' : accountTruncate(userName, 20);
+    const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
+    const clickHandler = () => {
+      globalCtx.dataPersonalAchievementModalHandler(userId);
+      globalCtx.visiblePersonalAchievementModalHandler();
+    };
 
-      const displayedRank = rank <= 0 ? '-' : rank;
-      const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
-      const displayedName = rank <= 0 ? 'N/A' : accountTruncate(userName, 20);
-      const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
-      return isLoading ? (
-        <div key={rank} className="flex items-center justify-between px-4 py-6">
-          <div className="flex items-center space-x-5">
-            <Skeleton width={60} height={25} />
-            <Skeleton width={leaderboardUserAvatarSize} height={leaderboardUserAvatarSize} circle />
-            <Skeleton width={80} height={25} />
-          </div>
-          <Skeleton width={100} height={30} />
+    return isLoading ? (
+      <div className="flex h-90px items-center justify-between px-8 py-3">
+        <div className="flex items-center space-x-6">
+          <Skeleton width={60} height={25} />
+          <Skeleton width={leaderboardUserAvatarSize} height={leaderboardUserAvatarSize} circle />
+          <Skeleton width={80} height={25} />
         </div>
-      ) : (
-        <div
-          key={rank}
-          className="flex w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
-          onClick={clickHandler}
-        >
-          <div className="flex flex-1 items-center space-x-2 md:space-x-3">
-            <div className="inline-flex items-center sm:w-70px">
-              <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
+        <Skeleton width={100} height={30} />
+      </div>
+    ) : (
+      <div
+        className="flex h-90px w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
+        onClick={clickHandler}
+      >
+        <div className="flex flex-1 items-center space-x-2 md:space-x-3">
+          <div className="inline-flex items-center sm:w-70px">
+            <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
-              <div className="ml-2 text-sm sm:text-lg">{displayedRank}</div>
-            </div>
-            {/* Info: (20230510 - Julian) User Avatar */}
-            <Image
-              src={displayedAvatar ?? DEFAULT_USER_AVATAR}
-              width={leaderboardUserAvatarSize}
-              height={leaderboardUserAvatarSize}
-              alt="user_avatar"
-            />
-            {/* Info: (20230510 - Julian) User Name */}
-            <div className="truncate text-sm sm:text-xl">{displayedName}</div>
+            <div className="ml-2 text-sm sm:text-lg">{displayedRank}</div>
           </div>
-          <div className="flex items-center space-x-3 text-base md:text-xl">
-            <div className="inline-flex items-end">
-              {displayedPnl}
-              <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
-            </div>
+          {/* Info: (20230510 - Julian) User Avatar */}
+          <Image
+            src={displayedAvatar ?? DEFAULT_USER_AVATAR}
+            width={leaderboardUserAvatarSize}
+            height={leaderboardUserAvatarSize}
+            alt="user_avatar"
+          />
+          {/* Info: (20230510 - Julian) User Name */}
+          <div className="truncate text-sm sm:text-xl">{displayedName}</div>
+        </div>
+        <div className="flex items-center space-x-3 text-base md:text-xl">
+          <div className="inline-flex items-end">
+            {displayedPnl}
+            <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
           </div>
         </div>
-      );
-    });
+      </div>
+    );
+  };
+
+  /* Info: (20230814 - Julian) 找到當前使用者的排名，未登入則 0  */
+  const userRankingNumber = rankingData.find(data => data.userId === userCtx.user?.id)?.rank ?? 0;
+
+  /* Info: (20230814 - Julian)
+   * 有登入：從第四名起，排名在當前使用者前面的名單，並排除前三名
+   * 未登入：從第四名起的所有名單 */
+  const rankingDataBeforeUser = userCtx.user?.address
+    ? rankingData.slice(3, userRankingNumber - 1).filter(item => item.rank > 3)
+    : rankingData.slice(3);
+  const displayedListBeforeUser = rankingDataBeforeUser.map((item, index) => (
+    <div key={index}>{rankingItem(item)}</div>
+  ));
+
+  /* Info: (20230814 - Julian)
+   * 有登入：從第四名起，排名在當前使用者後面的名單，並排除前三名
+   * 未登入：null */
+  const rankingDataAfterUser = userCtx.user?.address
+    ? rankingData.slice(userRankingNumber).filter(item => item.rank > 3)
+    : null;
+  const displayedListAfterUser = rankingDataAfterUser
+    ? rankingDataAfterUser.map((item, index) => <div key={index}>{rankingItem(item)}</div>)
+    : null;
 
   return (
     <div className="flex flex-col items-center">
@@ -330,9 +350,10 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       {/* Info: (20230509 - Julian) Leaderboard */}
       <div className="my-10 w-screen md:w-8/10">
         <div className="inline-flex w-full text-center font-medium md:space-x-3px">{tabList}</div>
-        <div className="relative flex w-full flex-col bg-darkGray7 pt-2">
-          {displayedleaderboardList}
+        <div className="flex w-full flex-col bg-darkGray7 pt-2">
+          {displayedListBeforeUser}
           <UserPersonalRanking timeSpan={timeSpan} rankingData={rankingData} />
+          {displayedListAfterUser}
         </div>
       </div>
     </div>

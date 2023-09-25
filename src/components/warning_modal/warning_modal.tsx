@@ -4,7 +4,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {IWarningModal} from '../../contexts/global_context';
 import {MODAL_BUTTON_STYLE} from '../../constants/display';
 import {ImWarning} from 'react-icons/im';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 interface IWarningModalProps {

@@ -17,7 +17,7 @@ import {
   unitAsset,
   SUGGEST_TP,
   SUGGEST_SL,
-  LIQUIDATION_FIVE_LEVERAGE,
+  LIQUIDATION_PERCENTAGE,
   FRACTION_DIGITS,
   TP_SL_LIMIT_RATIO,
   DEFAULT_INSTID,
@@ -84,13 +84,15 @@ const TradeTab = () => {
   const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, SafeMath.div(SUGGEST_TP, leverage))),
-      2
+      2,
+      true
     )
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, SafeMath.div(SUGGEST_SL, leverage))),
-      2
+      2,
+      true
     )
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
@@ -133,7 +135,7 @@ const TradeTab = () => {
     )
   );
   const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
-    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, longPriceRef.current), 2)
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, longPriceRef.current), 2, true)
   );
 
   const [requiredMarginShort, setRequiredMarginShort, requiredMarginShortRef] = useStateRef(
@@ -143,7 +145,7 @@ const TradeTab = () => {
     )
   );
   const [valueOfPositionShort, setValueOfPositionShort, valueOfPositionShortRef] = useStateRef(
-    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2)
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2, true)
   );
 
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
@@ -314,7 +316,8 @@ const TradeTab = () => {
 
       const sellPrice = roundToDecimalPlaces(
         marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.BUY),
-        2
+        2,
+        true
       );
 
       setLongPrice(buyPrice);
@@ -553,43 +556,49 @@ const TradeTab = () => {
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-      2
+      2,
+      true
     );
     const shortTpUpperBound = roundToDecimalPlaces(
       +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-      2
+      2,
+      true
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(
         longPriceRef.current,
         SafeMath.mult(
-          SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE),
+          SafeMath.minus(1, LIQUIDATION_PERCENTAGE),
           SafeMath.plus(1, TP_SL_LIMIT_RATIO)
         )
       ),
-      2
+      2,
+      true
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
       +SafeMath.mult(
         shortPriceRef.current,
         SafeMath.mult(
-          SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE),
+          SafeMath.plus(1, LIQUIDATION_PERCENTAGE),
           SafeMath.minus(1, TP_SL_LIMIT_RATIO)
         )
       ),
-      2
+      2,
+      true
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-      2
+      2,
+      true
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-      2
+      2,
+      true
     );
 
     setLongSlLowerLimit(longSlLowerBound);
@@ -608,16 +617,28 @@ const TradeTab = () => {
     const slTimes = SUGGEST_SL / leverage;
 
     setLongTpSuggestion(
-      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.plus(1, tpTimes)), 2)
+      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.plus(1, tpTimes)), 2, true)
     );
     setLongSlSuggestion(
-      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.minus(1, slTimes)), 2)
+      roundToDecimalPlaces(
+        +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, slTimes)),
+        2,
+        true
+      )
     );
     setShortTpSuggestion(
-      roundToDecimalPlaces(+SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, tpTimes)), 2)
+      roundToDecimalPlaces(
+        +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, tpTimes)),
+        2,
+        true
+      )
     );
     setShortSlSuggestion(
-      roundToDecimalPlaces(+SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, slTimes)), 2)
+      roundToDecimalPlaces(
+        +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, slTimes)),
+        2,
+        true
+      )
     );
   };
 
@@ -634,7 +655,7 @@ const TradeTab = () => {
     // Long
     const newLongValue = +SafeMath.mult(targetInputValueRef.current, longPriceRef.current);
 
-    const roundedLongValue = roundToDecimalPlaces(newLongValue, 2);
+    const roundedLongValue = roundToDecimalPlaces(newLongValue, 2, true);
     setValueOfPositionLong(roundedLongValue);
 
     const marginLong = +SafeMath.div(newLongValue, leverage);
@@ -656,7 +677,7 @@ const TradeTab = () => {
     // Short
     const newShortValue = +SafeMath.mult(targetInputValueRef.current, shortPriceRef.current);
 
-    const roundedShortValue = roundToDecimalPlaces(newShortValue, 2);
+    const roundedShortValue = roundToDecimalPlaces(newShortValue, 2, true);
     setValueOfPositionShort(roundedShortValue);
 
     const marginShort = +SafeMath.div(newShortValue, leverage);
@@ -737,8 +758,9 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(
-        +SafeMath.mult(long.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE)),
-        2
+        +SafeMath.mult(long.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE)),
+        2,
+        true
       ),
       fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
@@ -756,7 +778,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(
-        +SafeMath.mult(short.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE)),
+        +SafeMath.mult(short.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE)),
         2
       ),
       fee: feePercent,
@@ -877,15 +899,16 @@ const TradeTab = () => {
   const displayedExpectedLongProfit = (
     <div
       className={`${
-        longTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
-      } -mt-5 items-center transition-all`}
+        longTpToggle ? `translate-y-2` : `invisible translate-y-0`
+      } transition-all duration-150 ease-in-out`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
         ${' '}
         {roundToDecimalPlaces(
           Math.abs(estimatedLongProfitValueRef.current.number),
-          2
+          2,
+          true
         ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
@@ -914,25 +937,26 @@ const TradeTab = () => {
   const displayedExpectedLongLoss = (
     <div
       className={`${
-        longSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
-      } -mt-0 items-center transition-all`}
+        longSlToggle ? `translate-y-2` : `invisible translate-y-0`
+      } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedLongLossValueRef.current.symbol} ${' '}
-        {roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedLongLossValueRef.current.number),
+          2,
+          true
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
   );
 
   const longGuaranteedStop = (
-    // <div className={`${isDisplayedLongSlSetting} mt-0 h-14 items-center`}>
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mb-10 mt-0 flex items-center transition-all`}
+      } flex items-center transition-all duration-150 ease-in-out`}
     >
       <input
         type="checkbox"
@@ -1020,16 +1044,15 @@ const TradeTab = () => {
 
   const displayedExpectedShortProfit = (
     <div
-      className={`${
-        shortTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
-      } -mt-5 items-center transition-all`}
+      className={`${shortTpToggle ? `translate-y-2` : `invisible translate-y-0`} transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
         ${' '}
         {roundToDecimalPlaces(
           Math.abs(estimatedShortProfitValueRef.current.number),
-          2
+          2,
+          true
         ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
@@ -1058,14 +1081,15 @@ const TradeTab = () => {
   const displayedExpectedShortLoss = (
     <div
       className={`${
-        shortSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
-      } -mt-0 items-center transition-all`}
+        shortSlToggle ? `translate-y-2` : `invisible translate-y-0`
+      } items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedShortLossValueRef.current.symbol} ${' '}
         {roundToDecimalPlaces(
           Math.abs(estimatedShortLossValueRef.current.number),
-          2
+          2,
+          true
         ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
@@ -1179,7 +1203,7 @@ const TradeTab = () => {
     <div
       className={`${
         isActiveTabLong ? 'flex' : 'hidden'
-      } w-full flex-col items-center justify-center space-y-5`}
+      } w-full flex-col items-center justify-center space-y-2`}
     >
       {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
@@ -1188,11 +1212,11 @@ const TradeTab = () => {
           {displayedLongTpSetting}
           <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
         </div>
-        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedLongProfit}</div>
+        <div className="mb-3 w-full">{displayedExpectedLongProfit}</div>
       </div>
 
       {/* Info: (20230725 - Julian) Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center space-y-5">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedLongSlSetting}
@@ -1210,7 +1234,7 @@ const TradeTab = () => {
     <div
       className={`${
         isActiveTabLong ? 'hidden' : 'flex'
-      } w-full flex-col items-center justify-center space-y-5`}
+      } w-full flex-col items-center justify-center space-y-2`}
     >
       {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
@@ -1219,11 +1243,11 @@ const TradeTab = () => {
           {displayedShortTpSetting}
           <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
         </div>
-        <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedShortProfit}</div>
+        <div className="mb-3 w-full">{displayedExpectedShortProfit}</div>
       </div>
 
       {/* Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center space-y-5">
+      <div className="flex w-full flex-col items-center space-y-2">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedShortSlSetting}
@@ -1239,17 +1263,17 @@ const TradeTab = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
+      className={`flex h-screen w-screen flex-col items-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-36 transition-all duration-150`}
     >
-      <div className="flex self-end px-30px py-20px">
+      <div className="flex self-end px-30px pt-4">
         <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 
       {/* Info: (20230725 - Julian) ---------- margin setting ---------- */}
-      <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
-        <div className="flex flex-col items-center justify-between space-y-7">
+      <div className="w-screen flex-1 overflow-hidden px-8 sm:w-1/2">
+        <div className="flex flex-col items-center justify-between space-y-4">
           <div className="flex w-full items-center justify-center">
             <UserOverview
               depositAvailable={userCtx.userAssets?.balance?.available ?? 0}

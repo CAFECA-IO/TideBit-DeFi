@@ -72,9 +72,9 @@
     "APP_DOWLOAD_CONTAINER_TITLE_2": "進行交易。",
     "DOWNLOAD_REPORT": "下載報告",
     "REPORTS_LINK": "/whitepaper/tidebit_tech_whitepaper_v2.0.4_zh.pdf",
-    "COMPREHENSIVE_INCOME_STATEMENT_LINK": "/reports/comprehensive_income_statements.pdf",
-    "BALANCE_SHEET_LINK": "/reports/balance_sheets.pdf",
-    "CASH_FLOW_STATEMENT_LINK": "/reports/cash_flows_statements.pdf",
+    "COMPREHENSIVE_INCOME_STATEMENT_LINK": "/comprehensive-income",
+    "BALANCE_SHEET_LINK": "/balance",
+    "CASH_FLOW_STATEMENT_LINK": "/cash-flow",
     "RED_FLAG_ANALYSIS_LINK": "/reports/red_flag_analysis.pdf",
     "SMART": "人工智慧",
     "AUDITING_REPORTS": "監管報告",
@@ -83,7 +83,10 @@
     "BALANCE_SHEET": "資產負債表",
     "CASH_FLOW_STATEMENT": "現金流量表",
     "RED_FLAG_ANALYSIS": "風險分析",
-    "POWERED_BY": "技術支持"
+    "POWERED_BY": "技術支持",
+    "ISUNONE_PROMOTION_TITLE_1": "使用",
+    "ISUNONE_PROMOTION_TITLE_2": "付款",
+    "ISUNONE_PROMOTION_DESCRIPTION": "iSunOne Visa 金融卡"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "連接錢包",
@@ -304,7 +307,8 @@
     "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "處理中",
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "失敗",
     "RECEIPT_SECTION_FEE": "手續費",
-    "RECEIPT_SECTION_AVAILABLE": "可用餘額"
+    "RECEIPT_SECTION_AVAILABLE": "可用餘額",
+    "RECEIPT_SECTION_SEE_MORE": "查看更多"
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "糟糕！您要找的頁面不存在。"
@@ -322,7 +326,8 @@
     "SUCCESS": "成功",
     "WARNING": "警告",
     "INFO": "訊息",
-    "PROGRESSING_MESSAGE": "處理中，請稍候..."
+    "PROGRESSING_MESSAGE": "處理中，請稍候...",
+    "COPY_SUCCESS": "已複製到剪貼簿！"
   },
   "SHARING_BOX": {
     "TYPE_UP": "看漲",

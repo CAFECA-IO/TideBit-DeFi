@@ -34,11 +34,11 @@ neutra sustainable fingerstache kickstarter.`;
 
   return (
     <>
-      {/* Desktop */}
+      {/* Info: Desktop (20230922 - Shirley) */}
       <section
         className={`${desktopVersionBreakpoint} container mx-auto flex w-screen justify-center bg-black text-gray-400`}
       >
-        <div className="flex flex-col items-center pb-24 pl-1/20 md:flex-row xl:pl-1/50">
+        <div className="flex flex-col items-center pl-1/20 md:flex-row xl:pl-1/50">
           <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mr-28 md:mt-10 md:w-2/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
             <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
               {displayedHeading}
@@ -50,14 +50,14 @@ neutra sustainable fingerstache kickstarter.`;
         </div>
       </section>
 
-      {/* Mobile */}
+      {/* Info: Mobile (20230922 - Shirley) */}
       <section
         className={`${mobileVersionBreakpoint} container mx-auto w-screen justify-center bg-black text-gray-400`}
       >
-        <div className="flex flex-col items-center pb-24">
+        <div className="flex flex-col items-center">
           <div className="mb-10 w-5/6">{displayedImg}</div>
 
-          <div className="mx-auto mt-0 flex max-w-lg flex-col items-center justify-center text-center align-baseline">
+          <div className="mx-4 mt-0 flex max-w-lg flex-col items-center justify-center text-center align-baseline">
             <h1 className="mx-auto mb-5 text-center text-2xl font-medium text-white sm:text-4xl">
               {displayedHeading}
             </h1>

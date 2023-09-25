@@ -19,7 +19,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';

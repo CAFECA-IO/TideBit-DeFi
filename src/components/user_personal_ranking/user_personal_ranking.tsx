@@ -85,13 +85,13 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     const gapPnl =
       // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
       previousPnl.type === myPnl.type
-        ? Math.abs(previousPnl.value - myPnl.value)
-        : // Info: (202300809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
-          Math.abs(previousPnl.value + myPnl.value);
+        ? Math.abs(+previousPnl.value - +myPnl.value)
+        : // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
+          Math.abs(+previousPnl.value + +myPnl.value);
 
     const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
-    return gapPnl !== 0 ? gapPnlFormatted : '-';
+    return gapPnl !== 0 ? `+ ${gapPnlFormatted}` : '-';
   };
 
   const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;
@@ -125,9 +125,10 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     );
 
   const isDisplayedLiveRank =
-    timeSpan === RankingInterval.LIVE ? (
+    /* Info: (20230818 - Julian) 第一名不用顯示 */
+    timeSpan === RankingInterval.LIVE && rankingNumber > 1 ? (
       <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-        <div>+ {displayedGapPnl()}</div>
+        <div>{displayedGapPnl()}</div>
         <div>
           <ImArrowUp width={20} height={26} />
         </div>
@@ -137,7 +138,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
 
   const personalRanking = userCtx.user?.address ? (
     isLoading ? (
-      <div className="flex items-center bg-darkGray3 px-4 py-2 md:px-8">
+      <div className="flex h-90px items-center bg-darkGray3 px-4 py-2 md:px-8">
         <div className="flex flex-1 items-center space-x-4">
           <Skeleton width={60} height={25} />
           <Skeleton width={60} height={60} circle />

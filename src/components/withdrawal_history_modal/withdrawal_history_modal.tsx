@@ -7,7 +7,7 @@ import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;

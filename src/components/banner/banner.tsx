@@ -1,88 +1,146 @@
 import Image from 'next/image';
 import React from 'react';
-import TideButton from '../tide_button/tide_button';
-import {useTranslation} from 'react-i18next';
-
-// mx-auto flex flex-col items-center justify-center px-5 py-24
-// pb-[600px]
-// FIXME: remove `contain={true}` in Image components
+import {useTranslation} from 'next-i18next';
+import {useGlobal} from '../../contexts/global_context';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import useCheckLink from '../../lib/hooks/use_check_link';
+import {I_SUN_ONE_LINK} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
+
 const Banner = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const {layoutAssertion} = useGlobal();
+  const iSunOneIconSize = layoutAssertion === LayoutAssertion.MOBILE ? 35 : 50;
+  const shrink = 0.7;
+
+  const iSunOneLink = useCheckLink(I_SUN_ONE_LINK, I_SUN_ONE_LINK);
+
   return (
     <>
-      {/* Desktop version (width >= 1024 px) */}
-
-      <div className="hidden lg:block">
-        <section className="">
-          <div className="">
-            <div className="">
-              <div className="relative">
+      <div className="">
+        <section className="w-full">
+          <div
+            className="hidden w-screen lg:flex flex-col items-start pt-5 xl:pt-20 lg:pt-10 pl-1/4 md:pl-2/5 xl:pl-1/2 bg-iSunOneBg bg-center bg-no-repeat bg-cover"
+            style={{
+              height: `${layoutAssertion === LayoutAssertion.MOBILE ? '200px' : '356px'}`,
+            }}
+          >
+            <p className="text-white text-2xl md:text-4xl lg:text-5.5xl font-bold tracking-normal">
+              {t('HOME_PAGE.ISUNONE_PROMOTION_TITLE_1')}{' '}
+              <span className="text-lightGreen6">USDT</span>
+              <span className="text-lg lg:text-4xl mx-2">&</span>
+              <span className="text-lightBlue mr-2">USDC</span>
+              {t('HOME_PAGE.ISUNONE_PROMOTION_TITLE_2')}
+            </p>
+            <div className="pt-5 lg:pt-12 group">
+              <a
+                className="flex text-center items-center tracking-wider"
+                href={iSunOneLink}
+                target="_blank"
+              >
                 <Image
-                  className="absolute top-0 left-0 h-fit w-screen bg-darkGray3 opacity-80"
-                  alt="background image"
-                  src="/elements/group_14583.svg"
-                  width={1920}
-                  height={1080}
+                  src={`/elements/isunone_logo.svg`}
+                  width={iSunOneIconSize}
+                  height={iSunOneIconSize}
+                  alt="isunone logo"
                 />
-                <Image
-                  className="absolute right-20 top-1 w-1/3 xs:top-2 xs:right-24 md:right-40 lg:right-52 xl:right-64"
-                  width={892}
-                  height={712}
-                  alt="isunone"
-                  src="/elements/group_15199@2x.png"
-                />
-                <div className="absolute left-16 top-0 mt-5 flex text-xs xxs:left-20 xxs:mt-7 xxs:text-sm xs:left-28 xs:mt-10 xs:text-base sm:left-36 sm:top-3 sm:text-xl md:left-40 md:top-5 md:mt-12 md:text-3xl lg:top-5 lg:left-52 lg:mt-16 lg:text-4xl xl:top-5 xl:left-56 xl:text-5xl 2xl:left-96 2xl:top-20 2xl:text-6xl">
-                  <div className="flex flex-col items-start justify-start space-y-2 text-start font-bold sm:space-y-4 lg:space-y-8">
-                    <div className="text-white">{t('HOME_PAGE.BANNER_TITLE')}</div>
-                    <div className="text-tidebitTheme">{t('HOME_PAGE.BANNER_TITLE_HIGHLIGHT')}</div>
-                    <TideButton className="rounded bg-tidebitTheme px-5 py-2 font-normal text-white transition-all duration-300 hover:bg-cyan-600 xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                      {t('HOME_PAGE.BANNER_BUTTON')}
-                    </TideButton>
-                  </div>
+                <p className="ml-3 mr-2 text-white text-lg md:text-2xl lg:text-4xl font-bold group-hover:text-lightYellow3 transition-all duration-300">
+                  {t('HOME_PAGE.ISUNONE_PROMOTION_DESCRIPTION')}
+                </p>
+                <div className="">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={iSunOneIconSize * shrink}
+                    height={iSunOneIconSize * shrink}
+                    fill="none"
+                    viewBox="0 0 30 31"
+                    className="transition-transform duration-300 group-hover:translate-x-2"
+                  >
+                    <g clipPath="url(#clip0_9_1330)">
+                      <g>
+                        <path
+                          className="fill-current text-white group-hover:text-yellow-400 transition-colors duration-300"
+                          d="M25.896 16.357a1.875 1.875 0 000-2.65l-7.07-7.074a1.875 1.875 0 10-2.652 2.652l3.87 3.872H5.625a1.875 1.875 0 100 3.75h14.419l-3.87 3.87a1.875 1.875 0 002.652 2.652l7.07-7.072z"
+                        ></path>
+                      </g>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_9_1330">
+                        <path
+                          fill="#fff"
+                          d="M0 0H30V30H0z"
+                          transform="rotate(90 14.984 15.016)"
+                        ></path>
+                      </clipPath>
+                    </defs>
+                  </svg>
                 </div>
+              </a>
+            </div>
+          </div>
+
+          <div className="relative h-120vh md:h-200vh w-screen flex items-center justify-center lg:hidden bg-center bg-no-repeat bg-iSunOneBgMobile bg-contain">
+            <div className="flex flex-col mb-250px xs:mb-2/3 sm:mb-2/3 items-center w-full z-20">
+              <p className="text-white text-2xl xs:text-3xl sm:text-4xl font-bold tracking-normal">
+                {t('HOME_PAGE.ISUNONE_PROMOTION_TITLE_1')}{' '}
+                <span className="text-lightGreen6">USDT</span>
+                <span className="mx-2">&</span>
+                <span className="text-lightBlue mr-2">USDC</span>
+                {t('HOME_PAGE.ISUNONE_PROMOTION_TITLE_2')}
+              </p>
+              <div className="pt-5 sm:pt-12 group">
+                <a
+                  className="flex text-center items-center tracking-wider"
+                  href={iSunOneLink}
+                  target="_blank"
+                >
+                  <Image
+                    src={`/elements/isunone_logo.svg`}
+                    width={iSunOneIconSize}
+                    height={iSunOneIconSize}
+                    alt="isunone logo"
+                  />
+                  <p className="ml-3 mr-2 text-white text-base xs:text-2xl sm:text-3xl font-bold group-hover:text-lightYellow3 transition-all duration-300">
+                    {t('HOME_PAGE.ISUNONE_PROMOTION_DESCRIPTION')}
+                  </p>
+                  <div className="">
+                    <div className="">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={iSunOneIconSize * shrink}
+                        height={iSunOneIconSize * shrink}
+                        fill="none"
+                        viewBox="0 0 30 31"
+                        className="transition-transform duration-300 group-hover:translate-x-2"
+                      >
+                        <g clipPath="url(#clip0_9_1330)">
+                          <g>
+                            <path
+                              className="fill-current text-white group-hover:text-yellow-400 transition-colors duration-300"
+                              d="M25.896 16.357a1.875 1.875 0 000-2.65l-7.07-7.074a1.875 1.875 0 10-2.652 2.652l3.87 3.872H5.625a1.875 1.875 0 100 3.75h14.419l-3.87 3.87a1.875 1.875 0 002.652 2.652l7.07-7.072z"
+                            ></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_9_1330">
+                            <path
+                              fill="#fff"
+                              d="M0 0H30V30H0z"
+                              transform="rotate(90 14.984 15.016)"
+                            ></path>
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
-
-            {/* Slogan and Btn */}
           </div>
         </section>
       </div>
-
-      {/* Mobile version (width < 1024 px) */}
-      <section className="lg:hidden">
-        <div className="">
-          <div className="">
-            <div className="relative bg-darkGray4 pt-10 pb-10">
-              <Image
-                className="mx-auto flex w-1/2 pb-5 sm:pb-10"
-                width={490}
-                height={354}
-                alt="isunone"
-                src="/elements/group_15221@2x.png"
-              />
-
-              <div className="flex justify-center text-center">
-                <div className="mx-1/10 w-fit text-2xl font-bold tracking-wide text-white xxs:text-3xl xs:w-4/5 xs:text-4xl md:text-4xl">
-                  <div className="mx-auto mb-5 flex flex-col items-center justify-center space-y-2 text-center font-bold sm:mb-10 sm:space-y-4 lg:space-y-8">
-                    <div className="text-white">{t('HOME_PAGE.BANNER_TITLE')}</div>
-                    <div className="text-tidebitTheme">{t('HOME_PAGE.BANNER_TITLE_HIGHLIGHT')}</div>
-                  </div>
-                  <TideButton className="rounded bg-tidebitTheme px-4 py-2 font-normal transition-all hover:opacity-90 xxs:text-xs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                    {t('HOME_PAGE.BANNER_BUTTON')}
-                  </TideButton>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Slogan and Btn */}
-        </div>
-      </section>
-
-      {/* group_15221@2x */}
     </>
   );
 };

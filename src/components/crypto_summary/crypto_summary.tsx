@@ -5,7 +5,6 @@ import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import {getI18nLink} from '../../lib/common';
 
-type TranslateFunction = (s: string) => string;
 interface ICryptoSummary {
   icon: string;
   label: string;
@@ -36,8 +35,7 @@ const CryptoSummary = ({
   totalValue,
   tradingValue,
 }: ICryptoSummary) => {
-  const {t}: {t: TranslateFunction} = useTranslation('common');
-  const {i18n} = useTranslation('common');
+  const {t, i18n} = useTranslation('common');
   const language = i18n.language;
 
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';

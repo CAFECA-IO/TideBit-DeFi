@@ -4,7 +4,6 @@ import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import {getI18nLink} from '../../lib/common';
-
 interface ICryptoSummary {
   icon: string;
   label: string;

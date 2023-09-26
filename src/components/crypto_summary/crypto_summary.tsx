@@ -1,5 +1,4 @@
 import React from 'react';
-import {useRouter} from 'next/router';
 import Image from 'next/image';
 import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
@@ -38,13 +37,15 @@ const CryptoSummary = ({
   tradingValue,
 }: ICryptoSummary) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const {locale} = useRouter();
+  const {i18n} = useTranslation('common');
+  const language = i18n.language;
+
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
 
   // Info: (20230925 - Julian) i18n URL workaround
-  const whitePaperLinkWithI18n = getI18nLink(whitePaperLink, locale ?? '') ?? whitePaperLink;
-  const websiteLinkWithI18n = getI18nLink(websiteLink, locale ?? '') ?? websiteLink;
+  const whitePaperLinkWithI18n = getI18nLink(whitePaperLink, language ?? '') ?? whitePaperLink;
+  const websiteLinkWithI18n = getI18nLink(websiteLink, language ?? '') ?? websiteLink;
 
   return (
     <>

@@ -124,6 +124,22 @@ const UpdateFormModal = ({
     calculateLoss();
   };
 
+  const getTpValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+    } else {
+      compareChange();
+    }
+  };
+
+  const getSlValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+    } else {
+      compareChange();
+    }
+  };
+
   const getTpValue = (value: number) => {
     setTpValue(value);
 
@@ -346,6 +362,7 @@ const UpdateFormModal = ({
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
+        getIsValueValid={getTpValid}
         getInputValue={getTpValue}
         lowerLimit={tpLowerLimitRef.current}
         upperLimit={tpUpperLimitRef.current}
@@ -364,6 +381,7 @@ const UpdateFormModal = ({
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        getIsValueValid={getSlValid}
         disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
         lowerLimit={slLowerLimitRef.current}

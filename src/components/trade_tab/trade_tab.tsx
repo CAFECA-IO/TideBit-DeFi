@@ -492,8 +492,8 @@ const TradeTab = () => {
     calculateShortLoss();
   };
 
-  const validateTargetInput = () => {
-    if (!targetInputValueRef.current || +targetInputValueRef.current < TARGET_MIN_DIGITS) {
+  const validateTargetInput = (value?: number) => {
+    if (+targetInputValueRef.current < TARGET_MIN_DIGITS) {
       setLongBtnDisabled(true);
       setShortBtnDisabled(true);
     } else {
@@ -1363,7 +1363,8 @@ const TradeTab = () => {
         disabled={
           (openSubMenu && marginWarningShortRef.current) ||
           longBtnDisabledRef.current ||
-          shortBtnDisabledRef.current
+          shortBtnDisabledRef.current ||
+          +targetInputValueRef.current < TARGET_MIN_DIGITS
         }
         buttonType="button"
         className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
@@ -1481,7 +1482,11 @@ const TradeTab = () => {
               {/* Long Button */}
               <div className="flex justify-center">
                 <RippleButton
-                  disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
+                  disabled={
+                    marginWarningLongRef.current ||
+                    longBtnDisabledRef.current ||
+                    +targetInputValueRef.current < TARGET_MIN_DIGITS
+                  }
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
@@ -1565,7 +1570,11 @@ const TradeTab = () => {
               {/* Short Button */}
               <div className="flex justify-center">
                 <RippleButton
-                  disabled={marginWarningShortRef.current || shortBtnDisabledRef.current}
+                  disabled={
+                    marginWarningShortRef.current ||
+                    shortBtnDisabledRef.current ||
+                    +targetInputValueRef.current < TARGET_MIN_DIGITS
+                  }
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
@@ -1595,7 +1604,11 @@ const TradeTab = () => {
         {/* Info: (20230725 - Julian) Long Button */}
         <div className={`w-120px bg-black/100`}>
           <RippleButton
-            disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
+            disabled={
+              (openSubMenu && marginWarningLongRef.current) ||
+              longBtnDisabledRef.current ||
+              +targetInputValueRef.current < TARGET_MIN_DIGITS
+            }
             buttonType="button"
             className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}
@@ -1614,7 +1627,11 @@ const TradeTab = () => {
         {/* Info: (20230725 - Julian) Short Button */}
         <div className={`ml-4 w-120px bg-black/100`}>
           <RippleButton
-            disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
+            disabled={
+              (openSubMenu && marginWarningShortRef.current) ||
+              shortBtnDisabledRef.current ||
+              +targetInputValueRef.current < TARGET_MIN_DIGITS
+            }
             buttonType="button"
             className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
             onClick={shortSectionClickHandler}

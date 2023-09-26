@@ -12,6 +12,7 @@ import {TARGET_MIN_DIGITS} from '../../constants/config';
 interface ITradingInputProps {
   inputInitialValue: number;
   getInputValue?: (props: number) => void;
+  getIsValueValid?: (props: boolean) => void;
   onTypingStatusChange?: (props: boolean) => void;
 
   inputValueFromParent?: number;
@@ -48,6 +49,7 @@ const TradingInput = ({
   setInputValueFromParent,
   inputPlaceholder,
   getInputValue,
+  getIsValueValid,
 
   lowerLimit,
   upperLimit,
@@ -73,36 +75,39 @@ const TradingInput = ({
   const [isTyping, setIsTyping, isTypingRef] = useStateRef<boolean>(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
-  // const regex = /^\d+(\.\d{1,2})?$/;
+  const internalRegex = /^(?!0\d*)^\d*(?:\.\d{1,2})?$/;
 
   const passValueHandler = useCallback(
-    (data: number) => {
-      getInputValue && getInputValue(data);
+    (data: number | string) => {
+      setInputValue(data);
+
+      if (SafeMath.isNumber(data)) {
+        getInputValue && getInputValue(+data);
+        getIsValueValid && getIsValueValid(true);
+      } else {
+        getIsValueValid && getIsValueValid(false);
+      }
     },
     [getInputValue]
   );
 
+  // Info: Check if the number is within the range (20230926 - Shirley)
   const validateInput = (value: number) => {
     if (upperLimit && value >= upperLimit) {
-      setInputValue(upperLimit);
       passValueHandler(upperLimit);
       return;
     } else if (lowerLimit && value <= lowerLimit) {
       // Info: For short SL setting, if the value is lower than the lower limit, it will be set to the UPPER limit (Liquidation Price) (20230424 - Shirley)
       if (!!reachOppositeLimit && upperLimit) {
-        setInputValue(upperLimit);
         passValueHandler(upperLimit);
         return;
       }
-
-      setInputValue(lowerLimit);
       passValueHandler(lowerLimit);
       return;
     } else if (upperLimit && lowerLimit === upperLimit) {
       // Info: Do nothing (20230617 - Shirley)
       return;
     } else {
-      setInputValue(value);
       passValueHandler(value);
       return;
     }
@@ -117,7 +122,6 @@ const TradingInput = ({
       if (SafeMath.isNumber(value)) {
         validateInput(+value);
       } else {
-        setInputValue(TARGET_MIN_DIGITS);
         passValueHandler(TARGET_MIN_DIGITS);
       }
     }, INPUT_VALIDATION_DELAY);
@@ -137,22 +141,16 @@ const TradingInput = ({
     setTypingTimeout(newTimeout);
 
     const value = event.target.value;
-    const numberValue = event.target.value;
-    // const numberValue = Number(value);
 
     if (regex.test(value)) {
-      const numberValue = event.target.value;
-
-      // const numberValue = Number(value);
-      if (+numberValue === upperLimit && +numberValue === lowerLimit) {
+      if (+value === upperLimit && +value === lowerLimit) {
         return;
       }
 
-      setInputValue(numberValue);
-      passValueHandler(+numberValue);
-
-      debounceValidation(numberValue);
+      passValueHandler(value);
     }
+
+    debounceValidation(value);
   };
 
   const incrementClickHandler = () => {
@@ -163,11 +161,9 @@ const TradingInput = ({
       return;
     } else if (lowerLimit && changeRounded <= lowerLimit) {
       // Info: 在下限內加，要直接加到下限值 (20230426 - Shirley)
-      setInputValue(lowerLimit);
       passValueHandler(lowerLimit);
       return;
     }
-    setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };
 
@@ -179,13 +175,12 @@ const TradingInput = ({
     if (+inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
       return;
     }
-    setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };
 
   useEffect(() => {
     if (inputValueFromParent !== undefined && setInputValueFromParent !== undefined) {
-      setInputValue(inputValueFromParent);
+      passValueHandler(inputValueFromParent);
     }
 
     setDisabledState(!!disabled);

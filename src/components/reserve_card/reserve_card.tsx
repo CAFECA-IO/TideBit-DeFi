@@ -16,8 +16,8 @@ const ReserveCard = ({
 }: {
   name: string;
   ratio: string;
-  userHoldings: string;
-  walletAssets: string;
+  userHoldings: string | number;
+  walletAssets: string | number;
   icon: string;
   link: string;
   color: string;

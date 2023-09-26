@@ -46,7 +46,6 @@ import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
-  isIWebsiteReserve,
 } from '../interfaces/tidebit_defi_background/website_reserve';
 import {
   INews,
@@ -650,20 +649,25 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         result.reason = Reason[result.code];
       }
     }
-    if (result.success) {
-      // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
-      const valid = isIWebsiteReserve(result.data);
-      if (!valid) {
-        const dummy = {...dummyWebsiteReserve};
-        setWebsiteReserve(dummy);
+    // if (result.success) {
+    //   // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
+    //   const valid = isIWebsiteReserve(result.data);
+    //   if (!valid) {
+    //     const dummy = {...dummyWebsiteReserve};
+    //     setWebsiteReserve(dummy);
 
-        // Deprecate: error handle (Shirley - 20230914)
-        // eslint-disable-next-line no-console
-        console.error(`getWebsiteReserve invalid data interface`);
-      } else {
-        setWebsiteReserve(result.data as IWebsiteReserve);
-      }
-    }
+    //     // Deprecate: error handle (Shirley - 20230914)
+    //     // eslint-disable-next-line no-console
+    //     console.error(`getWebsiteReserve invalid data interface`);
+    //   } else {
+    //     setWebsiteReserve(result.data as IWebsiteReserve);
+    //   }
+    // }
+
+    setWebsiteReserve(result.data as IWebsiteReserve);
+    // Deprecated: [debug] (20230926 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('getWebsiteReserve result', result);
     return result;
   }, []);
 

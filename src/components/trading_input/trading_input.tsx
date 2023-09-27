@@ -6,6 +6,8 @@ import {
   TYPING_KEYUP_DELAY,
 } from '../../constants/display';
 import useStateRef from 'react-usestateref';
+import SafeMath from '../../lib/safe_math';
+import {TARGET_MIN_DIGITS} from '../../constants/config';
 
 interface ITradingInputProps {
   inputInitialValue: number;
@@ -73,8 +75,12 @@ const TradingInput = ({
   const regex = /^\d*\.?\d{0,2}$/;
 
   const passValueHandler = useCallback(
-    (data: number) => {
-      getInputValue && getInputValue(data);
+    (data: number | string) => {
+      if (SafeMath.isNumber(data)) {
+        getInputValue && getInputValue(+data);
+      } else {
+        getInputValue && getInputValue(TARGET_MIN_DIGITS);
+      }
     },
     [getInputValue]
   );
@@ -106,13 +112,24 @@ const TradingInput = ({
     }
   };
 
-  const debounceValidation = (value: number) => {
+  const debounceValidation = (value: number | string) => {
     if (validationTimeout) {
       clearTimeout(validationTimeout);
     }
 
     const newTimeout = setTimeout(() => {
-      validateInput(value);
+      if (regex.test(value.toString())) {
+        const numberValue = +value;
+        if (numberValue === upperLimit && numberValue === lowerLimit) {
+          return;
+        }
+
+        if (SafeMath.isNumber(value)) {
+          validateInput(+value);
+        } else {
+          passValueHandler(value);
+        }
+      }
     }, INPUT_VALIDATION_DELAY);
 
     setValidationTimeout(newTimeout);
@@ -141,17 +158,10 @@ const TradingInput = ({
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
-    if (regex.test(value)) {
-      const numberValue = Number(value);
-      if (numberValue === upperLimit && numberValue === lowerLimit) {
-        return;
-      }
+    setInputValue(value);
+    passValueHandler(value);
 
-      setInputValue(numberValue);
-      passValueHandler(numberValue);
-
-      debounceValidation(numberValue);
-    }
+    debounceValidation(value);
   };
 
   const incrementClickHandler = () => {

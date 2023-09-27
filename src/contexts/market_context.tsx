@@ -218,8 +218,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
     ICandlestickData[] | null
   >(null);
-  const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] =
-    useState<NodeJS.Timer | null>(null);
+  const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] = useState<
+    number | null
+  >(null);
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [instId: string]: ITickerData;
@@ -622,7 +623,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       setCandlestickInterval(null);
     }
 
-    const candlestickInterval = setInterval(() => {
+    const candlestickInterval = window.setInterval(() => {
       const ts = timeSpan ? timeSpan : timeSpanRef.current;
       if (timeSpan) setTimeSpan(timeSpan);
       const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);

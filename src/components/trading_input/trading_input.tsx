@@ -57,7 +57,9 @@ const TradingInput = ({
   ...otherProps
 }: ITradingInputProps) => {
   const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
-  const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
+  const [inputValue, setInputValue, inputValueRef] = useStateRef<number | string>(
+    inputInitialValue
+  );
 
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout
@@ -77,6 +79,7 @@ const TradingInput = ({
     [getInputValue]
   );
 
+  // Info: [TradeTab] 透過 isTyping 跟 checkTpSlWithinBounds 來檢查 input 是否正當 (20230927 - Shirley)
   const validateInput = (value: number) => {
     if (upperLimit && value >= upperLimit) {
       setInputValue(upperLimit);
@@ -152,7 +155,7 @@ const TradingInput = ({
   };
 
   const incrementClickHandler = () => {
-    const change = inputValue + TRADING_INPUT_STEP;
+    const change = +inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     if (upperLimit && changeRounded >= upperLimit) {
@@ -168,11 +171,11 @@ const TradingInput = ({
   };
 
   const decrementClickHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
+    const change = +inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     // Info: minimum margin is 0.01 (20230714 - Shirley)
-    if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
+    if (+inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
       return;
     }
     setInputValue(changeRounded);

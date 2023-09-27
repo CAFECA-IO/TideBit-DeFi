@@ -617,7 +617,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   );
 
   const syncCandlestickData = useCallback((instId: string, timeSpan?: ITimeSpanUnion) => {
-    if (!!candlestickIntervalRef.current) {
+    if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
     }

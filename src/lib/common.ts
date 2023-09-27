@@ -742,6 +742,7 @@ export function isValidTradeURL(url: string): boolean {
   return result;
 }
 
+
 // Info:(20230925 - Julian) i18n URL workaround
 export const getI18nLink = (link: string, locale: string) => {
   if (link.toLowerCase().includes('bitcoin')) {
@@ -758,3 +759,8 @@ export const getI18nLink = (link: string, locale: string) => {
     return ethereumLink;
   }
 };
+
+export function ratioToPercentage(decimal: number): string {
+  return `${(decimal * 100).toFixed(2)}`;
+}
+

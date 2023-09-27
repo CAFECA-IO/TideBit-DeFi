@@ -627,10 +627,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {
@@ -665,14 +668,22 @@ export const validateAllInput = ({
   lowerLimit: lowerLimit,
 }: IValidateInput): boolean => {
   let isValid = true;
+  const regex = /^\d*\.?\d{0,2}$/;
+
+  // const twoDecimalTp = regex.test(tpValueRef.current.toString());
 
   switch (typeOfValidation) {
     case TypeOfValidation.TPSL:
       if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
-        if (value > upperLimit || value < lowerLimit) {
+        const validFormat = regex.test(value?.toString());
+        if (!validFormat) {
           isValid = false;
         } else {
-          isValid = true;
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
         }
       }
   }
@@ -742,7 +753,6 @@ export function isValidTradeURL(url: string): boolean {
   return result;
 }
 
-
 // Info:(20230925 - Julian) i18n URL workaround
 export const getI18nLink = (link: string, locale: string) => {
   if (link.toLowerCase().includes('bitcoin')) {
@@ -763,4 +773,3 @@ export const getI18nLink = (link: string, locale: string) => {
 export function ratioToPercentage(decimal: number): string {
   return `${(decimal * 100).toFixed(2)}`;
 }
-

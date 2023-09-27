@@ -63,6 +63,8 @@ const UpdateFormModal = ({
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const regex = /^\d*\.?\d{0,2}$/;
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -112,6 +114,8 @@ const UpdateFormModal = ({
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({tp: false, sl: false});
+
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
@@ -122,6 +126,24 @@ const UpdateFormModal = ({
     setSlToggle(bool);
 
     calculateLoss();
+  };
+
+  const getTpValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedProfitValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
+  };
+
+  const getSlValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedLossValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
   };
 
   const getTpValue = (value: number) => {
@@ -343,9 +365,65 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const tp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        tp: typingStatus,
+      }));
+    };
+
+    const sl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        sl: typingStatus,
+      }));
+    };
+
+    return {
+      tp,
+      sl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+
+  const checkTpSlWithinBounds = () => {
+    if (SafeMath.isNumber(tpValueRef.current) && regex.test(tpValueRef.current.toString())) {
+      if (tpValueRef.current < tpLowerLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+
+      if (tpValueRef.current > tpUpperLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+    } else {
+      setTpValue(openCfdDetails.suggestion.takeProfit);
+      calculateProfit();
+    }
+
+    if (SafeMath.isNumber(slValueRef.current) && regex.test(slValueRef.current.toString())) {
+      if (slValueRef.current < slLowerLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+
+      if (slValueRef.current > slUpperLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+    } else {
+      setSlValue(openCfdDetails.suggestion.stopLoss);
+      calculateLoss();
+    }
+  };
+
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
+        getIsValueValid={getTpValid}
         getInputValue={getTpValue}
         lowerLimit={tpLowerLimitRef.current}
         upperLimit={tpUpperLimitRef.current}
@@ -357,6 +435,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.tp}
       />
     </div>
   );
@@ -364,6 +443,7 @@ const UpdateFormModal = ({
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        getIsValueValid={getSlValid}
         disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
         lowerLimit={slLowerLimitRef.current}
@@ -376,6 +456,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.sl}
       />
     </div>
   );
@@ -708,6 +789,12 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
+    if (!isTypingRef.current.tp && !isTypingRef.current.sl) {
+      checkTpSlWithinBounds();
+    }
+  }, [isTypingRef.current]);
+
+  useEffect(() => {
     setGuaranteedStopFee(
       roundToDecimalPlaces(
         +SafeMath.mult(
@@ -721,6 +808,7 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
+
     const isValidInput = validateInput();
 
     if (isValidInput) {

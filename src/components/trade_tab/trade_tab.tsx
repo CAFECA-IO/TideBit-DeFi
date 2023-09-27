@@ -570,6 +570,7 @@ const TradeTab = () => {
       if (+targetInputValueRef.current > TARGET_MAX_DIGITS) {
         setTargetInputValue(TARGET_MAX_DIGITS);
       }
+
       if (+targetInputValueRef.current < TARGET_MIN_DIGITS) {
         setTargetInputValue(TARGET_MIN_DIGITS);
       }
@@ -1192,6 +1193,7 @@ const TradeTab = () => {
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"
       incrementBtnSize="44"
+      onTypingStatusChange={handleTypingStatusChange.target}
     />
   );
 

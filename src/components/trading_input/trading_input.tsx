@@ -12,6 +12,7 @@ import {TARGET_MIN_DIGITS} from '../../constants/config';
 interface ITradingInputProps {
   inputInitialValue: number;
   getInputValue?: (props: number) => void;
+  getIsValueValid?: (props: boolean) => void;
   onTypingStatusChange?: (props: boolean) => void;
 
   inputValueFromParent?: number;
@@ -48,6 +49,7 @@ const TradingInput = ({
   setInputValueFromParent,
   inputPlaceholder,
   getInputValue,
+  getIsValueValid,
 
   lowerLimit,
   upperLimit,
@@ -76,11 +78,7 @@ const TradingInput = ({
 
   const passValueHandler = useCallback(
     (data: number | string) => {
-      if (SafeMath.isNumber(data)) {
-        getInputValue && getInputValue(+data);
-      } else {
-        getInputValue && getInputValue(TARGET_MIN_DIGITS);
-      }
+      getInputValue && getInputValue(+data);
     },
     [getInputValue]
   );

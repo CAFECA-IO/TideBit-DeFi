@@ -4,7 +4,6 @@ import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import {getI18nLink} from '../../lib/common';
-import {useRouter} from 'next/router';
 interface ICryptoSummary {
   icon: string;
   label: string;
@@ -35,9 +34,8 @@ const CryptoSummary = ({
   totalValue,
   tradingValue,
 }: ICryptoSummary) => {
-  const {t} = useTranslation('common');
-  //const language = i18n.language ?? '';
-  const {locale: language} = useRouter();
+  const {t, i18n} = useTranslation('common');
+  const language = i18n.language ?? '';
 
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';

@@ -8,12 +8,12 @@ class SafeMath {
         return false;
       }
       // Info:  檢查參數是否是字符串  (20230925 - tzuhan)
-      if (typeof str !== 'string' || typeof str !== 'number') {
+      if (typeof str !== 'string' && typeof str !== 'number') {
         return false;
       }
 
       const numReg = /^(([1-9]\d*)|([0]{1}))(\.\d+)?$/;
-      return numReg.test(str);
+      return numReg.test(str.toString());
     } catch (error) {
       // Deprecated: [debug]  (20230925 - tzuhan)
       // eslint-disable-next-line no-console

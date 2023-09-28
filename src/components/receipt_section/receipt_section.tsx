@@ -158,7 +158,7 @@ const ReceiptSection = () => {
     /* Info: (20230829 - Julian) 如果 showRow 大於等於 filteredReceipts 長度，就顯示全部
      * 如果不是，就從最後面取出 showRow 個 */
     const sliceReceipts =
-      showRow >= filteredReceipts.length ? filteredReceipts : filteredReceipts.slice(-showRow, -1);
+      showRow >= filteredReceipts.length ? filteredReceipts : filteredReceipts.slice(-showRow);
     setSliceReceipts(sliceReceipts);
 
     // Info: (20230829 - Julian) 如果 showRow 已經大於等於 filteredReceipts 長度，就不顯示 See more 按鈕
@@ -180,7 +180,6 @@ const ReceiptSection = () => {
     if (!prev.includes(curr)) {
       prev.push(curr);
     }
-
     return prev;
   }, []);
 

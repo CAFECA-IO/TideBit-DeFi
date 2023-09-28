@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import Image from 'next/image';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import {MONTH_FULL_NAME_LIST, WEEK_LIST} from '../../constants/config';
 
 type Dates = {
@@ -61,7 +62,7 @@ const PopulateDates = ({
 const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const [selectedMonth, setSelectedMonth] = useState(date.getMonth() + 1); // 0 (January) to 11 (December).
   const [selectedYear, setSelectedYear] = useState(date.getFullYear());
-  const [openDates, setOpenDates] = useState(false);
+  const {targetRef, componentVisible, setComponentVisible} = useOuterClick<HTMLDivElement>(false);
 
   const displayWeek = WEEK_LIST.map(v => {
     return <div key={v}>{v}</div>;
@@ -77,13 +78,13 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     const dateLength = new Date(year, month, 0).getDate();
     let dates: Dates[] = [];
     for (let i = 0; i < dateLength; i++) {
-      const dateTime = new Date(`${year}/${month + 1}/${i + 1}`).getTime();
+      const dateTime = new Date(`${year}/${month}/${i + 1}`).getTime();
 
       const maxTime = maxDate
-        ? new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, maxDate.getDate()).getTime()
+        ? new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate()).getTime()
         : null;
       const minTime = minDate
-        ? new Date(minDate.getFullYear(), minDate.getMonth() + 1, minDate.getDate()).getTime()
+        ? new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()).getTime()
         : null;
 
       const date = {
@@ -136,16 +137,14 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const selectDate = useCallback(
     (el: Dates) => {
       let newDate = new Date(el.time);
-      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth()}/${newDate.getDate()}`);
+      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth() + 1}/${newDate.getDate()}`);
       setDate(newDate);
-      setOpenDates(false);
+      setComponentVisible(false);
     },
     [minDate, maxDate, selectedMonth, selectedYear, date]
   );
 
-  const openDateHandler = () => {
-    setOpenDates(!openDates);
-  };
+  const openDateHandler = () => setComponentVisible(!componentVisible);
 
   const formatDate = (obj: Date) => {
     const day = obj.getDate();
@@ -159,8 +158,8 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   return (
     <div
       className={`relative flex h-48px flex-col items-start justify-center transition-all duration-200 ease-in-out ${
-        openDates ? 'bg-darkGray8' : 'bg-darkGray7'
-      } hover:cursor-pointer`}
+        componentVisible ? 'bg-darkGray8' : 'bg-darkGray7'
+      } transition-all duration-200 ease-in-out hover:cursor-pointer`}
     >
       <button
         className="inline-flex w-140px items-center justify-between px-5 py-3"
@@ -171,9 +170,10 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
       </button>
 
       <div
-        className={`absolute top-10 z-10 h-auto  w-320px flex-col bg-darkGray2 p-6 ${
-          openDates ? 'flex' : 'hidden'
-        }`}
+        ref={targetRef}
+        className={`absolute top-10 z-10 flex h-auto w-320px flex-col bg-darkGray2 p-6 ${
+          componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
+        } transition-all duration-200 ease-in-out`}
       >
         <div className="flex items-center justify-between py-2">
           <div className="text-2xl">{`${

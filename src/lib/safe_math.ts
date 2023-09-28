@@ -2,8 +2,20 @@ import BigNumber from 'bignumber.js';
 
 class SafeMath {
   static isNumber(str: string | number) {
-    const numReg = /^(([1-9]\d*)|([0]{1}))(\.\d+)?$/;
-    return numReg.test(str.toString());
+    try {
+      // Info:  檢查參數是否是字符串  (20230925 - tzuhan)
+      if (typeof str !== 'string' && typeof str !== 'number') {
+        return false;
+      }
+
+      const numReg = /^(([1-9]\d*)|([0]{1}))(\.\d+)?$/;
+      return numReg.test(str.toString());
+    } catch (error) {
+      // Deprecated: [debug]  (20230925 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.error('Error in isNumber method:', error);
+      return false; // 在異常情況下返回false
+    }
   }
   /**
    * check is hex number string

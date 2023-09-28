@@ -37,6 +37,7 @@ import {
   getTimestamp,
   roundToDecimalPlaces,
   validateAllInput,
+  validateNumberFormat,
 } from '../../lib/common';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
@@ -265,12 +266,13 @@ const TradeTab = () => {
   }, [marketCtx.selectedTicker]);
 
   useEffect(() => {
-    validateTpSlInput();
+    validateInputs();
   }, [
     longTpValueRef.current,
     longSlValueRef.current,
     shortTpValueRef.current,
     shortSlValueRef.current,
+    targetInputValueRef.current,
   ]);
 
   const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
@@ -498,7 +500,14 @@ const TradeTab = () => {
   };
 
   // Info: 如果 TpSl 不在合理範圍內，則讓按鈕反灰 (20230927 - Shirley)
-  const validateTpSlInput = () => {
+  const validateInputs = () => {
+    const targetInputValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TARGET,
+      value: targetInputValueRef.current,
+      upperLimit: TARGET_MAX_DIGITS,
+      lowerLimit: TARGET_MIN_DIGITS,
+    });
+
     const longTpValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
       value: longTpValueRef.current,
@@ -527,13 +536,13 @@ const TradeTab = () => {
       lowerLimit: shortSlLowerLimitRef.current,
     });
 
-    if (longTpValid && longSlValid) {
+    if (longTpValid && longSlValid && targetInputValid) {
       setLongBtnDisabled(false);
     } else {
       setLongBtnDisabled(true);
     }
 
-    if (shortTpValid && shortSlValid) {
+    if (shortTpValid && shortSlValid && targetInputValid) {
       setShortBtnDisabled(false);
     } else {
       setShortBtnDisabled(true);
@@ -567,12 +576,16 @@ const TradeTab = () => {
 
   const checkTargetWithinBounds = () => {
     if (SafeMath.isNumber(targetInputValueRef.current)) {
-      if (+targetInputValueRef.current > TARGET_MAX_DIGITS) {
-        setTargetInputValue(TARGET_MAX_DIGITS);
-      }
+      if (validateNumberFormat(targetInputValueRef.current)) {
+        if (+targetInputValueRef.current > TARGET_MAX_DIGITS) {
+          setTargetInputValue(TARGET_MAX_DIGITS);
+        }
 
-      if (+targetInputValueRef.current < TARGET_MIN_DIGITS) {
-        setTargetInputValue(TARGET_MIN_DIGITS);
+        if (+targetInputValueRef.current < TARGET_MIN_DIGITS) {
+          setTargetInputValue(TARGET_MIN_DIGITS);
+        }
+      } else {
+        setTargetInputValue(prev => roundToDecimalPlaces(prev, 2, true));
       }
     } else {
       setTargetInputValue(TARGET_MIN_DIGITS);
@@ -1494,11 +1507,7 @@ const TradeTab = () => {
               {/* Info: (20230925 - Shirley) Long Button */}
               <div className={`flex justify-center -mt-14`}>
                 <RippleButton
-                  disabled={
-                    marginWarningLongRef.current ||
-                    longBtnDisabledRef.current ||
-                    +targetInputValueRef.current < TARGET_MIN_DIGITS
-                  }
+                  disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"

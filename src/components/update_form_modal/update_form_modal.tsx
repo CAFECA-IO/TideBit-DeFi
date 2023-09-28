@@ -24,6 +24,7 @@ import {
   timestampToString,
   toPnl,
   validateAllInput,
+  validateNumberFormat,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
@@ -389,13 +390,13 @@ const UpdateFormModal = ({
   const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
 
   const checkTpSlWithinBounds = () => {
-    if (SafeMath.isNumber(tpValueRef.current) && regex.test(tpValueRef.current.toString())) {
-      if (tpValueRef.current < tpLowerLimitRef.current) {
+    if (validateNumberFormat(tpValueRef.current)) {
+      if (+tpValueRef.current < tpLowerLimitRef.current) {
         setTpValue(openCfdDetails.suggestion.takeProfit);
         calculateProfit();
       }
 
-      if (tpValueRef.current > tpUpperLimitRef.current) {
+      if (+tpValueRef.current > tpUpperLimitRef.current) {
         setTpValue(openCfdDetails.suggestion.takeProfit);
         calculateProfit();
       }
@@ -404,13 +405,13 @@ const UpdateFormModal = ({
       calculateProfit();
     }
 
-    if (SafeMath.isNumber(slValueRef.current) && regex.test(slValueRef.current.toString())) {
-      if (slValueRef.current < slLowerLimitRef.current) {
+    if (validateNumberFormat(slValueRef.current)) {
+      if (+slValueRef.current < slLowerLimitRef.current) {
         setSlValue(openCfdDetails.suggestion.stopLoss);
         calculateLoss();
       }
 
-      if (slValueRef.current > slUpperLimitRef.current) {
+      if (+slValueRef.current > slUpperLimitRef.current) {
         setSlValue(openCfdDetails.suggestion.stopLoss);
         calculateLoss();
       }

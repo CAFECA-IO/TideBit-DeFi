@@ -40,6 +40,13 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
+/**
+ * (20230928 - Shirley)
+ * @param number
+ * @param decimal
+ * @param condition true -> floor, false -> ceil
+ * @returns
+ */
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -661,21 +668,36 @@ export const validateCFD = (feeRate: number, amount: number) => {
   return result;
 };
 
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the number format is valid or not
+ */
+export const validateNumberFormat = (value: number | string) => {
+  const regex = /^\d*\.?\d{0,2}$/;
+  return regex.test(value?.toString());
+};
+
+export function getValueByProp(obj: any, prop: string) {
+  const keys = prop.split('.');
+  return keys.reduce((o, k) => (o || {})[k], obj);
+}
+
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the tp/sl value is valid or not
+ */
 export const validateAllInput = ({
   typeOfValidation,
   value,
   upperLimit: upperLimit,
   lowerLimit: lowerLimit,
 }: IValidateInput): boolean => {
-  let isValid = true;
-  const regex = /^\d*\.?\d{0,2}$/;
-
-  // const twoDecimalTp = regex.test(tpValueRef.current.toString());
+  let isValid = false;
 
   switch (typeOfValidation) {
     case TypeOfValidation.TPSL:
       if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
-        const validFormat = regex.test(value?.toString());
+        const validFormat = validateNumberFormat(value);
         if (!validFormat) {
           isValid = false;
         } else {
@@ -686,6 +708,22 @@ export const validateAllInput = ({
           }
         }
       }
+      break;
+
+    case TypeOfValidation.TARGET:
+      if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
+        const validFormat = validateNumberFormat(value);
+        if (!validFormat) {
+          isValid = false;
+        } else {
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
+        }
+      }
+      break;
   }
 
   return isValid;

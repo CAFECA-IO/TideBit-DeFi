@@ -8,6 +8,7 @@ import {
 import useStateRef from 'react-usestateref';
 import SafeMath from '../../lib/safe_math';
 import {TARGET_MIN_DIGITS} from '../../constants/config';
+import {validateNumberFormat} from '../../lib/common';
 
 interface ITradingInputProps {
   inputInitialValue: number;
@@ -79,6 +80,12 @@ const TradingInput = ({
   const passValueHandler = useCallback(
     (data: number | string) => {
       getInputValue && getInputValue(+data);
+
+      if (validateNumberFormat(data)) {
+        getIsValueValid && getIsValueValid(true);
+      } else {
+        getIsValueValid && getIsValueValid(false);
+      }
     },
     [getInputValue]
   );
@@ -174,6 +181,7 @@ const TradingInput = ({
       passValueHandler(lowerLimit);
       return;
     }
+
     setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };

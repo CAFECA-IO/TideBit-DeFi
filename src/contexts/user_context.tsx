@@ -36,10 +36,12 @@ import {
   getCookieByName,
   getServiceTermContract,
   getTimestamp,
+  getValueByProp,
   randomHex,
   rlpEncodeServiceTerm,
   toChecksumAddress,
   validateCFD,
+  validateNumberFormat,
   verifySignedServiceTerm,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
@@ -840,11 +842,34 @@ export const UserProvider = ({children}: IUserProvider) => {
     async (applyCreateCFDOrder: IApplyCreateCFDOrder | undefined): Promise<IResult> => {
       let result: IResult;
       try {
-        const isValid = validateCFD(
+        const propertiesToCheck = [
+          'amount',
+          'fee',
+          'guaranteedStopFee',
+          'liquidationPrice',
+          'margin.amount',
+          'price',
+          'stopLoss',
+          'takeProfit',
+        ];
+
+        const isValidFormat = propertiesToCheck.every(prop => {
+          const value = getValueByProp(applyCreateCFDOrder, prop);
+
+          if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+            return true;
+          }
+
+          const each = validateNumberFormat(value);
+          return each;
+        });
+
+        const isValidCFD = validateCFD(
           applyCreateCFDOrder?.fee ?? 0,
           applyCreateCFDOrder?.amount ?? 0
         );
-        if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
+
+        if (!isValidFormat || !isValidCFD) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
         if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
@@ -1081,7 +1106,19 @@ export const UserProvider = ({children}: IUserProvider) => {
       let result: IResult;
       try {
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-        if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        const propertiesToCheck = ['guaranteedStopFee', 'stopLoss', 'takeProfit'];
+        const isValidFormat = propertiesToCheck.every(prop => {
+          const value = getValueByProp(applyUpdateCFDOrder, prop);
+
+          if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+            return true;
+          }
+
+          const each = validateNumberFormat(value);
+          return each;
+        });
+        if (!applyUpdateCFDOrder || !isValidFormat)
+          throw new CustomError(Code.INVAILD_ORDER_INPUTS);
         const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
         if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
         if (updateAppliedCFD.state !== OrderState.OPENING)
@@ -1425,6 +1462,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const updateCFDHandler = useCallback((updateCFD: ICFDOrder) => {
     const _updateCFD = {...updateCFD};
+
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
       updatedCFDs = [...updatedCFDs, ...openCFDsRef.current];

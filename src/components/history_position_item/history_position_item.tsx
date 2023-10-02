@@ -44,10 +44,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   const displayedTextColor = pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
-  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnLValue = numberFormatted(Math.abs(pnl.value));
 
   const displayedPnLSymbol =
     pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';

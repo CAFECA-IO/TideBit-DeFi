@@ -2,6 +2,7 @@ import React from 'react';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 interface ITradeStatistics {
@@ -114,15 +115,11 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">
-                {fiveMin.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(fiveMin.low)}</p>
               <p className="text-sm text-lightWhite">
                 {t('TRADE_PAGE.TRADE_STATISTICS_5_MINUTES')}
               </p>
-              <p className="text-sm text-lightWhite">
-                {fiveMin.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(fiveMin.high)}</p>
             </div>
           </div>
 
@@ -136,15 +133,11 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">
-                {sixtyMin.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(sixtyMin.low)}</p>
               <p className="text-sm text-lightWhite">
                 {t('TRADE_PAGE.TRADE_STATISTICS_60_MINUTES')}
               </p>
-              <p className="text-sm text-lightWhite">
-                {sixtyMin.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(sixtyMin.high)}</p>
             </div>
           </div>
 
@@ -158,13 +151,9 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">
-                {oneDay.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(oneDay.low)}</p>
               <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_1_DAY')}</p>
-              <p className="text-sm text-lightWhite">
-                {oneDay.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </p>
+              <p className="text-sm text-lightWhite">{numberFormatted(oneDay.high)}</p>
             </div>
           </div>
         </div>

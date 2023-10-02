@@ -605,7 +605,6 @@ export const numberFormatted = (n: number | string | undefined, dash = false) =>
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         );
-  // : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 

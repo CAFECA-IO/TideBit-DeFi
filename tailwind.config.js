@@ -2,7 +2,11 @@
 module.exports = {
   mode: 'jit',
   content: ['./src/**/**/*.{js,ts,jsx,tsx}'],
-
+  plugins: [
+    require('tailwindcss'),
+    require('autoprefixer'),
+    ...(process.env.NODE_ENV === 'production' ? [require('cssnano')] : []),
+  ],
   theme: {
     container: {},
     content: {

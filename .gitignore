@@ -127,3 +127,4 @@ src/constants/walletconnect.js
 .DS_Store
 
 .vscode
+build.css

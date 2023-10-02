@@ -40,6 +40,13 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
+/**
+ * (20230928 - Shirley)
+ * @param number
+ * @param decimal
+ * @param condition true -> floor, false -> ceil
+ * @returns
+ */
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -627,10 +634,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {
@@ -658,23 +668,62 @@ export const validateCFD = (feeRate: number, amount: number) => {
   return result;
 };
 
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the number format is valid or not
+ */
+export const validateNumberFormat = (value: number | string) => {
+  const regex = /^\d*\.?\d{0,2}$/;
+  return regex.test(value?.toString());
+};
+
+export function getValueByProp(obj: any, prop: string) {
+  const keys = prop.split('.');
+  return keys.reduce((o, k) => (o || {})[k], obj);
+}
+
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the tp/sl value is valid or not
+ */
 export const validateAllInput = ({
   typeOfValidation,
   value,
   upperLimit: upperLimit,
   lowerLimit: lowerLimit,
 }: IValidateInput): boolean => {
-  let isValid = true;
+  let isValid = false;
 
   switch (typeOfValidation) {
     case TypeOfValidation.TPSL:
       if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
-        if (value > upperLimit || value < lowerLimit) {
+        const validFormat = validateNumberFormat(value);
+        if (!validFormat) {
           isValid = false;
         } else {
-          isValid = true;
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
         }
       }
+      break;
+
+    case TypeOfValidation.TARGET:
+      if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
+        const validFormat = validateNumberFormat(value);
+        if (!validFormat) {
+          isValid = false;
+        } else {
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
+        }
+      }
+      break;
   }
 
   return isValid;
@@ -742,7 +791,6 @@ export function isValidTradeURL(url: string): boolean {
   return result;
 }
 
-
 // Info:(20230925 - Julian) i18n URL workaround
 export const getI18nLink = (link: string, locale: string) => {
   if (link.toLowerCase().includes('bitcoin')) {
@@ -763,4 +811,3 @@ export const getI18nLink = (link: string, locale: string) => {
 export function ratioToPercentage(decimal: number): string {
   return `${(decimal * 100).toFixed(2)}`;
 }
-

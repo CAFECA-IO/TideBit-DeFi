@@ -18,6 +18,8 @@ import {
   toPnl,
   roundToDecimalPlaces,
   numberFormatted,
+  validateNumberFormat,
+  getValueByProp,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -136,22 +138,9 @@ const PositionOpenModal = ({
         const receipt = result.data as {order: ICFDOrder};
         const cfd = userCtx.getCFD(receipt.order.id) ?? {
           ...openCfdRequest,
-          // openPrice: openCfdRequest.price,
           ...receipt.order,
-          // state: OrderState.OPENING,
         };
 
-        // console.log('cfd from getCFD', userCtx.getCFD(receipt.order.id), 'scrambled cfd', {
-        //   ...openCfdRequest,
-        //   ...receipt.order,
-        // });
-
-        // const cfd: ICFDOrder = {
-        //   ...openCfdRequest,
-        //   // openPrice: openCfdRequest.price,
-        //   ...receipt.order,
-        //   // state: OrderState.OPENING,
-        // };
         const closePrice = marketCtx.predictCFDClosePrice(cfd.instId, cfd.typeOfPosition);
         const spread = marketCtx.getTickerSpread(cfd.instId);
 
@@ -389,8 +378,31 @@ const PositionOpenModal = ({
       setQuotationError(false);
     }
 
-    const isValid = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
-    if (!isValid) {
+    const propertiesToCheck = [
+      'amount',
+      'fee',
+      'guaranteedStopFee',
+      'liquidationPrice',
+      'margin.amount',
+      'price',
+      'stopLoss',
+      'takeProfit',
+    ];
+
+    const isValidFormat = propertiesToCheck.every(prop => {
+      const value = getValueByProp(openCfdRequest, prop);
+
+      if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+        return true;
+      }
+
+      const each = validateNumberFormat(value);
+      return each;
+    });
+
+    const isValidCFD = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
+
+    if (!isValidFormat || !isValidCFD) {
       setSecondsLeft(0);
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,

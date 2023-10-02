@@ -28,7 +28,7 @@ const ReceiptSearch = ({
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
   /* Info:(20230530 - Julian) Safari 只接受 yyyy/mm/dd 格式的日期 */
   const [dateStart, setDateStart] = useState(
-    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
+    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth()}/${currentDate.getDate()}`)
   );
   const [dateEnd, setDateEnd] = useState(
     new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)

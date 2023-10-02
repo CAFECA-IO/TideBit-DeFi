@@ -37,6 +37,7 @@ import {
   getTimestamp,
   roundToDecimalPlaces,
   validateAllInput,
+  validateNumberFormat,
 } from '../../lib/common';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
@@ -196,6 +197,7 @@ const TradeTab = () => {
   const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
 
   const [isTyping, setIsTyping, isTypingRef] = useStateRef({
+    target: false,
     longTp: false,
     longSl: false,
     shortTp: false,
@@ -239,6 +241,10 @@ const TradeTab = () => {
       checkTpSlWithinBounds();
     }
 
+    if (!isTypingRef.current.target) {
+      checkTargetWithinBounds();
+    }
+
     renewPosition();
 
     // TODO: FIXME: [To be optimized] May run more than 10 times in a second (20230714 - Shirley)
@@ -260,15 +266,23 @@ const TradeTab = () => {
   }, [marketCtx.selectedTicker]);
 
   useEffect(() => {
-    validateTpSlInput();
+    validateInputs();
   }, [
     longTpValueRef.current,
     longSlValueRef.current,
     shortTpValueRef.current,
     shortSlValueRef.current,
+    targetInputValueRef.current,
   ]);
 
   const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const target = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        target: typingStatus,
+      }));
+    };
+
     const longTp = (typingStatus: boolean) => {
       setIsTyping(prev => ({
         ...prev,
@@ -298,6 +312,7 @@ const TradeTab = () => {
     };
 
     return {
+      target,
       longTp,
       longSl,
       shortTp,
@@ -484,7 +499,15 @@ const TradeTab = () => {
     calculateShortLoss();
   };
 
-  const validateTpSlInput = () => {
+  // Info: 如果 TpSl 不在合理範圍內，則讓按鈕反灰 (20230927 - Shirley)
+  const validateInputs = () => {
+    const targetInputValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TARGET,
+      value: targetInputValueRef.current,
+      upperLimit: TARGET_MAX_DIGITS,
+      lowerLimit: TARGET_MIN_DIGITS,
+    });
+
     const longTpValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
       value: longTpValueRef.current,
@@ -494,7 +517,6 @@ const TradeTab = () => {
 
     const longSlValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
-
       value: longSlValueRef.current,
       upperLimit: longSlUpperLimitRef.current,
       lowerLimit: longSlLowerLimitRef.current,
@@ -502,7 +524,6 @@ const TradeTab = () => {
 
     const shortTpValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
-
       value: shortTpValueRef.current,
       upperLimit: shortTpUpperLimitRef.current,
       lowerLimit: 0,
@@ -510,25 +531,25 @@ const TradeTab = () => {
 
     const shortSlValid = validateAllInput({
       typeOfValidation: TypeOfValidation.TPSL,
-
       value: shortSlValueRef.current,
       upperLimit: shortSlUpperLimitRef.current,
       lowerLimit: shortSlLowerLimitRef.current,
     });
 
-    if (longTpValid && longSlValid) {
+    if (longTpValid && longSlValid && targetInputValid) {
       setLongBtnDisabled(false);
     } else {
       setLongBtnDisabled(true);
     }
 
-    if (shortTpValid && shortSlValid) {
+    if (shortTpValid && shortSlValid && targetInputValid) {
       setShortBtnDisabled(false);
     } else {
       setShortBtnDisabled(true);
     }
   };
 
+  // Info: 如果 TpSl 不在合理範圍內，則將其設為推薦值 (20230927 - Shirley)
   const checkTpSlWithinBounds = () => {
     if (
       longSlValueRef.current < longSlLowerLimitRef.current ||
@@ -553,6 +574,25 @@ const TradeTab = () => {
     }
   };
 
+  const checkTargetWithinBounds = () => {
+    if (SafeMath.isNumber(targetInputValueRef.current)) {
+      if (validateNumberFormat(targetInputValueRef.current)) {
+        if (+targetInputValueRef.current > TARGET_MAX_DIGITS) {
+          setTargetInputValue(TARGET_MAX_DIGITS);
+        }
+
+        if (+targetInputValueRef.current < TARGET_MIN_DIGITS) {
+          setTargetInputValue(TARGET_MIN_DIGITS);
+        }
+      } else {
+        setTargetInputValue(prev => roundToDecimalPlaces(prev, 2, true));
+      }
+    } else {
+      setTargetInputValue(TARGET_MIN_DIGITS);
+    }
+  };
+
+  // Info: 設定 TpSl 上下限 (20230927 - Shirley)
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
@@ -612,6 +652,7 @@ const TradeTab = () => {
     updateSuggestions();
   };
 
+  // Info: 更新 TpSl 推薦值 (20230927 - Shirley)
   const updateSuggestions = () => {
     const tpTimes = SUGGEST_TP / leverage;
     const slTimes = SUGGEST_SL / leverage;
@@ -652,7 +693,7 @@ const TradeTab = () => {
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = () => {
-    // Long
+    // Info: (20230927 - Shirley) Long
     const newLongValue = +SafeMath.mult(targetInputValueRef.current, longPriceRef.current);
 
     const roundedLongValue = roundToDecimalPlaces(newLongValue, 2, true);
@@ -674,7 +715,7 @@ const TradeTab = () => {
       roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current), 2)
     );
 
-    // Short
+    // Info: (20230927 - Shirley) Short
     const newShortValue = +SafeMath.mult(targetInputValueRef.current, shortPriceRef.current);
 
     const roundedShortValue = roundToDecimalPlaces(newShortValue, 2, true);
@@ -854,6 +895,7 @@ const TradeTab = () => {
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"
       incrementBtnSize="44"
+      onTypingStatusChange={handleTypingStatusChange.target}
     />
   );
 
@@ -1164,6 +1206,7 @@ const TradeTab = () => {
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"
       incrementBtnSize="44"
+      onTypingStatusChange={handleTypingStatusChange.target}
     />
   );
 
@@ -1347,7 +1390,8 @@ const TradeTab = () => {
         disabled={
           (openSubMenu && marginWarningShortRef.current) ||
           longBtnDisabledRef.current ||
-          shortBtnDisabledRef.current
+          shortBtnDisabledRef.current ||
+          +targetInputValueRef.current < TARGET_MIN_DIGITS
         }
         buttonType="button"
         className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
@@ -1541,7 +1585,11 @@ const TradeTab = () => {
               {/* Info: (20230925 - Shirley) Short Button */}
               <div className={`flex justify-center -mt-14`}>
                 <RippleButton
-                  disabled={marginWarningShortRef.current || shortBtnDisabledRef.current}
+                  disabled={
+                    marginWarningShortRef.current ||
+                    shortBtnDisabledRef.current ||
+                    +targetInputValueRef.current < TARGET_MIN_DIGITS
+                  }
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
@@ -1571,7 +1619,11 @@ const TradeTab = () => {
         {/* Info: (20230725 - Julian) Long Button */}
         <div className={`w-120px bg-black/100`}>
           <RippleButton
-            disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
+            disabled={
+              (openSubMenu && marginWarningLongRef.current) ||
+              longBtnDisabledRef.current ||
+              +targetInputValueRef.current < TARGET_MIN_DIGITS
+            }
             buttonType="button"
             className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}

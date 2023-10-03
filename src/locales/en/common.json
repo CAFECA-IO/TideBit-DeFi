@@ -178,6 +178,7 @@
     "OPEN_POSITION_TITLE": "Open Position",
     "CLOSE_POSITION_TITLE": "Close Position",
     "UPDATE_POSITION_TITLE": "Update Position",
+    "CFD_TRADE": "CFD Trade",
     "CONFIRM_CONTENT": "Confirm the transaction",
     "TRANSACTION_BROADCAST": "Transaction broadcast",
     "TRANSACTION_SUCCEED": "Transaction succeed",

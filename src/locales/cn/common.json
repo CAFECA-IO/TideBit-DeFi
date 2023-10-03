@@ -178,6 +178,7 @@
     "OPEN_POSITION_TITLE": "建仓",
     "CLOSE_POSITION_TITLE": "关仓",
     "UPDATE_POSITION_TITLE": "更新持仓",
+    "CFD_TRADE": "CFD 交易",
     "CONFIRM_CONTENT": "请确认您的交易",
     "TRANSACTION_BROADCAST": "交易已广播",
     "TRANSACTION_SUCCEED": "交易成功",

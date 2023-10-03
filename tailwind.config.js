@@ -19,11 +19,13 @@ module.exports = {
       '3xl': ['30px', '36px'],
       '4xl': ['36px', '40px'],
       '5xl': ['48px', 1],
+      '5.5xl': ['54px', 1],
       '6xl': ['60px', 1],
       '7xl': ['72px', 1],
       '8xl': ['96px', 1],
       '9xl': ['128px', 1],
     },
+
     screens: {
       xxs: '370px',
       xs: '500px',
@@ -43,6 +45,10 @@ module.exports = {
       textDecorationThickness: {
         2: '2px',
       },
+      backgroundImage: {
+        iSunOneBg: 'url("/elements/isunone_banner_bg@2x.png")',
+        iSunOneBgMobile: 'url("/elements/isunone_banner_bg_mobile.svg")',
+      },
       zIndex: {
         '60': '60',
         '70': '70',
@@ -53,9 +59,6 @@ module.exports = {
       },
       opacity: {'group-hover': '0.8', '0': '0'},
       visible: ['group-hover'],
-      backgroundImage: {
-        'reserve': "url('./public/elements/group_15244.svg')",
-      },
       gridTemplateColumns: {
         cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
       },
@@ -169,12 +172,14 @@ module.exports = {
         '130px': '130px',
         '134px': '134px',
         '140px': '140px',
+        '144px': '144px',
         '150px': '150px',
         '158px': '158px',
         '160px': '160px',
         '180px': '180px',
         '190px': '190px',
         '200px': '200px',
+        '210px': '210px',
         '220px': '220px',
         '240px': '240px',
         '250px': '250px',
@@ -229,6 +234,7 @@ module.exports = {
         '700px': '700px',
         '726px': '726px',
         '768px': '768px',
+        '900px': '900px',
         '1000px': '1000px',
         '1200px': '1200px',
         '1500px': '1500px',
@@ -275,11 +281,15 @@ module.exports = {
 
         '80vh': '80vh',
         '95vh': '95vh',
+        '120vh': '120vh',
+        '200vh': '200vh',
 
         '70vw': '70vw',
         '80vw': '80vw',
         '85vw': '85vw',
         '90vw': '90vw',
+        '95vw': '95vw',
+        '100vw': '100vw',
       },
       margin: {
         '8px': '8px',
@@ -324,6 +334,7 @@ module.exports = {
         '3/5': '60%',
       },
       borderRadius: {
+        '10px': '10px',
         '12px': '12px',
       },
       rotate: {
@@ -335,9 +346,6 @@ module.exports = {
         '80': '80',
         '90': '90',
         '100': '100',
-      },
-      backgroundImage: {
-        banner1: "url('~/img/group_15199@2x.png)",
       },
       colors: {
         cuteBlue: '#A5C4F3',
@@ -391,13 +399,15 @@ module.exports = {
 
         lightGray5: '#D4D4D4',
         lightYellow2: '#F8E71C',
+
+        lightGreen6: '#41FEA2',
+        lightBlue: '#4DBFFF',
+        lightYellow3: '#F9C53D',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
       },
-      backgroundImage: {
-        landingPageCta1: "url('~/public/elements/Group_15198@2x.png')",
-      },
+
       // animation class
       animation: {
         'spin-slow': 'spin 3s linear infinite',

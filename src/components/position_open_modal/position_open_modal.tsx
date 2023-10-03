@@ -16,6 +16,10 @@ import {
   validateCFD,
   toDisplayCFDOrder,
   toPnl,
+  roundToDecimalPlaces,
+  numberFormatted,
+  validateNumberFormat,
+  getValueByProp,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -27,12 +31,12 @@ import {
   CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   FRACTION_DIGITS,
-  LIQUIDATION_FIVE_LEVERAGE,
+  LIQUIDATION_PERCENTAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {
   defaultResultSuccess,
   defaultResultFailed,
@@ -134,22 +138,9 @@ const PositionOpenModal = ({
         const receipt = result.data as {order: ICFDOrder};
         const cfd = userCtx.getCFD(receipt.order.id) ?? {
           ...openCfdRequest,
-          // openPrice: openCfdRequest.price,
           ...receipt.order,
-          // state: OrderState.OPENING,
         };
 
-        // console.log('cfd from getCFD', userCtx.getCFD(receipt.order.id), 'scrambled cfd', {
-        //   ...openCfdRequest,
-        //   ...receipt.order,
-        // });
-
-        // const cfd: ICFDOrder = {
-        //   ...openCfdRequest,
-        //   // openPrice: openCfdRequest.price,
-        //   ...receipt.order,
-        //   // state: OrderState.OPENING,
-        // };
         const closePrice = marketCtx.predictCFDClosePrice(cfd.instId, cfd.typeOfPosition);
         const spread = marketCtx.getTickerSpread(cfd.instId);
 
@@ -324,11 +315,15 @@ const PositionOpenModal = ({
 
     const newPrice = newQuotation.price;
 
-    const newMargin = +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5);
+    const newMargin = roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5),
+      2
+    );
+
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
-        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE));
+        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE))
+        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE));
     const gslFee = +SafeMath.mult(gsl ?? 0, SafeMath.mult(openCfdRequest.amount, newPrice));
 
     globalCtx.dataPositionOpenModalHandler({
@@ -383,8 +378,31 @@ const PositionOpenModal = ({
       setQuotationError(false);
     }
 
-    const isValid = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
-    if (!isValid) {
+    const propertiesToCheck = [
+      'amount',
+      'fee',
+      'guaranteedStopFee',
+      'liquidationPrice',
+      'margin.amount',
+      'price',
+      'stopLoss',
+      'takeProfit',
+    ];
+
+    const isValidFormat = propertiesToCheck.every(prop => {
+      const value = getValueByProp(openCfdRequest, prop);
+
+      if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+        return true;
+      }
+
+      const each = validateNumberFormat(value);
+      return each;
+    });
+
+    const isValidCFD = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
+
+    if (!isValidFormat || !isValidCFD) {
       setSecondsLeft(0);
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
@@ -456,10 +474,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.price)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -517,19 +532,13 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
-              <div className="">
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
-                {t('POSITION_MODAL.LIQUIDATION_TIME')}
-              </div>
+              <div className="">{t('POSITION_MODAL.LIQUIDATION_TIME')}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.liquidationPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {numberFormatted(openCfdRequest.liquidationPrice)}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

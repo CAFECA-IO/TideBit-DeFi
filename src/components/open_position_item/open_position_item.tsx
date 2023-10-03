@@ -10,14 +10,13 @@ import {
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
-import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {timestampToString, toPnl} from '../../lib/common';
+import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {ToastTypeAndText} from '../../constants/toast_type';
@@ -218,9 +217,9 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedColorHex =
     remainSecs <= POSITION_CLOSE_COUNTDOWN_SECONDS
       ? TypeOfPnLColorHex.LIQUIDATION
-      : pnl?.type === ProfitState.PROFIT
+      : pnl?.value > 0
       ? TypeOfPnLColorHex.PROFIT
-      : pnl?.type === ProfitState.LOSS
+      : pnl?.value < 0
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
@@ -238,30 +237,31 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    pnl?.type === ProfitState.PROFIT
-      ? 'text-lightGreen5'
-      : pnl?.type === ProfitState.LOSS
-      ? 'text-lightRed'
-      : 'text-lightWhite';
+    pnl?.value > 0 ? 'text-lightGreen5' : pnl?.value < 0 ? 'text-lightRed' : 'text-lightWhite';
 
   const displayedCrossColor =
-    pnl?.type === ProfitState.PROFIT
+    pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
-      : 'hover:before:bg-lightRed hover:after:bg-lightRed';
+      : pnl?.value < 0
+      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
+
   const displayedCrossStyle =
     'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 
-  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
+  const displayedPnLSymbol = !marketCtx.selectedTicker?.price
     ? ''
-    : pnl?.type === ProfitState.PROFIT
+    : pnl?.value > 0
     ? '+'
-    : pnl?.type === ProfitState.LOSS
+    : pnl?.value < 0
     ? '-'
+    : openPrice !== closePrice && Math.abs(pnl?.value ?? 0) === 0
+    ? '≈'
     : '';
 
   const displayedPnLValue = !!!marketCtx.selectedTicker?.price
     ? '- -'
-    : pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : numberFormatted(pnl?.value);
 
   const displayedCreateTime = timestampToString(createTimestamp ?? 0);
   return (
@@ -313,7 +313,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
-            $ {openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+            $ {numberFormatted(roundToDecimalPlaces(openValue, 2, true))}
           </div>
         </div>
 

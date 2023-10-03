@@ -3,11 +3,11 @@ import React from 'react';
 import Link from 'next/link';
 import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {TBDURL} from '../../constants/api_request';
 import {COPYRIGHT} from '../../constants/config';
 import {useRouter} from 'next/router';
-import {isValidURL} from '../../lib/common';
+import {isValidTradeURL} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -15,7 +15,7 @@ const Footer = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const router = useRouter();
 
-  const tradeLink = isValidURL(router.asPath) ? router.asPath : TBDURL.TRADE;
+  const tradeLink = isValidTradeURL(router.asPath) ? router.asPath : TBDURL.TRADE;
 
   const ICON_SIZE = 30;
   const socialMediaLinks = [
@@ -176,8 +176,8 @@ const Footer = () => {
       </div>
 
       {/* Info: (20230328 - Julian) Mobile */}
-      <div className={`${mobileVersionBreakpoint}`}>
-        <footer className="mx-auto w-screen justify-center bg-darkGray text-base">
+      <div className={`${mobileVersionBreakpoint} w-full`}>
+        <footer className="mx-0 lg:mx-auto w-full justify-center bg-darkGray text-base">
           <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
             {/* Info: (20230328 - Julian) LOGO & Social media */}
             <div className="mx-auto w-full shrink-0 text-center">

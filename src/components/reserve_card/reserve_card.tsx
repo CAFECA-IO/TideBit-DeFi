@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {BiLinkAlt} from 'react-icons/bi';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
 const ReserveCard = ({
   name,
-  percentage,
+  ratio,
   userHoldings,
   walletAssets,
   icon,
@@ -15,9 +15,9 @@ const ReserveCard = ({
   color,
 }: {
   name: string;
-  percentage: string;
-  userHoldings: string | number;
-  walletAssets: string | number;
+  ratio: string;
+  userHoldings: string;
+  walletAssets: string;
   icon: string;
   link: string;
   color: string;
@@ -48,7 +48,7 @@ const ReserveCard = ({
 
             <div className="grow">
               <p className="font-bold">
-                <span className="pr-2 text-6xl font-bold leading-relaxed">{percentage}</span> %
+                <span className="pr-2 text-6xl font-bold leading-relaxed">{ratio}</span> %
               </p>
 
               <Link

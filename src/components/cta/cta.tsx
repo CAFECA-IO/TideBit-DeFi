@@ -66,12 +66,10 @@ const Cta = () => {
 
       {/* Info: Mobile version (width < 1024 px) (20230628 - Shirley) */}
       <div className="w-full lg:hidden">
-        <div className="mb-10 flex justify-center">
+        <div className="mb-20 flex flex-col justify-center items-center">
           <Image src="/elements/nav_logo.svg" height={50} width={150} alt="TideBit_logo" />
+          <p className="-mt-2 ml-90px text-center text-xs text-lightGray">v {version}</p>
         </div>
-        <p className="-mt-20 mb-20 flex justify-end pr-1/11 text-end text-xs text-lightGray">
-          v {version}
-        </p>
       </div>
 
       <section className="mb-1/10 flex flex-col items-center justify-center lg:hidden">
@@ -89,10 +87,10 @@ const Cta = () => {
             </span>{' '}
             {t('HOME_PAGE.CTA_REST_TITLE')}
           </div>
-          <div className="mx-5 mt-4 max-w-md text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
+          <div className="mx-5 mt-4 w-278px text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
             {t('HOME_PAGE.CTA_DESCRIPTION')}
           </div>
-          <div className="flex flex-col items-center space-y-4 pt-4">
+          <div className="flex flex-col items-center space-y-4 pt-10">
             <a
               href={t('HOME_PAGE.WHITEPAPER_LINK')}
               className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}

@@ -18,11 +18,13 @@ import {
   getEstimatedPnL,
   getNowSeconds,
   getTimestamp,
+  numberFormatted,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
   toPnl,
   validateAllInput,
+  validateNumberFormat,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
@@ -34,7 +36,7 @@ import {
   TP_SL_LIMIT_RATIO,
 } from '../../constants/config';
 import useStateRef from 'react-usestateref';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
@@ -61,6 +63,8 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const regex = /^\d*\.?\d{0,2}$/;
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -111,6 +115,8 @@ const UpdateFormModal = ({
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({tp: false, sl: false});
+
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
@@ -121,6 +127,24 @@ const UpdateFormModal = ({
     setSlToggle(bool);
 
     calculateLoss();
+  };
+
+  const getTpValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedProfitValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
+  };
+
+  const getSlValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedLossValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
   };
 
   const getTpValue = (value: number) => {
@@ -145,9 +169,11 @@ const UpdateFormModal = ({
     >
       <div className="text-xs text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedProfitValueRef.current.number),
+          2,
+          true
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -165,9 +191,11 @@ const UpdateFormModal = ({
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(Math.abs(estimatedLossValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedLossValueRef.current.number),
+          2,
+          true
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -192,17 +220,20 @@ const UpdateFormModal = ({
     }
   };
 
-  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
-    ? ''
-    : openCfdDetails?.pnl?.type === ProfitState.PROFIT
-    ? '+'
-    : openCfdDetails?.pnl?.type === ProfitState.LOSS
-    ? '-'
-    : '';
+  const displayedPnLSymbol =
+    !marketCtx.selectedTicker?.price && !openCfdDetails?.pnl?.value
+      ? ''
+      : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value > 0
+      ? '+'
+      : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
+      ? '-'
+      : openCfdDetails?.pnl?.value !== undefined && Math.abs(openCfdDetails?.pnl?.value) === 0
+      ? '≈'
+      : '';
 
-  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
-    ? '- -'
-    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+    ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
+    : '- -';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -216,31 +247,36 @@ const UpdateFormModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedPnLColor = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+      : TypeOfPnLColor.EQUAL
+    : TypeOfPnLColor.EQUAL;
 
-  const displayedBorderColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedBorderColor = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL;
+      : TypeOfBorderColor.EQUAL
+    : TypeOfBorderColor.EQUAL;
 
-  const displayedColorHex =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+  const displayedColorHex = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColorHex.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.value < 0
       ? TypeOfPnLColorHex.LOSS
-      : TypeOfPnLColorHex.EQUAL;
+      : TypeOfPnLColorHex.EQUAL
+    : TypeOfPnLColorHex.EQUAL;
 
   const displayedCrossColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
-      : 'hover:before:bg-lightRed hover:after:bg-lightRed';
+      : !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value < 0
+      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
 
   const displayedCrossStyle =
     'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
@@ -330,9 +366,65 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const tp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        tp: typingStatus,
+      }));
+    };
+
+    const sl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        sl: typingStatus,
+      }));
+    };
+
+    return {
+      tp,
+      sl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+
+  const checkTpSlWithinBounds = () => {
+    if (validateNumberFormat(tpValueRef.current)) {
+      if (+tpValueRef.current < tpLowerLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+
+      if (+tpValueRef.current > tpUpperLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+    } else {
+      setTpValue(openCfdDetails.suggestion.takeProfit);
+      calculateProfit();
+    }
+
+    if (validateNumberFormat(slValueRef.current)) {
+      if (+slValueRef.current < slLowerLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+
+      if (+slValueRef.current > slUpperLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+    } else {
+      setSlValue(openCfdDetails.suggestion.stopLoss);
+      calculateLoss();
+    }
+  };
+
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
+        getIsValueValid={getTpValid}
         getInputValue={getTpValue}
         lowerLimit={tpLowerLimitRef.current}
         upperLimit={tpUpperLimitRef.current}
@@ -344,6 +436,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.tp}
       />
     </div>
   );
@@ -351,6 +444,7 @@ const UpdateFormModal = ({
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        getIsValueValid={getSlValid}
         disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
         lowerLimit={slLowerLimitRef.current}
@@ -363,6 +457,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.sl}
       />
     </div>
   );
@@ -584,14 +679,16 @@ const UpdateFormModal = ({
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
             +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-            2
+            2,
+            true
           )
         : 0;
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
         ? roundToDecimalPlaces(
             +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-            2
+            2,
+            true
           )
         : TARGET_MAX_DIGITS;
 
@@ -609,11 +706,13 @@ const UpdateFormModal = ({
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-          2
+          2,
+          true
         )
       : roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-          2
+          2,
+          true
         );
 
     const caledSlUpperLimit = isLiquidated
@@ -621,11 +720,13 @@ const UpdateFormModal = ({
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-          2
+          2,
+          true
         )
       : roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-          2
+          2,
+          true
         );
 
     const caledSl =
@@ -637,9 +738,10 @@ const UpdateFormModal = ({
           ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
           : roundToDecimalPlaces(
               +SafeMath.plus(marketCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
-              2
+              2,
+              true
             )
-        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
+        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2, true);
 
     const suggestedSl =
       marketCtx.selectedTicker?.price !== undefined
@@ -688,6 +790,12 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
+    if (!isTypingRef.current.tp && !isTypingRef.current.sl) {
+      checkTpSlWithinBounds();
+    }
+  }, [isTypingRef.current]);
+
+  useEffect(() => {
     setGuaranteedStopFee(
       roundToDecimalPlaces(
         +SafeMath.mult(
@@ -701,6 +809,7 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
+
     const isValidInput = validateInput();
 
     if (isValidInput) {

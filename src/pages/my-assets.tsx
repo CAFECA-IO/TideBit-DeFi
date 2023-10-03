@@ -2,15 +2,12 @@ import React, {useContext, useEffect} from 'react';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
-import {useGlobal} from '../contexts/global_context';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';
-import {LayoutAssertion} from '../constants/layout_assertion';
 
 const MyAssets = () => {
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);

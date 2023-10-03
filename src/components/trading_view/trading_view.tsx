@@ -11,7 +11,7 @@ import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
 import {unitAsset} from '../../constants/config';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 

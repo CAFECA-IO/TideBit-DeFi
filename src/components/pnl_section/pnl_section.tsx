@@ -1,10 +1,11 @@
 import React, {useContext} from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {numberFormatted} from '../../lib/common';
+import {ratioToPercentage, numberFormatted, roundToDecimalPlaces} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 
@@ -23,23 +24,27 @@ const PnlSection = () => {
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
+    const amountValue = numberFormatted(amount.value);
+    const percent = ratioToPercentage(percentage.value);
+
     const result = {
       content:
         amount.type === ProfitState.PROFIT
-          ? `+${numberFormatted(amount.value)} ${unitAsset}`
+          ? `+${amountValue} ${unitAsset}`
           : amount.type === ProfitState.LOSS
-          ? `-${numberFormatted(amount.value)} ${unitAsset}`
+          ? `-${amountValue} ${unitAsset}`
           : amount.type === ProfitState.EQUAL
-          ? `${numberFormatted(amount.value)} ${unitAsset}`
+          ? `${amountValue} ${unitAsset}`
           : '-',
       remarks:
         /* Info: (20230602 - Julian) 調整 format (e.g. 0.012 -> 1.2%)  */
         percentage.type === ProfitState.PROFIT
-          ? `▴ ${numberFormatted(percentage.value * 100)} %`
-          : percentage.type === ProfitState.LOSS
-          ? `▾ ${numberFormatted(percentage.value * 100)} %`
+          ? `▴ ${percent} %`
+          : // ? `▴ ${numberFormatted(SafeMath.mult(percentage.value, 100))} %`
+          percentage.type === ProfitState.LOSS
+          ? `▾ ${percent} %`
           : percentage.type === ProfitState.EQUAL
-          ? `${numberFormatted(percentage.value * 100)} %`
+          ? `${percent} %`
           : '-',
       textColor:
         percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT
@@ -49,6 +54,7 @@ const PnlSection = () => {
           : TypeOfPnLColor.EQUAL,
       ...rest,
     };
+
     return result;
   });
 

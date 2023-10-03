@@ -22,6 +22,8 @@ import {
 } from '../../interfaces/tidebit_defi_background/order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
+import {ToastId} from '../../constants/toast_id';
+import {ToastTypeAndText} from '../../constants/toast_type';
 import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
@@ -52,15 +54,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? SafeMath.gt(
+        ? +SafeMath.gt(
             SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0),
             0
           )
-          ? SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0)
+          ? +SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0)
           : 0
         : +SafeMath.mult((order as ICFDOrder).margin.amount, -1)
       : orderType === OrderType.DEPOSIT
-      ? (order as IDepositOrder).targetAmount
+      ? +(order as IDepositOrder).targetAmount
       : +SafeMath.mult((order as IWithdrawOrder).targetAmount, -1);
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
@@ -173,6 +175,19 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         }
       : () => null;
 
+  const copyClickHandler = () => {
+    navigator.clipboard.writeText(displayedReceiptTxId);
+
+    globalCtx.toast({
+      type: ToastTypeAndText.INFO.type,
+      message: t('TOAST.COPY_SUCCESS'),
+      toastId: ToastId.COPY_SUCCESS,
+      autoClose: 300,
+      isLoading: false,
+      typeText: t(ToastTypeAndText.INFO.text),
+    });
+  };
+
   const displayedReceiptStateIcon =
     orderStatus === OrderStatusUnion.PROCESSING ||
     orderStatus === OrderStatusUnion.WAITING ? null : orderType === OrderType.CFD ? (
@@ -182,7 +197,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       )
     ) : (
-      <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+      <button onClick={copyClickHandler}>
+        <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+      </button>
     );
 
   const displayedReceiptFeeText =

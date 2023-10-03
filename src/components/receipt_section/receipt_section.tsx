@@ -6,15 +6,19 @@ import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
-import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {FiChevronDown} from 'react-icons/fi';
+import {SKELETON_DISPLAY_TIME, DEFAULT_RECEIPTS_SHOW_ROW} from '../../constants/display';
 import Skeleton from 'react-loading-skeleton';
 import {
   ICFDOrder,
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {useTranslation} from 'next-i18next';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
 const ReceiptSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext);
 
   const listHistories: IAcceptedOrder[] = userCtx.histories.map(v => {
@@ -32,6 +36,16 @@ const ReceiptSection = () => {
   const [filteredDate, setFilteredDate] = useState<string[]>([]);
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Info: (20230829 - Julian) 用於顯示的 receipts
+  const [sliceReceipts, setSliceReceipts] = useState<IAcceptedOrder[]>([]);
+  // Info: (20230829 - Julian) receipts 顯示行數
+  const [showRow, setShowRow] = useState(DEFAULT_RECEIPTS_SHOW_ROW);
+  // Info: (20230829 - Julian) 是否顯示 See more 按鈕
+  const [isShowMore, setIsShowMore] = useState(true);
+
+  // Info: (20230829 - Julian) 增加顯示行數
+  const seeMoreHandler = () => setShowRow(showRow + DEFAULT_RECEIPTS_SHOW_ROW);
 
   let timer: NodeJS.Timeout;
 
@@ -67,6 +81,9 @@ const ReceiptSection = () => {
   }, [userCtx.histories]);
 
   useEffect(() => {
+    // Info: (20230829 - Julian) 每次搜尋都重置 showRow
+    setShowRow(DEFAULT_RECEIPTS_SHOW_ROW);
+
     const searchResult = receipts
       .filter(v => {
         /* Info: (20230605 - Julian) Search by trading type
@@ -137,7 +154,22 @@ const ReceiptSection = () => {
     setFilteredReceipts(searchResult);
   }, [filteredTradingType, searches, filteredDate, receipts]);
 
-  const dataMonthList = filteredReceipts
+  useEffect(() => {
+    /* Info: (20230829 - Julian) 如果 showRow 大於等於 filteredReceipts 長度，就顯示全部
+     * 如果不是，就從最後面取出 showRow 個 */
+    const sliceReceipts =
+      showRow >= filteredReceipts.length ? filteredReceipts : filteredReceipts.slice(-showRow);
+    setSliceReceipts(sliceReceipts);
+
+    // Info: (20230829 - Julian) 如果 showRow 已經大於等於 filteredReceipts 長度，就不顯示 See more 按鈕
+    if (showRow >= filteredReceipts.length) {
+      setIsShowMore(false);
+    } else {
+      setIsShowMore(true);
+    }
+  }, [filteredReceipts, showRow]);
+
+  const dataMonthList = sliceReceipts
     /* Info: (20230322 - Julian) sort by desc */
     .sort((a, b) => b.createTimestamp - a.createTimestamp)
     .map(history => {
@@ -148,7 +180,6 @@ const ReceiptSection = () => {
     if (!prev.includes(curr)) {
       prev.push(curr);
     }
-
     return prev;
   }, []);
 
@@ -179,7 +210,7 @@ const ReceiptSection = () => {
             </div>
           </div>
         ) : (
-          <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
+          <ReceiptList monthData={v} sliceReceipts={sliceReceipts} />
         )}
       </div>
     );
@@ -213,7 +244,20 @@ const ReceiptSection = () => {
           setFilteredDate={setFilteredDate}
         />
       )}
-      <div>{listCluster}</div>
+
+      <div className="flex flex-col">
+        {listCluster}
+        {/* Info: (20230829 - Julian) See more button */}
+        <button
+          onClick={seeMoreHandler}
+          className={`${
+            isShowMore ? 'flex' : 'hidden'
+          } mb-2 items-center justify-center space-x-2 text-base uppercase text-tidebitTheme`}
+        >
+          <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEE_MORE')}</p>
+          <FiChevronDown className="text-xl" />
+        </button>
+      </div>
     </div>
   );
 };

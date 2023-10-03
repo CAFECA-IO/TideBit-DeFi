@@ -272,10 +272,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   );
 
   return (
-    <div className="flex h-70px w-full items-center">
-      {displayedReceiptTime}
+    <div className="flex h-76px w-full items-center">
+      <div className="w-70px">{displayedReceiptTime}</div>
 
-      <div className="flex h-full w-full items-center justify-between border-b-2 border-dashed border-lightGray4 pl-6">
+      <div className="flex h-full flex-1 items-center justify-between border-b-2 border-dashed border-lightGray4 pl-3">
         {displayedReceiptButton}
         {displayedReceiptIncome}
         {displayedReceiptDetail}

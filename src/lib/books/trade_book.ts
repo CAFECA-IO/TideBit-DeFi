@@ -1,7 +1,24 @@
+/** TODO: (20230815 - Shirley)
+ * Data:
+ * 1. trades: 用來存放所有的交易資料
+ * 2. predictedTrades: 用來存放預測的交易資料
+ * **3. candlestickChart: 依照時間間隔存放蠟燭圖資料**
+ * 4. isPredicting: 用來判斷是否正在預測
+ * 5. predictionTimers: 用來存放預測的 timer
+ * 6. config: 用來存放設定
+ * 7. model: 用來存放預測模型
+ * Time span:
+ * Live: 用 trades 形成 predictedTrades 再用 predictedTrades 形成蠟燭圖資料後，再存到 candlestickChart；定期檢查trades跟predictedTrades的資料需小於100筆，只保留最新的100筆
+ * 5m, 15m, 30m, 1h, 4h, 12h, 1d: 直接 call API 拿到蠟燭圖的資料
+ * 1.
+ */
+
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
+import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
+import {CANDLESTICK_SIZE} from '../../constants/display';
 
 interface ITrade {
   tradeId: string;
@@ -19,13 +36,8 @@ type ILine = {
   timestamp: number;
 };
 
-type ICandlestick = {
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  timestamp: number;
+type ICandlestickDataWithTimeSpan = {
+  [key in ITimeSpanUnion]: ICandlestickData[];
 };
 
 interface ITradeBookConfig {
@@ -49,6 +61,8 @@ function ensureTickerExistsDecorator(target: any, key: string, descriptor: Prope
 class TradeBook {
   private trades: Map<string, ITrade[]>;
   private predictedTrades: Map<string, ITrade[]>;
+  private candlestickChart: Map<string, ICandlestickDataWithTimeSpan>;
+  private convertedTradeIds: Set<string> = new Set();
   private isPredicting: Map<string, boolean>;
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
@@ -58,6 +72,7 @@ class TradeBook {
     this.config = config;
     this.trades = new Map();
     this.predictedTrades = new Map();
+    this.candlestickChart = new Map();
     this.isPredicting = new Map();
     this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
@@ -119,13 +134,17 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   private _add(instId: string, trade: ITrade): void {
-    const isPredictedData = trade.tradeId.includes('-');
+    let newTrade: ITrade = {...trade};
+
+    const isPredictedData = newTrade.tradeId.includes('-');
+
     const trades = this.trades.get(instId)!;
     const predictedTrades = this.predictedTrades.get(instId)!;
 
+    // Info: 檢查這筆trade是預測的還是真實的，然後存進不同變數裡 (20230816 - Shirley)
     if (!isPredictedData) {
-      trades.push(trade);
-      predictedTrades.push(trade);
+      trades.push(newTrade);
+      predictedTrades.push(newTrade);
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
@@ -137,8 +156,13 @@ class TradeBook {
           : `${lastTradeId[0]}-1`
       }`;
 
+      newTrade = {...trade, tradeId};
+
       this.predictedTrades.get(instId)!.push({...trade, tradeId});
     }
+
+    // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
+    // processTradesToCandlestickData()
   }
 
   /* Deprecated: replaced by _trim() (20230703 - Shirley)
@@ -184,10 +208,13 @@ class TradeBook {
           .filter(trade => {
             return trade.timestampMs >= cutoffTime;
           })
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITrade}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.trades.set(instId, trimmedTrades);
@@ -195,10 +222,13 @@ class TradeBook {
       const trimmedPredictedTrades = Object.values(
         predictedTrades
           .filter(trade => trade.timestampMs >= cutoffTime)
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITrade}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
@@ -244,6 +274,18 @@ class TradeBook {
       for (let i = 0; i < length; i++) {
         this._add(instId, prediction[i]);
       }
+    }
+  }
+
+  private convertTradesToCandlestickData(
+    instId: string,
+    trades: ITrade[],
+    timeSpan: keyof ICandlestickDataWithTimeSpan
+  ) {
+    const interval = this.config.intervalMs / 1000;
+    const candlestickData = this.toCandlestick(instId, interval, CANDLESTICK_SIZE, trades);
+    for (let i = 0; i < candlestickData.length; i++) {
+      this.candlestickChart.get(instId)![timeSpan].push(candlestickData[i]);
     }
   }
 
@@ -433,8 +475,14 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  toCandlestick(instId: string, interval: number, length: number): ICandlestickData[] {
-    const trades = this.predictedTrades.get(instId)!;
+  toCandlestick(
+    instId: string,
+    interval: number,
+    length: number,
+    tradesArray?: ITrade[]
+  ): ICandlestickData[] {
+    const trades =
+      !tradesArray || tradesArray.length === 0 ? this.predictedTrades.get(instId)! : tradesArray;
 
     if (trades.length === 0) return [];
 
@@ -478,6 +526,32 @@ class TradeBook {
     return candleSticks;
   }
 
+  getCandlestickData(instId: string): ICandlestickDataWithTimeSpan | undefined {
+    this.ensureCandlestickDataExists(instId);
+
+    return this.candlestickChart.get(instId);
+  }
+
+  addCandlestickData(instId: string, timeSpan: ITimeSpanUnion, data: ICandlestickData[]): void {
+    this.ensureCandlestickDataExists(instId);
+
+    const instData = this.getCandlestickData(instId);
+
+    if (instData) {
+      instData[timeSpan] = data;
+    }
+  }
+
+  // TODO: 即時將 trades 轉成 candlestickChart 的資料 (20230817 - Shirley)
+  // processTradesToCandlestickData(instId: string, timeSpan: ITimeSpanUnion): void {
+  //   // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
+  //   if (!this.isTradeConvertedToCandlestick(newTrade.tradeId)) {
+  //     this.ensureCandlestickDataExists(instId);
+  //     this.convertTradesToCandlestickData(instId, [trade], TimeSpanUnion._1s);
+  //     this.convertedTradeIds.add(newTrade.tradeId);
+  //   }
+  // }
+
   isValidTrade(trade: any): trade is ITrade {
     return (
       'tradeId' in trade &&
@@ -511,6 +585,26 @@ class TradeBook {
     const predictedTrades = this.predictedTrades.get(instId);
     return predictedTrades![predictedTrades!.length - 1];
   }
+
+  private ensureCandlestickDataExists(instId: string) {
+    if (!this.candlestickChart.has(instId)) {
+      const initialData: ICandlestickDataWithTimeSpan = {
+        '1s': [],
+        '5m': [],
+        '15m': [],
+        '30m': [],
+        '1h': [],
+        '4h': [],
+        '12h': [],
+        '1d': [],
+      };
+      this.candlestickChart.set(instId, initialData);
+    }
+  }
+
+  private isTradeConvertedToCandlestick(tradeId: string): boolean {
+    return this.convertedTradeIds.has(tradeId);
+  }
 }
 
 const TradeBookInstance = new TradeBook({
@@ -518,7 +612,7 @@ const TradeBookInstance = new TradeBook({
   model: Model.LINEAR_REGRESSION,
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
-  holdingTradesMs: 1000 * 60 * 15, // Info: 15 minutes in milliseconds (ms) (20230601 - Tzuhan)
+  holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20230601 - Tzuhan)
 });
 
 export default TradeBookInstance;

@@ -18,6 +18,11 @@ export interface ISortedCandlestick {
   [second: number]: ICandlestickData;
 }
 
+export interface IInstCandlestick {
+  instId: string;
+  candlesticks: {x: string; y: ICandle}[];
+}
+
 export type ITradeSideText = 'BUY' | 'SELL';
 export const TradeSideText: {[key: number]: ITradeSideText} = {
   0: 'BUY',

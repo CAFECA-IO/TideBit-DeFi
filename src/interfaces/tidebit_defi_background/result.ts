@@ -3,7 +3,7 @@ import {IAcceptedOrder} from './accepted_order';
 import {IBadge} from './badge';
 import {IBalance} from './balance';
 import {ICandlestick} from './candlestick';
-import {ICandlestickData, ITrade} from './candlestickData';
+import {ICandlestickData, IInstCandlestick, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
 import {ILeaderboard, IRanking} from './leaderboard';
 import {IDepositOrder, IOrder} from './order';
@@ -46,6 +46,7 @@ export interface IResult {
     | ITickerStatic
     | ITickerLiveStatistics
     | ITrade[]
+    | IInstCandlestick
     | ITideBitPromotion
     | IWebsiteReserve
     | IUserAssets

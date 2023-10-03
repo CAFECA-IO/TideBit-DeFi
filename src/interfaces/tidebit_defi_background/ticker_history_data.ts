@@ -1,7 +1,7 @@
 import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 
 const defaultLimit = 450;
-const defaultTimeSpan = TimeSpanUnion._1m;
+const defaultTimeSpan = TimeSpanUnion._1s;
 
 export interface ITickerHistoryData {
   date: Date;

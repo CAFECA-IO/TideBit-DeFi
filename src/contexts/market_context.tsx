@@ -21,6 +21,7 @@ import {
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
   ICandlestickData,
+  IInstCandlestick,
   ITrade,
   TradeSideText,
 } from '../interfaces/tidebit_defi_background/candlestickData';
@@ -585,6 +586,41 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     [tradeBook]
   );
 
+  const processCandlesticks = useCallback(
+    (timeSpan: ITimeSpanUnion, instCandlestick: IInstCandlestick) => {
+      // Info: 轉換成圖表要的格式 (20230817 - Shirley)
+      const dataWithDate = instCandlestick.candlesticks.map(candlestick => ({
+        x: new Date(candlestick.x),
+        y: candlestick.y,
+      }));
+
+      // Info: 避免重複的資料並從舊到新排序資料 (20230817 - Shirley)
+      const uniqueData = dataWithDate
+        .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
+          const xtime = current.x.getTime();
+          if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
+            acc.push(current);
+          }
+          return acc;
+        }, [])
+        .sort((a, b) => a.x.getTime() - b.x.getTime())
+        .slice(-CANDLESTICK_SIZE);
+
+      // Info: 如果該時間區間的資料是空白的，就將整理好的蠟燭圖資料放進去 (20230817 - Shirley)
+      let candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
+      const targetedCandlestick = candlestickDataGot?.[timeSpan];
+      if (!targetedCandlestick || targetedCandlestick?.length === 0) {
+        tradeBook.addCandlestickData(instCandlestick.instId, timeSpan, uniqueData);
+        candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
+      }
+
+      // TODO: 如果該時間密度的資料不是空白的，就直接切換蠟燭圖資料 (20230817 - Shirley)
+      const newData = candlestickDataGot?.[timeSpan] || null;
+      setCandlestickChartData(newData);
+    },
+    []
+  );
+
   const listCandlesticks = useCallback(
     async (
       instId: string,
@@ -604,7 +640,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           query: {...options},
         })) as IResult;
         if (result.success) {
-          const candlesticks = result.data as ICandlestick;
+          // Info: call API 拿到資料
+          const candlesticks = result.data as IInstCandlestick;
+          processCandlesticks(options.timeSpan, candlesticks);
         }
       } catch (error) {
         if (!isCustomError(error)) {
@@ -617,20 +655,62 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  const syncCandlestickData = useCallback((instId: string, timeSpan?: ITimeSpanUnion) => {
+  const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
     if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
     }
 
+    const candlestickData = tradeBook.getCandlestickData(instId);
+
+    if (timeSpan) {
+      if (candlestickData && candlestickData?.[timeSpan]?.length > 0) {
+        setCandlestickChartData(candlestickData?.[timeSpan] || null);
+      } else {
+        if (timeSpan !== TimeSpanUnion._1s) {
+          await listCandlesticks(instId, {
+            timeSpan,
+            limit: CANDLESTICK_SIZE,
+          });
+        }
+      }
+    }
+
     const candlestickInterval = window.setInterval(() => {
-      const ts = timeSpan ? timeSpan : timeSpanRef.current;
       if (timeSpan) setTimeSpan(timeSpan);
-      const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
 
-      const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
+      const ts = timeSpan ? timeSpan : timeSpanRef.current;
+      if (timeSpanRef.current === TimeSpanUnion._1s) {
+        const candlesticks = tradeBook.toCandlestick(
+          instId,
+          millesecondsToSeconds(getTime(ts)),
+          CANDLESTICK_SIZE
+        );
+        tradeBook.addCandlestickData(instId, ts, candlesticks);
+        const liveCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
 
-      setCandlestickChartData(candlesticks);
+        setCandlestickChartData(liveCandlesticks);
+      }
+
+      // TODO: 切換到其他 time span 也應該要隨著接收到新的 trades 更新蠟燭圖 (20231003 - Shirley)
+      // else if (timeSpanRef.current === TimeSpanUnion._5m) {
+      //   const fiveCompleteMin = tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
+      //   const fiveMin = tradeBook.toCandlestick(
+      //     instId,
+      //     millesecondsToSeconds(getTime(TimeSpanUnion._5m)),
+      //     CANDLESTICK_SIZE
+      //   );
+
+      //   console.log('fiveCompleteMin', fiveCompleteMin, 'fiveMin', fiveMin);
+
+      //   const fiveNewCandlesticks = fiveCompleteMin
+      //     .slice(-(CANDLESTICK_SIZE - 2))
+      //     .concat(fiveMin[fiveMin.length - 1]);
+
+      //   console.log('fiveNewCandlesticks', fiveNewCandlesticks);
+
+      //   setCandlestickChartData(fiveNewCandlesticks);
+      // }
     }, 100);
     setCandlestickInterval(candlestickInterval);
   }, []);

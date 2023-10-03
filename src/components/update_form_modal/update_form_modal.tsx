@@ -7,19 +7,16 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useContext, useEffect, useMemo, useRef} from 'react';
+import {useContext, useEffect} from 'react';
 import TradingInput from '../trading_input/trading_input';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import Tooltip from '../tooltip/tooltip';
 import RippleButton from '../ripple_button/ripple_button';
-import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {ProfitState} from '../../constants/profit_state';
 import {
   getEstimatedPnL,
-  getNowSeconds,
   getTimestamp,
   numberFormatted,
-  randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
   toPnl,
@@ -64,8 +61,6 @@ const UpdateFormModal = ({
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const regex = /^\d*\.?\d{0,2}$/;
-
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -79,10 +74,7 @@ const UpdateFormModal = ({
   const initialTpInput = cfdTp ?? openCfdDetails?.suggestion?.takeProfit;
   const initialSlInput = cfdSl ?? openCfdDetails?.suggestion?.takeProfit;
 
-  const initialState = {
-    number: 0,
-    symbol: '',
-  };
+  const initialState = {number: 0, symbol: ''};
 
   const [tpValue, setTpValue, tpValueRef] = useState(initialTpInput);
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
@@ -91,8 +83,6 @@ const UpdateFormModal = ({
   const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
     openCfdDetails.guaranteedStop
   );
-
-  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
   const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
@@ -157,9 +147,6 @@ const UpdateFormModal = ({
     setSlValue(value);
     calculateLoss();
   };
-
-  const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
-  const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   const displayedEstimatedProfit = (
     <div
@@ -477,28 +464,12 @@ const UpdateFormModal = ({
             ({t('POSITION_MODAL.FEE')}:{' '}
             {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
           </span>
-          {/* Info: tooltip (20230802 - Shirley) */}
-          <div className="ml-3">
-            <div
-              className="relative"
-              onMouseEnter={mouseEnterHandler}
-              onMouseLeave={mouseLeaveHandler}
-            >
-              <div className="opacity-70">
-                <AiOutlineQuestionCircle size={16} />
-              </div>
-              {guaranteedTooltipStatus == 3 && (
-                <div
-                  role="tooltip"
-                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
-                >
-                  <p className="pb-0 text-sm font-medium text-white">
-                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Info: (20231003 - Julian) Tooltip */}
+          <Tooltip className="ml-3">
+            <p className="w-56 text-left text-sm font-medium text-white">
+              {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+            </p>
+          </Tooltip>
         </label>
       </div>
     </div>

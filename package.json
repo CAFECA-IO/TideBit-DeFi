@@ -22,7 +22,6 @@
     "apexcharts": "^3.37.1",
     "bignumber.js": "^9.1.1",
     "ethers": "^5.7.2",
-    "fsevents": "^2.3.2",
     "gray-matter": "^4.0.3",
     "i18next": "^22.4.5",
     "lightweight-charts": "^4.0.1",
@@ -44,6 +43,9 @@
     "rlp": "^3.0.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

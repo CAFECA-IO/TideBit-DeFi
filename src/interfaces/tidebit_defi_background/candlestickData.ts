@@ -63,6 +63,20 @@ export interface ICandlestick {
   candlesticks: ICandlestickData[];
 }
 
+export function isCandlestickData(obj: any): obj is ICandlestickData {
+  return (
+    obj &&
+    obj.x instanceof Date &&
+    obj.y &&
+    typeof obj.y.open === 'number' &&
+    typeof obj.y.close === 'number' &&
+    typeof obj.y.high === 'number' &&
+    typeof obj.y.low === 'number' &&
+    typeof obj.y.volume === 'number' &&
+    typeof obj.y.value === 'number'
+  );
+}
+
 /* Till: remove generate dummy price data (20230327 - Tzuhan)
 export const getDummyPrices = (point: number) => {
   const prices: [...(number | null)[]] = new Array(4).fill(0).map(v => {

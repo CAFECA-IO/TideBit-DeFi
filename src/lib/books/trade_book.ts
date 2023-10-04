@@ -612,7 +612,7 @@ const TradeBookInstance = new TradeBook({
   model: Model.LINEAR_REGRESSION,
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
-  holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20230601 - Tzuhan)
+  holdingTradesMs: 1000 * 60 * 15, // Info: 1 minutes in milliseconds (ms) (20230601 - Tzuhan)
 });
 
 export default TradeBookInstance;

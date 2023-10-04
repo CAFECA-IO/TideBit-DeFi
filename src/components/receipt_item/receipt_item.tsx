@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {timestampToString, toDisplayCFDOrder, toPnl} from '../../lib/common';
+import {numberFormatted, timestampToString, toDisplayCFDOrder, toPnl} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
@@ -98,8 +98,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     cfdType === CFDOperation.UPDATE
       ? '+0'
       : targetAmount >= 0
-      ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-      : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      ? '+' + numberFormatted(targetAmount)
+      : numberFormatted(targetAmount);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -202,16 +202,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       </button>
     );
 
-  const displayedReceiptFeeText =
-    order.fee === 0
-      ? order.fee
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedReceiptFeeText = order.fee === 0 ? order.fee : numberFormatted(order.fee);
 
   const displayedReceiptAvailableText =
     orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? '-'
+      numberFormatted(balance?.available, true)
     );
 
   const displayedReceiptTime = (

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
+import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -44,10 +44,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   const displayedTextColor = pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
-  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnLValue = numberFormatted(Math.abs(pnl.value));
 
   const displayedPnLSymbol =
     pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';
@@ -91,12 +88,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-120px">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_VALUE')}</div>
             <div className="">
-              $
-              {closedCfdDetails.openValue.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-              / ${(closeValue || 0).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              ${numberFormatted(closedCfdDetails.openValue)}/ ${numberFormatted(closeValue || 0)}
             </div>
           </div>
 

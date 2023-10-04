@@ -89,7 +89,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
         : // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
           Math.abs(+previousPnl.value + +myPnl.value);
 
-    const gapPnlFormatted = gapPnl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    const gapPnlFormatted = numberFormatted(gapPnl);
 
     return gapPnl !== 0 ? `+ ${gapPnlFormatted}` : '-';
   };

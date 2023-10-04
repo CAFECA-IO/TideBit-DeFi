@@ -14,6 +14,7 @@ import {useTranslation} from 'next-i18next';
 import {DEFAULT_CRYPTO, FRACTION_DIGITS, unitAsset} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -36,13 +37,13 @@ const TradingHeader = () => {
   const priceShadowColor =
     marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
-  const priceChange = Math.abs(
-    marketCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE
-  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const priceChange = numberFormatted(
+    Math.abs(marketCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE)
+  );
 
-  const priceChangePercentage = Math.abs(
-    marketCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION
-  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const priceChangePercentage = numberFormatted(
+    Math.abs(marketCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION)
+  );
 
   const tickerTitle = (
     <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
@@ -76,13 +77,7 @@ const TradingHeader = () => {
           className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >
           <div className="text-3xl">
-            <span className="">
-              ₮{' '}
-              {marketCtx.selectedTicker?.price.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </span>
+            <span className="">₮ {numberFormatted(marketCtx.selectedTicker?.price)}</span>
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
@@ -93,11 +88,7 @@ const TradingHeader = () => {
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
             {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')}{' '}
-            {Number(marketCtx.selectedTicker?.tradingVolume).toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}{' '}
-            {unitAsset}
+            {numberFormatted(marketCtx.selectedTicker?.tradingVolume)} {unitAsset}
           </div>
         </div>
       </div>
@@ -136,13 +127,7 @@ const TradingHeader = () => {
         {/*  bg-gradient-to-r from-lightGreen to-purple-800 bg-clip-text text-transparent */}
         <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
           <div className="text-3xl">
-            <span className="">
-              ₮{' '}
-              {marketCtx.selectedTicker?.price.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </span>
+            <span className="">₮ {numberFormatted(marketCtx.selectedTicker?.price)}</span>
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'

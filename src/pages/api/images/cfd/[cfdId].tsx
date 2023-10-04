@@ -138,10 +138,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const backgroundImageUrl = DOMAIN + '/elements/' + bg + '.png';
 
-  const displayedPnlPercent = Math.abs(pnlPercent).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnlPercent = numberFormatted(Math.abs(pnlPercent));
 
   const displayedTypeOfPosition =
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';

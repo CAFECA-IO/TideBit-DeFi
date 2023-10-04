@@ -7,6 +7,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -21,16 +22,8 @@ const InterestSection = () => {
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const interestInfo = {
     APY: userAssets?.interest.apy ?? DEFAULT_INTEREST_RATE,
-    interest30Days:
-      userAssets?.interest.monthly.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      ) ?? 0,
-    cumulativeInterest:
-      userAssets?.interest.cumulative.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      ) ?? 0,
+    interest30Days: numberFormatted(userAssets?.interest.monthly),
+    cumulativeInterest: numberFormatted(userAssets?.interest.cumulative),
   };
 
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (

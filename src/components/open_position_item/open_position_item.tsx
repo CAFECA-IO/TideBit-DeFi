@@ -197,10 +197,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     },
     OPEN_PRICE: {
       VALUE: displayedPositionPrice,
-      STRING: `$ ${displayedPositionPrice.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      )}`,
+      STRING: `$ ${numberFormatted(displayedPositionPrice)}`,
     },
   };
 

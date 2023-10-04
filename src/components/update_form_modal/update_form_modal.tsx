@@ -169,11 +169,9 @@ const UpdateFormModal = ({
     >
       <div className="text-xs text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -191,11 +189,9 @@ const UpdateFormModal = ({
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -474,8 +470,7 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}:{' '}
-            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
+            ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
           </span>
           {/* Info: tooltip (20230802 - Shirley) */}
           <div className="ml-3">
@@ -892,10 +887,7 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
                     <div className="">
-                      {openCfdDetails?.amount?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
+                      {numberFormatted(openCfdDetails?.amount) ?? 0}
                       <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
                     </div>
                   </div>
@@ -909,23 +901,14 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
-                    <div className="">
-                      ${' '}
-                      {openCfdDetails?.openValue?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
-                    </div>
+                    <div className="">$ {numberFormatted(openCfdDetails?.openValue) ?? 0}</div>
                   </div>
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.openPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
+                      {numberFormatted(openCfdDetails?.openPrice) ?? 0}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
@@ -940,17 +923,8 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
-                      <span className={`text-lightWhite`}>
-                        {!cfdTp || cfdTp === 0
-                          ? '-'
-                          : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>{' '}
-                      /{' '}
-                      <span className={`text-lightWhite`}>
-                        {!cfdSl || cfdSl === 0
-                          ? '-'
-                          : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>
+                      <span className={`text-lightWhite`}>{numberFormatted(cfdTp, true)}</span> /{' '}
+                      <span className={`text-lightWhite`}>{numberFormatted(cfdSl, true)}</span>
                     </div>
                   </div>
 
@@ -958,10 +932,7 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.liquidationPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      )}
+                      {numberFormatted(openCfdDetails?.liquidationPrice)}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>

@@ -10,11 +10,15 @@ interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
   setSearches: Dispatch<SetStateAction<string>>;
-  filteredDate: string[];
-  setFilteredDate: Dispatch<SetStateAction<string[]>>;
+  filteredDate: {startTimeStamp: number; endTimeStamp: number};
+  setFilteredDate: Dispatch<SetStateAction<{startTimeStamp: number; endTimeStamp: number}>>;
 }
 
 const currentDate = new Date();
+const endDate =
+  new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()).getTime() /
+  1000;
+const startDate = endDate - 86400 * 7;
 
 const ReceiptSearch = ({
   filteredTradingType,
@@ -26,17 +30,15 @@ const ReceiptSearch = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
-  /* Info:(20230530 - Julian) Safari 只接受 yyyy/mm/dd 格式的日期 */
-  const [dateStart, setDateStart] = useState(
-    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth()}/${currentDate.getDate()}`)
-  );
-  const [dateEnd, setDateEnd] = useState(
-    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
-  );
+  const [dateStart, setDateStart] = useState(startDate);
+  const [dateEnd, setDateEnd] = useState(endDate);
 
   // Info: (20230921 - Julian) Set default date to today
   useEffect(() => {
-    setFilteredDate([dateStart.toLocaleDateString(), dateEnd.toLocaleDateString()]);
+    setFilteredDate({
+      startTimeStamp: startDate,
+      endTimeStamp: endDate,
+    });
   }, []);
 
   const tradingTypeMenuText =
@@ -82,23 +84,23 @@ const ReceiptSearch = ({
   };
 
   const dateStartUpdateHandler = useCallback(
-    async (date: Date) => {
+    async (date: number) => {
       setDateStart(date);
-      const end = dateEnd.toLocaleDateString();
-      const start = date.toLocaleDateString();
-
-      setFilteredDate([start, end]);
+      setFilteredDate({
+        startTimeStamp: date,
+        endTimeStamp: dateEnd,
+      });
     },
     [dateEnd, filteredDate]
   );
 
   const dateEndUpdateHandler = useCallback(
-    async (date: Date) => {
+    async (date: number) => {
       setDateEnd(date);
-      const end = date.toLocaleDateString();
-      const start = dateStart.toLocaleDateString();
-
-      setFilteredDate([start, end]);
+      setFilteredDate({
+        startTimeStamp: dateStart,
+        endTimeStamp: date,
+      });
     },
     [dateStart, filteredDate]
   );

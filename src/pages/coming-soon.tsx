@@ -4,20 +4,17 @@ import comingSoonAnimation from '../../public/animation/coming-soon.json';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
-import {useGlobal} from '../contexts/global_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
 import Head from 'next/head';
 import {TIDEBIT_FAVICON} from '../constants/display';
 import {useTranslation} from 'next-i18next';
-import {LayoutAssertion} from '../constants/layout_assertion';
 
 type TranslateFunction = (s: string) => string;
 
 const ComingSoon = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);

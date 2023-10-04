@@ -2,6 +2,7 @@ import React, {useCallback, useState} from 'react';
 import Image from 'next/image';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {MONTH_FULL_NAME_LIST, WEEK_LIST} from '../../constants/config';
+import {timestampToString} from '../../lib/common';
 
 type Dates = {
   date: number;
@@ -17,10 +18,10 @@ interface IPopulateDatesParams {
 }
 
 interface IDatePickerProps {
-  date: Date;
-  minDate?: Date;
-  maxDate?: Date;
-  setDate: (date: Date) => void;
+  date: number;
+  minDate?: number;
+  maxDate?: number;
+  setDate: (date: number) => void;
 }
 
 const formatGridStyle = 'grid grid-cols-7 gap-4';
@@ -60,8 +61,8 @@ const PopulateDates = ({
 };
 
 const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
-  const [selectedMonth, setSelectedMonth] = useState(date.getMonth() + 1); // 0 (January) to 11 (December).
-  const [selectedYear, setSelectedYear] = useState(date.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(+timestampToString(date).month);
+  const [selectedYear, setSelectedYear] = useState(+timestampToString(date).year);
   const {targetRef, componentVisible, setComponentVisible} = useOuterClick<HTMLDivElement>(false);
 
   const displayWeek = WEEK_LIST.map(v => {
@@ -78,31 +79,15 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     const dateLength = new Date(year, month, 0).getDate();
     let dates: Dates[] = [];
     for (let i = 0; i < dateLength; i++) {
-      const dateTime = new Date(`${year}/${month}/${i + 1}`).getTime();
+      const dateTime = new Date(`${year}/${month}/${i + 1}`).getTime() / 1000;
 
-      const maxTime = maxDate
-        ? new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate()).getTime()
-        : null;
-      const minTime = minDate
-        ? new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()).getTime()
-        : null;
+      const isEarlyThanMinDate = minDate ? dateTime < minDate : false;
+      const isLaterThanMaxDate = maxDate ? dateTime > maxDate : false;
 
-      const date = {
+      const date: Dates = {
         date: i + 1,
         time: dateTime,
-        disable: minTime
-          ? dateTime < minTime
-            ? true
-            : maxTime
-            ? dateTime > maxTime
-              ? true
-              : false
-            : false
-          : maxTime
-          ? dateTime > maxTime
-            ? true
-            : false
-          : false,
+        disable: isEarlyThanMinDate || isLaterThanMaxDate,
       };
       dates.push(date);
     }
@@ -136,24 +121,13 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
 
   const selectDate = useCallback(
     (el: Dates) => {
-      let newDate = new Date(el.time);
-      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth() + 1}/${newDate.getDate()}`);
-      setDate(newDate);
+      setDate(el.time);
       setComponentVisible(false);
     },
     [minDate, maxDate, selectedMonth, selectedYear, date]
   );
 
   const openDateHandler = () => setComponentVisible(!componentVisible);
-
-  const formatDate = (obj: Date) => {
-    const day = obj.getDate();
-    const month = obj.getMonth() + 1;
-    const formatDay = day < 10 ? '0' + day : `${day}`;
-    const formatMonth = month < 10 ? '0' + month : `${month}`;
-    const year = obj.getFullYear();
-    return year + '-' + formatMonth + '-' + formatDay;
-  };
 
   return (
     <div
@@ -165,7 +139,9 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         className="inline-flex w-140px items-center justify-between px-5 py-3"
         onClick={openDateHandler}
       >
-        <div className="mr-2 whitespace-nowrap text-sm text-lightGray4">{formatDate(date)}</div>
+        <div className="mr-2 whitespace-nowrap text-sm text-lightGray4">
+          {timestampToString(date).date}
+        </div>
         <Image src="/elements/date_icon.svg" alt="" width={20} height={20} />
       </button>
 
@@ -196,7 +172,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
 
         <PopulateDates
           daysInMonth={daysInMonth(selectedYear, selectedMonth)}
-          selectedTime={date.getDate()}
+          selectedTime={date}
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectDate={selectDate}

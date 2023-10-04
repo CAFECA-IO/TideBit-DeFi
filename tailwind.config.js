@@ -48,6 +48,9 @@ module.exports = {
       backgroundImage: {
         iSunOneBg: 'url("/elements/isunone_banner_bg@2x.png")',
         iSunOneBgMobile: 'url("/elements/isunone_banner_bg_mobile.svg")',
+
+        redLinear: 'linear-gradient(180deg, #E86D6DCC 0%, #E86D6D00 100%)',
+        greenLinear: 'linear-gradient(180deg, #1AE2A0CC 0%, #1AE2A000 100%)',
       },
       zIndex: {
         '60': '60',
@@ -96,7 +99,9 @@ module.exports = {
         '1px': '1px',
         '2px': '2px',
         '3px': '3px',
+        '4px': '4px',
         '5px': '5px',
+        '9px': '9px',
         '10px': '10px',
         '12px': '12px',
         '14px': '14px',

@@ -258,6 +258,14 @@ const UpdateFormModal = ({
       : TypeOfPnLColorHex.EQUAL
     : TypeOfPnLColorHex.EQUAL;
 
+  const displayedIdBackgroundColor = !!openCfdDetails?.pnl?.value
+    ? openCfdDetails?.pnl?.value > 0
+      ? 'bg-greenLinear'
+      : openCfdDetails?.pnl?.value < 0
+      ? 'bg-redLinear'
+      : ''
+    : '';
+
   const displayedCrossColor =
     !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
@@ -266,7 +274,7 @@ const UpdateFormModal = ({
       : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
 
   const displayedCrossStyle =
-    'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
+    'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-6 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-6 after:-rotate-45 after:rounded-md';
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
@@ -800,197 +808,204 @@ const UpdateFormModal = ({
     initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 
-  const isDisplayedDetailedPositionModal = modalVisible ? (
-    <div {...otherProps}>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          <div className="relative flex h-auto w-90vw flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px">
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <div className="mx-10 mt-6 flex w-full justify-between">
-                <div className="flex items-center space-x-3 text-center text-lightWhite">
-                  <Image
-                    src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
-                    width={30}
-                    height={30}
-                    alt="icon"
-                  />
-                  <h3 className="text-2xl">{openCfdDetails?.instId} </h3>
-                </div>
-
-                <div className="inline-flex items-center">
-                  <div className="mr-1 text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
-                  <div className="relative flex h-50px w-50px items-center">
-                    <div
-                      className={`absolute left-12px top-10px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
-                      ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
-                      onClick={closedModalClickHandler}
-                    ></div>
-
-                    <div className="">
-                      <CircularProgressBar
-                        label={label}
-                        showLabel={true}
-                        numerator={remainTime}
-                        denominator={denominator}
-                        progressBarColor={[displayedColorHex]}
-                        hollowSize="40%"
-                        circularBarSize="100"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
+  const formContent = (
+    <div className="flex-col items-center">
+      <div
+        className={`${displayedBorderColor} mt-4 w-full border-1px text-xs leading-relaxed text-lightWhite lg:text-sm`}
+      >
+        <div className="flex-col justify-center">
+          <div
+            className={`px-5 py-2 ${displayedIdBackgroundColor} ${displayedBorderColor} border-b-1px`}
+          >
+            <p>{openCfdDetails.id}</p>
+          </div>
+          {/* Info: (20231004 - Julian) Type */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+            <div className={`${displayedPositionColor}`}>
+              {displayedTypeOfPosition}
+              <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
             </div>
-            <div className="relative flex flex-auto flex-col items-center px-10 pt-0">
-              <div
-                className={`${displayedBorderColor} mt-2 w-full border-1px text-xs leading-relaxed text-lightWhite`}
-              >
-                <div className="flex-col justify-center text-center">
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-                    <div className={`${displayedPositionColor}`}>
-                      {displayedTypeOfPosition}
-                      <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
-                    <div className="">
-                      {openCfdDetails?.amount?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
-                      <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
-                    <div className={`${displayedPnLColor}`}>
-                      {displayedPnLSymbol} $ {displayedPnLValue}
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
-                    <div className="">
-                      ${' '}
-                      {openCfdDetails?.openValue?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-                    <div className="">
-                      {' '}
-                      {openCfdDetails?.openPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
-                      <span className="ml-1 text-lightGray">{unitAsset}</span>
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
-                    <div className="">
-                      {displayedTime.date} {displayedTime.time}
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-                    <div className="">
-                      <span className={`text-lightWhite`}>
-                        {!cfdTp || cfdTp === 0
-                          ? '-'
-                          : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>{' '}
-                      /{' '}
-                      <span className={`text-lightWhite`}>
-                        {!cfdSl || cfdSl === 0
-                          ? '-'
-                          : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-                    <div className="">
-                      {' '}
-                      {openCfdDetails?.liquidationPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      )}
-                      <span className="ml-1 text-lightGray">{unitAsset}</span>
-                    </div>
-                  </div>
-
-                  <div className={`${layoutInsideBorder}`}>
-                    <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
-                    <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className={`mx-10 mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
-                <div className="mb-2 h-50px">
-                  <div className="flex items-center justify-between">
-                    <div className="text-lightGray">{t('POSITION_MODAL.TP_SETTING')}</div>
-                    <div className="-mr-10">{displayedTakeProfitSetting}</div>
-                    <Toggle
-                      setToggleStateFromParent={setTpToggle}
-                      toggleStateFromParent={tpToggle}
-                      getToggledState={getToggledTpSetting}
-                    />
-                  </div>
-
-                  {displayedEstimatedProfit}
-                </div>
-
-                <div className="mb-5 h-70px">
-                  <div className="flex items-center justify-between">
-                    <div className="text-lightGray">{t('POSITION_MODAL.SL_SETTING')}</div>
-                    <div className="-mr-50px">{displayedStopLossSetting}</div>
-                    <Toggle
-                      getToggledState={getToggledSlSetting}
-                      lockedToOpen={guaranteedChecked}
-                      initialToggleState={guaranteedChecked}
-                      toggleStateFromParent={slToggle}
-                      setToggleStateFromParent={setSlToggle}
-                    />
-                  </div>
-                  {displayedEstimatedLoss}
-                  {guaranteedStopLoss}
-                </div>
-
-                <RippleButton
-                  disabled={submitDisabledRef.current}
-                  onClick={buttonClickHandler}
-                  buttonType="button"
-                  className="mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme p-90px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:cursor-default disabled:bg-lightGray md:mt-0 md:px-28"
-                >
-                  {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
-                </RippleButton>
-              </div>
+          </div>
+          {/* Info: (20231004 - Julian) Amount */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+            <div className="">
+              {openCfdDetails?.amount?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
+              <span className="ml-1 text-xs text-lightGray">{openCfdDetails?.targetAsset}</span>
             </div>
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
+          </div>
+          {/* Info: (20231004 - Julian) PnL */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
+            <div className={`${displayedPnLColor}`}>
+              {displayedPnLSymbol} {displayedPnLValue}{' '}
+              <span className="ml-1 text-xs">{unitAsset}</span>
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) Open Value */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
+            <div className="">
+              {openCfdDetails?.openValue?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
+              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) Open Price */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+            <div className="flex items-center space-x-1">
+              {/* ToDo: (20231004 - Julian) get spotPrice and Spreads from API */}
+              {openCfdDetails?.openPrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
+              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+              <Tooltip className="hidden lg:block">
+                {/* ToDo: (20231004 - Julian) ----------- spotPrice, Spread, price 文字說明 ----------- */}
+                <p className="text-sm font-medium text-white">open price</p>
+              </Tooltip>
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) Open Time */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
+            <div className="">
+              {displayedTime.date} {displayedTime.time}
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) TP/SL */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+            <div className="">
+              <span className={`text-lightWhite`}>
+                {!cfdTp || cfdTp === 0
+                  ? '-'
+                  : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </span>{' '}
+              /{' '}
+              <span className={`text-lightWhite`}>
+                {!cfdSl || cfdSl === 0
+                  ? '-'
+                  : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </span>
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) Liquidation Price */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+            <div className="">
+              {openCfdDetails?.liquidationPrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+            </div>
+          </div>
+          {/* Info: (20231004 - Julian) State */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
+            <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
           </div>
         </div>
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+
+      <div className={`mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
+        <div className="mb-2 h-50px">
+          <div className="flex items-center justify-between">
+            <div className="text-lightGray">{t('POSITION_MODAL.TP_SETTING')}</div>
+            <div className="-mr-10">{displayedTakeProfitSetting}</div>
+            <Toggle
+              setToggleStateFromParent={setTpToggle}
+              toggleStateFromParent={tpToggle}
+              getToggledState={getToggledTpSetting}
+            />
+          </div>
+
+          {displayedEstimatedProfit}
+        </div>
+
+        <div className="mb-5 h-70px">
+          <div className="flex items-center justify-between">
+            <div className="text-lightGray">{t('POSITION_MODAL.SL_SETTING')}</div>
+            <div className="-mr-50px">{displayedStopLossSetting}</div>
+            <Toggle
+              getToggledState={getToggledSlSetting}
+              lockedToOpen={guaranteedChecked}
+              initialToggleState={guaranteedChecked}
+              toggleStateFromParent={slToggle}
+              setToggleStateFromParent={setSlToggle}
+            />
+          </div>
+          {displayedEstimatedLoss}
+          {guaranteedStopLoss}
+        </div>
+
+        <RippleButton
+          disabled={submitDisabledRef.current}
+          onClick={buttonClickHandler}
+          buttonType="button"
+          className="mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme p-90px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:cursor-default disabled:bg-lightGray md:mt-0 md:px-28"
+        >
+          {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
+        </RippleButton>
+      </div>
+    </div>
+  );
+
+  const isDisplayedDetailedPositionModal = modalVisible ? (
+    <div {...otherProps}>
+      {/* Info: (20231004 - Julian) Blur Mask */}
+      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-10 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px">
+          {/* Info: (20231004 - Julian) Header */}
+          <div className="flex items-end justify-between pt-4">
+            {/* Info: (20231004 - Julian) Ticker Title */}
+            <div className="flex items-center space-x-2 text-lightWhite">
+              <Image
+                src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
+                width={30}
+                height={30}
+                alt={`${openCfdDetails?.targetAsset}_icon`}
+              />
+              <h3 className="text-2xl">{openCfdDetails?.instId}</h3>
+            </div>
+            {/* Info: (20231004 - Julian) Circular Progress Bar */}
+            <div className="relative flex h-40px w-40px items-center">
+              <div
+                className={`absolute left-9px top-4px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
+                      ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
+                onClick={closedModalClickHandler}
+              ></div>
+
+              <div className="">
+                <CircularProgressBar
+                  label={label}
+                  showLabel={true}
+                  numerator={remainTime}
+                  denominator={denominator}
+                  progressBarColor={[displayedColorHex]}
+                  hollowSize="40%"
+                  circularBarSize="90"
+                />
+              </div>
+            </div>
+
+            {/* Info: (20231004 - Julian) Close Button */}
+            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+              <ImCross onClick={modalClickHandler} />
+            </button>
+          </div>
+          {/* Info: (20231004 - Julian) Form Content */}
+          {formContent}
+        </div>
+      </div>
     </div>
   ) : null;
 

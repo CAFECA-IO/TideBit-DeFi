@@ -4,7 +4,6 @@ import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Tooltip from '../tooltip/tooltip';
@@ -631,7 +630,7 @@ const PositionClosedModal = ({
     <>
       {/* Info: (20231003 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-420px lg:p-8">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8">
           {/* Info: (20231003 - Julian) Header */}
           <div className="flex items-center justify-between">
             <div className="flex w-full flex-col items-center">

@@ -676,6 +676,28 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
 
+    // const candlestickInterval = window.setInterval(() => {
+    //   if (timeSpan) setTimeSpan(timeSpan);
+
+    //   const ts = timeSpan ? timeSpan : timeSpanRef.current;
+    //   const currentCandlestickData = tradeBook.toCandlestick(
+    //     instId,
+    //     millesecondsToSeconds(getTime(ts)),
+    //     CANDLESTICK_SIZE
+    //   );
+    //   tradeBook.addCandlestickData(instId, ts, currentCandlestickData);
+
+    //   // Generalized logic for updating candlestick chart data
+    //   const completeCandlestickData = tradeBook.getCandlestickData(instId)?.[ts] || [];
+    //   const organizedCandlestickData = completeCandlestickData
+    //     .filter(item => item.x.getTime() < currentCandlestickData[0].x.getTime())
+    //     .concat(currentCandlestickData);
+
+    //   const data = ts !== TimeSpanUnion._1s ? organizedCandlestickData : completeCandlestickData;
+
+    //   setCandlestickChartData(data);
+    // }, 100);
+
     const candlestickInterval = window.setInterval(() => {
       if (timeSpan) setTimeSpan(timeSpan);
 
@@ -693,56 +715,42 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
 
       // TODO: 切換到其他 time span 也應該要隨著接收到新的 trades 更新蠟燭圖 (20231003 - Shirley)
-      else if (timeSpanRef.current === TimeSpanUnion._5m) {
-        const fiveCompleteMin = tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
-        const fiveMin = tradeBook.toCandlestick(
+      // else if (timeSpanRef.current === TimeSpanUnion._5m) {
+      else {
+        const wholeCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+        const candlestickFromTrades = tradeBook.toCandlestick(
           instId,
-          millesecondsToSeconds(getTime(TimeSpanUnion._5m)),
+          millesecondsToSeconds(getTime(ts)),
           CANDLESTICK_SIZE
         );
 
-        // const fiveNewCandlesticks = fiveCompleteMin
-        //   .slice(-(CANDLESTICK_SIZE - 2))
-        //   .concat(fiveMin[fiveMin.length - 1]);
-
-        // strip the fiveCompleteMin if it's older than fiveMin[0], and concat fiveMin to fiveCompleteMin
-        const organizedFiveCompleteMin = fiveCompleteMin
+        // Info: strip the fiveCompleteMin if it's older than fiveMin[0], and concat fiveMin to fiveCompleteMin
+        const organizedCandlesticks = wholeCandlesticks
           .filter(item => {
-            if (item.x.getTime() > fiveMin[0].x.getTime()) {
+            if (item.x.getTime() > candlestickFromTrades[0].x.getTime()) {
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
               console.log('completeCandlestick', item);
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
-              console.log('fiveMin', fiveMin);
+              console.log('candles from trades', candlestickFromTrades);
             }
-            return item.x.getTime() < fiveMin[0].x.getTime();
+            return item.x.getTime() < candlestickFromTrades[0].x.getTime();
           })
-          .concat(fiveMin);
-
-        // const organizedFiveNewCandlesticks = fiveNewCandlesticks.reduce(
-        //   (acc: ICandlestickData[], current: ICandlestickData) => {
-        //     const xtime = current.x.getTime();
-        //     if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
-        //       acc.push(current);
-        //     }
-        //     return acc;
-        //   },
-        //   []
-        // );
+          .concat(candlestickFromTrades);
 
         // Deprecated: dev (20231004 - Shirley)
         // eslint-disable-next-line no-console
         console.log(
-          'fiveCompleteMin',
-          fiveCompleteMin,
-          'fiveMin',
-          fiveMin,
-          'organizedFiveCompleteMin',
-          organizedFiveCompleteMin
+          'wholeCandlesticks',
+          wholeCandlesticks,
+          'candlestickFromTrades',
+          candlestickFromTrades,
+          'organizedCandlesticks',
+          organizedCandlesticks
         );
 
-        setCandlestickChartData(organizedFiveCompleteMin);
+        setCandlestickChartData(organizedCandlesticks);
       }
     }, 100);
     setCandlestickInterval(candlestickInterval);

@@ -607,7 +607,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
       // Deprecated: dev (20231004 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('uniqueData', uniqueData);
+      // console.log('uniqueData', uniqueData);
 
       // 得到最後一個candlestick的時間
       const lastCandlestick = uniqueData[uniqueData.length - 1];
@@ -706,6 +706,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // else if (timeSpanRef.current === TimeSpanUnion._5m) {
       else {
         const wholeCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+        const lastInWholeCandlesticks = wholeCandlesticks[wholeCandlesticks.length - 1];
+        // Deprecated: dev (20231004 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('lastInWholeCandlesticks', lastInWholeCandlesticks);
 
         const candlestickFromTrades = tradeBook.toCandlestick(
           instId,
@@ -714,21 +718,29 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         );
 
         const mergedCandlestick = tradeBook.mergeCandlesticks(
-          wholeCandlesticks[wholeCandlesticks.length - 1],
+          lastInWholeCandlesticks,
           candlestickFromTrades[0]
         );
+
+        const anotherMergedCandlestick = tradeBook.mergeCandlestickByTimeSpan(
+          instId,
+          candlestickFromTrades[0],
+          ts
+        );
+
+        let merge;
 
         // Info: strip the fiveCompleteMin if it's older than fiveMin[0], and concat fiveMin to fiveCompleteMin
         const organizedCandlesticks = wholeCandlesticks
           .filter(item => {
-            if (item.x.getTime() < candlestickFromTrades[0].x.getTime()) {
+            if (item.x.getTime() > candlestickFromTrades[0].x.getTime()) {
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
               // console.log('completeCandlestick', item);
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
               // console.log('candles from trades', candlestickFromTrades);
-              const merge = tradeBook.mergeCandlesticks(item, candlestickFromTrades[0]);
+              merge = tradeBook.mergeCandlesticks(item, candlestickFromTrades[0]);
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
               console.log('item', item, 'merge', merge);
@@ -736,7 +748,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
             return item.x.getTime() < candlestickFromTrades[0].x.getTime();
           })
-          .concat(candlestickFromTrades);
+          .concat(merge || candlestickFromTrades);
 
         tradeBook.addCandlestickData(instId, ts, organizedCandlesticks);
 
@@ -750,8 +762,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           'candlestickFromTrades',
           candlestickFromTrades[0],
           'mergedCandlestick',
-          mergedCandlestick
+          mergedCandlestick,
+          'anotherMergedCandlestick',
+          anotherMergedCandlestick
         );
+
         // console.log(
         //   'wholeCandlesticks',
         //   wholeCandlesticks,

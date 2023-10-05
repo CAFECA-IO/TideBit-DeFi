@@ -1,3 +1,4 @@
+import {instIds} from './../../constants/config';
 /** TODO: (20230815 - Shirley)
  * Data:
  * 1. trades: 用來存放所有的交易資料
@@ -207,7 +208,7 @@ class TradeBook {
       CANDLESTICK_SIZE,
       predictedTrades
     );
-    const originCandles = this.getCandlestickData(instId)?.['1s'];
+    const originCandles = this.getCandlestickData(instId)?.[TimeSpanUnion._5m];
 
     const organized = originCandles
       ?.filter(item => {
@@ -216,15 +217,15 @@ class TradeBook {
       .concat(predictedCandles);
 
     if (isCandlestickData(organized)) {
-      this.addCandlestickData(instId, TimeSpanUnion._1s, organized);
+      this.addCandlestickData(instId, TimeSpanUnion._5m, organized);
     }
 
     // Deprecated: dev (20231004 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('originCandles', originCandles);
+    // console.log('originCandles', originCandles);
     // Deprecated: dev (20231004 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('organized', organized);
+    // console.log('organized', organized);
   }
 
   @ensureTickerExistsDecorator
@@ -234,6 +235,12 @@ class TradeBook {
 
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
+
+    // Deprecated: dev (20231004 - Shirley)
+    // eslint-disable-next-line no-console
+    // console.log('candlestickChart 5m before trimming', this.candlestickChart.get(instId)?.['5m']);
+
+    this.organizedTradesToCandlestickData(instId);
 
     if (trades[0]?.timestampMs < cutoffTime || predictedTrades[0]?.timestampMs < cutoffTime) {
       const trimmedTrades = Object.values(
@@ -268,30 +275,32 @@ class TradeBook {
 
       // Deprecated: dev (20231004 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('candlestickChart 1s', this.candlestickChart.get(instId)?.['1s']);
-      // Deprecated: dev (20231004 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('candlestickChart 5m', this.candlestickChart.get(instId)?.['5m']);
-      // Deprecated: dev (20231004 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('candlestickChart 15m', this.candlestickChart.get(instId)?.['15m']);
+      // console.log('candlestickChart 5m after trimming', this.candlestickChart.get(instId)?.['5m']);
 
-      // Deprecated: dev (20231004 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(
-        '_trim()',
-        'trades',
-        trades.length,
-        'predictedTrades',
-        predictedTrades.length,
-        'trimmedTrades',
+      // // Deprecated: dev (20231004 - Shirley)
+      // // eslint-disable-next-line no-console
+      // console.log('candlestickChart 1s', this.candlestickChart.get(instId)?.['1s']);
 
-        trimmedTrades,
-        trimmedTrades.length,
-        'trimmedPredictedTrades',
-        trimmedPredictedTrades,
-        trimmedPredictedTrades.length
-      );
+      // // Deprecated: dev (20231004 - Shirley)
+      // // eslint-disable-next-line no-console
+      // console.log('candlestickChart 15m', this.candlestickChart.get(instId)?.['15m']);
+
+      // // Deprecated: dev (20231004 - Shirley)
+      // // eslint-disable-next-line no-console
+      // console.log(
+      //   '_trim()',
+      //   'trades',
+      //   trades.length,
+      //   'predictedTrades',
+      //   predictedTrades.length,
+      //   'trimmedTrades',
+
+      //   trimmedTrades,
+      //   trimmedTrades.length,
+      //   'trimmedPredictedTrades',
+      //   trimmedPredictedTrades,
+      //   trimmedPredictedTrades.length
+      // );
     }
   }
 
@@ -361,22 +370,59 @@ class TradeBook {
     lastCandlestick: ICandlestickData
   ): ICandlestickData | null {
     if (!isCandlestickData(firstCandlestick) || !isCandlestickData(lastCandlestick)) return null;
-    // Create an array containing both firstCandlestick and lastCandlestick
+    // Info: Create an array containing both firstCandlestick and lastCandlestick (20231005 - Shirley)
     const mixCandlesticks = [firstCandlestick, lastCandlestick];
 
-    // 計算融合後的candlestick的開盤、收盤、最高和最低價
+    // Info: 計算融合後的candlestick的開盤、收盤、最高和最低價 (20231005 - Shirley)
     const open = firstCandlestick?.y?.open ?? 0;
     const close = lastCandlestick?.y?.close ?? 0;
     const high = Math.max(...mixCandlesticks.map(c => c?.y?.high ?? 0));
     const low = Math.min(...mixCandlesticks.map(c => c?.y?.low ?? 0));
 
-    // 計算融合後的candlestick的成交量和成交價值
+    // Info: 計算融合後的candlestick的成交量和成交價值 (20231005 - Shirley)
     const volume = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.volume ?? 0), 0);
     const value = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.value ?? 0), 0);
 
-    // 返回融合後的candlestick chart data
+    // Info: 返回融合後的candlestick chart data (20231005 - Shirley)
     return {
       x: firstCandlestick.x,
+      y: {
+        open,
+        high,
+        low,
+        close,
+        volume,
+        value,
+      },
+    };
+  }
+
+  // Info: convert the predicted trades to candlestick data, and them combine the data with the candlestickChart.[instId].[ts]  (20231004 - Shirley)
+  mergeCandlestickByTimeSpan(
+    instId: string,
+    newCandlestick: ICandlestickData,
+    timeSpan: ITimeSpanUnion
+  ): ICandlestickData | null {
+    if (!isCandlestickData(newCandlestick)) return null;
+    // Info: Create an array containing both firstCandlestick and lastCandlestick (20231005 - Shirley)
+    const originCandlesticks = this.candlestickChart.get(instId)![timeSpan];
+    const lastOneFromOrigin = originCandlesticks[originCandlesticks.length - 1];
+
+    const mixCandlesticks = [lastOneFromOrigin, newCandlestick];
+
+    // Info: 計算融合後的candlestick的開盤、收盤、最高和最低價 (20231005 - Shirley)
+    const open = newCandlestick?.y?.open ?? 0;
+    const close = lastOneFromOrigin?.y?.close ?? 0;
+    const high = Math.max(...mixCandlesticks.map(c => c?.y?.high ?? 0));
+    const low = Math.min(...mixCandlesticks.map(c => c?.y?.low ?? 0));
+
+    // Info: 計算融合後的candlestick的成交量和成交價值 (20231005 - Shirley)
+    const volume = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.volume ?? 0), 0);
+    const value = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.value ?? 0), 0);
+
+    // Info: 返回融合後的candlestick chart data (20231005 - Shirley)
+    return {
+      x: lastOneFromOrigin.x,
       y: {
         open,
         high,

@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import {defineConfig, devices} from '@playwright/test';
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -9,7 +9,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   timeout: 200000,
-  testDir: "./tests",
+  testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -29,33 +29,33 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        locale: "en",
-        ...devices["Desktop Chrome"],
-        baseURL: "https://tidebit-defi.com/",
+        locale: 'en',
+        ...devices['Desktop Chrome'],
+        baseURL: process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/',
       },
     },
     {
-      name: "chromium TW",
+      name: 'chromium TW',
       use: {
-        locale: "tw",
-        ...devices["Desktop Chrome"],
-        baseURL: "https://tidebit-defi.com/tw/",
+        locale: 'tw',
+        ...devices['Desktop Chrome'],
+        baseURL: process.env.CI ? `${process.env.BASE_URL}tw/` : 'https://tidebit-defi.com/tw/',
       },
     },
     {
-      name: "chromium CN",
+      name: 'chromium CN',
       use: {
-        ...devices["Desktop Chrome"],
-        baseURL: "https://tidebit-defi.com/cn/",
-        locale: "cn",
+        ...devices['Desktop Chrome'],
+        baseURL: process.env.CI ? `${process.env.BASE_URL}cn/` : 'https://tidebit-defi.com/cn/',
+        locale: 'cn',
       },
     },
     // firefox is not supported yet

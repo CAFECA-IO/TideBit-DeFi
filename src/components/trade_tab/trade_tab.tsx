@@ -35,6 +35,7 @@ import {ClickEvent} from '../../constants/tidebit_event';
 import {
   getEstimatedPnL,
   getTimestamp,
+  numberFormatted,
   roundToDecimalPlaces,
   validateAllInput,
   validateNumberFormat,
@@ -884,11 +885,7 @@ const TradeTab = () => {
   const displayedRequiredMarginLongStyle = (
     <>
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} my-1 text-base`}>
-        {requiredMarginLongRef.current?.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}{' '}
-        {unitAsset}
+        {numberFormatted(requiredMarginLongRef.current)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -928,11 +925,9 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
         ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLongProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLongProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -965,11 +960,9 @@ const TradeTab = () => {
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedLongLossValueRef.current.symbol} ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLongLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -991,11 +984,7 @@ const TradeTab = () => {
         {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
         <span className="text-lightWhite">
           {' '}
-          ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-          {guaranteedStopFeeLongRef.current?.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}{' '}
+          ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {numberFormatted(guaranteedStopFeeLongRef.current)}{' '}
           {unitAsset})
         </span>
         {/* Info: (20231003 - Julian) Tooltip */}
@@ -1014,11 +1003,7 @@ const TradeTab = () => {
       <div
         className={`${isDisplayedMarginShortStyle} ${isDisplayedMarginShortSize} mt-1 text-base`}
       >
-        {requiredMarginShortRef.current?.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}{' '}
-        {unitAsset}
+        {numberFormatted(requiredMarginShortRef.current)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginShortWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -1058,11 +1043,9 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
         ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedShortProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedShortProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -1095,11 +1078,9 @@ const TradeTab = () => {
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedShortLossValueRef.current.symbol} ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedShortLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedShortLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -1122,11 +1103,7 @@ const TradeTab = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-            {guaranteedStopFeeShortRef.current?.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}{' '}
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {numberFormatted(guaranteedStopFeeShortRef.current)}{' '}
             {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
@@ -1305,19 +1282,11 @@ const TradeTab = () => {
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
               {isActiveTabLong ? (
                 <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                  {valueOfPositionLongRef.current?.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}{' '}
-                  {unitAsset}
+                  {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
                 </div>
               ) : (
                 <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
-                  {valueOfPositionShortRef.current?.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}{' '}
-                  {unitAsset}
+                  {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
                 </div>
               )}
             </div>
@@ -1359,14 +1328,8 @@ const TradeTab = () => {
         <p className="text-xs">
           ₮{' '}
           {isActiveTabLong
-            ? Number(longPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )
-            : Number(shortPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
+            ? numberFormatted(longPriceRef.current)
+            : numberFormatted(shortPriceRef.current)}
         </p>
       </RippleButton>
     </div>
@@ -1413,11 +1376,7 @@ const TradeTab = () => {
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                    {valueOfPositionLongRef.current?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}{' '}
-                    {unitAsset}
+                    {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
                   </div>
                 </div>
               </div>
@@ -1463,11 +1422,7 @@ const TradeTab = () => {
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
                   <span className="whitespace-nowrap">
-                    ₮{' '}
-                    {Number(longPriceRef.current).toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}
+                    ₮ {numberFormatted(longPriceRef.current)}
                   </span>
                 </RippleButton>
               </div>
@@ -1491,11 +1446,7 @@ const TradeTab = () => {
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
-                    {valueOfPositionShortRef.current?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}{' '}
-                    {unitAsset}
+                    {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
                   </div>
                 </div>
               </div>
@@ -1545,11 +1496,7 @@ const TradeTab = () => {
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
                   <span className="whitespace-nowrap">
-                    ₮{' '}
-                    {Number(shortPriceRef.current).toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}
+                    ₮ {numberFormatted(shortPriceRef.current)}
                   </span>
                 </RippleButton>
               </div>
@@ -1578,13 +1525,7 @@ const TradeTab = () => {
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-            <p className="text-xs">
-              ₮{' '}
-              {Number(longPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </p>
+            <p className="text-xs">₮ {numberFormatted(longPriceRef.current)}</p>
           </RippleButton>
         </div>
 
@@ -1597,13 +1538,7 @@ const TradeTab = () => {
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-            <p className="text-xs">
-              ₮{' '}
-              {Number(shortPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </p>
+            <p className="text-xs">₮ {numberFormatted(shortPriceRef.current)}</p>
           </RippleButton>
         </div>
       </div>

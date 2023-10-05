@@ -2,6 +2,7 @@ import React from 'react';
 import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -19,9 +20,9 @@ const UserOverview = ({
   profitOrLossAmount,
 }: IUserOverviewProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const deposit = depositAvailable.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-  const locked = marginLocked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-  const pnl = profitOrLossAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const deposit = numberFormatted(depositAvailable);
+  const locked = numberFormatted(marginLocked);
+  const pnl = numberFormatted(profitOrLossAmount);
 
   return (
     <>

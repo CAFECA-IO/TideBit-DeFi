@@ -811,7 +811,7 @@ const UpdateFormModal = ({
   const formContent = (
     <div className="flex-col items-center">
       <div
-        className={`${displayedBorderColor} mt-4 w-full border-1px text-xs leading-relaxed text-lightWhite lg:text-sm`}
+        className={`${displayedBorderColor} mt-1 w-full border-1px text-xs leading-relaxed text-lightWhite lg:mt-4 lg:text-sm`}
       >
         <div className="flex-col justify-center">
           <div
@@ -951,7 +951,7 @@ const UpdateFormModal = ({
           disabled={submitDisabledRef.current}
           onClick={buttonClickHandler}
           buttonType="button"
-          className="mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme p-90px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:cursor-default disabled:bg-lightGray md:mt-0 md:px-28"
+          className="w-full whitespace-nowrap rounded bg-tidebitTheme py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:cursor-default disabled:bg-lightGray"
         >
           {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
         </RippleButton>
@@ -963,9 +963,9 @@ const UpdateFormModal = ({
     <div {...otherProps}>
       {/* Info: (20231004 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-10 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 px-10 py-6 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px lg:p-10">
           {/* Info: (20231004 - Julian) Header */}
-          <div className="flex items-end justify-between pt-4">
+          <div className="flex items-end justify-between">
             {/* Info: (20231004 - Julian) Ticker Title */}
             <div className="flex items-center space-x-2 text-lightWhite">
               <Image
@@ -998,7 +998,7 @@ const UpdateFormModal = ({
             </div>
 
             {/* Info: (20231004 - Julian) Close Button */}
-            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+            <button className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5">
               <ImCross onClick={modalClickHandler} />
             </button>
           </div>

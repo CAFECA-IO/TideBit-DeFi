@@ -8,10 +8,10 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     shard: [1/4, 2/4, 3/4, 4/4]
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
     defaults:
       run:
         working-directory: ./intergration-test
@@ -27,8 +27,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      # run: npx playwright test --shard ${{ matrix.shard }} 
-      run: npx playwright test tests/MetamaskConnect.spec.ts
+      run: npx playwright test --shard ${{ matrix.shard }} 
     - name: Upload blob report to GitHub Actions Artifacts
       if: always()
       uses: actions/upload-artifact@v3
@@ -67,6 +66,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: html-report--attempt-${{ github.run_attempt }}
-        path: ./intergration-test/playwright-report
+        path: ./playwright-report
         retention-days: 14
 

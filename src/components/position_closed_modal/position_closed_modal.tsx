@@ -531,16 +531,17 @@ const PositionClosedModal = ({
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
           <div className="flex items-baseline space-x-1">
             {/* Info: (20231003 - Julian) Spot Price */}
-            {numberFormatted(openCfdDetails?.openPrice)}
+            {/* numberFormatted(openCfdDetails?.openPrice) */}
             {/* ToDo: (20231003 - Julian) ----------- get open spread from API ----------- */}
             {/* Info: (20231003 - Julian) Spread */}
             {/* <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(spread)}</span> */}
             {/* Info: (20231003 - Julian) Price */}
-            {/* <p>→ {numberFormatted(openCfdDetails?.openPrice)}</p> */}
+            {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
-              {/* ToDo: (20231003 - Julian) ----------- spotPrice, Spread, price 文字說明 ----------- */}
-              <p className="text-sm font-medium text-white">open price</p>
+            <Tooltip className="hidden lg:block">
+              <p className="w-40 text-sm font-medium text-white">
+                {t('POSITION_MODAL.SPREAD_HINT')}
+              </p>
             </Tooltip>
           </div>
         </div>
@@ -559,7 +560,7 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(gQuotationRef.current.spotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            <span className="text-3xs text-lightGray">+{numberFormatted(closeSpread)}</span>
+            <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(closeSpread)}</span>
             {/* Info: (20231003 - Julian) Price */}
             <p>
               →{' '}
@@ -568,9 +569,10 @@ const PositionClosedModal = ({
                 : numberFormatted(gQuotationRef.current.price)}
             </p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
-              {/* ToDo: (20231003 - Julian) ----------- spotPrice, Spread, price 文字說明 ----------- */}
-              <p className="text-sm font-medium text-white">close price</p>
+            <Tooltip className="hidden lg:block">
+              <p className="w-40 text-sm font-medium text-white">
+                {t('POSITION_MODAL.SPREAD_HINT')}
+              </p>
             </Tooltip>
           </div>
         </div>

@@ -250,7 +250,8 @@
     "SHARING": "分享",
     "SHARING_CANCELLED_TITLE": "您已取消分享",
     "SHARING_LOADING": "正在載入...",
-    "SHARING_FAILED_CONTENT": "分享失敗"
+    "SHARING_FAILED_CONTENT": "分享失敗",
+    "SPREAD_HINT": "市場價格 + 點差 = 建倉/關倉價格"
   },
   "D_W_MODAL": {
     "DEPOSIT": "入金",

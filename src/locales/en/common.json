@@ -250,7 +250,8 @@
     "SHARING": "Sharing",
     "SHARING_CANCELLED_TITLE": "You've cancelled sharing the post",
     "SHARING_LOADING": "Loading...",
-    "SHARING_FAILED_CONTENT": "Failed to share the post"
+    "SHARING_FAILED_CONTENT": "Failed to share the post",
+    "SPREAD_HINT": "Spot Price + Spread → Open/Close Price"
   },
   "D_W_MODAL": {
     "DEPOSIT": "Deposit",

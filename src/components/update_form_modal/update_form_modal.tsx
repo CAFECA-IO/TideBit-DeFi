@@ -281,7 +281,7 @@ const UpdateFormModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
-  const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
+  const layoutInsideBorder = 'mx-5 flex justify-between';
 
   const gslFee = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.guaranteedStopFee
@@ -811,108 +811,110 @@ const UpdateFormModal = ({
   const formContent = (
     <div className="flex-col items-center">
       <div
-        className={`${displayedBorderColor} mt-1 w-full border-1px text-xs leading-relaxed text-lightWhite lg:mt-4 lg:text-sm`}
+        className={`${displayedBorderColor} mt-1 w-full space-y-3 border-1px pb-3 text-xs leading-relaxed text-lightWhite lg:mt-2 lg:text-sm`}
       >
-        <div className="flex-col justify-center">
-          <div
-            className={`px-5 py-2 ${displayedIdBackgroundColor} ${displayedBorderColor} border-b-1px`}
-          >
-            <p>{openCfdDetails.id}</p>
+        {/* Info: (20231004 - Julian) CFD ID */}
+        <div
+          className={`px-5 py-2 ${displayedIdBackgroundColor} ${displayedBorderColor} border-b-1px`}
+        >
+          <p>{openCfdDetails.id}</p>
+        </div>
+        {/* Info: (20231004 - Julian) Type */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+          <div className={`${displayedPositionColor}`}>
+            {displayedTypeOfPosition}
+            <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
           </div>
-          {/* Info: (20231004 - Julian) Type */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-            <div className={`${displayedPositionColor}`}>
-              {displayedTypeOfPosition}
-              <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) Amount */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+          <div className="">
+            {openCfdDetails?.amount?.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            ) ?? 0}
+            <span className="ml-1 text-xs text-lightGray">{openCfdDetails?.targetAsset}</span>
           </div>
-          {/* Info: (20231004 - Julian) Amount */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
-            <div className="">
-              {openCfdDetails?.amount?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
-              <span className="ml-1 text-xs text-lightGray">{openCfdDetails?.targetAsset}</span>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) PnL */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
+          <div className={`${displayedPnLColor}`}>
+            {displayedPnLSymbol} {displayedPnLValue}{' '}
+            <span className="ml-1 text-xs">{unitAsset}</span>
           </div>
-          {/* Info: (20231004 - Julian) PnL */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
-            <div className={`${displayedPnLColor}`}>
-              {displayedPnLSymbol} {displayedPnLValue}{' '}
-              <span className="ml-1 text-xs">{unitAsset}</span>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) Open Value */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
+          <div className="">
+            {openCfdDetails?.openValue?.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            ) ?? 0}
+            <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
           </div>
-          {/* Info: (20231004 - Julian) Open Value */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
-            <div className="">
-              {openCfdDetails?.openValue?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
-              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) Open Price */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+          <div className="flex items-center space-x-1">
+            {/* ToDo: (20231003 - Julian) ----------- get open spread from API ----------- */}
+            {/* Info: (20231003 - Julian) Spot Price */}
+            {/* numberFormatted(openCfdDetails?.openPrice) */}
+            {/* Info: (20231003 - Julian) Spread */}
+            {/* <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(spread)}</span> */}
+            {/* Info: (20231003 - Julian) Price */}
+            {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
+            <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+            <Tooltip className="hidden lg:block">
+              <p className="w-40 text-sm font-medium text-white">
+                {t('POSITION_MODAL.SPREAD_HINT')}
+              </p>
+            </Tooltip>
           </div>
-          {/* Info: (20231004 - Julian) Open Price */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-            <div className="flex items-center space-x-1">
-              {/* ToDo: (20231004 - Julian) get spotPrice and Spreads from API */}
-              {openCfdDetails?.openPrice?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
-              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-              <Tooltip className="hidden lg:block">
-                {/* ToDo: (20231004 - Julian) ----------- spotPrice, Spread, price 文字說明 ----------- */}
-                <p className="text-sm font-medium text-white">open price</p>
-              </Tooltip>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) Open Time */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
+          <div className="">
+            {displayedTime.date} {displayedTime.time}
           </div>
-          {/* Info: (20231004 - Julian) Open Time */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
-            <div className="">
-              {displayedTime.date} {displayedTime.time}
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) TP/SL */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+          <div className="">
+            <span className={`text-lightWhite`}>
+              {!cfdTp || cfdTp === 0
+                ? '-'
+                : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+            </span>{' '}
+            /{' '}
+            <span className={`text-lightWhite`}>
+              {!cfdSl || cfdSl === 0
+                ? '-'
+                : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+            </span>
           </div>
-          {/* Info: (20231004 - Julian) TP/SL */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-            <div className="">
-              <span className={`text-lightWhite`}>
-                {!cfdTp || cfdTp === 0
-                  ? '-'
-                  : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </span>{' '}
-              /{' '}
-              <span className={`text-lightWhite`}>
-                {!cfdSl || cfdSl === 0
-                  ? '-'
-                  : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-              </span>
-            </div>
+        </div>
+        {/* Info: (20231004 - Julian) Liquidation Price */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+          <div className="">
+            {openCfdDetails?.liquidationPrice?.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )}
+            <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
           </div>
-          {/* Info: (20231004 - Julian) Liquidation Price */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-            <div className="">
-              {openCfdDetails?.liquidationPrice?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            </div>
-          </div>
-          {/* Info: (20231004 - Julian) State */}
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
-            <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
-          </div>
+        </div>
+        {/* Info: (20231004 - Julian) State */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
+          <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
         </div>
       </div>
 

@@ -47,14 +47,14 @@ export default defineConfig({
       use: {
         locale: 'tw',
         ...devices['Desktop Chrome'],
-        baseURL: process.env.CI ? `${process.env.BASE_URL}tw/` : 'https://tidebit-defi.com/tw/',
+        baseURL: process.env.CI ? `${process.env.BASE_URL}/tw/` : 'https://tidebit-defi.com/tw/',
       },
     },
     {
       name: 'chromium CN',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.CI ? `${process.env.BASE_URL}cn/` : 'https://tidebit-defi.com/cn/',
+        baseURL: process.env.CI ? `${process.env.BASE_URL}/cn/` : 'https://tidebit-defi.com/cn/',
         locale: 'cn',
       },
     },

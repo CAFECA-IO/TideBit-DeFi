@@ -267,25 +267,16 @@ const PositionUpdatedModal = ({
   // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit
     ? openCfdDetails.takeProfit !== updatedProps.takeProfit
-      ? `$ ${updatedProps.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
-      : `$ ${openCfdDetails.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${numberFormatted(updatedProps.takeProfit)}`
+      : `$ ${numberFormatted(openCfdDetails.takeProfit)}`
     : !!openCfdDetails.takeProfit !== !!updatedProps?.takeProfit
     ? '-'
     : '-';
 
   const displayedStopLoss = !!updatedProps?.stopLoss
     ? openCfdDetails.stopLoss !== updatedProps.stopLoss
-      ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`
-      : `$ ${openCfdDetails.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${numberFormatted(updatedProps.stopLoss)}`
+      : `$ ${numberFormatted(openCfdDetails.stopLoss)}`
     : !!openCfdDetails.stopLoss !== !!updatedProps?.stopLoss
     ? '-'
     : '-';
@@ -337,12 +328,8 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {numberFormatted(openCfdDetails?.openPrice)}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
-                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>
 

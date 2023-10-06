@@ -41,6 +41,8 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     instId: applyCFDData.instId,
     state: OrderState.OPENING,
     openPrice: applyCFDData.price,
+    openSpotPrice: applyCFDData.quotation.spotPrice,
+    openSpreadFee: applyCFDData.quotation.spreadFee,
     createTimestamp: timestamp,
     updatedTimestamp: timestamp,
     typeOfPosition: applyCFDData.typeOfPosition,

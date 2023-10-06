@@ -9,7 +9,6 @@ import {numberFormatted, timestampToString, toDisplayCFDOrder, toPnl} from '../.
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
@@ -21,7 +20,6 @@ import {
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
 import {CFDOperation} from '../../constants/cfd_order_type';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {ToastId} from '../../constants/toast_id';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import SafeMath from '../../lib/safe_math';

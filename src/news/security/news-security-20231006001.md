@@ -1,0 +1,41 @@
+---
+date: 1696559751
+title: 'Cryptocurrency Security Breaches in 2021: Lessons Learned From Exploits and Hacks'
+description: 'Cryptocurrency platforms confronted several major security incidents in 2021, highlighting the ongoing risks facing the crypto space. Exploits like Compound misdirected rewards distribution and hacks such as $611 million theft of Poly Network exposed vulnerabilities in DeFi protocols, exchanges, and wallets.
+These breaches stemmed from issues like technical design flaws, code exploits, and outright cyber attacks. In response, some projects took steps to reimburse users and strengthen systems, like Yearn Finance repaying hack victims. However, the incidents reveal the inherent risks of an emerging technology and the work needed to harden security.'
+---
+
+### **Introduction**
+
+Cryptocurrency platforms confronted several major security incidents in 2021, highlighting the ongoing risks facing the crypto space. Exploits like Compound misdirected rewards distribution and hacks such as $611 million theft of Poly Network exposed vulnerabilities in DeFi protocols, exchanges, and wallets.
+These breaches stemmed from issues like technical design flaws, code exploits, and outright cyber attacks. In response, some projects took steps to reimburse users and strengthen systems, like Yearn Finance repaying hack victims. However, the incidents reveal the inherent risks of an emerging technology and the work needed to harden security.
+
+### **Internal Operation Error**
+
+- **DeFi Money Market Compound Overpays Millions in COMP Rewards in Possible Exploit:** Compound has experienced a possible exploit after updating its smart contract, leading to millions of dollars in COMP tokens being erroneously paid out as liquidity mining rewards. Some users received COMP tokens worth millions of dollars in exchange for borrowing and supplying tiny quantities of tokens, including USDC, ETH, and DAI. Compound founder Robert Leshner stated that at worst only 280,000 COMP(near $80M) tokens are at risk of being erroneously claimed. He also said that there are no admin controls or community tools to disable the COMP distribution; any changes to the protocol require a 7-day governance process to make their way into production. Compound’s official Twitter handle also stated that no user funds are at risk.
+- **EasyFi Network Details $6M DeFi Hack:** EasyFi is a decentralized finance (DeFi) protocol that was hit by a targeted attack on April 19, resulting in the loss of up to $6 million in its liquidity pools. The hacker exploited the admin and mnemonic keys, stealing nearly 3 million EASY tokens. EasyFi’s founder and CEO Ankitt Gaur explained the attack in a blog post on April 20. He said that it was a remote attack on his computer and MetaMask, accessing the wallet directly from the hard drive. He also offered a $1 million reward if the hacker could return the funds in full.Gaur claimed that EasyFi’s smart contracts were not compromised, and this was an attack on the mnemonic phrase. He said that this incident reinforced the premise that DeFi protocols are not really decentralized if the “CEO” still holds all the keys. This is similar to the attack on Nexus Mutual founder Hugh Karp in December 2020, but that was from Karp’s personal wallet, not the protocol itself.
+- **PAID Network suffers cryptocurrency theft losing over $127 million:** PAID Network's deployer contract was exploited by an attacker, who stole over 59 million PAID tokens. The attacker used a leaked private key, modified the token contract, and burned and re-minted PAID tokens. The attacker sold 2.5 million PAID tokens on Uniswap, exchanging them for 2040 ETH. PAID Network quickly withdrew liquidity from Uniswap and notified the community to stop all transactions after discovering the attack. PAID Network also hired several security experts (Cipherblade, Parsiq, Acheron, CertiK and Immunefi) to assist in the investigation and resolution. PAID Network will relaunch its token contract to remove the attacker's tokens. The new token contract will be controlled by a multisig and undergo thorough security and process audits.
+
+### **Technical design issues**
+
+- **Yearn.Finance puts expanded treasury to use by repaying victims of $11M hack:**  Yearn.Finance, a major decentralized finance protocol, and how it repaid the victims of its $11 million hack by opening a Maker vault with YFI tokens from its newly expanded treasury. The hack occurred on **Feb. 4, 2021**, when an attacker exploited the yDAI vault, one of Yearn’s lending pools, and caused a loss of $11 million, most of which were fees paid to the attacker. The attacker used a complex strategy involving deposits and withdrawals from the Curve 3pool, a decentralized exchange, to manipulate the exchange rates and drain funds from the yDAI vault. The Yearn team responded quickly and stopped the exploit while it was underway, saving $24 million out of the vault’s total $35 million deposits. The team also announced that they would restore the yDAI vault using YFI tokens from the treasury, which was recently increased by a community proposal to mint 6,666 new YFI tokens. The team opened a Maker vault with YFI tokens and minted 9.7 million DAI tokens to repay the yDAI vault users. The team also advised users to buy coverage from Cover, another Yearn ecosystem member, to hedge their risks in the future.
+- **$611 Million in Cryptocurrencies Stolen in Poly Network:** Poly Network is a protocol used for exchanging cryptocurrencies, including Bitcoin. The protocol announced on **Aug. 10, 2021**, that it had been hacked, resulting in a loss of $611 million. The attack is suspected to be the largest fraud in the history of “decentralized finance” or DeFi. Poly Network posted a message on Twitter and urged exchanges to freeze all stolen assets. According to SlowMist, The hackers modified the public key of the Keeper on Ethereum by initiating cross-chain transactions on other chains, and then signed the operation of transferring assets with their own controlled address, bypassing the contract’s checks and verifications.
+
+### **Hack Attack**
+
+- **Liquid Exchange Attack: Can a Crypto Wallet Ever Be 100% Safe From Hacks** Japan’s Liquid Global exchange was hacked on **Aug. 19, 2021** , losing nearly $100 million in funds. The company said the attack targeted its multi-party computation (MPC) system for custody. MPC is an advanced cryptographic technology that allows multiple parties to jointly generate private keys that control funds, without any one party seeing fragments of other parties’ computations. This technology is considered the preferred choice for banks and blue-chip companies entering the cryptocurrency space. Experts believe that Liquid’s hack may be related to a system intrusion into the exchange November, 2020, when attackers collected data on the company’s security settings. They speculate that the attackers may have exploited a vulnerability in security policies, bypassed the entire approval process, instructed wallets to extract coins without affecting private keys.
+
+### **Summary**
+
+Overall, 2021 saw multiple security failures across DeFi and crypto exchanges, leading to huge losses. But projects also took actions to compensate users and bolster systems after the fact. The breaches spotlight the urgency of prioritizing security and the importance of resilience in absorbing and recovering from attacks. With hackers continuously probing for weaknesses, cryptocurrency platforms need robust preventative measures along with responsive strategies to handle inevitable incidents.
+
+### **References**
+
+- <https://cointelegraph.com/news/yearn-finance-puts-expanded-treasury-to-use-by-repaying-victims-of-11m-hack>
+- <https://github.com/yearn/yearn-security/blob/master/disclosures/2021-02-04.md>
+- <https://www.coindesk.com/tech/2021/08/20/liquid-exchange-attack-can-a-crypto-wallet-ever-be-100-safe-from-hacks/>
+- <https://www.coindesk.com/tech/2021/09/30/defi-money-market-compound-overpays-15m-in-comp-rewards-in-possible-exploit/>
+- <https://www.freebuf.com/vuls/284340.html>
+- <https://www.halborn.com/blog/post/the-10-biggest-defi-hacks-of-2021-a-recap>
+- <https://www.bbc.co.uk/news/business-58180692>
+- <https://finance.yahoo.com/news/easyfi-network-details-6m-defi-073400859.html>

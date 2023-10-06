@@ -58,23 +58,31 @@ export async function getPosts(src?: string): Promise<IPost[]> {
 }
 
 export async function getDirectories(src: string): Promise<string[]> {
-  const subdirs = await readdir(src);
-  const directories = [];
+  try {
+    const subdirs = await readdir(src);
+    const directories = [];
 
-  for (const subdir of subdirs) {
-    const regex = /^[a-zA-Z0-9_]+$/;
-    const isValidSubdir = regex.test(subdir);
+    for (const subdir of subdirs) {
+      const regex = /^[a-zA-Z0-9_]+$/;
+      const isValidSubdir = regex.test(subdir);
 
-    if (!isValidSubdir) continue;
+      if (!isValidSubdir) continue;
 
-    const absolutePath = join(src, subdir);
-    const isDirectory = (await stat(absolutePath)).isDirectory();
+      const absolutePath = join(src, subdir);
+      const isDirectory = (await stat(absolutePath)).isDirectory();
 
-    if (isDirectory && isValidSubdir) {
-      directories.push(absolutePath);
+      if (isDirectory && isValidSubdir) {
+        directories.push(absolutePath);
+      }
     }
+
+    return directories;
+  } catch (error) {
+    // Info: do nothing if the directory doesn't exist (20230616 - Shirley)
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching subdirectories for ${src}:`, error);
+    return [];
   }
-  return directories;
 }
 
 export async function getSlugs(src: string): Promise<string[] | undefined> {
@@ -118,4 +126,15 @@ export async function getFilteredPosts(src: string, exclude: string[]): Promise<
     }
   }
   return posts;
+}
+
+export async function getDirectoryById(id: string): Promise<string | null> {
+  const directories = await getDirectories(NEWS_FOLDER);
+  for (const dir of directories) {
+    const slugs = await getSlugs(dir);
+    if (slugs && slugs.includes(id)) {
+      return dir;
+    }
+  }
+  return null;
 }

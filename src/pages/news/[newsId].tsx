@@ -9,9 +9,22 @@ import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {MarketContext} from '../../contexts/market_context';
-import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER, USDC_NEWS_FOLDER} from '../../constants/config';
+import {
+  BTC_NEWS_FOLDER,
+  DOMAIN,
+  ETH_NEWS_FOLDER,
+  NEWS_FOLDER,
+  USDC_NEWS_FOLDER,
+} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
+import {
+  IPost,
+  getDirectories,
+  getDirectoryById,
+  getFilteredPosts,
+  getPost,
+  getSlugs,
+} from '../../lib/posts';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 
 interface IPageProps {
@@ -110,24 +123,38 @@ const NewsPage = (props: IPageProps) => {
 export default NewsPage;
 
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
-  const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
-  const usdcSlugs = await getSlugs(USDC_NEWS_FOLDER);
+  // const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
+  // const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
+  // const usdcSlugs = await getSlugs(USDC_NEWS_FOLDER);
+  // const securitySlugs = await getSlugs('src/news/security');
 
-  const slugs =
-    ethSlugs && btcSlugs && usdcSlugs
-      ? [...ethSlugs, ...btcSlugs, ...usdcSlugs]
-      : ethSlugs && !btcSlugs
-      ? ethSlugs
-      : btcSlugs
-      ? btcSlugs
-      : [];
+  // const slugs =
+  //   ethSlugs && btcSlugs && usdcSlugs && securitySlugs
+  //     ? [...ethSlugs, ...btcSlugs, ...usdcSlugs, ...securitySlugs]
+  //     : ethSlugs && !btcSlugs
+  //     ? ethSlugs
+  //     : btcSlugs
+  //     ? btcSlugs
+  //     : [];
+
+  // const paths = slugs
+  //   .flatMap(slug => {
+  //     return locales?.map(locale => ({params: {newsId: slug}, locale}));
+  //   })
+  //   .filter((path): path is {params: {newsId: string}; locale: string} => !!path);
+  // return {paths, fallback: false};
+
+  const folders = await getDirectories(NEWS_FOLDER); // Assuming NEWS_FOLDER is the parent directory
+
+  const allSlugs = await Promise.all(folders.map(folder => getSlugs(folder)));
+  const slugs = allSlugs.flat();
 
   const paths = slugs
     .flatMap(slug => {
       return locales?.map(locale => ({params: {newsId: slug}, locale}));
     })
     .filter((path): path is {params: {newsId: string}; locale: string} => !!path);
+
   return {paths, fallback: false};
 };
 
@@ -138,11 +165,12 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.newsId.includes('eth')
-    ? ETH_NEWS_FOLDER
-    : params.newsId.includes('btc')
-    ? BTC_NEWS_FOLDER
-    : USDC_NEWS_FOLDER;
+  const dir = await getDirectoryById(params.newsId);
+  if (!dir) {
+    return {
+      notFound: true,
+    };
+  }
 
   const newsData = await getPost(dir, params.newsId);
   const allPost = await getFilteredPosts(dir, [params.newsId]);

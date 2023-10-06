@@ -15,7 +15,7 @@ interface IHistoryPositionItemProps {
   closedCfdDetails: IDisplayCFDOrder;
 }
 
-const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
+const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);

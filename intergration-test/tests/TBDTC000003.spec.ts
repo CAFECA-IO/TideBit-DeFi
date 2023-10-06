@@ -44,7 +44,7 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
   await expect.soft(page).toHaveURL(/.*cn/);
   await page.locator('#globe').click();
   await page.getByRole('link', {name: 'English'}).click();
-  await expect.soft(page).toHaveURL(/https:\/\/tidebit-defi.com\/./);
+  await expect.soft(page).toHaveTitle(/TideBit DeFi/);
   await page.getByRole('button', {name: '2 notification icon'}).click();
   await page.locator('.translate-x-0 > div > div').first().click();
   await expect

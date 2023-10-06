@@ -18,8 +18,9 @@ import {
   MAX_FEE_RATE,
   MIN_FEE_RATE,
   instIds,
+  MONTH_SHORT_NAME_LIST,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -28,7 +29,6 @@ import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
-import {TBDURL} from '../constants/api_request';
 import SafeMath from './safe_math';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
@@ -40,6 +40,13 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
+/**
+ * (20230928 - Shirley)
+ * @param number
+ * @param decimal
+ * @param condition true -> floor, false -> ceil
+ * @returns
+ */
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -102,9 +109,11 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
       date: '-',
       time: '-',
       abbreviatedMonth: '-',
+      monthName: '-',
       monthAndYear: '-',
       day: '-',
       abbreviatedTime: '-',
+      year: '-',
     };
 
   if (timezoneOffset !== undefined) {
@@ -119,22 +128,8 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     const second = date.getUTCSeconds().toString().padStart(2, '0');
 
     const monthIndex = date.getUTCMonth();
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
 
-    const monthName = monthNames[monthIndex];
+    const monthName = MONTH_SHORT_NAME_LIST[monthIndex];
     const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
 
     const dateString = `${year}-${month}-${day}`;
@@ -144,52 +139,41 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
       date: dateString,
       time: timeString,
       abbreviatedMonth: monthName,
+      monthName: monthFullName,
       monthAndYear: `${monthFullName} ${year}`,
       day: day,
       abbreviatedTime: `${hour}:${minute}`,
+      year: year,
+    };
+  } else {
+    const date = new Date(timestamp * 1000);
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    const second = date.getSeconds().toString().padStart(2, '0');
+
+    const monthIndex = date.getMonth();
+
+    const monthName = MONTH_SHORT_NAME_LIST[monthIndex];
+    const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
+
+    const dateString = `${year}-${month}-${day}`;
+    const timeString = `${hour}:${minute}:${second}`;
+
+    return {
+      date: dateString,
+      time: timeString,
+      abbreviatedMonth: monthName,
+      monthName: monthFullName,
+      monthAndYear: `${monthFullName} ${year}`,
+      day: day,
+      abbreviatedTime: `${hour}:${minute}`,
+      year: year,
     };
   }
-
-  const date = new Date(timestamp * 1000);
-
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const monthIndex = date.getMonth();
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  const monthName = monthNames[monthIndex];
-  const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  // return [dateString, timeString];
-  return {
-    date: dateString,
-    time: timeString,
-    abbreviatedMonth: monthName,
-    monthAndYear: `${monthFullName} ${year}`,
-    day: day,
-    abbreviatedTime: `${hour}:${minute}`,
-  };
 };
 
 /**
@@ -611,11 +595,16 @@ export function getChainNameByCurrency(
   }
 }
 
-export const numberFormatted = (n: number | string | undefined) => {
+// TODO: 用 SafeMath isNumber 判斷數字 (20230919 - Shirley)
+export const numberFormatted = (n: number | string | undefined, dash = false) => {
+  const zero = dash ? '-' : '0';
   const result =
     !n || n === '0'
-      ? '0'
-      : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      ? zero
+      : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        );
   return result;
 };
 
@@ -678,23 +667,62 @@ export const validateCFD = (feeRate: number, amount: number) => {
   return result;
 };
 
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the number format is valid or not
+ */
+export const validateNumberFormat = (value: number | string) => {
+  const regex = /^\d*\.?\d{0,2}$/;
+  return regex.test(value?.toString());
+};
+
+export function getValueByProp(obj: any, prop: string) {
+  const keys = prop.split('.');
+  return keys.reduce((o, k) => (o || {})[k], obj);
+}
+
+/**
+ * (20230928 - Shirley)
+ * @dev check whether the tp/sl value is valid or not
+ */
 export const validateAllInput = ({
   typeOfValidation,
   value,
   upperLimit: upperLimit,
   lowerLimit: lowerLimit,
 }: IValidateInput): boolean => {
-  let isValid = true;
+  let isValid = false;
 
   switch (typeOfValidation) {
     case TypeOfValidation.TPSL:
       if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
-        if (value > upperLimit || value < lowerLimit) {
+        const validFormat = validateNumberFormat(value);
+        if (!validFormat) {
           isValid = false;
         } else {
-          isValid = true;
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
         }
       }
+      break;
+
+    case TypeOfValidation.TARGET:
+      if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
+        const validFormat = validateNumberFormat(value);
+        if (!validFormat) {
+          isValid = false;
+        } else {
+          if (value > upperLimit || value < lowerLimit) {
+            isValid = false;
+          } else {
+            isValid = true;
+          }
+        }
+      }
+      break;
   }
 
   return isValid;
@@ -760,4 +788,25 @@ export function isValidTradeURL(url: string): boolean {
   }
 
   return result;
+}
+
+// Info:(20230925 - Julian) i18n URL workaround
+export const getI18nLink = (link: string, locale: string) => {
+  if (link.toLowerCase().includes('bitcoin')) {
+    const bitcoinText = locale === 'tw' ? 'zh_TW' : locale === 'cn' ? 'zh_CN' : 'en';
+    const bitcoinLink = link.includes('en')
+      ? link.replace('en', bitcoinText)
+      : `${link}/${bitcoinText}`;
+    return bitcoinLink;
+  } else if (link.toLowerCase().includes('ethereum')) {
+    const ethereumText = locale === 'tw' ? 'zh-tw' : locale === 'cn' ? 'zh' : 'en';
+    const ethereumLink = link.includes('en')
+      ? link.replace('en', ethereumText)
+      : `${link}/${ethereumText}`;
+    return ethereumLink;
+  }
+};
+
+export function ratioToPercentage(decimal: number): string {
+  return `${(decimal * 100).toFixed(2)}`;
 }

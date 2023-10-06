@@ -9,9 +9,12 @@ import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {
   findCodeByReason,
+  getValueByProp,
   locker,
+  numberFormatted,
   roundToDecimalPlaces,
   timestampToString,
+  validateNumberFormat,
   wait,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
@@ -54,6 +57,7 @@ const PositionUpdatedModal = ({
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
+  const [disabled, setDisabled] = useState(false);
 
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
@@ -223,8 +227,35 @@ const PositionUpdatedModal = ({
       : setSlTextStyle('text-lightYellow2');
   };
 
+  const validateRequest = (request: IUpdatedCFDInputProps) => {
+    const propertiesToCheck = ['stopLoss', 'takeProfit'];
+
+    const isValidFormat = propertiesToCheck.every(prop => {
+      const value = getValueByProp(request, prop);
+
+      if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+        return true;
+      }
+
+      const each = validateNumberFormat(value);
+      return each;
+    });
+
+    if (!isValidFormat) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  };
+
   useEffect(() => {
     renewDataStyle();
+
+    if (updatedProps) {
+      validateRequest(updatedProps);
+    } else {
+      setDisabled(true);
+    }
   }, [globalCtx.visiblePositionUpdatedModal]);
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
@@ -236,25 +267,16 @@ const PositionUpdatedModal = ({
   // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit
     ? openCfdDetails.takeProfit !== updatedProps.takeProfit
-      ? `$ ${updatedProps.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
-      : `$ ${openCfdDetails.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${numberFormatted(updatedProps.takeProfit)}`
+      : `$ ${numberFormatted(openCfdDetails.takeProfit)}`
     : !!openCfdDetails.takeProfit !== !!updatedProps?.takeProfit
     ? '-'
     : '-';
 
   const displayedStopLoss = !!updatedProps?.stopLoss
     ? openCfdDetails.stopLoss !== updatedProps.stopLoss
-      ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`
-      : `$ ${openCfdDetails.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${numberFormatted(updatedProps.stopLoss)}`
+      : `$ ${numberFormatted(openCfdDetails.stopLoss)}`
     : !!openCfdDetails.stopLoss !== !!updatedProps?.stopLoss
     ? '-'
     : '-';
@@ -306,12 +328,8 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {numberFormatted(openCfdDetails?.openPrice)}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
-                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>
 
@@ -338,9 +356,8 @@ const PositionUpdatedModal = ({
               <div className={`${layoutInsideBorder}`}>
                 <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
                 <div className={`${TypeOfPnLColor.LOSS}`}>
-                  {`- $ ${roundToDecimalPlaces(
-                    (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0,
-                    2
+                  {`- $ ${numberFormatted(
+                    (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
                   )}`}
                 </div>
               </div>
@@ -351,6 +368,7 @@ const PositionUpdatedModal = ({
         <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
+          disabled={disabled}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}

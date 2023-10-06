@@ -1,4 +1,3 @@
-import React, {Dispatch, SetStateAction, useState} from 'react';
 import OpenSubTab from '../open_sub_tab/open_sub_tab';
 import HistorySubTab from '../history_sub_tab/history_sub_tab';
 import {useTranslation} from 'next-i18next';
@@ -59,7 +58,7 @@ const PositionTab = ({
         <li className="">
           <button
             onClick={openTabClickHandler}
-            className={`${activeOpenTabStyle} inline-block py-1 px-11`}
+            className={`${activeOpenTabStyle} inline-block px-11 py-1`}
           >
             {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
@@ -67,7 +66,7 @@ const PositionTab = ({
         <li className="">
           <button
             onClick={historyTabClickHandler}
-            className={`${activeHistoryTabStyle} inline-block py-1 px-11`}
+            className={`${activeHistoryTabStyle} inline-block px-11 py-1`}
           >
             {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>
@@ -91,9 +90,9 @@ const PositionTab = ({
 
   const desktopLayout = (
     <div
-      className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      className={`pointer-events-none fixed right-0 top-82px z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
     >
-      <div className="relative my-6 mx-auto w-auto max-w-xl">
+      <div className="relative mx-auto my-6 w-auto max-w-xl">
         {' '}
         <div className={`relative`}>
           {/* Info: sidebar self (20230808 - Shirley) */}

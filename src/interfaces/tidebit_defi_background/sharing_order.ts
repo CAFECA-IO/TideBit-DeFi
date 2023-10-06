@@ -9,8 +9,8 @@ export interface ISharingOrder {
   targetAsset: ICurrency;
   targetAssetName: string;
   typeOfPosition: ITypeOfPosition;
-  openPrice: number;
-  closePrice: number;
+  openPrice: string;
+  closePrice: string;
   leverage: number;
   userName: string;
   qrcodeUrl?: string;
@@ -36,8 +36,8 @@ export const getDummySharingOrder = (
       : randomIntFromInterval(0, 1) === 0
       ? TypeOfPosition.BUY
       : TypeOfPosition.SELL,
-    openPrice: randomIntFromInterval(1000, 1200),
-    closePrice: randomIntFromInterval(1000, 1200),
+    openPrice: randomIntFromInterval(1000, 1200).toString(),
+    closePrice: randomIntFromInterval(1000, 1200).toString(),
     createTimestamp: getTimestamp() - 86400,
     closeTimestamp: getTimestamp(),
     leverage: 5,
@@ -52,8 +52,8 @@ export const isSharingOrder = (order: any) => {
     // typeof order.instId !== 'string' ||
     typeof order.targetAssetName !== 'string' ||
     typeof order.typeOfPosition !== 'string' ||
-    typeof order.openPrice !== 'number' ||
-    typeof order.closePrice !== 'number' ||
+    typeof order.openPrice !== 'string' ||
+    typeof order.closePrice !== 'string' ||
     typeof order.leverage !== 'number' ||
     typeof order.userName !== 'string'
   ) {
@@ -77,8 +77,8 @@ export const isDummySharingOrder = (order: ISharingOrder): boolean => {
     typeof order.targetAsset !== 'string' ||
     typeof order.targetAssetName !== 'string' ||
     typeof order.typeOfPosition !== 'string' ||
-    typeof order.openPrice !== 'number' ||
-    typeof order.closePrice !== 'number' ||
+    typeof order.openPrice !== 'string' ||
+    typeof order.closePrice !== 'string' ||
     typeof order.leverage !== 'number' ||
     typeof order.userName !== 'string'
   ) {
@@ -114,8 +114,8 @@ export const getInvalidSharingOrder = (
     targetAsset: Currency.ETH,
     targetAssetName: getChainNameByCurrency(Currency.ETH, TRADING_CRYPTO_DATA),
     typeOfPosition: TypeOfPosition.BUY,
-    openPrice: 0,
-    closePrice: 0,
+    openPrice: '0',
+    closePrice: '0',
     createTimestamp: now,
     closeTimestamp: now,
     leverage: 5,

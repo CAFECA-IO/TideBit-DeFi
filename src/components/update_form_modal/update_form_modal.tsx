@@ -24,6 +24,7 @@ import {
   timestampToString,
   toPnl,
   validateAllInput,
+  validateNumberFormat,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
@@ -62,6 +63,8 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const regex = /^\d*\.?\d{0,2}$/;
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -112,6 +115,8 @@ const UpdateFormModal = ({
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({tp: false, sl: false});
+
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
@@ -122,6 +127,24 @@ const UpdateFormModal = ({
     setSlToggle(bool);
 
     calculateLoss();
+  };
+
+  const getTpValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedProfitValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
+  };
+
+  const getSlValid = (bool: boolean) => {
+    if (!bool) {
+      setSubmitDisabled(true);
+      setEstimatedLossValue(prev => ({...prev, number: 0}));
+    } else {
+      compareChange();
+    }
   };
 
   const getTpValue = (value: number) => {
@@ -146,11 +169,9 @@ const UpdateFormModal = ({
     >
       <div className="text-xs text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -168,11 +189,9 @@ const UpdateFormModal = ({
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -343,9 +362,65 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const tp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        tp: typingStatus,
+      }));
+    };
+
+    const sl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        sl: typingStatus,
+      }));
+    };
+
+    return {
+      tp,
+      sl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+
+  const checkTpSlWithinBounds = () => {
+    if (validateNumberFormat(tpValueRef.current)) {
+      if (+tpValueRef.current < tpLowerLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+
+      if (+tpValueRef.current > tpUpperLimitRef.current) {
+        setTpValue(openCfdDetails.suggestion.takeProfit);
+        calculateProfit();
+      }
+    } else {
+      setTpValue(openCfdDetails.suggestion.takeProfit);
+      calculateProfit();
+    }
+
+    if (validateNumberFormat(slValueRef.current)) {
+      if (+slValueRef.current < slLowerLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+
+      if (+slValueRef.current > slUpperLimitRef.current) {
+        setSlValue(openCfdDetails.suggestion.stopLoss);
+        calculateLoss();
+      }
+    } else {
+      setSlValue(openCfdDetails.suggestion.stopLoss);
+      calculateLoss();
+    }
+  };
+
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
+        getIsValueValid={getTpValid}
         getInputValue={getTpValue}
         lowerLimit={tpLowerLimitRef.current}
         upperLimit={tpUpperLimitRef.current}
@@ -357,6 +432,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.tp}
       />
     </div>
   );
@@ -364,6 +440,7 @@ const UpdateFormModal = ({
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        getIsValueValid={getSlValid}
         disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
         lowerLimit={slLowerLimitRef.current}
@@ -376,6 +453,7 @@ const UpdateFormModal = ({
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.sl}
       />
     </div>
   );
@@ -392,8 +470,7 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}:{' '}
-            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
+            ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
           </span>
           {/* Info: tooltip (20230802 - Shirley) */}
           <div className="ml-3">
@@ -708,6 +785,12 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
+    if (!isTypingRef.current.tp && !isTypingRef.current.sl) {
+      checkTpSlWithinBounds();
+    }
+  }, [isTypingRef.current]);
+
+  useEffect(() => {
     setGuaranteedStopFee(
       roundToDecimalPlaces(
         +SafeMath.mult(
@@ -721,6 +804,7 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
+
     const isValidInput = validateInput();
 
     if (isValidInput) {
@@ -803,10 +887,7 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
                     <div className="">
-                      {openCfdDetails?.amount?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
+                      {numberFormatted(openCfdDetails?.amount) ?? 0}
                       <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
                     </div>
                   </div>
@@ -820,23 +901,14 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
-                    <div className="">
-                      ${' '}
-                      {openCfdDetails?.openValue?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
-                    </div>
+                    <div className="">$ {numberFormatted(openCfdDetails?.openValue) ?? 0}</div>
                   </div>
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.openPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      ) ?? 0}
+                      {numberFormatted(openCfdDetails?.openPrice) ?? 0}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
@@ -851,17 +923,8 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
-                      <span className={`text-lightWhite`}>
-                        {!cfdTp || cfdTp === 0
-                          ? '-'
-                          : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>{' '}
-                      /{' '}
-                      <span className={`text-lightWhite`}>
-                        {!cfdSl || cfdSl === 0
-                          ? '-'
-                          : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                      </span>
+                      <span className={`text-lightWhite`}>{numberFormatted(cfdTp, true)}</span> /{' '}
+                      <span className={`text-lightWhite`}>{numberFormatted(cfdSl, true)}</span>
                     </div>
                   </div>
 
@@ -869,10 +932,7 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.liquidationPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        FRACTION_DIGITS
-                      )}
+                      {numberFormatted(openCfdDetails?.liquidationPrice)}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>

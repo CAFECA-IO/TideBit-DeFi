@@ -10,7 +10,6 @@ import {
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
-import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
@@ -198,10 +197,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     },
     OPEN_PRICE: {
       VALUE: displayedPositionPrice,
-      STRING: `$ ${displayedPositionPrice.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      )}`,
+      STRING: `$ ${numberFormatted(displayedPositionPrice)}`,
     },
   };
 

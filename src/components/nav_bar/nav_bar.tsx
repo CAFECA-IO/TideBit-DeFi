@@ -14,7 +14,6 @@ import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 import {useRouter} from 'next/router';
 import {isValidTradeURL} from '../../lib/common';
-import {instIds} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
@@ -160,7 +159,7 @@ const NavBar = () => {
                       />
 
                       <Image
-                        className="absolute right-60px bottom-1"
+                        className="absolute bottom-1 right-60px"
                         src="/elements/beta@2x.png"
                         width={30}
                         height={13}

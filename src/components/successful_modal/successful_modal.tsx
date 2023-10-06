@@ -1,7 +1,6 @@
 import Lottie from 'lottie-react';
 import successfulAnimation from '../../../public/animation/processing-success.json';
 import RippleButton from '../ripple_button/ripple_button';
-import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 
 export interface ISuccessfulModal {
@@ -29,11 +28,11 @@ const SuccessfulModal = ({
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
           <Lottie
-            className="ml-70px w-150px pt-7 pb-5"
+            className="ml-70px w-150px pb-5 pt-7"
             animationData={successfulAnimation}
             loop={false}
           />
-          <div className="mt-3 mb-0 h-55px text-base">
+          <div className="mb-0 mt-3 h-55px text-base">
             {modalContent ? (
               modalContent
             ) : (
@@ -72,7 +71,7 @@ const SuccessfulModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-90 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           <div
             id="successfulModal"
@@ -83,7 +82,7 @@ const SuccessfulModal = ({
                 {modalTitle}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

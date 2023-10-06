@@ -1,4 +1,4 @@
-import {NextApiRequest, NextApiResponse} from 'next';
+import {NextApiRequest} from 'next';
 import {ImageResponse} from 'next/server';
 import {timestampToString, adjustTimestamp, accountTruncate} from '../../../../lib/common';
 import {IBadge} from '../../../../interfaces/tidebit_defi_background/badge';
@@ -16,7 +16,7 @@ export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const badgeId = params.pop();

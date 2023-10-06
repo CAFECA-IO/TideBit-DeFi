@@ -108,9 +108,14 @@ interface IChartSpecProps {
   chartWidth: number;
 }
 
+interface ICustomizedLocalizationOptions {
+  locale: string;
+  dateFormat: string;
+}
+
 // ToDo: 從 props 拿資料；圖表樣式、長寬、時間區間、資料數量
 const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecProps) => {
-  const locale: LocalizationOptions = {
+  const locale: ICustomizedLocalizationOptions = {
     locale: 'zh-TW',
     dateFormat: 'yyyy-MM-dd',
   };

@@ -32,6 +32,21 @@ export const MONTH_FULL_NAME_LIST = [
   'December',
 ];
 
+export const MONTH_SHORT_NAME_LIST = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 export const WEEK_LIST = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 export const FRACTION_DIGITS = {
@@ -292,4 +307,5 @@ export const ETH_NEWS_FOLDER = 'src/news/eth';
 export const BTC_NEWS_FOLDER = 'src/news/btc';
 export const USDC_NEWS_FOLDER = 'src/news/usdc';
 export const NEWS_FOLDER = './src/news';
-// export const
+export const BAIFA_LINK = 'https://baifa.io';
+export const I_SUN_ONE_LINK = 'https://www.isun1.com';

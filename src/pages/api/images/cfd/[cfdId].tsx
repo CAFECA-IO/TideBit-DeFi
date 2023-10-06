@@ -4,6 +4,7 @@ import {
   adjustTimestamp,
   getTimestamp,
   getTimestampInMilliseconds,
+  numberFormatted,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -60,6 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const order = await orderResponse.json();
 
       if (order?.success) {
+        if (order?.data.openPrice) order.data.openPrice = order.data.openPrice.toString();
+        if (order?.data.closePrice) order.data.closePrice = order.data.closePrice.toString();
         if (isSharingOrder(order?.data)) {
           sharingOrder = order?.data;
         }
@@ -135,10 +138,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const backgroundImageUrl = DOMAIN + '/elements/' + bg + '.png';
 
-  const displayedPnlPercent = Math.abs(pnlPercent).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnlPercent = numberFormatted(Math.abs(pnlPercent));
 
   const displayedTypeOfPosition =
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
@@ -372,10 +372,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '35px',
                           }}
                         >
-                          {openPrice?.toLocaleString(
-                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                            FRACTION_DIGITS
-                          )}
+                          {numberFormatted(openPrice)}
                           <span
                             style={{
                               marginTop: '2px',
@@ -415,10 +412,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '35px',
                           }}
                         >
-                          {closePrice?.toLocaleString(
-                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                            FRACTION_DIGITS
-                          )}
+                          {numberFormatted(closePrice)}
                           <span
                             style={{
                               marginTop: '2px',

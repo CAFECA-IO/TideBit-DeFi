@@ -2,6 +2,7 @@
 module.exports = {
   mode: 'jit',
   content: ['./src/**/**/*.{js,ts,jsx,tsx}'],
+
   theme: {
     container: {},
     content: {
@@ -25,6 +26,7 @@ module.exports = {
       '8xl': ['96px', 1],
       '9xl': ['128px', 1],
     },
+
     screens: {
       xxs: '370px',
       xs: '500px',
@@ -44,6 +46,10 @@ module.exports = {
       textDecorationThickness: {
         2: '2px',
       },
+      backgroundImage: {
+        iSunOneBg: 'url("/elements/isunone_banner_bg@2x.png")',
+        iSunOneBgMobile: 'url("/elements/isunone_banner_bg_mobile.svg")',
+      },
       zIndex: {
         '60': '60',
         '70': '70',
@@ -54,9 +60,6 @@ module.exports = {
       },
       opacity: {'group-hover': '0.8', '0': '0'},
       visible: ['group-hover'],
-      backgroundImage: {
-        'reserve': "url('./public/elements/group_15244.svg')",
-      },
       gridTemplateColumns: {
         cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
       },
@@ -170,12 +173,14 @@ module.exports = {
         '130px': '130px',
         '134px': '134px',
         '140px': '140px',
+        '144px': '144px',
         '150px': '150px',
         '158px': '158px',
         '160px': '160px',
         '180px': '180px',
         '190px': '190px',
         '200px': '200px',
+        '210px': '210px',
         '220px': '220px',
         '240px': '240px',
         '250px': '250px',
@@ -277,6 +282,8 @@ module.exports = {
 
         '80vh': '80vh',
         '95vh': '95vh',
+        '120vh': '120vh',
+        '200vh': '200vh',
 
         '70vw': '70vw',
         '80vw': '80vw',
@@ -341,9 +348,6 @@ module.exports = {
         '90': '90',
         '100': '100',
       },
-      backgroundImage: {
-        banner1: "url('~/img/group_15199@2x.png)",
-      },
       colors: {
         cuteBlue: '#A5C4F3',
         cuteBlue1: '#5895D9',
@@ -404,9 +408,7 @@ module.exports = {
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
       },
-      backgroundImage: {
-        landingPageCta1: "url('~/public/elements/Group_15198@2x.png')",
-      },
+
       // animation class
       animation: {
         'spin-slow': 'spin 3s linear infinite',

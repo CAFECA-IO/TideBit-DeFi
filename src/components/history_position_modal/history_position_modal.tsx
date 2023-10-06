@@ -191,11 +191,11 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {numberFormatted(closedCfdDetails?.takeProfit)}
+                {numberFormatted(closedCfdDetails?.takeProfit, true)}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {numberFormatted(closedCfdDetails?.stopLoss)}
+                {numberFormatted(closedCfdDetails?.stopLoss, true)}
               </span>
             </div>
           </div>
@@ -209,7 +209,7 @@ const HistoryPositionModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
               <div className={`${TypeOfPnLColor.LOSS}`}>
-                {`- $ ${roundToDecimalPlaces(closedCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+                {`- $ ${numberFormatted(closedCfdDetails?.guaranteedStopFee)}`}{' '}
               </div>
             </div>
           )}

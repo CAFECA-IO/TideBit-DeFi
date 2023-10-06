@@ -793,6 +793,9 @@ const UpdateFormModal = ({
     initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 
+  const spreadSymbol =
+    openCfdDetails?.openSpreadFee > 0 ? '+' : openCfdDetails.openSpreadFee < 0 ? '-' : '';
+
   const formContent = (
     <div className="flex-col items-center">
       <div
@@ -840,11 +843,13 @@ const UpdateFormModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
           <div className="flex items-center space-x-1">
-            {/* ToDo: (20231003 - Julian) ----------- get open spread from API ----------- */}
             {/* Info: (20231003 - Julian) Spot Price */}
-            {/* numberFormatted(openCfdDetails?.openPrice) */}
+            {numberFormatted(openCfdDetails?.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            {/* <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(spread)}</span> */}
+            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+              {spreadSymbol}
+              {numberFormatted(openCfdDetails?.openSpreadFee)}
+            </span>
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
@@ -932,9 +937,9 @@ const UpdateFormModal = ({
     <div {...otherProps}>
       {/* Info: (20231004 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 px-10 py-6 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px lg:p-10">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px lg:p-10">
           {/* Info: (20231004 - Julian) Header */}
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between pr-5 lg:pr-0">
             {/* Info: (20231004 - Julian) Ticker Title */}
             <div className="flex items-center space-x-2 text-lightWhite">
               <Image

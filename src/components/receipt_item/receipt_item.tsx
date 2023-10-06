@@ -97,7 +97,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? '+0'
       : targetAmount >= 0
       ? '+' + numberFormatted(targetAmount)
-      : numberFormatted(targetAmount);
+      : '-' + numberFormatted(targetAmount);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -230,7 +230,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedReceiptIncome = (
     <div className="flex items-end lg:w-48">
-      <div className="text-2xl">{displayedReceiptAmount}</div>
+      <div className="text-xl lg:text-2xl">{displayedReceiptAmount}</div>
       <span className="ml-1 text-sm text-lightGray">{targetAsset}</span>
     </div>
   );

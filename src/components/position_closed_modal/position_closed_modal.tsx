@@ -30,7 +30,6 @@ import {
   SUGGEST_TP,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
-  FRACTION_DIGITS,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
@@ -84,6 +83,7 @@ const PositionClosedModal = ({
     typeOfPosition: openCfdDetails?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
     spotPrice: randomIntFromInterval(20, 29),
+    spreadFee: 0,
     targetAsset: openCfdDetails?.targetAsset,
     unitAsset: openCfdDetails?.unitAsset,
     deadline: getDeadline(QUOTATION_RENEWAL_INTERVAL_SECONDS),
@@ -491,8 +491,10 @@ const PositionClosedModal = ({
     };
   }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
 
-  // Info: (20231003 - Julian) calculate spread
-  const closeSpread = gQuotationRef.current.price - gQuotationRef.current.spotPrice;
+  const openSpreadSymbol =
+    openCfdDetails?.openSpreadFee > 0 ? '+' : openCfdDetails.openSpreadFee < 0 ? '-' : '';
+  const closeSpreadSymbol =
+    gQuotationRef.current.spreadFee > 0 ? '+' : gQuotationRef.current.spreadFee < 0 ? '-' : '';
 
   const formContent = (
     <div className="mt-4 flex flex-col">
@@ -531,14 +533,16 @@ const PositionClosedModal = ({
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
           <div className="flex items-baseline space-x-1">
             {/* Info: (20231003 - Julian) Spot Price */}
-            {/* numberFormatted(openCfdDetails?.openPrice) */}
-            {/* ToDo: (20231003 - Julian) ----------- get open spread from API ----------- */}
+            {numberFormatted(openCfdDetails?.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            {/* <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(spread)}</span> */}
+            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+              {openSpreadSymbol}
+              {numberFormatted(openCfdDetails.openSpreadFee)}
+            </span>
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -560,7 +564,10 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(gQuotationRef.current.spotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            <span className="ml-1 text-3xs text-lightGray">+{numberFormatted(closeSpread)}</span>
+            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+              {closeSpreadSymbol}
+              {numberFormatted(gQuotationRef.current.spreadFee)}
+            </span>
             {/* Info: (20231003 - Julian) Price */}
             <p>
               →{' '}
@@ -569,7 +576,7 @@ const PositionClosedModal = ({
                 : numberFormatted(gQuotationRef.current.price)}
             </p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>

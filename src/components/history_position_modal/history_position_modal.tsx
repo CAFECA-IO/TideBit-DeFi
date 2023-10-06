@@ -122,6 +122,11 @@ const HistoryPositionModal = ({
     enableShare: userCtx.enableShare,
   });
 
+  const closeSpreadFee = closedCfdDetails.closeSpreadFee ?? 0;
+  const openSpreadSymbol =
+    closedCfdDetails?.openSpreadFee > 0 ? '+' : closedCfdDetails.openSpreadFee < 0 ? '-' : '';
+  const closeSpreadSymbol = closeSpreadFee > 0 ? '+' : closeSpreadFee < 0 ? '-' : '';
+
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col">
       <div
@@ -177,19 +182,15 @@ const HistoryPositionModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
           <div className="flex items-center space-x-1">
-            {/* ToDo: (20231005 - Julian) get spotPrice and Spreads from API */}
             {/* Info: (20231003 - Julian) Spot Price */}
-            {/* {numberFormatted(closedCfdDetails)} */}
+            {numberFormatted(closedCfdDetails.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            {/* <span className="text-3xs text-lightGray">+{numberFormatted(closeSpread)}</span> */}
+            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+              {openSpreadSymbol}
+              {numberFormatted(closedCfdDetails.openSpreadFee)}
+            </span>
             {/* Info: (20231003 - Julian) Price */}
-            <p>
-              →{' '}
-              {closedCfdDetails?.openPrice?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
-            </p>
+            <p>→ {numberFormatted(closedCfdDetails?.openPrice)}</p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
             <Tooltip className="hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
@@ -202,11 +203,13 @@ const HistoryPositionModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
           <div className="flex items-center space-x-1">
-            {/* ToDo: (20231005 - Julian) get spotPrice and Spreads from API */}
             {/* Info: (20231003 - Julian) Spot Price */}
-            {/* {numberFormatted(closedCfdDetails)} */}
+            {numberFormatted(closedCfdDetails.closeSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            {/* <span className="text-3xs text-lightGray">+{numberFormatted(closeSpread)}</span> */}
+            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+              {closeSpreadSymbol}
+              {numberFormatted(closedCfdDetails.closeSpreadFee)}
+            </span>
             {/* Info: (20231003 - Julian) Price */}
             <p>→ {numberFormatted(closedCfdDetails.closePrice)}</p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
@@ -293,7 +296,7 @@ const HistoryPositionModal = ({
     <div {...otherProps}>
       {/* Info: (20231005 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-10 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-400px">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-400px lg:p-10">
           {/* Info: (20231005 - Julian) Header */}
           <div className="flex items-start">
             {/* Info: (20231005 - Julian) Ticker Title */}

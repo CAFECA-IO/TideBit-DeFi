@@ -10,7 +10,6 @@ import {
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_USER_BALANCE,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
@@ -18,7 +17,6 @@ import {
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_PERCENTAGE,
-  FRACTION_DIGITS,
   TP_SL_LIMIT_RATIO,
   DEFAULT_INSTID,
   DEFAULT_CURRENCY,
@@ -363,6 +361,7 @@ const TradeTab = () => {
           unitAsset: unitAsset,
           price: longPriceRef.current,
           spotPrice: marketCtx.selectedTicker?.price ?? 0,
+          spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -383,6 +382,7 @@ const TradeTab = () => {
           unitAsset: unitAsset,
           price: shortPriceRef.current,
           spotPrice: marketCtx.selectedTicker?.price ?? 0,
+          spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -397,6 +397,7 @@ const TradeTab = () => {
         unitAsset: unitAsset,
         price: longPriceRef.current,
         spotPrice: marketCtx.selectedTicker?.price ?? 0,
+        spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
@@ -408,6 +409,7 @@ const TradeTab = () => {
         unitAsset: unitAsset,
         price: shortPriceRef.current,
         spotPrice: marketCtx.selectedTicker?.price ?? 0,
+        spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };

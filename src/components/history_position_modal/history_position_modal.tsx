@@ -291,7 +291,7 @@ const HistoryPositionModal = ({
     <div {...otherProps}>
       {/* Info: (20231005 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-420px lg:p-8">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8">
           {/* Info: (20231005 - Julian) Header */}
           <div className="flex items-start">
             {/* Info: (20231005 - Julian) Ticker Title */}

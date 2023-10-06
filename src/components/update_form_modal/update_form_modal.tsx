@@ -936,7 +936,7 @@ const UpdateFormModal = ({
     <div {...otherProps}>
       {/* Info: (20231004 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px lg:p-10">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-400px sm:p-10">
           {/* Info: (20231004 - Julian) Header */}
           <div className="flex items-end justify-between pr-5 lg:pr-0">
             {/* Info: (20231004 - Julian) Ticker Title */}

@@ -64,9 +64,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
-    rankings.sort((a, b) => {
-      return b.cumulativePnl.value - a.cumulativePnl.value;
-    }) ?? defaultLeaderboard;
+    rankings.sort((a, b) => b.cumulativePnl.value - a.cumulativePnl.value) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
     timeSpan == RankingInterval.LIVE
@@ -103,7 +101,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     ) : pnl?.value < 0 ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value || 0)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value ?? 0)}</div>
     );
 
   const defaultTop3Data = {
@@ -323,23 +321,27 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   /* Info: (20230814 - Julian) 找到當前使用者的排名，未登入則 0  */
   const userRankingNumber = rankingData.find(data => data.userId === userCtx.user?.id)?.rank ?? 0;
+  /* Info: (20231006 - Julian) 排除了前三名的名單 */
+  const rankingWithoutTop3 = rankingData.filter(item => item.rank > 3);
 
-  /* Info: (20230814 - Julian)
-   * 有登入：從第四名起，排名在當前使用者前面的名單，並排除前三名
-   * 未登入：從第四名起的所有名單 */
-  const rankingDataBeforeUser = userCtx.user?.address
-    ? rankingData.slice(3, userRankingNumber - 1).filter(item => item.rank > 3)
-    : rankingData.slice(3);
+  /* Info: (20231006 - Julian)
+   * 有登入且排名存在：排除前三名，名次在當前使用者前面的名單
+   * 未登入或排名不存在：排除前三名的名單 */
+  const rankingDataBeforeUser =
+    userCtx.user?.address && userRankingNumber > 0
+      ? rankingWithoutTop3.filter(item => item.rank < userRankingNumber)
+      : rankingWithoutTop3;
   const displayedListBeforeUser = rankingDataBeforeUser.map((item, index) => (
     <div key={index}>{rankingItem(item)}</div>
   ));
 
-  /* Info: (20230814 - Julian)
-   * 有登入：從第四名起，排名在當前使用者後面的名單，並排除前三名
-   * 未登入：null */
-  const rankingDataAfterUser = userCtx.user?.address
-    ? rankingData.slice(userRankingNumber).filter(item => item.rank > 3)
-    : null;
+  /* Info: (20231006 - Julian)
+   * 有登入且排名存在：排除前三名，名次在當前使用者後面的名單
+   * 未登入或排名不存在：null */
+  const rankingDataAfterUser =
+    userCtx.user?.address && userRankingNumber > 0
+      ? rankingWithoutTop3.filter(item => item.rank > userRankingNumber)
+      : null;
   const displayedListAfterUser = rankingDataAfterUser
     ? rankingDataAfterUser.map((item, index) => <div key={index}>{rankingItem(item)}</div>)
     : null;

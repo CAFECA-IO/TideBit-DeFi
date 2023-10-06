@@ -123,29 +123,7 @@ const NewsPage = (props: IPageProps) => {
 export default NewsPage;
 
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  // const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
-  // const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
-  // const usdcSlugs = await getSlugs(USDC_NEWS_FOLDER);
-  // const securitySlugs = await getSlugs('src/news/security');
-
-  // const slugs =
-  //   ethSlugs && btcSlugs && usdcSlugs && securitySlugs
-  //     ? [...ethSlugs, ...btcSlugs, ...usdcSlugs, ...securitySlugs]
-  //     : ethSlugs && !btcSlugs
-  //     ? ethSlugs
-  //     : btcSlugs
-  //     ? btcSlugs
-  //     : [];
-
-  // const paths = slugs
-  //   .flatMap(slug => {
-  //     return locales?.map(locale => ({params: {newsId: slug}, locale}));
-  //   })
-  //   .filter((path): path is {params: {newsId: string}; locale: string} => !!path);
-  // return {paths, fallback: false};
-
-  const folders = await getDirectories(NEWS_FOLDER); // Assuming NEWS_FOLDER is the parent directory
-
+  const folders = await getDirectories(NEWS_FOLDER);
   const allSlugs = await Promise.all(folders.map(folder => getSlugs(folder)));
   const slugs = allSlugs.flat();
 

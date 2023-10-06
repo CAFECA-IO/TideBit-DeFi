@@ -793,8 +793,7 @@ const UpdateFormModal = ({
     initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 
-  const spreadSymbol =
-    openCfdDetails?.openSpreadFee > 0 ? '+' : openCfdDetails.openSpreadFee < 0 ? '-' : '';
+  const spreadSymbol = openCfdDetails?.openSpreadFee >= 0 ? '+' : '-';
 
   const formContent = (
     <div className="flex-col items-center">

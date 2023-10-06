@@ -491,10 +491,8 @@ const PositionClosedModal = ({
     };
   }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
 
-  const openSpreadSymbol =
-    openCfdDetails?.openSpreadFee > 0 ? '+' : openCfdDetails.openSpreadFee < 0 ? '-' : '';
-  const closeSpreadSymbol =
-    gQuotationRef.current.spreadFee > 0 ? '+' : gQuotationRef.current.spreadFee < 0 ? '-' : '';
+  const openSpreadSymbol = openCfdDetails?.openSpreadFee >= 0 ? '+' : '-';
+  const closeSpreadSymbol = gQuotationRef.current.spreadFee >= 0 ? '+' : '-';
 
   const formContent = (
     <div className="mt-4 flex flex-col">

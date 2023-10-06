@@ -1,12 +1,8 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {
-  TypeOfBorderColor,
-  TypeOfPnLColor,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {TypeOfBorderColor, TypeOfPnLColor} from '../../constants/display';
 import Tooltip from '../tooltip/tooltip';
-import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {unitAsset} from '../../constants/config';
 import {useContext} from 'react';
 import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
@@ -123,9 +119,8 @@ const HistoryPositionModal = ({
   });
 
   const closeSpreadFee = closedCfdDetails.closeSpreadFee ?? 0;
-  const openSpreadSymbol =
-    closedCfdDetails?.openSpreadFee > 0 ? '+' : closedCfdDetails.openSpreadFee < 0 ? '-' : '';
-  const closeSpreadSymbol = closeSpreadFee > 0 ? '+' : closeSpreadFee < 0 ? '-' : '';
+  const openSpreadSymbol = closedCfdDetails?.openSpreadFee >= 0 ? '+' : '-';
+  const closeSpreadSymbol = closeSpreadFee >= 0 ? '+' : '-';
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col">
@@ -296,7 +291,7 @@ const HistoryPositionModal = ({
     <div {...otherProps}>
       {/* Info: (20231005 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-400px lg:p-10">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none lg:w-420px lg:p-8">
           {/* Info: (20231005 - Julian) Header */}
           <div className="flex items-start">
             {/* Info: (20231005 - Julian) Ticker Title */}

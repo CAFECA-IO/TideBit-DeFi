@@ -178,6 +178,7 @@
     "OPEN_POSITION_TITLE": "建仓",
     "CLOSE_POSITION_TITLE": "关仓",
     "UPDATE_POSITION_TITLE": "更新持仓",
+    "CFD_TRADE": "CFD 交易",
     "CONFIRM_CONTENT": "请确认您的交易",
     "TRANSACTION_BROADCAST": "交易已广播",
     "TRANSACTION_SUCCEED": "交易成功",
@@ -249,7 +250,8 @@
     "SHARING": "分享",
     "SHARING_CANCELLED_TITLE": "您已取消分享",
     "SHARING_LOADING": "正在载入...",
-    "SHARING_FAILED_CONTENT": "分享失败"
+    "SHARING_FAILED_CONTENT": "分享失败",
+    "SPREAD_HINT": "市场价格 + 点差 = 建仓/关仓价格"
   },
   "D_W_MODAL": {
     "DEPOSIT": "入金",

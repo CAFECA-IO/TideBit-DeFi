@@ -8,7 +8,7 @@ import {
   defaultCryptocurrency,
 } from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import Image from 'next/image';
-import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
 import {findCodeByReason, locker, numberFormatted, randomHex, wait} from '../../lib/common';
@@ -18,7 +18,6 @@ import {Code, Reason} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {isCustomError} from '../../lib/custom_error';
 import {useRouter} from 'next/router';
 

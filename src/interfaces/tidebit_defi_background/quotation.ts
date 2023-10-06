@@ -8,8 +8,9 @@ export interface IQuotation {
   targetAsset: ICurrency;
   unitAsset: string;
   typeOfPosition: ITypeOfPosition;
-  spotPrice: number;
   price: number;
+  spotPrice: number;
+  spreadFee: number;
   deadline: number;
   signature: string;
 }
@@ -25,6 +26,7 @@ export const getDummyQuotation = (instId: string, typeOfPosition: ITypeOfPositio
     targetAsset: targetAsset as ICurrency,
     unitAsset: unitAsset,
     typeOfPosition,
+    spreadFee: randomIntFromInterval(3, 10),
     price: randomIntFromInterval(1300, 2200),
     spotPrice: randomIntFromInterval(1300, 2200),
     deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,

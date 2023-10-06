@@ -33,7 +33,10 @@ const ReceiptSection = () => {
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
-  const [filteredDate, setFilteredDate] = useState<string[]>([]);
+  const [filteredDate, setFilteredDate] = useState({
+    startTimeStamp: 0,
+    endTimeStamp: 0,
+  });
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -139,11 +142,11 @@ const ReceiptSection = () => {
         }
       })
       .filter(v => {
-        if (filteredDate.length > 0) {
+        if (filteredDate.startTimeStamp > 0 && filteredDate.endTimeStamp > 0) {
           /* Info: (20230602 - Julian) search by date
-           * from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59, if filteredDate is empty, return all */
-          const startTime = new Date(filteredDate[0]).getTime() / 1000;
-          const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
+           * from startTimeStamp 00:00:00 to endTimeStamp 23:59:59, if filteredDate is empty, return all */
+          const startTime = filteredDate.startTimeStamp;
+          const endTime = filteredDate.endTimeStamp + 86399;
 
           return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
         } else {

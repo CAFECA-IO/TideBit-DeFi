@@ -33,12 +33,12 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
   await leaderboardPage.goto();
   await leaderboardPage.clickAnncmnt();
   const today = new Date();
-  const dayOfWeek = new Date().getDay();
+  const dayOfWeek = new Date().getUTCDay();
   const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const lastWeekStart = new Date(today);
-  lastWeekStart.setDate(today.getDate() - daysToSubtract - 8);
+  lastWeekStart.setDate(today.getUTCDate() - daysToSubtract - 8);
   const lastWeekEnd = new Date(lastWeekStart);
-  lastWeekEnd.setDate(lastWeekStart.getDate() + 7);
+  lastWeekEnd.setDate(lastWeekStart.getUTCDate() + 7);
   const monthNames = [
     'January',
     'February',
@@ -91,7 +91,7 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
         '#__next > div > div:nth-child(17) > main > div > div > div.min-h-screen > div > div.inline-block.text-base > span'
       )
     )
-    .toContainText(monthNames[today.getMonth() - 1] + ' ' + today.getFullYear());
+    .toContainText(monthNames[today.getUTCMonth() - 1] + ' ' + today.getFullYear());
 });
 
 test('4. 點擊此帳號的地址後點擊入金徽章並將徽章分享至FB。', async ({page, context}) => {

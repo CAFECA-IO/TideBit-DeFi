@@ -86,7 +86,7 @@ export class WalletConnect {
     // comfirm navAvailable
     const navAvailable = await this.page
       .locator(
-        '#__next > div > div:nth-child(17) > nav > div > div > div.flex.items-center > div > div > div:nth-child(6) > div > div:nth-child(1) > div:nth-child(2)'
+        '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div:nth-child(6) > div > div:nth-child(1) > div:nth-child(2)'
       )
       .textContent();
     const navAvailableNum = Number(navAvailable.substring(0, navAvailable.length - 4));

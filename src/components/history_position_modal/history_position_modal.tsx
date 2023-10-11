@@ -105,8 +105,6 @@ const HistoryPositionModal = ({
   const displayedIdBackgroundColor =
     pnl.type === 'PROFIT' ? 'bg-greenLinear' : pnl.type === 'LOSS' ? 'bg-redLinear' : '';
 
-  const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
-
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
@@ -123,9 +121,9 @@ const HistoryPositionModal = ({
   const closeSpreadSymbol = closeSpreadFee >= 0 ? '+' : '-';
 
   const formContent = (
-    <div className="relative flex w-full flex-auto flex-col">
+    <div className="relative flex w-full flex-auto flex-col text-xs lg:text-sm">
       <div
-        className={`${displayedBorderColor} mt-3 flex flex-col space-y-3 border-1px pb-3 text-xs text-lightWhite lg:text-sm`}
+        className={`${displayedBorderColor} mt-3 flex flex-col space-y-3 border-1px pb-3 text-lightWhite`}
       >
         {/* Info: (20231005 - Julian) CFD ID */}
         <div
@@ -268,11 +266,11 @@ const HistoryPositionModal = ({
         </div>
       </div>
       {/* Info: (20231005 - Julian) Share */}
-      <div className={`mt-2 flex items-center justify-end text-base text-lightGray`}>
-        <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
+      <div className={`mt-2 flex items-center justify-end text-lightGray`}>
+        <p>{t('POSITION_MODAL.SHARE')}:</p>
         <div className="flex items-center justify-between">
           {Object.entries(ShareSettings).map(([key, value]) => (
-            <div key={key} className={`${socialMediaStyle}`}>
+            <div key={key} className={`text-base hover:cursor-pointer hover:opacity-80`}>
               <Image
                 onClick={() => share({socialMedia: key as ISocialMedia, text: value.TEXT})}
                 src={value.ICON}

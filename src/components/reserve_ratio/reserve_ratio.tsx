@@ -11,6 +11,7 @@ import {FiDownload} from 'react-icons/fi';
 import {useGlobal} from '../../contexts/global_context';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {numberFormatted} from '../../lib/common';
+import useCheckLink from '../../lib/hooks/use_check_link';
 
 const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -18,6 +19,7 @@ const ReserveRatio = () => {
   const {websiteReserve} = useContext(MarketContext);
   const {BTC, ETH, USDT} = websiteReserve;
 
+  const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
   const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
   // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
@@ -81,7 +83,7 @@ const ReserveRatio = () => {
               color="text-lightGreen2"
               ratio={usdtReserveRatio}
               icon="/asset_icon/usdt.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={usdtUserHolding}
               walletAssets={usdtReserve}
             />
@@ -90,7 +92,7 @@ const ReserveRatio = () => {
               color="text-bluePurple"
               ratio={ethReserveRatio}
               icon="/asset_icon/eth.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={ethUserHolding}
               walletAssets={ethReserve}
             />
@@ -99,7 +101,7 @@ const ReserveRatio = () => {
               color="text-lightOrange"
               ratio={btcReserveRatio}
               icon="/asset_icon/btc.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={btcUserHolding}
               walletAssets={btcReserve}
             />
@@ -114,7 +116,7 @@ const ReserveRatio = () => {
               color="text-lightGreen2"
               ratio={usdtReserveRatio}
               icon="/asset_icon/usdt.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={usdtUserHolding}
               walletAssets={usdtReserve}
             />
@@ -123,7 +125,7 @@ const ReserveRatio = () => {
               color="text-bluePurple"
               ratio={ethReserveRatio}
               icon="/asset_icon/eth.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={ethUserHolding}
               walletAssets={ethReserve}
             />
@@ -132,7 +134,7 @@ const ReserveRatio = () => {
               color="text-lightOrange"
               ratio={btcReserveRatio}
               icon="/asset_icon/btc.svg"
-              link="/"
+              link={`${baifaLink}/reports/${baifaProjectId}/plugin`}
               userHoldings={btcUserHolding}
               walletAssets={btcReserve}
             />

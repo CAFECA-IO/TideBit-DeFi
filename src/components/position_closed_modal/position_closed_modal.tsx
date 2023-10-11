@@ -495,7 +495,7 @@ const PositionClosedModal = ({
   const closeSpreadSymbol = gQuotationRef.current.spreadFee >= 0 ? '+' : '-';
 
   const formContent = (
-    <div className="mt-4 flex flex-col">
+    <div className="mt-4 flex flex-col text-xs lg:text-sm">
       <div className="flex w-full items-end justify-between">
         {/* Info: (20231003 - Julian) Ticker Title */}
         <div className="flex items-center space-x-2 text-center">
@@ -516,7 +516,7 @@ const PositionClosedModal = ({
       </div>
 
       <div
-        className={`${displayedBorderColor} mt-2 flex w-full flex-col items-center space-y-3 border-1px p-4 text-xs leading-relaxed text-lightWhite lg:text-sm`}
+        className={`${displayedBorderColor} mt-2 flex w-full flex-col items-center space-y-3 border-1px p-4 leading-relaxed text-lightWhite`}
       >
         {/* Info: (20231003 - Julian) Type */}
         <div className={`${layoutInsideBorder}`}>
@@ -619,7 +619,7 @@ const PositionClosedModal = ({
       </div>
 
       {/* Info: (20231003 - Julian) CFD Content */}
-      <div className="my-3 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+      <div className="my-3 text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
       {/* Info: (20231003 - Julian) Submit Button */}
       <RippleButton

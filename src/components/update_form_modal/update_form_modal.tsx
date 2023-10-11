@@ -142,9 +142,9 @@ const UpdateFormModal = ({
     <div
       className={`${
         tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
-      } -mt-0 items-center transition-all`}
+      } items-center transition-all`}
     >
-      <div className="text-xs text-lightWhite">
+      <div className="text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
         {numberFormatted(
           roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2, true)
@@ -158,9 +158,9 @@ const UpdateFormModal = ({
     <div
       className={`${
         slToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
-      } -mt-1 items-center transition-all`}
+      } items-center transition-all`}
     >
-      <div className="text-xs text-lightWhite">
+      <div className="text-lightWhite">
         *
         {guaranteedpCheckedRef.current
           ? t('POSITION_MODAL.SL_SETTING')
@@ -452,7 +452,7 @@ const UpdateFormModal = ({
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
-        <label className="ml-2 flex text-xs font-medium text-lightGray">
+        <label className="ml-2 flex font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
             ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
@@ -796,9 +796,9 @@ const UpdateFormModal = ({
   const spreadSymbol = openCfdDetails?.openSpreadFee >= 0 ? '+' : '-';
 
   const formContent = (
-    <div className="flex-col items-center">
+    <div className="flex-col items-center text-xs lg:text-sm">
       <div
-        className={`${displayedBorderColor} mt-1 w-full space-y-3 border-1px pb-3 text-xs leading-relaxed text-lightWhite lg:mt-2 lg:text-sm`}
+        className={`${displayedBorderColor} mt-1 w-full space-y-3 border-1px pb-3 leading-relaxed text-lightWhite lg:mt-2`}
       >
         {/* Info: (20231004 - Julian) CFD ID */}
         <div
@@ -841,7 +841,7 @@ const UpdateFormModal = ({
         {/* Info: (20231004 - Julian) Open Price */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 whitespace-nowrap">
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(openCfdDetails?.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
@@ -889,7 +889,7 @@ const UpdateFormModal = ({
         </div>
       </div>
 
-      <div className={`mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
+      <div className={`mt-3 flex-col leading-relaxed text-lightWhite`}>
         <div className="mb-2 h-50px">
           <div className="flex items-center justify-between">
             <div className="text-lightGray">{t('POSITION_MODAL.TP_SETTING')}</div>
@@ -936,7 +936,7 @@ const UpdateFormModal = ({
     <div {...otherProps}>
       {/* Info: (20231004 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-5 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-400px sm:p-10">
+        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 px-5 py-8 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-400px sm:p-10">
           {/* Info: (20231004 - Julian) Header */}
           <div className="flex items-end justify-between pr-5 lg:pr-0">
             {/* Info: (20231004 - Julian) Ticker Title */}

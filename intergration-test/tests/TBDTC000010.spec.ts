@@ -38,7 +38,7 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
   const lastWeekStart = new Date(today);
   lastWeekStart.setDate(today.getDate() - daysToSubtract - 8);
   const lastWeekEnd = new Date(lastWeekStart);
-  lastWeekEnd.setDate(lastWeekStart.getDate() + 6);
+  lastWeekEnd.setDate(lastWeekStart.getDate() + 7);
   const monthNames = [
     'January',
     'February',
@@ -53,6 +53,13 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
     'November',
     'December',
   ];
+  await expect
+    .soft(
+      await page.locator(
+        '#__next > div > div:nth-child(17) > main > div > div > div.min-h-screen > div > div.inline-block > span'
+      )
+    )
+    .toBeVisible();
   await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.DAILY')}).click();
   // cant locate the text
   await expect

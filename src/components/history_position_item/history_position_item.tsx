@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import Image from 'next/image';
-import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
+import {TypeOfTransaction} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -16,7 +15,7 @@ interface IHistoryPositionItemProps {
   closedCfdDetails: IDisplayCFDOrder;
 }
 
-const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
+const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);

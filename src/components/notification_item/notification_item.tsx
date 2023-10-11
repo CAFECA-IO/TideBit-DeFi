@@ -72,10 +72,10 @@ export default function NotificationItem(notificationItem: INotificationItem) {
 
             <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
               <div className="mx-auto flex justify-between">
-                <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
+                <div className="mr-5px line-clamp-1 text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
                   {t(title)}
                 </div>
-                <div className="whitespace-nowrap pr-0 text-end text-xs text-lightGray">
+                <div className="whitespace-nowrap text-end text-xs text-lightGray">
                   <div>{displayTime.date}</div>
                   <div>{displayTime.time}</div>
                 </div>
@@ -84,7 +84,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
           </div>
 
           {/* Info: (20230420 - Julian) Content */}
-          <div className="mb-5 mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
+          <div className="mb-5 line-clamp-4 h-80px w-500px pl-12 text-xs text-lightGray">
             {t(content)}
           </div>
         </div>

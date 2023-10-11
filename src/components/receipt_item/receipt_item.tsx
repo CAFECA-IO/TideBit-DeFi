@@ -9,7 +9,6 @@ import {numberFormatted, timestampToString, toDisplayCFDOrder, toPnl} from '../.
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
@@ -21,7 +20,6 @@ import {
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
 import {CFDOperation} from '../../constants/cfd_order_type';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {ToastId} from '../../constants/toast_id';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import SafeMath from '../../lib/safe_math';
@@ -99,7 +97,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? '+0'
       : targetAmount >= 0
       ? '+' + numberFormatted(targetAmount)
-      : numberFormatted(targetAmount);
+      : '-' + numberFormatted(targetAmount);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -232,7 +230,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedReceiptIncome = (
     <div className="flex items-end lg:w-48">
-      <div className="text-2xl">{displayedReceiptAmount}</div>
+      <div className="text-xl lg:text-2xl">{displayedReceiptAmount}</div>
       <span className="ml-1 text-sm text-lightGray">{targetAsset}</span>
     </div>
   );
@@ -269,10 +267,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   );
 
   return (
-    <div className="flex h-70px w-full items-center">
-      {displayedReceiptTime}
+    <div className="flex h-76px w-full items-center">
+      <div className="w-70px">{displayedReceiptTime}</div>
 
-      <div className="flex h-full w-full items-center justify-between border-b-2 border-dashed border-lightGray4 pl-6">
+      <div className="flex h-full flex-1 items-center justify-between border-b-2 border-dashed border-lightGray4 pl-3">
         {displayedReceiptButton}
         {displayedReceiptIncome}
         {displayedReceiptDetail}

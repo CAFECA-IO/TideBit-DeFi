@@ -108,6 +108,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: '-',
       time: '-',
+      month: '-',
       abbreviatedMonth: '-',
       monthName: '-',
       monthAndYear: '-',
@@ -138,6 +139,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: dateString,
       time: timeString,
+      month: month,
       abbreviatedMonth: monthName,
       monthName: monthFullName,
       monthAndYear: `${monthFullName} ${year}`,
@@ -166,6 +168,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: dateString,
       time: timeString,
+      month: month,
       abbreviatedMonth: monthName,
       monthName: monthFullName,
       monthAndYear: `${monthFullName} ${year}`,
@@ -633,13 +636,10 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce(
-    (acc, [key, value]) => {
-      acc[value] = key;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {} as Record<string, string>);
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {

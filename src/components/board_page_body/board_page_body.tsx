@@ -12,7 +12,6 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-
 const BoardPageBody = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -61,10 +60,10 @@ const BoardPageBody = () => {
     return () => clearTimeout(timer);
   }, [leaderboardLiveRemains]);
 
-  const timeSpanStart = new Date(timestampToString(startTime).date).toISOString().slice(0, 10);
-  const timeSpanEnd = new Date(timestampToString(endTime).date).toISOString().slice(0, 10);
-  /* Info: (20230816 - Julian) Trick: 月榜的時間轉換由起始時間的第二天算，以避免時區誤差 */
-  const timeSpanMonthly = timestampToString(startTime + 86400).monthAndYear;
+  const timeSpanStart = timestampToString(startTime).date;
+  const timeSpanEnd = timestampToString(endTime).date; //new Date(endTime * 1000).toISOString().slice(0, 10);
+  /* Info: (20230816 - Julian) Trick: 月榜的時間固定在 UTC 0:00:00，以避免時區誤差 */
+  const timeSpanMonthly = timestampToString(startTime, 0).monthAndYear;
 
   const subtitle =
     timeSpan === RankingInterval.LIVE ? (

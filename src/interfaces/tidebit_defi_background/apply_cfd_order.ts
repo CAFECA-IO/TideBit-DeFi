@@ -4,7 +4,7 @@ import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_
 import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {getTimestamp, randomHex, roundToDecimalPlaces} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IApplyCloseCFDOrder} from './apply_close_cfd_order';
 import {IApplyCreateCFDOrder} from './apply_create_cfd_order';
@@ -41,6 +41,8 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     instId: applyCFDData.instId,
     state: OrderState.OPENING,
     openPrice: applyCFDData.price,
+    openSpotPrice: applyCFDData.quotation.spotPrice,
+    openSpreadFee: applyCFDData.quotation.spreadFee,
     createTimestamp: timestamp,
     updatedTimestamp: timestamp,
     typeOfPosition: applyCFDData.typeOfPosition,

@@ -1,12 +1,8 @@
 import {ImCross} from 'react-icons/im';
-import {
-  DELAYED_HIDDEN_SECONDS,
-  TypeOfBorderColor,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor} from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
+import Tooltip from '../tooltip/tooltip';
 import Image from 'next/image';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {
   locker,
   wait,
@@ -30,7 +26,6 @@ import {UserContext} from '../../contexts/user_context';
 import {
   CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
-  FRACTION_DIGITS,
   LIQUIDATION_PERCENTAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
@@ -47,9 +42,8 @@ import useStateRef from 'react-usestateref';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError, isCustomError} from '../../lib/custom_error';
-import {ICFDOrder, IOrder} from '../../interfaces/tidebit_defi_background/order';
-import {OrderState} from '../../constants/order_state';
+import {isCustomError} from '../../lib/custom_error';
+import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
@@ -222,8 +216,6 @@ const PositionOpenModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
-
   const displayedPositionColor = 'text-tidebitTheme';
 
   const displayedBorderColor = TypeOfBorderColor.EQUAL;
@@ -344,9 +336,6 @@ const PositionOpenModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
   };
-
-  const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
-  const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   // Info: get the quotation before the modal is shown (20230327 - Shirley)
   useEffect(() => {
@@ -508,25 +497,11 @@ const PositionOpenModal = ({
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
-                <div
-                  className="relative ml-1"
-                  onMouseEnter={mouseEnterHandler}
-                  onMouseLeave={mouseLeaveHandler}
-                >
-                  <div className="opacity-70">
-                    <AiOutlineQuestionCircle size={16} />
-                  </div>
-                  {guaranteedTooltipStatus == 3 && (
-                    <div
-                      role="tooltip"
-                      className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
-                    >
-                      <p className="pb-0 text-sm font-medium text-white">
-                        {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <Tooltip className="ml-1">
+                  <p className="w-56 text-left text-sm font-medium text-white">
+                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                  </p>
+                </Tooltip>
               </div>
             </div>
 

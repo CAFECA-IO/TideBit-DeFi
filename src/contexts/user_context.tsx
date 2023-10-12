@@ -701,17 +701,17 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const addFavorites = useCallback(async (instId: string[]) => {
+  const addFavorites = useCallback(async (instIds: string[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickersRef.current];
-        const newFavoriteTickers = updatedFavoriteTickers.concat(instId);
+        const newFavoriteTickers = updatedFavoriteTickers.concat(instIds);
         (await workerCtx.requestHandler({
           name: APIName.ADD_FAVORITE_TICKERS,
           method: Method.PUT,
           body: {
-            instId,
+            instId: instIds,
             starred: true,
           },
         })) as any;

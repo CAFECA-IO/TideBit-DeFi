@@ -41,7 +41,7 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(2) > section > div.mx-auto > div > div:nth-child(3) > div > h2'
     )
     .textContent();
-  await expect.soft(myAssetsPNL).toContain(headerPNL);
+  await expect.soft(myAssetsPNL).toContain(headerPNL.replace(/ /g, ''));
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(3) > div:nth-child(1) > button'

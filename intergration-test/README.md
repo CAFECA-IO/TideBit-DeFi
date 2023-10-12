@@ -43,7 +43,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 5. Install Playwright Browsers
 
     ```node.js
-    npx playwright install --with-deps
+    npx playwright install --with-deps chromium
     ```
 6. Install Metamask 11.0.0
 

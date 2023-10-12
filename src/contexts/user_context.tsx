@@ -86,8 +86,8 @@ export interface IUserContext {
   connect: () => Promise<IResult>;
   signServiceTerm: () => Promise<IResult>;
   disconnect: () => Promise<IResult>;
-  addFavorites: (props: string) => Promise<IResult>;
-  removeFavorites: (props: string) => Promise<IResult>;
+  addFavorites: (props: string[]) => Promise<IResult>;
+  removeFavorites: (props: string[]) => Promise<IResult>;
   listHistories: () => Promise<IResult>;
   listCFDs: (props: string) => Promise<IResult>;
   getCFD: (props: string) => ICFDOrder | null;
@@ -701,11 +701,12 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const addFavorites = useCallback(async (instId: string) => {
+  const addFavorites = useCallback(async (instId: string[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickersRef.current];
+        const newFavoriteTickers = updatedFavoriteTickers.concat(instId);
         (await workerCtx.requestHandler({
           name: APIName.ADD_FAVORITE_TICKERS,
           method: Method.PUT,
@@ -713,10 +714,10 @@ export const UserProvider = ({children}: IUserProvider) => {
             instId,
             starred: true,
           },
-        })) as string[];
-        updatedFavoriteTickers.push(instId);
-        setFavoriteTickers(updatedFavoriteTickers);
-        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
+        })) as any;
+
+        setFavoriteTickers(newFavoriteTickers);
+        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
         result = defaultResultSuccess;
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -730,26 +731,30 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const removeFavorites = useCallback(async (instId: string) => {
+  const removeFavorites = useCallback(async (instIds: string[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickersRef.current];
-        const index: number = updatedFavoriteTickers.findIndex(id => id === instId);
-        if (index !== -1) {
-          (await privateRequestHandler({
+
+        const newFavoriteTickers = updatedFavoriteTickers.filter(
+          ticker => !instIds.includes(ticker)
+        );
+
+        if (newFavoriteTickers.length !== updatedFavoriteTickers.length) {
+          await privateRequestHandler({
             name: APIName.REMOVE_FAVORITE_TICKERS,
             method: Method.PUT,
             body: {
-              instId,
+              instId: instIds,
               starred: false,
             },
-          })) as string[];
-          updatedFavoriteTickers.splice(index, 1);
+          });
+
+          setFavoriteTickers(newFavoriteTickers);
+          notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
+          result = defaultResultSuccess;
         }
-        setFavoriteTickers(updatedFavoriteTickers);
-        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
-        result = defaultResultSuccess;
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console

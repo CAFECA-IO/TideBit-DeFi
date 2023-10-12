@@ -141,13 +141,8 @@ const TickerSelectorBox = ({
       if (favoriteDiff.inArr1NotInArr2.length === 0 && favoriteDiff.inArr2NotInArr1.length === 0) {
         return;
       } else {
-        for (const item of favoriteDiff.inArr1NotInArr2) {
-          await userCtx.removeFavorites(item);
-        }
-
-        for (const item of favoriteDiff.inArr2NotInArr1) {
-          await userCtx.addFavorites(item);
-        }
+        await userCtx.removeFavorites(favoriteDiff.inArr1NotInArr2);
+        await userCtx.addFavorites(favoriteDiff.inArr2NotInArr1);
       }
     };
 

@@ -31,6 +31,17 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
   await myAssetsPage.checkBalance();
+  const headerPNL = await page
+    .locator(
+      '#__next > div > div:nth-child(17) > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(3) > div.whitespace-nowrap.text-sm > span'
+    )
+    .textContent();
+  const myAssetsPNL = await page
+    .locator(
+      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(2) > section > div.mx-auto > div > div:nth-child(3) > div > h2'
+    )
+    .textContent();
+  await expect.soft(myAssetsPNL).toContain(headerPNL);
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(3) > div:nth-child(1) > button'

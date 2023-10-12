@@ -40,6 +40,7 @@ export interface ICardProps {
   starColor?: string;
   starred?: boolean;
   getStarredState?: (props: boolean) => void;
+  getStarredInstId?: (props: string) => void;
 
   className?: string;
   cardClickHandler?: () => void;
@@ -66,6 +67,8 @@ const CryptoCard = ({
   lineGraphProps,
   cardClickHandler,
   onTheSamePage = true,
+  getStarredState,
+  getStarredInstId,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -73,7 +76,7 @@ const CryptoCard = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
 
-  const [starredState, setStarredState, starredStateRef] = useStateRef(starred);
+  const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
 
   fluctuating = Number(fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
@@ -84,6 +87,10 @@ const CryptoCard = ({
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
+  const passStarredState = (props: boolean) => {
+    getStarredState && getStarredState(props);
+  };
+
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
@@ -93,11 +100,16 @@ const CryptoCard = ({
         autoClose: 3000,
         isLoading: false,
       });
+      return;
     }
 
     event.stopPropagation(); // Prevent the div click handler from firing
 
     setStarredState(!starredStateRef.current);
+
+    passStarredState(starredStateRef.current);
+    // eslint-disable-next-line no-console
+    console.log('starredStateRef.current in Card', starredStateRef.current, instId);
     // if (!starred) {
     //   userCtx.addFavorites(instId);
     // } else {

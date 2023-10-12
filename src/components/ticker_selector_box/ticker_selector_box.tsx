@@ -1,6 +1,6 @@
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {CgSearch} from 'react-icons/cg';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
@@ -13,6 +13,8 @@ import {ICurrency} from '../../constants/currency';
 import {ImCross} from 'react-icons/im';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
+import useStateRef from 'react-usestateref';
+import {ITicker, Ticker} from '../../constants/ticker';
 
 type TranslateFunction = (s: string) => string;
 
@@ -21,6 +23,10 @@ interface ITickerSelectorBox {
   tickerSelectorBoxVisible: boolean;
   tickerSelectorBoxClickHandler: () => void;
 }
+
+type StarredStateFunctions = {
+  [instId: string]: (prop: boolean) => void;
+};
 
 export interface ICryptoCardData {
   instId: string;
@@ -50,7 +56,46 @@ const TickerSelectorBox = ({
 
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState('All');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeTab, setActiveTab, activeTabRef] = useStateRef('All');
+  const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
+    undefined
+  );
+  const [searches, setSearches] = useState<string>();
+  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
+  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+  const [starredTickers, setStarredTickers, starredTickersRef] = useStateRef<string[]>([]);
+
+  const generateStarredStateFunction = (ticker: ITicker) => (prop: boolean) => {
+    setStarredTickers(prevTickers =>
+      prop ? [...prevTickers, ticker] : prevTickers.filter(t => t !== ticker)
+    );
+    // eslint-disable-next-line no-console
+    console.log('generateStarredStateFunction');
+  };
+
+  const tickerFunctions = useMemo(() => {
+    // eslint-disable-next-line no-console
+    console.log('tickerFunction');
+
+    return Object.values(Ticker).reduce(
+      (acc, ticker) => {
+        acc[ticker] = generateStarredStateFunction(ticker);
+        return acc;
+      },
+      {} as {[key: string]: (prop: boolean) => void}
+    );
+  }, []);
+
+  // Info: get the star state of all tickers from CryptoCard (20231012 - Shirley)
+  const getStarredStateFunctions = useMemo<StarredStateFunctions>(() => {
+    // eslint-disable-next-line no-console
+    console.log('getStarredStateFunctions Memo');
+    return availableTickers?.reduce((acc, cryptoCard) => {
+      acc[cryptoCard.instId] = tickerFunctions[cryptoCard.instId];
+      return acc;
+    }, {} as StarredStateFunctions);
+  }, [availableTickers]);
 
   const cardClickHandler = (route: string) => {
     tickerSelectorBoxClickHandler();
@@ -71,6 +116,7 @@ const TickerSelectorBox = ({
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
       const addCallbackFunc: ICryptoCardData = {
         ...each,
+        starred: starredTickersRef.current.includes(each.instId),
         starColor: color?.starColor,
         gradientColor: color?.gradientColor,
       };
@@ -78,17 +124,6 @@ const TickerSelectorBox = ({
     });
     return cryptoCardsData;
   };
-
-  const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
-    undefined
-  );
-
-  const [searches, setSearches] = useState<string>();
-
-  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
-
-  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setAvailableTickers(marketCtx.listAvailableTickers());
@@ -98,6 +133,10 @@ const TickerSelectorBox = ({
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
   };
+
+  useEffect(() => {
+    setStarredTickers(userCtx.favoriteTickers);
+  }, []);
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
@@ -123,7 +162,7 @@ const TickerSelectorBox = ({
         setFilteredFavorites(newSearchResult);
       }
     }
-  }, [tickerSelectorBoxVisible, searches, activeTab, availableTickers]);
+  }, [tickerSelectorBoxVisible, searches, activeTabRef.current, availableTickers]);
 
   const allTabClickHandler = () => {
     setActiveTab('All');
@@ -140,17 +179,21 @@ const TickerSelectorBox = ({
     activeTab == 'Favorite' ? 'bg-darkGray1 text-lightWhite' : 'bg-darkGray5 text-lightGray';
 
   const displayedAllCryptoCards = filteredCards?.map((cryptoCard, i) => {
+    const getStarredStateFunction = getStarredStateFunctions[cryptoCard.instId];
+    const starredState = starredTickersRef.current.includes(cryptoCard.instId);
+
     if (i === 0) {
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          getStarredState={getStarredStateFunction}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="ml-4 mt-4"
           instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
           starColor={cryptoCard.starColor}
-          starred={cryptoCard.starred}
+          starred={starredState}
           chain={cryptoCard.name}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -164,13 +207,14 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
+        getStarredState={getStarredStateFunction}
         cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"
         instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
         star={true}
         starColor={cryptoCard.starColor}
-        starred={cryptoCard.starred}
+        starred={starredState}
         chain={cryptoCard.name}
         currency={cryptoCard.currency}
         price={cryptoCard.price}
@@ -182,11 +226,15 @@ const TickerSelectorBox = ({
   });
 
   const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
-    if (cryptoCard.starred !== true) return;
+    const getStarredStateFunction = getStarredStateFunctions[cryptoCard.instId];
+
+    // if (cryptoCard.starred !== true) return;
+    if (!starredTickersRef.current.includes(cryptoCard.instId)) return;
     if (i === 0) {
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          getStarredState={getStarredStateFunction}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="ml-4 mt-4"
           instId={cryptoCard.instId}
@@ -207,6 +255,7 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
+        getStarredState={getStarredStateFunction}
         cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"
         instId={cryptoCard.instId}

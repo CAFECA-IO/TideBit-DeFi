@@ -130,7 +130,7 @@ const TickerSelectorBox = ({
 
   useEffect(() => {
     setStarredTickers(userCtx.favoriteTickers);
-  }, []);
+  }, [userCtx.enableServiceTerm, userCtx.favoriteTickers]);
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) return;

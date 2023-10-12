@@ -6,7 +6,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/) (version 18 or higher)
+- [Node.js](https://nodejs.org/en/) (version 18.18.1 LTS)
 
 ### Dependencies
 
@@ -19,7 +19,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 1. Clone this repository
 
     ```bash
-    git clone https://github.com/CAFECA-IO/Playwright.git
+    git clone https://github.com/CAFECA-IO/TideBit-DeFi.git
     ```
 
 2. Checkout to the develop branch

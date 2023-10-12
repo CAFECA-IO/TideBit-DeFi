@@ -15,6 +15,7 @@ import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
 import {ITicker, Ticker} from '../../constants/ticker';
+import {areArraysEqual, arrayDifferences} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -70,14 +71,9 @@ const TickerSelectorBox = ({
     setStarredTickers(prevTickers =>
       prop ? [...prevTickers, ticker] : prevTickers.filter(t => t !== ticker)
     );
-    // eslint-disable-next-line no-console
-    console.log('generateStarredStateFunction');
   };
 
   const tickerFunctions = useMemo(() => {
-    // eslint-disable-next-line no-console
-    console.log('tickerFunction');
-
     return Object.values(Ticker).reduce(
       (acc, ticker) => {
         acc[ticker] = generateStarredStateFunction(ticker);
@@ -89,8 +85,6 @@ const TickerSelectorBox = ({
 
   // Info: get the star state of all tickers from CryptoCard (20231012 - Shirley)
   const getStarredStateFunctions = useMemo<StarredStateFunctions>(() => {
-    // eslint-disable-next-line no-console
-    console.log('getStarredStateFunctions Memo');
     return availableTickers?.reduce((acc, cryptoCard) => {
       acc[cryptoCard.instId] = tickerFunctions[cryptoCard.instId];
       return acc;
@@ -125,18 +119,40 @@ const TickerSelectorBox = ({
     return cryptoCardsData;
   };
 
-  useEffect(() => {
-    setAvailableTickers(marketCtx.listAvailableTickers());
-  }, [marketCtx]);
-
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
   };
 
   useEffect(() => {
+    setAvailableTickers(marketCtx.listAvailableTickers());
+  }, [marketCtx]);
+
+  useEffect(() => {
     setStarredTickers(userCtx.favoriteTickers);
   }, []);
+
+  useEffect(() => {
+    if (tickerSelectorBoxVisible) return;
+
+    const favoriteDiff = arrayDifferences(userCtx.favoriteTickers, starredTickersRef.current);
+
+    const handleFavorites = async () => {
+      if (favoriteDiff.inArr1NotInArr2.length === 0 && favoriteDiff.inArr2NotInArr1.length === 0) {
+        return;
+      } else {
+        for (const item of favoriteDiff.inArr1NotInArr2) {
+          await userCtx.removeFavorites(item);
+        }
+
+        for (const item of favoriteDiff.inArr2NotInArr1) {
+          await userCtx.addFavorites(item);
+        }
+      }
+    };
+
+    handleFavorites();
+  }, [tickerSelectorBoxVisible]);
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
@@ -228,7 +244,6 @@ const TickerSelectorBox = ({
   const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
     const getStarredStateFunction = getStarredStateFunctions[cryptoCard.instId];
 
-    // if (cryptoCard.starred !== true) return;
     if (!starredTickersRef.current.includes(cryptoCard.instId)) return;
     if (i === 0) {
       return (

@@ -92,6 +92,8 @@ const CryptoCard = ({
   };
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the div click handler from firing
+
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
@@ -103,18 +105,8 @@ const CryptoCard = ({
       return;
     }
 
-    event.stopPropagation(); // Prevent the div click handler from firing
-
     setStarredState(!starredStateRef.current);
-
     passStarredState(starredStateRef.current);
-    // eslint-disable-next-line no-console
-    console.log('starredStateRef.current in Card', starredStateRef.current, instId);
-    // if (!starred) {
-    //   userCtx.addFavorites(instId);
-    // } else {
-    //   userCtx.removeFavorites(instId);
-    // }
   };
 
   const showStar = starredStateRef.current ? (

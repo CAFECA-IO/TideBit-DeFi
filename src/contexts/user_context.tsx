@@ -726,6 +726,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
       }
     }
+
     return result;
   }, []);
 
@@ -757,6 +758,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
       }
     }
+
     return result;
   }, []);
 

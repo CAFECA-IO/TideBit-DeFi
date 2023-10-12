@@ -31,7 +31,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 3. Change directory to the repository
 
     ```bash
-    cd Playwright/TBD
+    cd intergration
     ```
 
 4. Install dependencies
@@ -45,6 +45,11 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
     ```node.js
     npx playwright install --with-deps
     ```
+6. Install Metamask 11.0.0
+
+   ```bash
+   wget https://github.com/MetaMask/metamask-extension/releases/download/v11.0.0/metamask-chrome-11.0.0.zip && unzip metamask-chrome-11.0.0.zip -d metamask-chrome-11.0.0
+   ```
 
 6. Run Playwright tests to run all the test in tests folder
 

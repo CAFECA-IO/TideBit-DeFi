@@ -9,7 +9,6 @@ module.exports = {
       "''": '',
     },
     fontSize: {
-      '3xs': ['8px', '12px'],
       xxs: ['10px', '12px'],
       xs: ['12px', '16px'],
       sm: ['14px', '20px'],

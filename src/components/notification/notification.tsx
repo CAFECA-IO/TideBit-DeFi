@@ -1,6 +1,5 @@
 import {useContext, useState, useEffect} from 'react';
 import NotificationItem from '../notification_item/notification_item';
-import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {NotificationLevel} from '../../constants/notification_level';
@@ -21,7 +20,6 @@ export default function Notification({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
-  const {enableServiceTerm} = useContext(UserContext);
 
   const [readAllanim, setReadAllanim] = useState('translate-x-0 opacity-100');
 
@@ -41,20 +39,6 @@ export default function Notification({
       }
     });
   }, []);
-
-  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
-  const hamburgerStyles =
-    'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
-
-  /* Info: (20230327 - Julian) Hamburger Animation */
-  // const displayedMobileNavBarLine1 = !componentVisible
-  //   ? 'translate-y-0 rotate-0'
-  //   : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  // const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0';
-  // const displayedMobileNavBarLine3 = !componentVisible
-  //   ? 'translate-y-3 rotate-0'
-  //   : 'translate-y-0 origin-left w-3/4 rotate-35';
-  //   */
 
   let timer: NodeJS.Timeout;
 
@@ -150,38 +134,10 @@ export default function Notification({
     </>
   ) : null;
 
-  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
-  /* Info: (20230420 - Julian) Cover for Mobile notification drawer
-   * 如果用戶為登入狀態， cover width 改為 7/10 讓頭貼可以被看到 */
-  // const isDisplayedNotificationSidebarMobileCover = (
-  //   <div
-  //     className={`sm:hidden ${enableServiceTerm ? 'w-7/10' : 'w-screen'} ${
-  //       componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
-  //     } fixed z-80 flex h-14 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
-  //   >
-  //     <div className="flex basis-full items-end">
-  //       <div className="flex border-r border-lightGray1 lg:hidden">
-  //         <button className="z-50 inline-flex items-center justify-center rounded-md p-2">
-  //           <div className="relative h-20px w-30px cursor-pointer">
-  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
-  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
-  //           </div>
-  //         </button>
-  //       </div>
-
-  //       <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
-  //     </div>
-  //   </div>
-  // );
-  // */
-
   return (
     <div>
       {/* Info: (20230420 - Julian) Notification Sidebar */}
       {isDisplayedNotificationSidebarCover}
-      {/* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
-      {isDisplayedNotificationSidebarMobileCover}*/}
       {isDisplayedNotificationSidebarSection}
     </div>
   );

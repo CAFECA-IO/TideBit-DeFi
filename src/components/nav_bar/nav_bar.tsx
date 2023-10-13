@@ -34,9 +34,7 @@ const NavBar = () => {
     setComponentVisible: setNotifyVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const sidebarOpenHandler = () => {
-    setNotifyVisible(!notifyVisible);
-  };
+  const sidebarOpenHandler = () => setNotifyVisible(!notifyVisible);
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
@@ -56,7 +54,7 @@ const NavBar = () => {
   const isDisplayedUnreadNumber =
     notificationCtx.unreadNotifications.length > 0 ? (
       <span className="absolute bottom-4 left-3 z-20 inline-flex h-4 w-4 items-center justify-center rounded-xl bg-tidebitTheme">
-        <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
+        <p className="text-center text-xs">{notificationCtx.unreadNotifications.length}</p>
       </span>
     ) : null;
 
@@ -80,17 +78,13 @@ const NavBar = () => {
     if (langIsOpen) {
       setLangIsOpen(false);
     } else if (sidebarOpenRef.current) {
-      // setComponentVisible(false);
       setSidebarOpen(!sidebarOpen);
     } else {
       setNavOpen(!navOpen);
     }
   };
 
-  const sidebarOpenHandlerMobile = () => {
-    setSidebarOpen(!sidebarOpen);
-    // setComponentVisible(!componentVisible);
-  };
+  const sidebarOpenHandlerMobile = () => setSidebarOpen(!sidebarOpen);
 
   const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
 
@@ -132,13 +126,6 @@ const NavBar = () => {
     /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="px-3 py-2 text-sm" />
   );
-
-  // const isDisplayedUnreadnumber =
-  //   notificationCtx.unreadNotifications.length > 0 ? (
-  //     <span className="absolute right-0 top-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
-  //       <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
-  //     </span>
-  //   ) : null;
 
   const desktopLayout = (
     <>

@@ -6,7 +6,7 @@ import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {timestampToString} from '../../lib/common';
+import {numberFormatted, timestampToString} from '../../lib/common';
 import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 
@@ -32,14 +32,8 @@ const WithdrawalHistoryModal = ({
   const displayedWithdrawalAsset = order.targetAsset;
   const displayedWithdrawalTime = timestampToString(createTimestamp ?? 0);
   const displayedWithdrawalType = t('D_W_MODAL.WITHDRAW');
-  const displayedWithdrawalAmount = order.targetAmount.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
-  const displayedWithdrawalFee =
-    order.fee === 0
-      ? '-'
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedWithdrawalAmount = numberFormatted(order.targetAmount);
+  const displayedWithdrawalFee = order.fee === 0 ? '-' : numberFormatted(order.fee, true);
 
   const displayedWithdrawalAssetIcon = (
     <>
@@ -57,9 +51,7 @@ const WithdrawalHistoryModal = ({
     order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      <div>
-        {balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-      </div>
+      <div>{numberFormatted(balance?.available)}</div>
     );
 
   const displayedWithdrawalDetail =

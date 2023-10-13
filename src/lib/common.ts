@@ -108,6 +108,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: '-',
       time: '-',
+      month: '-',
       abbreviatedMonth: '-',
       monthName: '-',
       monthAndYear: '-',
@@ -138,6 +139,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: dateString,
       time: timeString,
+      month: month,
       abbreviatedMonth: monthName,
       monthName: monthFullName,
       monthAndYear: `${monthFullName} ${year}`,
@@ -166,6 +168,7 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
     return {
       date: dateString,
       time: timeString,
+      month: month,
       abbreviatedMonth: monthName,
       monthName: monthFullName,
       monthAndYear: `${monthFullName} ${year}`,
@@ -605,7 +608,6 @@ export const numberFormatted = (n: number | string | undefined, dash = false) =>
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         );
-  // : Math.abs(+n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
 };
 

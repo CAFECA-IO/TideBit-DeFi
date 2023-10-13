@@ -6,14 +6,13 @@ import {
   TypeOfPnLColorHex,
   TypeOfTransaction,
   LINE_GRAPH_STROKE_COLOR,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
-import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
+import {POSITION_CLOSE_COUNTDOWN_SECONDS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'next-i18next';
@@ -197,10 +196,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     },
     OPEN_PRICE: {
       VALUE: displayedPositionPrice,
-      STRING: `$ ${displayedPositionPrice.toLocaleString(
-        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-        FRACTION_DIGITS
-      )}`,
+      STRING: `$ ${numberFormatted(displayedPositionPrice)}`,
     },
   };
 

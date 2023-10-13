@@ -8,17 +8,16 @@ import {
   defaultCryptocurrency,
 } from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import Image from 'next/image';
-import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
-import {findCodeByReason, locker, randomHex, wait} from '../../lib/common';
+import {findCodeByReason, locker, numberFormatted, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code, Reason} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {isCustomError} from '../../lib/custom_error';
 import {useRouter} from 'next/router';
 
@@ -357,12 +356,7 @@ const DepositModal = ({
             <div className="flex justify-end">
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
-                <span className="text-tidebitTheme">
-                  {userAvailableBalance.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}
-                </span>{' '}
+                <span className="text-tidebitTheme">{numberFormatted(userAvailableBalance)}</span>{' '}
                 {selectedCrypto.symbol}
               </p>
             </div>

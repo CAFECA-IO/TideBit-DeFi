@@ -8,6 +8,7 @@ import {DEFAULT_BALANCE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/d
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -69,17 +70,11 @@ const BalanceSection = () => {
     />
   );
 
-  const displayedBalance = hidden
-    ? '********'
-    : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedBalance = hidden ? '********' : numberFormatted(totalBalance);
 
-  const displayedAvalibleBalance = hidden
-    ? '*****'
-    : availableBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedAvalibleBalance = hidden ? '*****' : numberFormatted(availableBalance);
 
-  const displayedLockedBalance = hidden
-    ? '*****'
-    : lockedBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedLockedBalance = hidden ? '*****' : numberFormatted(lockedBalance);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();

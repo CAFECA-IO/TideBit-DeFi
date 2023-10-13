@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import Tooltip from '../tooltip/tooltip';
 import RippleButton from '../ripple_button/ripple_button';
 import {
   DEFAULT_BUY_PRICE,
@@ -10,7 +10,6 @@ import {
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_USER_BALANCE,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
@@ -18,7 +17,6 @@ import {
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_PERCENTAGE,
-  FRACTION_DIGITS,
   TP_SL_LIMIT_RATIO,
   DEFAULT_INSTID,
   DEFAULT_CURRENCY,
@@ -35,6 +33,7 @@ import {ClickEvent} from '../../constants/tidebit_event';
 import {
   getEstimatedPnL,
   getTimestamp,
+  numberFormatted,
   roundToDecimalPlaces,
   validateAllInput,
   validateNumberFormat,
@@ -76,9 +75,6 @@ const TradeTab = () => {
 
   const [longPrice, setLongPrice, longPriceRef] = useStateRef(DEFAULT_BUY_PRICE);
   const [shortPrice, setShortPrice, shortPriceRef] = useStateRef(DEFAULT_SELL_PRICE);
-
-  const [longTooltipStatus, setLongTooltipStatus] = useState(0);
-  const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
@@ -365,6 +361,7 @@ const TradeTab = () => {
           unitAsset: unitAsset,
           price: longPriceRef.current,
           spotPrice: marketCtx.selectedTicker?.price ?? 0,
+          spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -385,6 +382,7 @@ const TradeTab = () => {
           unitAsset: unitAsset,
           price: shortPriceRef.current,
           spotPrice: marketCtx.selectedTicker?.price ?? 0,
+          spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -399,6 +397,7 @@ const TradeTab = () => {
         unitAsset: unitAsset,
         price: longPriceRef.current,
         spotPrice: marketCtx.selectedTicker?.price ?? 0,
+        spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
@@ -410,6 +409,7 @@ const TradeTab = () => {
         unitAsset: unitAsset,
         price: shortPriceRef.current,
         spotPrice: marketCtx.selectedTicker?.price ?? 0,
+        spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
@@ -477,25 +477,21 @@ const TradeTab = () => {
 
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
-
     calculateLongProfit();
   };
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
-
     calculateLongLoss();
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
-
     calculateShortProfit();
   };
 
   const getShortSlValue = (value: number) => {
     setShortSlValue(value);
-
     calculateShortLoss();
   };
 
@@ -738,33 +734,27 @@ const TradeTab = () => {
     );
   };
 
-  const targetAmountDetection = (value?: number) => {
-    renewPosition();
-  };
+  const targetAmountDetection = (value?: number) => renewPosition();
 
   const tabBodyWidth = 'w-320px';
 
   const getToggledLongTpSetting = (bool: boolean) => {
     setLongTpToggle(bool);
-
     calculateLongProfit();
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
     setLongSlToggle(bool);
-
     calculateLongLoss();
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
     setShortTpToggle(bool);
-
     calculateShortProfit();
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
     setShortSlToggle(bool);
-
     calculateShortLoss();
   };
 
@@ -875,12 +865,6 @@ const TradeTab = () => {
   const isDisplayedMarginShortSize = targetLengthShort > 7 ? 'text-sm' : 'text-base';
   const isDisplayedValueShortSize = valueOfPositionLengthShort > 7 ? 'text-sm' : 'text-base';
 
-  const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
-  const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
-
-  const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
-  const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
-
   // ----------Target area----------
   const displayedTargetAmountSetting = (
     <TradingInput
@@ -903,11 +887,7 @@ const TradeTab = () => {
   const displayedRequiredMarginLongStyle = (
     <>
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} my-1 text-base`}>
-        {requiredMarginLongRef.current?.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}{' '}
-        {unitAsset}
+        {numberFormatted(requiredMarginLongRef.current)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -947,11 +927,9 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
         ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLongProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLongProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -984,11 +962,9 @@ const TradeTab = () => {
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedLongLossValueRef.current.symbol} ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedLongLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -998,7 +974,7 @@ const TradeTab = () => {
     <div
       className={`${
         longSlToggle ? `translate-y-5 lg:h-70px` : `invisible translate-y-0`
-      } lg:mb-10 lg:mt-0 flex items-start transition-all duration-150 ease-in-out`}
+      } flex items-start transition-all duration-150 ease-in-out lg:mb-10 lg:mt-0`}
     >
       <input
         type="checkbox"
@@ -1006,39 +982,19 @@ const TradeTab = () => {
         onChange={longGuaranteedStopChangeHandler}
         className={`h-5 w-5 rounded text-lightWhite accent-tidebitTheme`}
       />
-      <label className={`ml-2 flex text-sm font-medium text-lightGray`}>
+      <label className={`ml-2 flex items-center text-sm font-medium text-lightGray`}>
         {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
         <span className="text-lightWhite">
           {' '}
-          ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-          {guaranteedStopFeeLongRef.current?.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}{' '}
+          ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {numberFormatted(guaranteedStopFeeLongRef.current)}{' '}
           {unitAsset})
         </span>
-        {/* tooltip */}
-        <div className="ml-1">
-          <div
-            className="relative"
-            onMouseEnter={longToolMouseEnterHandler}
-            onMouseLeave={longToolMouseLeaveHandler}
-          >
-            <div className="">
-              <AiOutlineQuestionCircle size={20} />
-            </div>
-            {longTooltipStatus == 3 && (
-              <div
-                role="tooltip"
-                className={`absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out`}
-              >
-                <p className="pb-1 text-sm font-medium text-white">
-                  {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Info: (20231003 - Julian) Tooltip */}
+        <Tooltip className="ml-1">
+          <p className="w-56 text-left text-sm font-medium text-white">
+            {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
+          </p>
+        </Tooltip>
       </label>
     </div>
   );
@@ -1049,11 +1005,7 @@ const TradeTab = () => {
       <div
         className={`${isDisplayedMarginShortStyle} ${isDisplayedMarginShortSize} mt-1 text-base`}
       >
-        {requiredMarginShortRef.current?.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}{' '}
-        {unitAsset}
+        {numberFormatted(requiredMarginShortRef.current)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginShortWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -1093,11 +1045,9 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
         ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedShortProfitValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedShortProfitValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -1130,11 +1080,9 @@ const TradeTab = () => {
     >
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedShortLossValueRef.current.symbol} ${' '}
-        {roundToDecimalPlaces(
-          Math.abs(estimatedShortLossValueRef.current.number),
-          2,
-          true
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
+        {numberFormatted(
+          roundToDecimalPlaces(Math.abs(estimatedShortLossValueRef.current.number), 2, true)
+        )}{' '}
         {unitAsset}
       </div>
     </div>
@@ -1144,7 +1092,7 @@ const TradeTab = () => {
     <div
       className={`${
         shortSlToggle ? `translate-y-5 lg:h-70px` : `invisible translate-y-0`
-      } lg:mb-10 lg:mt-0 mb-10 mt-0 items-center transition-all`}
+      } mb-10 mt-0 items-center transition-all lg:mb-10 lg:mt-0`}
     >
       <div className="mt-0 flex items-center">
         <input
@@ -1153,39 +1101,19 @@ const TradeTab = () => {
           onChange={shortGuaranteedStopChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"
         />
-        <label className="ml-2 flex text-sm font-medium text-lightGray">
+        <label className="ml-2 flex items-center text-sm font-medium text-lightGray">
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-            {guaranteedStopFeeShortRef.current?.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}{' '}
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {numberFormatted(guaranteedStopFeeShortRef.current)}{' '}
             {unitAsset})
           </span>
-          {/* tooltip */}
-          <div className="ml-1">
-            <div
-              className="relative"
-              onMouseEnter={shortToolMouseEnterHandler}
-              onMouseLeave={shortToolMouseLeaveHandler}
-            >
-              <div className="">
-                <AiOutlineQuestionCircle size={20} />
-              </div>
-              {shortTooltipStatus == 3 && (
-                <div
-                  role="tooltip"
-                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
-                >
-                  <p className="pb-1 text-sm font-medium text-white">
-                    {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Info: (20231003 - Julian) Tooltip */}
+          <Tooltip className="ml-1">
+            <p className="w-56 text-left text-sm font-medium text-white">
+              {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
+            </p>
+          </Tooltip>
         </label>
       </div>
     </div>
@@ -1356,19 +1284,11 @@ const TradeTab = () => {
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
               {isActiveTabLong ? (
                 <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                  {valueOfPositionLongRef.current?.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}{' '}
-                  {unitAsset}
+                  {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
                 </div>
               ) : (
                 <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
-                  {valueOfPositionShortRef.current?.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}{' '}
-                  {unitAsset}
+                  {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
                 </div>
               )}
             </div>
@@ -1410,14 +1330,8 @@ const TradeTab = () => {
         <p className="text-xs">
           ₮{' '}
           {isActiveTabLong
-            ? Number(longPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )
-            : Number(shortPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
+            ? numberFormatted(longPriceRef.current)
+            : numberFormatted(shortPriceRef.current)}
         </p>
       </RippleButton>
     </div>
@@ -1464,11 +1378,7 @@ const TradeTab = () => {
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                    {valueOfPositionLongRef.current?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}{' '}
-                    {unitAsset}
+                    {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
                   </div>
                 </div>
               </div>
@@ -1505,7 +1415,7 @@ const TradeTab = () => {
               </div>
 
               {/* Info: (20230925 - Shirley) Long Button */}
-              <div className={`flex justify-center -mt-14`}>
+              <div className={`-mt-14 flex justify-center`}>
                 <RippleButton
                   disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
                   onClick={longOrderSubmitHandler}
@@ -1514,11 +1424,7 @@ const TradeTab = () => {
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
                   <span className="whitespace-nowrap">
-                    ₮{' '}
-                    {Number(longPriceRef.current).toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}
+                    ₮ {numberFormatted(longPriceRef.current)}
                   </span>
                 </RippleButton>
               </div>
@@ -1542,11 +1448,7 @@ const TradeTab = () => {
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
-                    {valueOfPositionShortRef.current?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}{' '}
-                    {unitAsset}
+                    {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
                   </div>
                 </div>
               </div>
@@ -1583,7 +1485,7 @@ const TradeTab = () => {
               </div>
 
               {/* Info: (20230925 - Shirley) Short Button */}
-              <div className={`flex justify-center -mt-14`}>
+              <div className={`-mt-14 flex justify-center`}>
                 <RippleButton
                   disabled={
                     marginWarningShortRef.current ||
@@ -1596,11 +1498,7 @@ const TradeTab = () => {
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
                   <span className="whitespace-nowrap">
-                    ₮{' '}
-                    {Number(shortPriceRef.current).toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                      FRACTION_DIGITS
-                    )}
+                    ₮ {numberFormatted(shortPriceRef.current)}
                   </span>
                 </RippleButton>
               </div>
@@ -1629,13 +1527,7 @@ const TradeTab = () => {
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-            <p className="text-xs">
-              ₮{' '}
-              {Number(longPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </p>
+            <p className="text-xs">₮ {numberFormatted(longPriceRef.current)}</p>
           </RippleButton>
         </div>
 
@@ -1648,13 +1540,7 @@ const TradeTab = () => {
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-            <p className="text-xs">
-              ₮{' '}
-              {Number(shortPriceRef.current).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </p>
+            <p className="text-xs">₮ {numberFormatted(shortPriceRef.current)}</p>
           </RippleButton>
         </div>
       </div>

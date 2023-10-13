@@ -12,6 +12,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -73,8 +74,8 @@ const CryptoCard = ({
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingAbs = Math.abs(fluctuating);
   const fluctuatingRate = priceRise
-    ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
-    : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;
+    ? `▴ ${numberFormatted(fluctuatingAbs)}%`
+    : `▾ ${numberFormatted(fluctuatingAbs)}%`;
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
@@ -309,7 +310,7 @@ const CryptoCard = ({
                 className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
               >
                 <p className="mb-1 ml-0 text-left text-xs font-normal tracking-wide">
-                  ₮ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                  ₮ {numberFormatted(price)}
                 </p>
                 <div className="absolute bottom-5px right-4 flex">
                   <span className="text-xxs"> {fluctuatingRate}</span>

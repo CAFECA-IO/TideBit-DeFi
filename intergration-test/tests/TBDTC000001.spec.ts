@@ -27,11 +27,13 @@ test('1. 進入 TideBit-DeFi 首頁，確認網站為英文後，將錢包連接
     )
     .textContent();
   const navAvailableNum = Number(navAvailable.substring(0, navAvailable.length - 4));
+  // Info: (20231013 - Jacky) make sure navAvailable is bigger than 100
   if (navAvailableNum < 100) {
     walletConnect.deposit();
   }
 });
 
+// Todo: (20231013 - Jacky) This test should be fixed after the favorite cookie
 test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星星移除我的最愛，點擊我的最愛查看後重新添加，再點擊BTC。', async ({
   page,
   context,
@@ -99,6 +101,7 @@ test('4. 點擊任一篇ETH新聞後，下滑至最下面點擊分享至FB', asy
   const newPage = await pagePromise;
   await expect.soft(newPage).toHaveTitle(/Facebook/);
 });
+
 test('5. 回到「交易」頁面後，在「看漲」和「看跌」各開一個0.05ETH的倉位，並到「倉位」的 tab確認', async ({
   page,
   context,
@@ -115,6 +118,7 @@ test('5. 回到「交易」頁面後，在「看漲」和「看跌」各開一�
   await tradePage.openLongPosition(walletConnect.extensionId);
   await tradePage.inputAmount();
   await tradePage.openShortPosition(walletConnect.extensionId);
+  // Todo (20231013 - Jacky) This test should be finished after the efficiency improvement of CFD trade
   // await page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB')}).click();
   // await expect
   //   .soft(
@@ -131,6 +135,8 @@ test('5. 回到「交易」頁面後，在「看漲」和「看跌」各開一�
   //   )
   //   .toContainText('Down');
 });
+
+// Info (20231013 - Jacky) This test should pass after the efficiency improvement of CFD trade
 test('6. 點擊其中一個持倉，設定止盈點與止損點後，點擊更新持倉。', async ({page, context}) => {
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
@@ -142,6 +148,8 @@ test('6. 點擊其中一個持倉，設定止盈點與止損點後，點擊更�
   await tradePage.clickAnncmnt();
   await tradePage.updatePosition(walletConnect.extensionId);
 });
+
+// Info (20231013 - Jacky) This test should pass after the efficiency improvement of CFD trade
 test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀錄」中的詳細記錄。', async ({
   page,
   context,

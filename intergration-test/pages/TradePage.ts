@@ -27,6 +27,7 @@ export class TradePage {
       await this.getAnncmnt.click();
     }
   }
+  // Info: (20231013 - Jacky) open position amount can be changed
   async inputAmount(amount = '0.01') {
     await this.page.getByPlaceholder('amount input').fill(amount);
   }
@@ -62,7 +63,7 @@ export class TradePage {
     newPage.close();
   }
 
-  // number="1" means the last position
+  // Info: (20231013 - Jacky) number="1" means the last position
   async updatePosition(extensionId, number = '1') {
     await this.page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB')}).click();
     await this.page
@@ -92,6 +93,8 @@ export class TradePage {
       .click();
     newPage.close();
   }
+
+  // Info: (20231013 - Jacky) number="1" means the last position
   async closePosition(extensionId, number = '1') {
     await this.page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB')}).click();
     await this.page

@@ -74,20 +74,21 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  const firstLogDate = await page
-    .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-child(1)'
+  const todayDate = new Date().getUTCDate();
+  await expect
+    .soft(
+      page.locator(
+        '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-child(1)'
+      )
     )
-    .textContent();
-  const lastLogdate = await page
-    .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
+    .toContainText(String(todayDate));
+  await expect
+    .soft(
+      page.locator(
+        '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
+      )
     )
-    .textContent();
-  const timestamp = new Date().getTime() + 8 * 60 * 60 * 1000;
-  const todayDate = String(new Date(timestamp).getDate());
-  expect(firstLogDate.substring(0, 2)).toContain(todayDate);
-  expect(lastLogdate.substring(0, 2)).toContain(todayDate);
+    .toContainText(String(todayDate - 7));
 });
 
 test('5. 設定日期區間篩選交易紀錄', async ({page, context}) => {
@@ -98,9 +99,7 @@ test('5. 設定日期區間篩選交易紀錄', async ({page, context}) => {
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  const timestamp = new Date().getTime() + 8 * 60 * 60 * 1000;
-  const todayDate = String(new Date(timestamp).getDate());
-
+  const todayDate = new Date().getUTCDate();
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center > div > div.mt-2.hidden.items-center.space-x-2 > div:nth-child(1) > button'

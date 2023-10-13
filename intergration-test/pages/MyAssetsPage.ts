@@ -12,18 +12,17 @@ export class MyAssetsPage {
     });
   }
 
+  // Info: (20231013 - Jacky) Use profile button to go to My Assets page
   async goto() {
     await this.page.goto('./');
     if (this.getAnncmnt) {
       await this.getAnncmnt.click();
     }
-    // profile button
     await this.page
       .locator(
         '#__next > div > div.w-full.text-center> nav > div > div > div> div.mr-5.inline-flex > div > button'
       )
       .click();
-    // My assets button
     await this.page.locator('#userDropdown > ul > li:nth-child(1) > button > a').click();
     await expect.soft(this.page).toHaveTitle(/My Assets/);
     if (this.getAnncmnt) {
@@ -31,6 +30,7 @@ export class MyAssetsPage {
     }
   }
 
+  // Info: (20231013 - Jacky) Check balance higher than 20
   async checkBalance() {
     await this.page
       .locator(
@@ -45,6 +45,7 @@ export class MyAssetsPage {
     const expectedNavAvailable = Number(assetsAvailable);
     expect(expectedNavAvailable).toBeGreaterThan(20);
   }
+
   async checkTradeLog() {
     await this.page
       .getByRole('button', {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')})

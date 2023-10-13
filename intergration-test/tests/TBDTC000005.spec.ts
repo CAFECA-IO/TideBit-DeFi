@@ -9,10 +9,6 @@ test.beforeEach(async ({page}) => {
 });
 
 test('1. 進入 TideBit-DeFi 首頁，確定語言為英文，點擊錢包連接', async ({page, context}) => {
-  const walletConnect = new WalletConnect(page, context);
-  await walletConnect.getMetamaskId();
-  // await walletConnect.connectMetamask();
-  // await walletConnect.connectWallet();
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await landingPage.clickAnncmnt();

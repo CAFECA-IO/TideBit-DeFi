@@ -20,7 +20,7 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
   landingPage.goto();
   landingPage.clickAnncmnt();
   await page
-    //need to check the site version
+    // Info (20231013 - Jacky) This test could be failed if the site version is changed
     .getByRole('link', {name: 'TideBit_logo beta v0.8.0'})
     .click();
   await expect.soft(page).toHaveTitle(/TideBit DeFi/);
@@ -28,9 +28,7 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
     .getByRole('link', {name: i18next.t('NAV_BAR.TRADE')})
     .first()
     .click();
-  //check URL jump to trade page
   await expect.soft(page).toHaveURL(/.*trade/);
-  //click the notice popup
   landingPage.clickAnncmnt();
   await page.getByRole('link', {name: i18next.t('NAV_BAR.LEADERBOARD')}).click();
   landingPage.clickAnncmnt();
@@ -54,7 +52,6 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
 
 test('3. 點擊首圖上的開始和信箱聯絡按鈕、白皮書和 AI 報告按鈕下載', async ({page}) => {
   const landingPage = new LandingPage(page);
-  //click first banner button
   landingPage.goto();
   landingPage.clickAnncmnt();
   await expect
@@ -63,7 +60,6 @@ test('3. 點擊首圖上的開始和信箱聯絡按鈕、白皮書和 AI 報告�
   await page.getByRole('button', {name: i18next.t('HOME_PAGE.CTA_BUTTON')}).click();
   await expect.soft(page).toHaveURL(/.*trade/);
   landingPage.goto();
-  // landingPage.clickAnncmnt();
   await expect
     .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.WHITEPAPER')}))
     .toHaveAttribute('href', i18next.t('HOME_PAGE.WHITEPAPER_LINK'));

@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {Ticker} from '../../../../constants/ticker';
 import cookie from 'cookie';
+import {COOKIE_FAVORITES_PERIOD} from '../../../../constants/config';
 
 const defaultFavoriteTickers = Object.values(Ticker) as string[];
 
@@ -22,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     } else res.status(500).json({error: 'Internal Server Error'});
 
     const expiration = new Date();
-    expiration.setDate(expiration.getDate() + 365);
+    expiration.setDate(expiration.getDate() + COOKIE_FAVORITES_PERIOD);
 
     res.setHeader(
       'Set-Cookie',

@@ -14,11 +14,11 @@ const Tooltip = ({children, className}: ITooltipProps) => {
 
   return (
     <div
-      className={`relative ${className}`}
+      className={`relative whitespace-normal ${className}`}
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseLeaveHandler}
     >
-      <div className="opacity-70">
+      <div className="text-lightGray1 opacity-70">
         <AiOutlineQuestionCircle size={16} />
       </div>
       {showTooltip ? (

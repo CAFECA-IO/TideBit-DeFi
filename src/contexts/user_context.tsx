@@ -710,14 +710,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (!areArraysEqual(originFavoriteTickers, instIds)) {
           const newFavoriteTickers = originFavoriteTickers.concat(instIds);
 
-          (await workerCtx.requestHandler({
+          await workerCtx.requestHandler({
             name: APIName.ADD_FAVORITE_TICKERS,
             method: Method.PUT,
             body: {
               instId: instIds,
               starred: true,
             },
-          })) as any;
+          });
 
           setFavoriteTickers(newFavoriteTickers);
           notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);

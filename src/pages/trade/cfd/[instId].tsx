@@ -35,6 +35,8 @@ const Trading = (props: IPageProps) => {
   const instId = router.query?.instId as string;
   const ticker = instId?.toUpperCase();
 
+  const hideTradingView = router.query?.trading_view === 'hide';
+
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && ticker) {
       marketCtx.selectTickerHandler(ticker);
@@ -63,7 +65,7 @@ const Trading = (props: IPageProps) => {
       {displayedNavBar}
 
       <main>
-        <TradePageBody briefs={props.briefs} />
+        <TradePageBody briefs={props.briefs} hideTradingView={hideTradingView} />
       </main>
     </>
   ) : (

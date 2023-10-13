@@ -1,12 +1,10 @@
 import {defineConfig, devices} from '@playwright/test';
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
-/**
  * See https://playwright.dev/docs/test-configuration.
  */
+// change this to your own url
+const baseURL = process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/';
+
 export default defineConfig({
   timeout: 200000,
   testDir: './tests',
@@ -38,7 +36,7 @@ export default defineConfig({
       use: {
         locale: 'en',
         ...devices['Desktop Chrome'],
-        baseURL: process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/',
+        baseURL: baseURL,
       },
     },
     {
@@ -46,14 +44,14 @@ export default defineConfig({
       use: {
         locale: 'tw',
         ...devices['Desktop Chrome'],
-        baseURL: process.env.CI ? `${process.env.BASE_URL}/tw/` : 'https://tidebit-defi.com/tw/',
+        baseURL: baseURL + '/tw/',
       },
     },
     {
       name: 'chromium CN',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.CI ? `${process.env.BASE_URL}/cn/` : 'https://tidebit-defi.com/cn/',
+        baseURL: baseURL + '/cn/',
         locale: 'cn',
       },
     },

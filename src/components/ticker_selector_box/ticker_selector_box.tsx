@@ -141,8 +141,13 @@ const TickerSelectorBox = ({
       if (favoriteDiff.inArr1NotInArr2.length === 0 && favoriteDiff.inArr2NotInArr1.length === 0) {
         return;
       } else {
-        await userCtx.removeFavorites(favoriteDiff.inArr1NotInArr2);
-        await userCtx.addFavorites(favoriteDiff.inArr2NotInArr1);
+        if (favoriteDiff.inArr1NotInArr2.length !== 0) {
+          await userCtx.removeFavorites(favoriteDiff.inArr1NotInArr2);
+        }
+
+        if (favoriteDiff.inArr2NotInArr1.length !== 0) {
+          await userCtx.addFavorites(favoriteDiff.inArr2NotInArr1);
+        }
       }
     };
 

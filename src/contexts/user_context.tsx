@@ -33,6 +33,7 @@ import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_w
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 import {Code, Reason} from '../constants/code';
 import {
+  areArraysEqual,
   getCookieByName,
   getServiceTermContract,
   getTimestamp,
@@ -705,20 +706,23 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickersRef.current];
-        const newFavoriteTickers = updatedFavoriteTickers.concat(instIds);
-        (await workerCtx.requestHandler({
-          name: APIName.ADD_FAVORITE_TICKERS,
-          method: Method.PUT,
-          body: {
-            instId: instIds,
-            starred: true,
-          },
-        })) as any;
+        const originFavoriteTickers = [...favoriteTickersRef.current];
+        if (!areArraysEqual(originFavoriteTickers, instIds)) {
+          const newFavoriteTickers = originFavoriteTickers.concat(instIds);
 
-        setFavoriteTickers(newFavoriteTickers);
-        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
-        result = defaultResultSuccess;
+          (await workerCtx.requestHandler({
+            name: APIName.ADD_FAVORITE_TICKERS,
+            method: Method.PUT,
+            body: {
+              instId: instIds,
+              starred: true,
+            },
+          })) as any;
+
+          setFavoriteTickers(newFavoriteTickers);
+          notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
+          result = defaultResultSuccess;
+        }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
@@ -735,13 +739,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickersRef.current];
-
-        const newFavoriteTickers = updatedFavoriteTickers.filter(
+        const originFavoriteTickers = [...favoriteTickersRef.current];
+        const newFavoriteTickers = originFavoriteTickers.filter(
           ticker => !instIds.includes(ticker)
         );
-
-        if (newFavoriteTickers.length !== updatedFavoriteTickers.length) {
+        if (newFavoriteTickers.length !== originFavoriteTickers.length) {
           await privateRequestHandler({
             name: APIName.REMOVE_FAVORITE_TICKERS,
             method: Method.PUT,

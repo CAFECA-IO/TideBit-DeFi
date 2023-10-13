@@ -4,12 +4,6 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 
 ## Getting started
 
-- There is a setup.sh file in the intergration-test folder, you can run it if you are a clean macOs.
-
-    ```bash
-    sh setup.sh
-    ```
-
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/) (version 18.0.0)
@@ -31,7 +25,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 2. Checkout to the develop branch
 
     ```bash
-    git checkout playwight_workflow
+    git checkout develop
     ```
 
 3. Change directory to the repository
@@ -60,6 +54,15 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 
 ### Run the test
 
+- (Optional) Change the baseUrl to local Url
+
+    1. open the file in the path: intergration-test/playwright.config.ts
+    2. change the below 'https://tidebit-defi.com/' to your local Url
+
+    ```typescript
+    const baseURL = process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/';
+    ```
+
 - Run Playwright tests to run all the test in tests folder
 
     ```node.js
@@ -86,7 +89,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
     npx playwright show-report
     ```
 
-### Read the test report
+### Read the test report on Github Action
 
 1. Download the test report from github action.
 2. Put the report in the folder which is installed the playwright.

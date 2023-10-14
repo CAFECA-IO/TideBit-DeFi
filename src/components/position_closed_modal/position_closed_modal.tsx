@@ -191,6 +191,8 @@ const PositionClosedModal = ({
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
     const closePrice = quotation.price;
+    const closeSpotPrice = quotation.spotPrice;
+    const closeSpreadFee = quotation.spreadFee;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
     const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2, true);
@@ -227,6 +229,8 @@ const PositionClosedModal = ({
 
       closeTimestamp: quotation.deadline,
       closePrice: closePrice,
+      closeSpotPrice: closeSpotPrice,
+      closeSpreadFee: closeSpreadFee,
       closedType: CFDClosedType.BY_USER,
       state: OrderState.CLOSED,
     };
@@ -533,7 +537,7 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(openCfdDetails?.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
               {openSpreadSymbol}
               {numberFormatted(openCfdDetails.openSpreadFee)}
             </span>
@@ -562,7 +566,7 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(gQuotationRef.current.spotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
               {closeSpreadSymbol}
               {numberFormatted(gQuotationRef.current.spreadFee)}
             </span>

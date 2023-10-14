@@ -20,7 +20,7 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
 
   return (
     <>
-      <div className="flex space-x-5 lg:space-x-20">
+      <div className="flex space-x-5">
         <div className="flex flex-col items-center lg:items-start">
           <div className="whitespace-nowrap text-sm text-lightGray4">
             {t('USER.OVERVIEW_AVAILABLE')}

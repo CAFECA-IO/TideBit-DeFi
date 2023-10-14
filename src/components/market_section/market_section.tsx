@@ -12,6 +12,7 @@ import {DEFAULT_CRYPTO} from '../../constants/config';
 
 interface IMarketSectionProps {
   briefs: IRecommendedNews[];
+  hideTradingView?: boolean;
 }
 
 const MarketSection = (props: IMarketSectionProps) => {
@@ -34,7 +35,11 @@ const MarketSection = (props: IMarketSectionProps) => {
 
   const displayedTickerHeader = <TradingHeader />;
 
-  const displayedTradingView = <TradingView />;
+  const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
+
+  const tradeStatisticsStyle = props?.hideTradingView
+    ? 'mt-5 lg:mt-20 lg:pl-5'
+    : 'mt-5 lg:mt-8 lg:pl-5';
 
   return (
     <div className="ml-5 py-100px">
@@ -42,7 +47,7 @@ const MarketSection = (props: IMarketSectionProps) => {
 
       <div>{displayedTradingView}</div>
 
-      <div className="mt-5 lg:mt-8 lg:pl-5">
+      <div className={tradeStatisticsStyle}>
         <TradeStatistics
           fiveMin={{
             low: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.low ?? 0,

@@ -636,10 +636,13 @@ export const getEstimatedPnL = (
 };
 
 export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {} as Record<string, string>);
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 };
 
 export const findCodeByReason = (reason: string): ICode | undefined => {
@@ -810,3 +813,36 @@ export const getI18nLink = (link: string, locale: string) => {
 export function ratioToPercentage(decimal: number): string {
   return `${(decimal * 100).toFixed(2)}`;
 }
+
+export const areArraysEqual = (arr1: Array<string>, arr2: Array<string>) => {
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+
+  if (set1.size !== set2.size) return false;
+  for (const item of set1) {
+    if (!set2.has(item)) return false;
+  }
+
+  return true;
+};
+
+export const arrayDifferences = (arr1: Array<string>, arr2: Array<string>) => {
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+
+  const inArr1NotInArr2: string[] = [];
+  const inArr2NotInArr1: string[] = [];
+
+  for (const item of set1) {
+    if (!set2.has(item)) inArr1NotInArr2.push(item);
+  }
+
+  for (const item of set2) {
+    if (!set1.has(item)) inArr2NotInArr1.push(item);
+  }
+
+  return {
+    inArr1NotInArr2,
+    inArr2NotInArr1,
+  };
+};

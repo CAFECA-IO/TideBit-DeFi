@@ -13,6 +13,7 @@ import {useTranslation} from 'next-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {numberFormatted} from '../../lib/common';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 
@@ -39,6 +40,7 @@ export interface ICardProps {
   starColor?: string;
   starred?: boolean;
   getStarredState?: (props: boolean) => void;
+  getStarredInstId?: (props: string) => void;
 
   className?: string;
   cardClickHandler?: () => void;
@@ -65,11 +67,17 @@ const CryptoCard = ({
   lineGraphProps,
   cardClickHandler,
   onTheSamePage = true,
+  getStarredState,
+  getStarredInstId,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
+  const globalCtx = useGlobal();
+
+  const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
+
   fluctuating = Number(fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingAbs = Math.abs(fluctuating);
@@ -79,9 +87,13 @@ const CryptoCard = ({
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
-  const globalCtx = useGlobal();
+  const passStarredState = (props: boolean) => {
+    getStarredState && getStarredState(props);
+  };
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the div click handler from firing
+
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
@@ -90,18 +102,14 @@ const CryptoCard = ({
         autoClose: 3000,
         isLoading: false,
       });
+      return;
     }
 
-    event.stopPropagation(); // Prevent the div click handler from firing
-
-    if (!starred) {
-      userCtx.addFavorites(instId);
-    } else {
-      userCtx.removeFavorites(instId);
-    }
+    setStarredState(!starredStateRef.current);
+    passStarredState(starredStateRef.current);
   };
 
-  const showStar = starred ? (
+  const showStar = starredStateRef.current ? (
     <button type="button" onClick={starClickHandler} className="absolute right-3 top-2">
       <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
     </button>
@@ -115,7 +123,7 @@ const CryptoCard = ({
     </button>
   ) : null;
 
-  const showStarMobile = starred ? (
+  const showStarMobile = starredStateRef.current ? (
     <button
       type="button"
       onClick={starClickHandler}

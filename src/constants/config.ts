@@ -309,3 +309,4 @@ export const USDC_NEWS_FOLDER = 'src/news/usdc';
 export const NEWS_FOLDER = './src/news';
 export const BAIFA_LINK = 'https://baifa.io';
 export const I_SUN_ONE_LINK = 'https://www.isun1.com';
+export const COOKIE_FAVORITES_PERIOD = 365; // Info: days (20231013 - Shirley)

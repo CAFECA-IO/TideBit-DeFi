@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import {useContext, useMemo} from 'react';
 import Image from 'next/image';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
@@ -60,9 +60,12 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   } = openCfdDetails;
 
   const spread = marketCtx.getTickerSpread(openCfdDetails.instId);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.instId, {
-    begin: openCfdDetails.createTimestamp,
-  });
+  const positionLineGraph = useMemo(() => {
+    const lineData = marketCtx.listTickerPositions(openCfdDetails.instId, {
+      begin: openCfdDetails.createTimestamp,
+    });
+    return lineData;
+  }, []);
 
   const positionLineGraphWithSpread =
     typeOfPosition === TypeOfPosition.BUY

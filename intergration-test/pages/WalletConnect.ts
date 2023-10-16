@@ -83,29 +83,24 @@ export class WalletConnect {
     await newPage.close();
   }
   async deposit() {
-    // comfirm navAvailable
     const navAvailable = await this.page
       .locator(
-        '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div:nth-child(6) > div > div:nth-child(1) > div:nth-child(2)'
+        '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(1) > div:nth-child(2)'
       )
       .textContent();
     const navAvailableNum = Number(navAvailable.substring(0, navAvailable.length - 4));
-    // profile button
     await this.page
       .locator(
         '#__next > div > div.w-full.text-center> nav > div > div > div> div.mr-5.inline-flex > div > button'
       )
       .click();
-    // deposit button
     await this.page.locator('#userDropdown > ul > li:nth-child(2) > button').click();
-    // deposit process
     await this.page.getByRole('button', {name: i18next.t('D_W_MODAL.MAX')}).click();
     await this.page
       .locator(
         '#depositModal > div.relative.flex-auto.pt-0 > div > div > div:nth-child(4) > div > button'
       )
       .click();
-    // deposit success or not
     const hasDeposit = await this.page
       .getByRole('button', {name: i18next.t('POSITION_MODAL.VIEW_ON_BUTTON')})
       .isVisible();
@@ -118,14 +113,12 @@ export class WalletConnect {
           '#__next > div > div.w-full.text-center> nav > div > div > div> div.mr-5.inline-flex > div > button'
         )
         .click();
-      // My assets button
       await this.page.locator('#userDropdown > ul > li:nth-child(1) > button > a').click();
       await this.page
         .getByRole('button', {
           name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON'),
         })
         .click();
-      // click the eye
       await this.page
         .locator(
           '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div > div.flex.items-center.justify-center.space-x-2.text-center > button'

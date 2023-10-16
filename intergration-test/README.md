@@ -57,7 +57,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 - (Optional) Change the baseUrl to local Url
 
     1. open the file in the path: intergration-test/playwright.config.ts
-    2. change the below 'https://tidebit-defi.com/' to your local Url
+    2. change the below '<https://tidebit-defi.com/>' to your local Url
 
     ```typescript
     const baseURL = process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/';

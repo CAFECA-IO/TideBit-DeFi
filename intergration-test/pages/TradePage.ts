@@ -13,12 +13,12 @@ export class TradePage {
   }
 
   async goto() {
-    await this.page.goto('./trade/cfd/eth-usdt');
+    await this.page.goto('./trade/cfd/eth-usdt?trading_view=hide');
     await expect.soft(this.page).toHaveTitle(/CFD/);
   }
 
   async gotoBTC() {
-    await this.page.goto('./trade/cfd/btc-usdt');
+    await this.page.goto('./trade/cfd/btc-usdt?trading_view=hide');
     await expect.soft(this.page).toHaveTitle(/CFD/);
   }
 

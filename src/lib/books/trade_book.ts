@@ -168,7 +168,7 @@ class TradeBook {
 
     // Info: 檢查這筆trade有沒有被轉換成candlestickChart過 (20230816 - Shirley)
     // processTradesToCandlestickData()
-    this.processTradeToCandlestickData(instId, newTrade);
+    this.processTradeToCandlestickData(instId, [newTrade]);
   }
 
   /* Deprecated: replaced by _trim() (20230703 - Shirley)
@@ -200,6 +200,7 @@ class TradeBook {
   }
   */
 
+  // TODO: (20231016 - Shirley)
   @ensureTickerExistsDecorator
   organizedTradesToCandlestickData(instId: string) {
     const predictedTrades = this.predictedTrades.get(instId)!;
@@ -419,56 +420,79 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  processTradeToCandlestickData(instId: string, trade: ITradeInTradeBook) {
+  processTradeToCandlestickData(instId: string, trades: ITradeInTradeBook[]) {
     this.ensureCandlestickDataExists(instId); // Ensure data structure exists for the given ticker
 
-    // iterate through all time span in candlestickChart
-    // this.candlestickChart.forEach((value, key) => {
-    //   // Info: 將trade轉換成candlestickData (20231004 - Shirley)
-    //   const candlestickData = this.oneTradeToCandlestickData(new Date(trade.timestampMs), trade);
+    // switch (trades.length) {
+    //   case 0:
+    //     return;
+    //   case 1:
+    //     this.processOneTradeToCandlestickData(instId, trades);
+    //     break;
+    //   default:
+    //     this.processMultipleTradesToCandlestickData(instId, trades);
+    //     break;
+    // }
 
-    //   // Info: 將candlestickData存到candlestickChart (20231004 - Shirley)
-    //   this.addCandlestickData(instId, key as ITimeSpanUnion, candlestickData);
-    // });
+    if (trades.length > 1) {
+      const timeSpans = Object.keys(this.candlestickChart.get(instId)!);
+      for (const timeSpan of timeSpans) {
+        const candlestickChartData = this.toCandlestick(
+          instId,
+          millesecondsToSeconds(getTime(timeSpan as ITimeSpanUnion)),
+          CANDLESTICK_SIZE,
+          trades
+        );
+        this.addCandlestickData(instId, timeSpan as ITimeSpanUnion, candlestickChartData);
+      }
 
-    // for [key in ITimeSpanUnion] in candlestickChart
-    // console.log('before processTradeToCandlestickData', this.candlestickChart.get(instId));
-    // eslint-disable-next-line no-console
-    console.log('processTradeToCandlestickData');
-
-    const timeSpans = Object.keys(this.candlestickChart.get(instId)!);
-
-    for (const timeSpan of timeSpans) {
+      // Deprecated: dev (20231017 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('processTradeToCandlestickData for timeSpan', timeSpan);
+      console.log('trades.length > 1', this.candlestickChart.get(instId));
+    } else if (trades.length === 1) {
+      const trade = trades[0];
+      // for [key in ITimeSpanUnion] in candlestickChart
+      // console.log('before processTradeToCandlestickData', this.candlestickChart.get(instId));
+      // eslint-disable-next-line no-console
+      console.log('processTradeToCandlestickData');
 
-      // const candlestickChartData = this.toCandlestick(
-      //   instId,
-      //   millesecondsToSeconds(getTime(timeSpan as ITimeSpanUnion)),
-      //   CANDLESTICK_SIZE
-      // );
+      const timeSpans = Object.keys(this.candlestickChart.get(instId)!);
 
-      // this.addCandlestickData(instId, timeSpan as ITimeSpanUnion, candlestickChartData);
+      for (const timeSpan of timeSpans) {
+        // eslint-disable-next-line no-console
+        console.log('trades.length = 1, processTradeToCandlestickData for timeSpan', timeSpan);
 
-      const data = this.getCandlestickData(instId)![timeSpan as ITimeSpanUnion];
+        // const candlestickChartData = this.toCandlestick(
+        //   instId,
+        //   millesecondsToSeconds(getTime(timeSpan as ITimeSpanUnion)),
+        //   CANDLESTICK_SIZE
+        // );
 
-      if (!data || data.length === 0) continue;
+        // this.addCandlestickData(instId, timeSpan as ITimeSpanUnion, candlestickChartData);
 
-      const timeForCandle = this.getLastTimeForCandle(data, timeSpan as ITimeSpanUnion);
+        const data = this.getCandlestickData(instId)![timeSpan as ITimeSpanUnion];
 
-      if (!timeForCandle) continue;
-      const oneCandle = this.oneTradeToCandlestickData(new Date(timeForCandle), trade);
-      if (!oneCandle) continue;
+        if (!data || data.length === 0) continue;
 
-      this.mergeCandlestickByTimeSpan(
-        instId,
-        oneCandle,
-        timeSpan as ITimeSpanUnion,
-        new Date(timeForCandle)
+        const timeForCandle = this.getLastTimeForCandle(data, timeSpan as ITimeSpanUnion);
+
+        if (!timeForCandle) continue;
+        const oneCandle = this.oneTradeToCandlestickData(new Date(timeForCandle), trade);
+        if (!oneCandle) continue;
+
+        this.mergeCandlestickByTimeSpan(
+          instId,
+          oneCandle,
+          timeSpan as ITimeSpanUnion,
+          new Date(timeForCandle)
+        );
+      }
+      // eslint-disable-next-line no-console
+      console.log(
+        'trades.length = 1, after processTradeToCandlestickData',
+        this.candlestickChart.get(instId)
       );
     }
-    // eslint-disable-next-line no-console
-    console.log('after processTradeToCandlestickData', this.candlestickChart.get(instId));
   }
 
   oneTradeToCandlestickData(time: Date, trade: ITradeInTradeBook) {
@@ -530,10 +554,41 @@ class TradeBook {
     return alignedTime;
   }
 
+  mergeCandlesticks(candlesticks: ICandlestickData[], tunedTime?: Date) {
+    if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
+      // eslint-disable-next-line no-console
+      console.error('candlesticks is either undefined, not an array, or has less than 2 items.');
+      return;
+    }
+
+    // Use recursion until there's no 2 candlesticks to merge
+    if (candlesticks.length > 2) {
+      const firstCandlestick = candlesticks[candlesticks.length - 2];
+      const lastCandlestick = candlesticks[candlesticks.length - 1];
+      const mergedCandlestick = this.mergeTwoCandlesticks(firstCandlestick, lastCandlestick);
+      if (!mergedCandlestick) return;
+      candlesticks.shift();
+      candlesticks.shift();
+      candlesticks.push(mergedCandlestick);
+      this.mergeCandlesticks(candlesticks);
+    } else {
+      const firstCandlestick = candlesticks[0];
+      const lastCandlestick = candlesticks[1];
+      const mergedCandlestick = this.mergeTwoCandlesticks(firstCandlestick, lastCandlestick);
+      if (!mergedCandlestick) return;
+      candlesticks.shift();
+      candlesticks.pop();
+      candlesticks.push(mergedCandlestick);
+    }
+
+    return candlesticks;
+  }
+
   // Info: convert the predicted trades to candlestick data, and them combine the data with the candlestickChart.[instId].[ts]  (20231004 - Shirley)
-  mergeCandlesticks(
+  mergeTwoCandlesticks(
     firstCandlestick: ICandlestickData,
-    lastCandlestick: ICandlestickData
+    lastCandlestick: ICandlestickData,
+    tunedTime?: Date
   ): ICandlestickData | null {
     if (!isCandlestickData(firstCandlestick) || !isCandlestickData(lastCandlestick)) return null;
     // Info: Create an array containing both firstCandlestick and lastCandlestick (20231005 - Shirley)

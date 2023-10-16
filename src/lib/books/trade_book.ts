@@ -364,6 +364,46 @@ class TradeBook {
     }
   }
 
+  getAlignedTimeForCandlestick(currentTime: Date, timeSpan: ITimeSpanUnion): Date {
+    const minutes = currentTime.getMinutes();
+    let roundedMinutes = 0;
+
+    switch (timeSpan) {
+      case '5m':
+        roundedMinutes = Math.floor(minutes / 5) * 5;
+        break;
+      case '15m':
+        roundedMinutes = Math.floor(minutes / 15) * 15;
+        break;
+      case '30m':
+        roundedMinutes = Math.floor(minutes / 30) * 30;
+        break;
+      case '1h':
+      case '4h':
+      case '12h':
+        roundedMinutes = 0;
+        break;
+      case '1d':
+        return new Date(
+          currentTime.getFullYear(),
+          currentTime.getMonth(),
+          currentTime.getDate(),
+          0,
+          0,
+          0
+        );
+    }
+
+    return new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate(),
+      currentTime.getHours(),
+      roundedMinutes,
+      0
+    );
+  }
+
   // Info: convert the predicted trades to candlestick data, and them combine the data with the candlestickChart.[instId].[ts]  (20231004 - Shirley)
   mergeCandlesticks(
     firstCandlestick: ICandlestickData,
@@ -408,6 +448,9 @@ class TradeBook {
     const originCandlesticks = this.candlestickChart.get(instId)![timeSpan];
     const lastOneFromOrigin = originCandlesticks[originCandlesticks.length - 1];
 
+    let timeForLastOne;
+    const alignedTime = this.getAlignedTimeForCandlestick(new Date(newCandlestick.x), timeSpan);
+
     const mixCandlesticks = [lastOneFromOrigin, newCandlestick];
 
     // Info: 計算融合後的candlestick的開盤、收盤、最高和最低價 (20231005 - Shirley)
@@ -419,6 +462,18 @@ class TradeBook {
     // Info: 計算融合後的candlestick的成交量和成交價值 (20231005 - Shirley)
     const volume = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.volume ?? 0), 0);
     const value = mixCandlesticks.reduce((sum, c) => sum + (c?.y?.value ?? 0), 0);
+
+    if (lastOneFromOrigin.x === alignedTime) {
+      timeForLastOne = lastOneFromOrigin.x;
+      // Deprecated: dev (20231016 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('timeForLastOne, lastOneFromOrigin', timeForLastOne);
+    } else {
+      timeForLastOne = newCandlestick.x;
+      // Deprecated: dev (20231016 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('timeForLastOne, newCandlestick', timeForLastOne);
+    }
 
     // Info: 返回融合後的candlestick chart data (20231005 - Shirley)
     return {

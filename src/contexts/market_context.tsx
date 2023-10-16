@@ -709,7 +709,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const lastInWholeCandlesticks = wholeCandlesticks[wholeCandlesticks.length - 1];
         // Deprecated: dev (20231004 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('lastInWholeCandlesticks', lastInWholeCandlesticks);
+        // console.log('lastInWholeCandlesticks', lastInWholeCandlesticks);
 
         const candlestickFromTrades = tradeBook.toCandlestick(
           instId,
@@ -743,7 +743,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
               merge = tradeBook.mergeCandlesticks(item, candlestickFromTrades[0]);
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
-              console.log('item', item, 'merge', merge);
+              // console.log('item', item, 'merge', merge);
             }
 
             return item.x.getTime() < candlestickFromTrades[0].x.getTime();
@@ -754,18 +754,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
         // Deprecated: dev (20231004 - Shirley)
         // eslint-disable-next-line no-console
-        console.log(
-          'wholeCandlesticks last two',
-          wholeCandlesticks[wholeCandlesticks.length - 2],
-          'wholeCandlesticks last one',
-          wholeCandlesticks[wholeCandlesticks.length - 1],
-          'candlestickFromTrades',
-          candlestickFromTrades[0],
-          'mergedCandlestick',
-          mergedCandlestick,
-          'anotherMergedCandlestick',
-          anotherMergedCandlestick
-        );
+        // console.log(
+        //   'wholeCandlesticks last two',
+        //   wholeCandlesticks[wholeCandlesticks.length - 2],
+        //   'wholeCandlesticks last one',
+        //   wholeCandlesticks[wholeCandlesticks.length - 1],
+        //   'candlestickFromTrades',
+        //   candlestickFromTrades[0],
+        //   'mergedCandlestick',
+        //   mergedCandlestick,
+        //   'anotherMergedCandlestick',
+        //   anotherMergedCandlestick
+        // );
 
         // console.log(
         //   'wholeCandlesticks',

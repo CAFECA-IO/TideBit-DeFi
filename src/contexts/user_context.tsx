@@ -645,8 +645,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         eip712signature = await lunar.signTypedData(serviceTermContract);
         resultCode = Code.FAILED_TO_VERIFY_SIGNATURE;
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
-        // eslint-disable-next-line no-console
-        console.log(`verifyR`, verifyR);
         if (verifyR) {
           const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
           setDeWT(deWT);
@@ -672,8 +670,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         }
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`signServiceTerm error`, error);
       result.code = resultCode;
       result.reason = Reason[resultCode];
       return result;
@@ -832,8 +828,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('error in updateBalance in ctx', error);
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
     }

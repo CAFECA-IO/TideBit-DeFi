@@ -13,6 +13,7 @@ interface PositionTabProps {
   activePositionTabMobile: string;
   openTabClickHandler: () => void;
   historyTabClickHandler: () => void;
+  hideOpenLineGraph?: boolean;
 }
 
 type TranslateFunction = (s: string) => string;
@@ -23,6 +24,7 @@ const PositionTab = ({
   activePositionTabMobile,
   openTabClickHandler,
   historyTabClickHandler,
+  hideOpenLineGraph,
 }: PositionTabProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
@@ -30,14 +32,8 @@ const PositionTab = ({
   const tabBodyWidth = 'w-320px';
 
   const currentSubTab =
-    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? (
-      activePositionTabMobile === POSITION_TAB.OPEN ? (
-        <OpenSubTab />
-      ) : (
-        <HistorySubTab />
-      )
-    ) : activePositionTabMobile === POSITION_TAB.OPEN ? (
-      <OpenSubTab />
+    activePositionTabMobile === POSITION_TAB.OPEN ? (
+      <OpenSubTab hideOpenLineGraph={hideOpenLineGraph} />
     ) : (
       <HistorySubTab />
     );

@@ -634,6 +634,13 @@ export function getChainNameByCurrency(
   }
 }
 
+/** (20231017 - Shirley)
+ * @description 這個函數將檢查輸入的 n 是否為數字，使用 SafeMath 的 isNumber 方法進行判斷。預設使用 roundToDecimalPlaces 的 ROUND 方法。如果你希望該數字無條件進位或是趨近於0，則在放進 numberFormatted 之前，應該先用 roundToDecimalPlaces 來調整它。函數的輸出將是一個字串格式。
+ * @param n
+ * @param dash
+ * @param sign
+ * @returns string
+ */
 export const numberFormatted = (n: number | string | undefined, dash = false, sign = false) => {
   const zero = dash ? '-' : '0';
   if (!n) return zero;

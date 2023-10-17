@@ -16,6 +16,7 @@ import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 
+// ToDo: (20231013 - Julian) 修完 Layout Error 再刪掉
 const NavBarMobile = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
@@ -97,7 +98,7 @@ const NavBarMobile = () => {
   const isDisplayedUnreadnumber =
     notificationCtx.unreadNotifications.length > 0 ? (
       <span className="absolute right-0 top-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
-        <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
+        <p className="text-3xs text-center">{notificationCtx.unreadNotifications.length}</p>
       </span>
     ) : null;
 

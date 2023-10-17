@@ -19,7 +19,8 @@
       "middlewares/*": ["./middlewares/*"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "downlevelIteration": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/api/images/cfd/[cfdId].tsx"],
   "exclude": ["node_modules"]

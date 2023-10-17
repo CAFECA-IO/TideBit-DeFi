@@ -845,7 +845,7 @@ const UpdateFormModal = ({
             {/* Info: (20231003 - Julian) Spot Price */}
             {numberFormatted(openCfdDetails?.openSpotPrice)}
             {/* Info: (20231003 - Julian) Spread */}
-            <span className="ml-1 whitespace-nowrap text-3xs text-lightGray">
+            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
               {spreadSymbol}
               {numberFormatted(openCfdDetails?.openSpreadFee)}
             </span>

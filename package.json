@@ -1,6 +1,6 @@
 {
   "name": "src",
-  "version": "0.8.0+59.0",
+  "version": "0.8.0+60.2",
   "private": true,
   "scripts": {
     "dev": "next dev",

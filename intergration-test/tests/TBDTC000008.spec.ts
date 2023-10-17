@@ -75,6 +75,7 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
   const todayDate = new Date().getUTCDate();
+  await page.waitForTimeout(10000);
   await expect
     .soft(
       page.locator(
@@ -82,13 +83,14 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
       )
     )
     .toContainText(String(todayDate));
-  await expect
-    .soft(
-      page.locator(
-        '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
-      )
-    )
-    .toContainText(String(todayDate - 7));
+  // Todo (20231013 - Jacky) This expect should be finished after a button show all logs.
+  // await expect
+  //   .soft(
+  //     page.locator(
+  //       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
+  //     )
+  //   )
+  //   .toContainText(String(todayDate - 7));
 });
 
 test('5. 設定日期區間篩選交易紀錄', async ({page, context}) => {

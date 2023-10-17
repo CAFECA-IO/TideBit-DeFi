@@ -48,7 +48,7 @@ export class WalletConnect {
     await this.page.getByRole('button', {name: 'Got it'}).click();
     await this.page.getByTestId('pin-extension-next').click();
     await this.page.getByTestId('pin-extension-done').click();
-    await this.page.waitForTimeout(2000);
+    await this.page.waitForTimeout(1500);
     await this.page.getByTestId('popover-close').click();
   }
   async connectWallet() {

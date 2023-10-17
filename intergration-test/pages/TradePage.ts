@@ -13,12 +13,12 @@ export class TradePage {
   }
 
   async goto() {
-    await this.page.goto('./trade/cfd/eth-usdt?trading_view=hide');
+    await this.page.goto('./trade/cfd/eth-usdt?trading_view=hidden&open_line_graph=hidden');
     await expect.soft(this.page).toHaveTitle(/CFD/);
   }
 
   async gotoBTC() {
-    await this.page.goto('./trade/cfd/btc-usdt?trading_view=hide');
+    await this.page.goto('./trade/cfd/btc-usdt?trading_view=hidden&open_line_graph=hidden');
     await expect.soft(this.page).toHaveTitle(/CFD/);
   }
 
@@ -73,14 +73,20 @@ export class TradePage {
           ')'
       )
       .click();
-    await this.page.locator('.bg-white').first().click();
     await this.page
       .locator(
-        '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center > div.mt-3.flex-col.text-xs.leading-relaxed.text-lightWhite > div.mb-5.h-70px > div:nth-child(3) > div > input'
+        '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div.mb-2.h-50px > div.flex.items-center.justify-between > div:nth-child(3) > div > div'
+      )
+      .click();
+    await this.page
+      .locator(
+        '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div.mb-5.h-70px > div:nth-child(3) > div > input'
       )
       .check();
     await this.page
-      .getByRole('button', {name: i18next.t('POSITION_MODAL.UPDATE_POSITION_TITLE')})
+      .locator(
+        '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div:nth-child(3) > button'
+      )
       .click();
     await this.page.getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')}).click();
     const pagePromise = this.context.newPage();

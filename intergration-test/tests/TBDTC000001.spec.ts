@@ -23,7 +23,7 @@ test('1. 進入 TideBit-DeFi 首頁，確認網站為英文後，將錢包連接
   await landingPage.clickAnncmnt();
   const navAvailable = await page
     .locator(
-      '#__next > div > div:nth-child(17) > nav > div > div > div.flex.items-center > div > div > div:nth-child(6) > div > div:nth-child(1) > div:nth-child(2)'
+      '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(1) > div:nth-child(2)'
     )
     .textContent();
   const navAvailableNum = Number(navAvailable.substring(0, navAvailable.length - 4));

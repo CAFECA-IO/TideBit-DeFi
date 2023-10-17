@@ -72,13 +72,13 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 - Run Playwright tests to run single test file in tests folder
   
    ```node.js
-   npx playwright test tests/{filename}
+   npx playwright test tests/{filename}  --retries=1
     ```
 
 - Run the test with the specific title in tests folder
 
     ```node.js
-    npx playwright test -g "{Test Title}"
+    npx playwright test -g "{Test Title}"  --retries=1
     ```
 
 ### See the test report

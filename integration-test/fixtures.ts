@@ -1,12 +1,11 @@
-import { test as base , chromium, type BrowserContext } from '@playwright/test';
+import {test as base, chromium, type BrowserContext} from '@playwright/test';
 import path from 'path';
-
 
 export const test = base.extend<{
   context: BrowserContext;
   extensionId: string;
 }>({
-  context: async ({ }, use) => {
+  context: async ({}, use) => {
     const pathToExtension = path.join(__dirname, 'metamask-chrome-11.0.0');
     const context = await chromium.launchPersistentContext('', {
       headless: false,

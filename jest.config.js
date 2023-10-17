@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 const config = {
   verbose: true,
-  modulePathIgnorePatterns: ['intergration-test'],
+  modulePathIgnorePatterns: ['integration-test'],
 };
 
 module.exports = config;

@@ -31,7 +31,7 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 3. Change directory to the repository
 
     ```bash
-    cd intergration
+    cd integration-test
     ```
 
 4. Install dependencies
@@ -72,13 +72,13 @@ This is the  end to end test for [TideBit-Defi](https://tidebit-defi.com/). To s
 - Run Playwright tests to run single test file in tests folder
   
    ```node.js
-   npx playwright test tests/{filename}  --retries=1
+   npx playwright test tests/{filename} --trace on --retries=1
     ```
 
 - Run the test with the specific title in tests folder
 
     ```node.js
-    npx playwright test -g "{Test Title}"  --retries=1
+    npx playwright test -g "{Test Title}" --trace on --retries=1
     ```
 
 ### See the test report

@@ -15,8 +15,7 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const deposit = numberFormatted(depositAvailable);
   const locked = numberFormatted(marginLocked);
-  const pnlSymbpl = profitOrLossAmount < 0 ? '-' : '';
-  const pnl = numberFormatted(profitOrLossAmount);
+  const pnl = numberFormatted(profitOrLossAmount, false, true);
 
   return (
     <>
@@ -42,9 +41,7 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
         <div className="flex flex-col items-center lg:items-start">
           <div className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
           <div className="whitespace-nowrap text-sm lg:text-base">
-            <span className="mr-1 whitespace-nowrap">
-              {pnlSymbpl} {pnl}
-            </span>
+            <span className="mr-1 whitespace-nowrap">{pnl}</span>
             {unitAsset}
           </div>
         </div>

@@ -53,6 +53,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -195,7 +196,11 @@ const PositionClosedModal = ({
     const closeSpreadFee = quotation.spreadFee;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2, true);
+    const openValue = roundToDecimalPlaces(
+      +SafeMath.mult(openPrice, cfd.amount),
+      2,
+      RoundCondition.SHRINK
+    );
 
     const pnl: IPnL =
       cfd?.pnl ||

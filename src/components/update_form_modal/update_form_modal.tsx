@@ -35,6 +35,7 @@ import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -147,7 +148,11 @@ const UpdateFormModal = ({
       <div className="text-lightWhite">
         * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedProfitValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>
@@ -167,7 +172,11 @@ const UpdateFormModal = ({
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedLossValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedLossValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>
@@ -644,7 +653,7 @@ const UpdateFormModal = ({
         ? roundToDecimalPlaces(
             +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
             2,
-            true
+            RoundCondition.SHRINK
           )
         : 0;
     const caledTpUpperLimit =
@@ -652,7 +661,7 @@ const UpdateFormModal = ({
         ? roundToDecimalPlaces(
             +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
             2,
-            true
+            RoundCondition.SHRINK
           )
         : TARGET_MAX_DIGITS;
 
@@ -671,12 +680,12 @@ const UpdateFormModal = ({
       ? roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
           2,
-          true
+          RoundCondition.SHRINK
         )
       : roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
           2,
-          true
+          RoundCondition.SHRINK
         );
 
     const caledSlUpperLimit = isLiquidated
@@ -685,12 +694,12 @@ const UpdateFormModal = ({
       ? roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
           2,
-          true
+          RoundCondition.SHRINK
         )
       : roundToDecimalPlaces(
           +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
           2,
-          true
+          RoundCondition.SHRINK
         );
 
     const caledSl =
@@ -703,9 +712,9 @@ const UpdateFormModal = ({
           : roundToDecimalPlaces(
               +SafeMath.plus(marketCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
               2,
-              true
+              RoundCondition.SHRINK
             )
-        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2, true);
+        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2, RoundCondition.SHRINK);
 
     const suggestedSl =
       marketCtx.selectedTicker?.price !== undefined

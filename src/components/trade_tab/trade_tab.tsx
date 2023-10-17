@@ -49,6 +49,7 @@ import SafeMath from '../../lib/safe_math';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import UserOverview from '../user_overview/user_overview';
 import {ImCross} from 'react-icons/im';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 
@@ -82,14 +83,14 @@ const TradeTab = () => {
     roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, SafeMath.div(SUGGEST_TP, leverage))),
       2,
-      true
+      RoundCondition.SHRINK
     )
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, SafeMath.div(SUGGEST_SL, leverage))),
       2,
-      true
+      RoundCondition.SHRINK
     )
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
@@ -132,7 +133,11 @@ const TradeTab = () => {
     )
   );
   const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
-    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, longPriceRef.current), 2, true)
+    roundToDecimalPlaces(
+      +SafeMath.mult(targetInputValue, longPriceRef.current),
+      2,
+      RoundCondition.SHRINK
+    )
   );
 
   const [requiredMarginShort, setRequiredMarginShort, requiredMarginShortRef] = useStateRef(
@@ -142,7 +147,11 @@ const TradeTab = () => {
     )
   );
   const [valueOfPositionShort, setValueOfPositionShort, valueOfPositionShortRef] = useStateRef(
-    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2, true)
+    roundToDecimalPlaces(
+      +SafeMath.mult(targetInputValue, shortPriceRef.current),
+      2,
+      RoundCondition.SHRINK
+    )
   );
 
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
@@ -328,7 +337,7 @@ const TradeTab = () => {
       const sellPrice = roundToDecimalPlaces(
         marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.BUY),
         2,
-        true
+        RoundCondition.SHRINK
       );
 
       setLongPrice(buyPrice);
@@ -581,7 +590,7 @@ const TradeTab = () => {
           setTargetInputValue(TARGET_MIN_DIGITS);
         }
       } else {
-        setTargetInputValue(prev => roundToDecimalPlaces(prev, 2, true));
+        setTargetInputValue(prev => roundToDecimalPlaces(prev, 2, RoundCondition.SHRINK));
       }
     } else {
       setTargetInputValue(TARGET_MIN_DIGITS);
@@ -593,12 +602,12 @@ const TradeTab = () => {
     const longTpLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2,
-      true
+      RoundCondition.SHRINK
     );
     const shortTpUpperBound = roundToDecimalPlaces(
       +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2,
-      true
+      RoundCondition.SHRINK
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
@@ -610,7 +619,7 @@ const TradeTab = () => {
         )
       ),
       2,
-      true
+      RoundCondition.SHRINK
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
@@ -622,19 +631,19 @@ const TradeTab = () => {
         )
       ),
       2,
-      true
+      RoundCondition.SHRINK
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
       +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2,
-      true
+      RoundCondition.SHRINK
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
       +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2,
-      true
+      RoundCondition.SHRINK
     );
 
     setLongSlLowerLimit(longSlLowerBound);
@@ -654,27 +663,31 @@ const TradeTab = () => {
     const slTimes = SUGGEST_SL / leverage;
 
     setLongTpSuggestion(
-      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.plus(1, tpTimes)), 2, true)
+      roundToDecimalPlaces(
+        +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, tpTimes)),
+        2,
+        RoundCondition.SHRINK
+      )
     );
     setLongSlSuggestion(
       roundToDecimalPlaces(
         +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, slTimes)),
         2,
-        true
+        RoundCondition.SHRINK
       )
     );
     setShortTpSuggestion(
       roundToDecimalPlaces(
         +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, tpTimes)),
         2,
-        true
+        RoundCondition.SHRINK
       )
     );
     setShortSlSuggestion(
       roundToDecimalPlaces(
         +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, slTimes)),
         2,
-        true
+        RoundCondition.SHRINK
       )
     );
   };
@@ -692,7 +705,7 @@ const TradeTab = () => {
     // Info: (20230927 - Shirley) Long
     const newLongValue = +SafeMath.mult(targetInputValueRef.current, longPriceRef.current);
 
-    const roundedLongValue = roundToDecimalPlaces(newLongValue, 2, true);
+    const roundedLongValue = roundToDecimalPlaces(newLongValue, 2, RoundCondition.SHRINK);
     setValueOfPositionLong(roundedLongValue);
 
     const marginLong = +SafeMath.div(newLongValue, leverage);
@@ -714,7 +727,7 @@ const TradeTab = () => {
     // Info: (20230927 - Shirley) Short
     const newShortValue = +SafeMath.mult(targetInputValueRef.current, shortPriceRef.current);
 
-    const roundedShortValue = roundToDecimalPlaces(newShortValue, 2, true);
+    const roundedShortValue = roundToDecimalPlaces(newShortValue, 2, RoundCondition.SHRINK);
     setValueOfPositionShort(roundedShortValue);
 
     const marginShort = +SafeMath.div(newShortValue, leverage);
@@ -772,7 +785,7 @@ const TradeTab = () => {
       instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
       targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
-      amount: targetInputValueRef.current,
+      amount: roundToDecimalPlaces(targetInputValueRef.current, 2, RoundCondition.ROUND),
       leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
       margin: {
         asset: unitAsset,
@@ -791,7 +804,7 @@ const TradeTab = () => {
       liquidationPrice: roundToDecimalPlaces(
         +SafeMath.mult(long.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE)),
         2,
-        true
+        RoundCondition.SHRINK
       ),
       fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
@@ -928,7 +941,11 @@ const TradeTab = () => {
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedLongProfitValueRef.current.symbol}{' '}
         ${' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedLongProfitValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedLongProfitValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>
@@ -963,7 +980,11 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedLongLossValueRef.current.symbol} ${' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedLongLossValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>
@@ -1046,7 +1067,11 @@ const TradeTab = () => {
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')}: {estimatedShortProfitValueRef.current.symbol}{' '}
         ${' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedShortProfitValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedShortProfitValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>
@@ -1081,7 +1106,11 @@ const TradeTab = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')}: {estimatedShortLossValueRef.current.symbol} ${' '}
         {numberFormatted(
-          roundToDecimalPlaces(Math.abs(estimatedShortLossValueRef.current.number), 2, true)
+          roundToDecimalPlaces(
+            Math.abs(estimatedShortLossValueRef.current.number),
+            2,
+            RoundCondition.SHRINK
+          )
         )}{' '}
         {unitAsset}
       </div>

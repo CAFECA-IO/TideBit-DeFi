@@ -9,6 +9,7 @@ import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display
 import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -28,7 +29,7 @@ const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
   const closeValue = roundToDecimalPlaces(
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2,
-    true
+    RoundCondition.SHRINK
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl =
@@ -45,8 +46,7 @@ const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
 
   const displayedPnLValue = numberFormatted(Math.abs(pnl.value));
 
-  const displayedPnLSymbol =
-    pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';
+  const displayedPnLSymbol = pnl.value > 0 ? '+' : pnl.value <= 0 ? '-' : '';
 
   const itemClickHandler = () => {
     globalCtx.dataHistoryPositionModalHandler(closedCfdDetails);

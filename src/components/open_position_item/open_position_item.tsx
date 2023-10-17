@@ -22,6 +22,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {Code} from '../../constants/code';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -312,7 +313,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
-            $ {numberFormatted(roundToDecimalPlaces(openValue, 2, true))}
+            $ {numberFormatted(roundToDecimalPlaces(openValue, 2, RoundCondition.SHRINK))}
           </div>
         </div>
 

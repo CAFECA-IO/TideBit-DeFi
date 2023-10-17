@@ -34,6 +34,8 @@ import {
   IRoundConditionConstant,
   RoundCondition,
 } from '../interfaces/tidebit_defi_background/round_condition';
+import BigNumber from 'bignumber.js';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
 
@@ -48,9 +50,58 @@ interface IValidateInput {
  * (20230928 - Shirley)
  * @param number
  * @param decimal
- * @param condition undefined/RoundCondition.ENLARGE -> Math.ceil, RoundCondition.SHRINK -> truncate number towards 0, RoundCondition.ROUND -> round the number
+ * @param condition undefined/RoundCondition.ENLARGE -> Math.ceil, RoundCondition.SHRINK -> truncate number towards 0, RoundCondition.SHRINK -> round the number
  * @returns
  */
+// export const roundToDecimalPlaces = (
+//   number: number,
+//   decimal: number,
+//   condition?: IRoundConditionConstant
+// ): number => {
+//   const factor = new BigNumber(10).pow(decimal);
+//   const n = new BigNumber(number);
+
+//   // Handle extremely small numbers
+//   if (n.abs().lt(1e-15)) {
+//     return 0;
+//   }
+
+//   // Handle numbers close to 0.5
+//   if (n.minus(0.5).abs().lt(1e-15)) {
+//     return 0.5;
+//   }
+
+//   // Handle numbers close to -0.5
+//   if (n.plus(0.5).abs().lt(1e-15)) {
+//     return -0.5;
+//   }
+
+//   // Handle extremely large numbers
+//   if (n.abs().gt(Number.MAX_SAFE_INTEGER)) {
+//     return n.toNumber();
+//   }
+
+//   if (SafeMath.eq(+n, 0)) {
+//     return parseFloat(`0.${'0'.repeat(decimal)}`);
+//   }
+
+//   let roundedNumber = new BigNumber(0);
+
+//   if (condition === RoundCondition.SHRINK) {
+//     if (SafeMath.lt(n, 0)) {
+//       roundedNumber = n.abs().plus(Number.EPSILON).times(factor).ceil().times(-1).div(factor);
+//     } else if (SafeMath.gt(n, 0)) {
+//       roundedNumber = n.times(factor).floor().div(factor);
+//     }
+//   } else if (condition === RoundCondition.SHRINK) {
+//     roundedNumber = n.plus(Number.EPSILON).times(factor).round().div(factor);
+//   } else {
+//     roundedNumber = n.plus(Number.EPSILON).times(factor).ceil().div(factor);
+//   }
+
+//   return roundedNumber.toNumber();
+// };
+
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -70,35 +121,11 @@ export const roundToDecimalPlaces = (
     } else if (SafeMath.gt(number, 0)) {
       roundedNumber = Math.floor(number * factor) / factor;
     }
-  } else if (condition === RoundCondition.ROUND) {
-    roundedNumber = Math.round(number * factor) / factor;
   } else {
     roundedNumber = Math.ceil((+number + Number.EPSILON) * factor) / factor;
   }
 
   return roundedNumber;
-};
-
-export const roundToDecimalPlacesCeil = (
-  number: number,
-  decimal: number,
-  condition = false
-): number => {
-  const factor = Math.pow(10, decimal);
-
-  if (SafeMath.eq(+number, 0)) {
-    return Number(`0.${'0'.repeat(decimal)}`);
-  }
-
-  if (condition) {
-    if (SafeMath.lt(+number, 0)) {
-      return (Math.ceil((Math.abs(+number) + Number.EPSILON) * factor) / factor) * -1;
-    } else if (SafeMath.gt(+number, 0)) {
-      return Math.floor((+number + Number.EPSILON) * factor) / factor;
-    }
-  }
-
-  return Math.ceil((+number + Number.EPSILON) * factor) / factor;
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -652,11 +679,11 @@ export const numberFormatted = (n: number | string | undefined, dash = false, si
       ? zero
       : sign
       ? signStr +
-        Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.ROUND)).toLocaleString(
+        Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         )
-      : Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.ROUND)).toLocaleString(
+      : Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         );

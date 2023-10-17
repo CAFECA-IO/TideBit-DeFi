@@ -1,11 +1,12 @@
 import React, {useContext} from 'react';
 import {useTranslation} from 'next-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {ratioToPercentage, numberFormatted} from '../../lib/common';
+import {ratioToPercentage, numberFormatted, roundToDecimalPlaces} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 

@@ -785,7 +785,7 @@ const TradeTab = () => {
       instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
       targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
-      amount: roundToDecimalPlaces(targetInputValueRef.current, 2, RoundCondition.ROUND),
+      amount: roundToDecimalPlaces(targetInputValueRef.current, 2, RoundCondition.SHRINK),
       leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
       margin: {
         asset: unitAsset,

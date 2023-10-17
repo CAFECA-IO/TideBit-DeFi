@@ -128,5 +128,6 @@ src/constants/walletconnect.js
 
 .vscode
 
-intergration-test/metamask-chrome-11.0.0/
+integration-test/metamask-chrome-11.0.0/
 playwright-report/
+test-results/

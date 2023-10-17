@@ -609,7 +609,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
       // Deprecated: dev (20231004 - Shirley)
       // eslint-disable-next-line no-console
-      // console.log('uniqueData', uniqueData);
+      console.log('uniqueData', uniqueData);
 
       // 得到最後一個candlestick的時間
       // const lastCandlestick = uniqueData[uniqueData.length - 1];
@@ -688,7 +688,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           const candlesticks = result.data as IInstCandlestick;
           const formattedData = processCandlesticks(timeSpan, candlesticks);
 
-          tunedLastTime = tradeBook.getLastTimeForCandle(formattedData, timeSpan)!;
+          tunedLastTime = tradeBook.getLastTimestampForCandle(formattedData, timeSpan)!;
         }
       }
     }
@@ -751,20 +751,20 @@ export const MarketProvider = ({children}: IMarketProvider) => {
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
               // console.log('candles from trades', candlestickFromTrades);
-              // merge = tradeBook.mergeCandlesticks(item, candlestickFromTrades[0]);
+              merge = tradeBook.mergeTwoCandlesticks(item, candlestickFromTrades[0]);
               // const timeOfLast = tradeBook.getLastTimeForCandle(wholeCandlesticks.slice(-2), ts);
               // const tuned = timeOfLast ? new Date(timeOfLast) : undefined;
 
-              merge = tradeBook.mergeCandlestickByTimeSpan(
-                instId,
-                candlestickFromTrades[0],
-                ts,
-                new Date(tunedLastTime)
-              );
+              // merge = tradeBook.mergeCandlestickByTimeSpan(
+              //   instId,
+              //   candlestickFromTrades[0],
+              //   ts,
+              //   new Date(tunedLastTime)
+              // );
 
               // Deprecated: dev (20231004 - Shirley)
               // eslint-disable-next-line no-console
-              console.log('item', item, 'merge', merge);
+              // console.log('item', item, 'merge', merge);
             }
 
             return item.x.getTime() < candlestickFromTrades[0].x.getTime();
@@ -775,9 +775,15 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
         // Deprecated: dev (20231004 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('organizedCandlesticks', organizedCandlesticks);
+        // console.log('organizedCandlesticks', organizedCandlesticks);
 
         tradeBook.addCandlestickData(instId, ts, organizedCandlesticks);
+
+        const aligend = tradeBook.alignCandlestickData(wholeCandlesticks, ts);
+
+        // Deprecated: dev (20231004 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('aligned', aligend);
 
         // Deprecated: dev (20231004 - Shirley)
         // eslint-disable-next-line no-console
@@ -805,7 +811,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
         // const tsCandles = tradeBook.getCandlestickData(instId)?.[ts] || [];
 
-        setCandlestickChartData(organizedCandlesticks);
+        setCandlestickChartData(aligend);
       }
     }, 100);
     setCandlestickInterval(candlestickInterval);

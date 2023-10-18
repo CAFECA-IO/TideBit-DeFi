@@ -233,7 +233,7 @@ export const APIURL = {
   // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
   // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
   GET_CANDLESTICK_DATA: `${apiUrl}/market/candlesticks`,
-  GET_CFD_QUOTATION: `${apiUrl}/market/qutation`,
+  GET_CFD_QUOTATION: `${apiUrl}/market/quotation`,
   GET_CFD_SUGGESTION: `${apiUrl}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${apiUrl}/market/guaranteed-stop-fee`,

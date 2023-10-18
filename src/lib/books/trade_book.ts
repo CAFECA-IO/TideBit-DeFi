@@ -22,7 +22,7 @@ import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {CANDLESTICK_SIZE} from '../../constants/display';
-import {millesecondsToSeconds} from '../common';
+import {millisecondsToSeconds} from '../common';
 
 interface ITradeInTradeBook {
   tradeId: string;
@@ -40,7 +40,7 @@ type ILine = {
   timestamp: number;
 };
 
-type ICandlestickDataWithTimeSpan = {
+export type ICandlestickDataWithTimeSpan = {
   [key in ITimeSpanUnion]: ICandlestickData[];
 };
 
@@ -318,12 +318,15 @@ class TradeBook {
     );
   }
 
+  // Info: 找最後一根蠟燭的時間 (20231018 - Shirley)
+  // TODO: 包含下一根蠟燭（新的一根）的時間 (20231018 - Shirley)
   getLatestTimestampMs(candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
     if (candlesticks.length < 2) {
       return;
     }
 
     const copy = [...candlesticks];
+    const now = new Date().getTime();
 
     let timeForLatestCandle = 0;
 
@@ -331,7 +334,12 @@ class TradeBook {
       const diff = copy[i].x.getTime() - copy[i - 1].x.getTime();
       const tsMs = getTime(timeSpan);
 
-      if (diff > tsMs || diff === tsMs) {
+      if (
+        i === copy.length - 1 &&
+        (now - copy[i].x.getTime() > tsMs || now - copy[i].x.getTime() === tsMs)
+      ) {
+        timeForLatestCandle = copy[i].x.getTime() + tsMs;
+      } else if (diff > tsMs || diff === tsMs) {
         timeForLatestCandle = copy[i - 1].x.getTime() + tsMs;
       } else if (diff < tsMs) {
         timeForLatestCandle = copy[i - 1].x.getTime();
@@ -342,54 +350,20 @@ class TradeBook {
   }
 
   // Info: (20231018 - Shirley)
-  alignCandlesticksStale1018(candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
-    if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
-      // Deprecated: dev (20231004 - Shirley)
-      // eslint-disable-next-line no-console
-      console.error('candlesticks is either undefined or not an array.');
-      return [];
-    }
-
-    const copy = [...candlesticks];
-
-    // Info: (20231018 - Shirley) check each candlestick's timestamp
-    for (let i = 1; i < candlesticks.length; i++) {
-      const diff = copy[i].x.getTime() - copy[i - 1].x.getTime();
-      const tsMs = getTime(timeSpan);
-
-      if (diff > tsMs || diff === tsMs) {
-        const alignedTime = copy[i - 1].x.getTime() + tsMs;
-        copy[i].x = new Date(alignedTime);
-      } else if (diff < tsMs) {
-        const alignedTime = copy[i - 1].x.getTime();
-
-        const readyForMerge = [copy[i - 1], copy[i]];
-        // Info: (20231018 - Shirley) merge the candlestick
-        const merged = this.mergeCandlesticks(readyForMerge, new Date(alignedTime));
-
-        // Info: (20231018 - Shirley) remove the copy[i-1] and copy[i], and add merged into copy
-        if (!merged) return;
-        copy.pop();
-        copy.pop();
-        copy.push(merged!);
-      }
-    }
-
-    return copy;
-  }
-
-  // Info: (20231018 - Shirley)
   alignCandlesticks(instId: string, candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
     if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
-      // Deprecated: dev (20231004 - Shirley)
+      // Deprecated: dev (20231118 - Shirley)
       // eslint-disable-next-line no-console
-      console.error('candlesticks is either undefined or not an array.');
+      console.error('candlesticks is either undefined or not an array in alignCandlesticks.');
       return [];
     }
+    // Deprecated: dev (20231118 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('alignCandlesticks', candlesticks, timeSpan);
 
     const tsMs = getTime(timeSpan);
     const result: ICandlestickData[] = [];
-    const interval = millesecondsToSeconds(getTime(timeSpan));
+    const interval = millisecondsToSeconds(getTime(timeSpan));
 
     // Info: (20231018 - Shirley) Start with the first candlestick
     result.push(candlesticks[0]);
@@ -442,7 +416,7 @@ class TradeBook {
     if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
       // Deprecated: dev (20231118 - Shirley)
       // eslint-disable-next-line no-console
-      console.error('candlesticks is either undefined or not an array.');
+      console.error('candlesticks is either undefined or not an array in mergeCandlesticks.');
       return;
     }
 
@@ -467,6 +441,14 @@ class TradeBook {
         value,
       },
     };
+    // Deprecated: dev (20231118 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log(
+      'candlesticks in mergeCandlesticks',
+      candlesticks,
+      'merged candlestick: ',
+      newCandlestick
+    );
 
     return newCandlestick;
   }

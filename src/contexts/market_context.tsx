@@ -748,7 +748,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
     // Deprecated: dev (20231118 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('candlesticks after init', candlesticks);
+    console.log('candlesticks after init', ts, candlesticks);
     setCandlestickChartData(candlesticks);
 
     // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)

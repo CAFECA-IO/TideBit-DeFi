@@ -1,6 +1,6 @@
 {
   "name": "src",
-  "version": "0.8.0+59.1",
+  "version": "0.8.0+60.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -32,6 +32,8 @@
     "next": "13.3.0",
     "next-i18next": "^13.0.1",
     "pusher-js": "^8.0.2",
+    "playwright": "^1.38.0",
+    "playwright-core": "^1.38.0",
     "react": "18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-dom": "18.2.0",
@@ -44,12 +46,17 @@
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1"
   },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/eslint-plugin": "^7.19.1",
     "@ethersproject/providers": "^5.7.2",
+    "@playwright/test": "^1.38.0",
     "@types/jest": "^29.2.2",
     "@types/marked": "^5.0.0",
+    "@types/node": "^20.6.2",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "autoprefixer": "^10.4.13",

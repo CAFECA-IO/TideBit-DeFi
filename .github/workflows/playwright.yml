@@ -64,7 +64,7 @@ jobs:
     - name: Upload HTML report
       uses: actions/upload-artifact@v3
       with:
-        name: Playwright-Report-${{ github.event.workflow_run.created_at}}
+        name: Playwright-Report-${{ github.job_workflow_sha}}
         path: ./playwright-report
         retention-days: 14
 

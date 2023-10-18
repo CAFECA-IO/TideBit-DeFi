@@ -133,3 +133,5 @@ src/constants/walletconnect.js
 .DS_Store
 
 .vscode
+intergration-test/metamask-chrome-11.0.0/
+playwright-report/

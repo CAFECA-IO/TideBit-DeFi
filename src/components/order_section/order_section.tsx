@@ -23,7 +23,11 @@ export enum ORDER_SECTION_TAB {
   POSITION = 'POSITION',
 }
 
-const OrderSection = () => {
+interface IOrderSection {
+  hideOpenLineGraph?: boolean;
+}
+
+const OrderSection = (props: IOrderSection) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useGlobal();
@@ -64,6 +68,7 @@ const OrderSection = () => {
           activePositionTabMobile={positionActiveTab}
           openTabClickHandler={openTabClickHandler}
           historyTabClickHandler={historyTabClickHandler}
+          hideOpenLineGraph={props?.hideOpenLineGraph}
         />
       ) : (
         <PositionVisitorTab />
@@ -156,6 +161,7 @@ const OrderSection = () => {
           activePositionTabMobile={positionActiveTab}
           openTabClickHandler={openTabClickHandler}
           historyTabClickHandler={historyTabClickHandler}
+          hideOpenLineGraph={props?.hideOpenLineGraph}
         />
       </div>
     </div>

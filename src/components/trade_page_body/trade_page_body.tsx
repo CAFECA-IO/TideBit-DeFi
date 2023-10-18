@@ -5,17 +5,16 @@ import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 interface ITradePageBodyProps {
   briefs: IRecommendedNews[];
   hideTradingView?: boolean;
+  hideOpenLineGraph?: boolean;
 }
 
 const TradePageBody = (props: ITradePageBodyProps) => {
-  const displayedOrdersection = <OrderSection />;
-
   return (
     <>
       <div className="flex min-h-screen flex-col overflow-hidden">
         <MarketSection briefs={props.briefs} hideTradingView={props?.hideTradingView} />
 
-        {displayedOrdersection}
+        <OrderSection hideOpenLineGraph={props?.hideOpenLineGraph} />
       </div>
     </>
   );

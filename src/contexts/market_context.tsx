@@ -605,27 +605,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }, [])
         .sort((a, b) => a.x.getTime() - b.x.getTime());
 
-      // const lastTime = tradeBook.getLastTimeForCandle(uniqueData, timeSpan);
-
-      // Deprecated: dev (20231004 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('uniqueData', uniqueData);
-
-      // 得到最後一個candlestick的時間
-      // const lastCandlestick = uniqueData[uniqueData.length - 1];
-      // const lastCandlestickTime = lastCandlestick.x.getTime();
-
       // Info: 如果該時間區間的資料是空白的，就將整理好的蠟燭圖資料放進去 (20230817 - Shirley)
       let candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
 
       const targetedCandlestick = candlestickDataGot?.[timeSpan];
-
       if (!targetedCandlestick || targetedCandlestick?.length === 0) {
         tradeBook.addCandlestickData(instCandlestick.instId, timeSpan, uniqueData);
         candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
       }
 
-      // TODO: 如果該時間密度的資料不是空白的，就直接切換蠟燭圖資料 (20230817 - Shirley)
+      // Info: 如果該時間密度的資料不是空白的，就直接切換蠟燭圖資料 (20231018 - Shirley)
       const newData = candlestickDataGot?.[timeSpan] || null;
       setCandlestickChartData(newData);
 
@@ -674,7 +663,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
 
     const candlestickData = tradeBook.getCandlestickData(instId);
-    let tunedLastTime = new Date().getTime();
 
     if (timeSpan) {
       if (candlestickData && candlestickData?.[timeSpan]?.length > 0) {
@@ -686,9 +674,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             limit: CANDLESTICK_SIZE,
           });
           const candlesticks = result.data as IInstCandlestick;
-          const formattedData = processCandlesticks(timeSpan, candlesticks);
-
-          tunedLastTime = tradeBook.getLastTimestampForCandle(formattedData, timeSpan)!;
+          processCandlesticks(timeSpan, candlesticks);
         }
       }
     }
@@ -706,112 +692,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
         tradeBook.addCandlestickData(instId, ts, candlesticks);
         const liveCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        // Deprecated: dev (20231017 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('liveCandlesticks', liveCandlesticks);
 
         setCandlestickChartData(liveCandlesticks);
-      }
-
-      // TODO: 切換到其他 time span 也應該要隨著接收到新的 trades 更新蠟燭圖 (20231003 - Shirley)
-      // else if (timeSpanRef.current === TimeSpanUnion._5m) {
-      else {
+      } else {
         const wholeCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        const lastInWholeCandlesticks = wholeCandlesticks[wholeCandlesticks.length - 1];
-        // Deprecated: dev (20231004 - Shirley)
+        const alignedCandlesticks = tradeBook.alignCandlesticks(instId, wholeCandlesticks, ts);
+        // Deprecated: dev (20231017 - Shirley)
         // eslint-disable-next-line no-console
-        // console.log('lastInWholeCandlesticks', lastInWholeCandlesticks);
+        console.log('alignedCandlesticks', ts, alignedCandlesticks);
 
-        const candlestickFromTrades = tradeBook.toCandlestick(
-          instId,
-          millesecondsToSeconds(getTime(ts)),
-          CANDLESTICK_SIZE
-        );
+        tradeBook.addCandlestickData(instId, ts, alignedCandlesticks ?? []);
 
-        const mergedCandlestick = tradeBook.mergeTwoCandlesticks(
-          lastInWholeCandlesticks,
-          candlestickFromTrades[0]
-        );
-
-        const anotherMergedCandlestick = tradeBook.mergeCandlestickByTimeSpan(
-          instId,
-          candlestickFromTrades[0],
-          ts
-        );
-
-        let merge;
-
-        // Info: strip the fiveCompleteMin if it's older than fiveMin[0], and concat fiveMin to fiveCompleteMin
-        const organizedCandlesticks = wholeCandlesticks
-          .filter(item => {
-            if (item.x.getTime() > candlestickFromTrades[0].x.getTime()) {
-              // Deprecated: dev (20231004 - Shirley)
-              // eslint-disable-next-line no-console
-              // console.log('completeCandlestick', item);
-              // Deprecated: dev (20231004 - Shirley)
-              // eslint-disable-next-line no-console
-              // console.log('candles from trades', candlestickFromTrades);
-              merge = tradeBook.mergeTwoCandlesticks(item, candlestickFromTrades[0]);
-              // const timeOfLast = tradeBook.getLastTimeForCandle(wholeCandlesticks.slice(-2), ts);
-              // const tuned = timeOfLast ? new Date(timeOfLast) : undefined;
-
-              // merge = tradeBook.mergeCandlestickByTimeSpan(
-              //   instId,
-              //   candlestickFromTrades[0],
-              //   ts,
-              //   new Date(tunedLastTime)
-              // );
-
-              // Deprecated: dev (20231004 - Shirley)
-              // eslint-disable-next-line no-console
-              // console.log('item', item, 'merge', merge);
-            }
-
-            return item.x.getTime() < candlestickFromTrades[0].x.getTime();
-          })
-          .concat(merge || candlestickFromTrades);
-
-        // const merged = tradeBook.mergeCandlesticks(organizedCandlesticks);
-
-        // Deprecated: dev (20231004 - Shirley)
-        // eslint-disable-next-line no-console
-        // console.log('organizedCandlesticks', organizedCandlesticks);
-
-        tradeBook.addCandlestickData(instId, ts, organizedCandlesticks);
-
-        const aligend = tradeBook.alignCandlestickData(wholeCandlesticks, ts);
-
-        // Deprecated: dev (20231004 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('aligned', aligend);
-
-        // Deprecated: dev (20231004 - Shirley)
-        // eslint-disable-next-line no-console
-        // console.log(
-        //   'wholeCandlesticks last two',
-        //   wholeCandlesticks[wholeCandlesticks.length - 2],
-        //   'wholeCandlesticks last one',
-        //   wholeCandlesticks[wholeCandlesticks.length - 1],
-        //   'candlestickFromTrades',
-        //   candlestickFromTrades[0],
-        //   'mergedCandlestick',
-        //   mergedCandlestick,
-        //   'anotherMergedCandlestick',
-        //   anotherMergedCandlestick
-        // );
-
-        // console.log(
-        //   'wholeCandlesticks',
-        //   wholeCandlesticks,
-        //   'candlestickFromTrades',
-        //   candlestickFromTrades,
-        //   'organizedCandlesticks',
-        //   organizedCandlesticks
-        // );
-
-        // const tsCandles = tradeBook.getCandlestickData(instId)?.[ts] || [];
-
-        setCandlestickChartData(aligend);
+        setCandlestickChartData(alignedCandlesticks ?? wholeCandlesticks);
       }
     }, 100);
     setCandlestickInterval(candlestickInterval);

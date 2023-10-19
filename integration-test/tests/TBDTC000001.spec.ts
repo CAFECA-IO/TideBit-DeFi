@@ -38,6 +38,8 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
   page,
   context,
 }) => {
+  const favoriteTabButton = {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')};
+  const allTabButton = {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -52,9 +54,7 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
       '#tickerSelectorModal > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(3) > div > div > div:nth-child(3) > button'
     )
     .click();
-  await page
-    .getByRole('button', {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE') as string})
-    .click();
+  await page.getByRole('button', favoriteTabButton).click();
   await expect
     .soft(
       page.locator(
@@ -62,9 +62,7 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
       )
     )
     .toBeHidden();
-  await page
-    .getByRole('button', {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL') as string})
-    .click();
+  await page.getByRole('button', allTabButton).click();
   await page
     .locator(
       '#tickerSelectorModal > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(3) > div > div > div:nth-child(3) > button'
@@ -79,15 +77,13 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
 });
 
 test('3. 至ETH交易頁面，下滑點擊白皮書與官方網站。', async ({page, context}) => {
+  const whitePaper = {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WHITE_PAPER')};
+  const website = {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE')};
   const tradePage = new TradePage(page, context);
   await tradePage.goto();
+  await expect.soft(page.getByRole('link', whitePaper)).toHaveAttribute('href', /.*whitepaper/);
   await expect
-    .soft(
-      page.getByRole('link', {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER') as string})
-    )
-    .toHaveAttribute('href', /.*whitepaper/);
-  await expect
-    .soft(page.getByRole('link', {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE') as string}))
+    .soft(page.getByRole('link', website))
     .toHaveAttribute('href', /https:\/\/ethereum.org/);
 });
 
@@ -158,6 +154,7 @@ test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀�
   page,
   context,
 }) => {
+  const HistoryTabButton = {name: i18next.t('TRADE_PAGE.POSITION_TAB_HISTORY')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -168,9 +165,7 @@ test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀�
   await tradePage.clickAnncmnt();
   await tradePage.closePosition(walletConnect.extensionId);
   await tradePage.closePosition(walletConnect.extensionId);
-  await page
-    .getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB_HISTORY') as string})
-    .click();
+  await page.getByRole('button', HistoryTabButton).click();
   const minutetext = await page
     .locator(
       '#__next > div > main > div > div.pointer-events-none.fixed.right-0.top-82px.z-10.flex.overflow-x-hidden.overflow-y-hidden.outline-none > div > div > div > div > div:nth-child(1) > div.mt-3.text-xs > div > div.w-48px > div:nth-child(2)'

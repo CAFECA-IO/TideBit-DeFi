@@ -53,14 +53,12 @@ export class WalletConnect {
     await this.page.getByTestId('popover-close').click();
   }
   async connectWallet() {
+    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
+    const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
     await this.page.goto('./');
-    this.page
-      .getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string})
-      .click();
+    this.page.getByRole('button', okButton).click();
     const pagePromise = this.context.newPage();
-    await this.page
-      .getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT') as string})
-      .click();
+    await this.page.getByRole('button', walletConnectButton).click();
     await this.page.waitForTimeout(2000);
     await this.page
       .locator('div')
@@ -74,22 +72,23 @@ export class WalletConnect {
     await newPage.close();
   }
   async sendRequest() {
+    const requestsButton = {
+      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON'),
+    };
+    const doneButton = {name: i18next.t('WALLET_PANEL.DONE_BUTTON')};
     const pagePromise = this.context.newPage();
-    await this.page
-      .getByRole('button', {
-        name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON') as string,
-      })
-      .click();
+    await this.page.getByRole('button', requestsButton).click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + this.extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();
     await newPage.getByTestId('page-container-footer-next').click();
-    await this.page
-      .getByRole('button', {name: i18next.t('WALLET_PANEL.DONE_BUTTON') as string})
-      .click();
+    await this.page.getByRole('button', doneButton).click();
     await newPage.close();
   }
   async deposit() {
+    const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
+    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
+    const viewOnButton = {name: i18next.t('POSITION_MODAL.VIEW_ON_BUTTON')};
     const navAvailable = await this.page
       .locator(
         '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(1) > div:nth-child(2)'
@@ -105,20 +104,16 @@ export class WalletConnect {
       )
       .click();
     await this.page.locator('#userDropdown > ul > li:nth-child(2) > button').click();
-    await this.page.getByRole('button', {name: i18next.t('D_W_MODAL.MAX') as string}).click();
+    await this.page.getByRole('button', maxButton).click();
     await this.page
       .locator(
         '#depositModal > div.relative.flex-auto.pt-0 > div > div > div:nth-child(4) > div > button'
       )
       .click();
-    const hasDeposit = await this.page
-      .getByRole('button', {name: i18next.t('POSITION_MODAL.VIEW_ON_BUTTON') as string})
-      .isVisible();
+    const hasDeposit = await this.page.getByRole('button', viewOnButton).isVisible();
     if (hasDeposit) {
       this.page.reload();
-      this.page
-        .getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string})
-        .click();
+      this.page.getByRole('button', okButton).click();
       // profile button
       await this.page
         .locator(
@@ -126,11 +121,7 @@ export class WalletConnect {
         )
         .click();
       await this.page.locator('#userDropdown > ul > li:nth-child(1) > button > a').click();
-      await this.page
-        .getByRole('button', {
-          name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string,
-        })
-        .click();
+      await this.page.getByRole('button', okButton).click();
       await this.page
         .locator(
           '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div > div.flex.items-center.justify-center.space-x-2.text-center > button'

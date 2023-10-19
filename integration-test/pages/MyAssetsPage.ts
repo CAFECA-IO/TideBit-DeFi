@@ -6,10 +6,9 @@ export class MyAssetsPage {
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
+    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', {
-      name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string,
-    });
+    this.getAnncmnt = page.getByRole('button', okButton);
   }
 
   // Info: (20231013 - Jacky) Use profile button to go to My Assets page
@@ -46,73 +45,34 @@ export class MyAssetsPage {
   }
 
   async checkTradeLog() {
-    await this.page
-      .getByRole('button', {
-        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE') as string,
-      })
-      .click();
+    const titleButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')};
+    const depositButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')};
+    const openButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')};
+    const updateButton = {
+      name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE'),
+    };
+    const closeButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')};
+    await this.page.getByRole('button', titleButton).click();
     await this.page
       .locator(
         '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.relative.mt-2.hidden.w-160px> div > button:nth-child(2)'
       )
       .click();
-    await expect
-      .soft(
-        this.page
-          .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT') as string,
-          })
-          .last()
-      )
-      .toBeVisible();
-    await this.page
-      .getByRole('button', {
-        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT') as string,
-      })
-      .nth(2)
-      .click();
+    await expect.soft(this.page.getByRole('button', depositButton).last()).toBeVisible();
+    await this.page.getByRole('button', depositButton).nth(2).click();
     await this.page
       .locator(
         '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.relative.mt-2.hidden.w-160px> div > button:nth-child(4)'
       )
       .click();
-    await expect
-      .soft(
-        this.page
-          .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN') as string,
-          })
-          .last()
-      )
-      .toBeVisible();
-    await expect
-      .soft(
-        this.page
-          .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE') as string,
-          })
-          .last()
-      )
-      .toBeVisible();
-    await this.page
-      .getByRole('button', {
-        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN') as string,
-      })
-      .first()
-      .click();
+    await expect.soft(this.page.getByRole('button', openButton).last()).toBeVisible();
+    await expect.soft(this.page.getByRole('button', updateButton).last()).toBeVisible();
+    await this.page.getByRole('button', openButton).first().click();
     await this.page
       .locator(
         '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.relative.mt-2.hidden.w-160px> div > button:nth-child(5)'
       )
       .click();
-    await expect
-      .soft(
-        this.page
-          .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE') as string,
-          })
-          .last()
-      )
-      .toBeVisible();
+    await expect.soft(this.page.getByRole('button', closeButton).last()).toBeVisible();
   }
 }

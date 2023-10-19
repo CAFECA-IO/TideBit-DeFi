@@ -688,19 +688,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             timeSpan,
             limit: CANDLESTICK_SIZE,
           });
-          const candlesticks = result.data as IInstCandlestick;
-          const data = processCandlesticks(timeSpan, candlesticks);
-          tradeBook.addCandlestickData(instId, timeSpan, data);
+          const candlesticks = (await result.data) as IInstCandlestick;
+          const data = await processCandlesticks(timeSpan, candlesticks);
+          await tradeBook.addCandlestickData(instId, timeSpan, data);
         } else {
-          const candlesticks = tradeBook.toCandlestick(
+          const candlesticks = await tradeBook.toCandlestick(
             instId,
             millisecondsToSeconds(getTime(timeSpan)),
             CANDLESTICK_SIZE
           );
-          tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
+          await tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
         }
 
-        const get = tradeBook.getCandlestickData(instId)?.[timeSpan] || null;
+        const get = (await tradeBook.getCandlestickData(instId)?.[timeSpan]) || null;
         // Deprecated: dev (20231118 - Shirley)
         // eslint-disable-next-line no-console
         console.log('timeSpan', timeSpan, 'get in initCandlestickData', get);

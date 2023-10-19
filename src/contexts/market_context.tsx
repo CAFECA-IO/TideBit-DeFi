@@ -714,9 +714,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
                 timeSpan,
                 limit: CANDLESTICK_SIZE,
               });
-              const candlesticks = result.data as IInstCandlestick;
-              const data = processCandlesticks(timeSpan, candlesticks);
-              tradeBook.addCandlestickData(instId, timeSpan, data);
+              const candlesticks = (await result.data) as IInstCandlestick;
+              const data = await processCandlesticks(timeSpan, candlesticks);
+              await tradeBook.addCandlestickData(instId, timeSpan, data);
             }
           }
         }
@@ -764,7 +764,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         setCandlestickChartData(liveCandlesticks);
       } else {
         const origin = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        const sample = origin.slice(-5);
+        const sample = origin.slice(-SAMPLE_NUMBER);
         const latestTimestampMs = tradeBook.getLatestTimestampMs(sample, ts) ?? 0;
         const lastOfOrigin = origin[origin.length - 1];
         const lastTsOfOrigin = lastOfOrigin?.x.getTime() ?? 0;

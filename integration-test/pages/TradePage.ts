@@ -91,10 +91,11 @@ export class TradePage {
         '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div.mb-5.h-70px > div:nth-child(3) > div > input'
       )
       .check();
+    if (this.page.locator('body > vercel-live-feedback')) {
+      await this.page.$eval('vercel-live-feedback', el => el.remove());
+    }
     await this.page
-      .locator(
-        '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div:nth-child(3) > button'
-      )
+      .getByRole('button', {name: i18next.t('POSITION_MODAL.UPDATE_POSITION_TITLE') as string})
       .click();
     await this.page
       .getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON') as string})
@@ -117,9 +118,9 @@ export class TradePage {
       .click();
     await this.page
       .locator(
-        '#__next > div > main > div > div:nth-child(3) > div > div > div > div > div:nth-last-child(' +
+        '#__next > div > main > div > div.pointer-events-none.fixed.right-0.top-82px.z-10.flex.overflow-x-hidden.overflow-y-hidden.outline-none > div > div > div > div > div:nth-last-child(' +
           number +
-          ') > div > div:nth-child(4) > div:nth-child(3)'
+          ') > div > div:nth-child(3) > div:nth-child(3)'
       )
       .click();
     const pagePromise = this.context.newPage();

@@ -1,9 +1,30 @@
-import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
+/** TODO: (20230815 - Shirley)
+ * Data:
+ * 1. trades: 用來存放所有的交易資料
+ * 2. predictedTrades: 用來存放預測的交易資料
+ * **3. candlestickChart: 依照時間間隔存放蠟燭圖資料**
+ * 4. isPredicting: 用來判斷是否正在預測
+ * 5. predictionTimers: 用來存放預測的 timer
+ * 6. config: 用來存放設定
+ * 7. model: 用來存放預測模型
+ * Time span:
+ * Live: 用 trades 形成 predictedTrades 再用 predictedTrades 形成蠟燭圖資料後，再存到 candlestickChart；定期檢查trades跟predictedTrades的資料需小於100筆，只保留最新的100筆
+ * 5m, 15m, 30m, 1h, 4h, 12h, 1d: 直接 call API 拿到蠟燭圖的資料
+ * 1.
+ */
+
+import {
+  ICandlestickData,
+  isCandlestickData,
+} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
+import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../../constants/time_span_union';
+import {CANDLESTICK_SIZE} from '../../constants/display';
+import {millisecondsToSeconds} from '../common';
 
-interface ITrade {
+interface ITradeInTradeBook {
   tradeId: string;
   targetAsset: string;
   unitAsset: string;
@@ -19,18 +40,13 @@ type ILine = {
   timestamp: number;
 };
 
-type ICandlestick = {
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  timestamp: number;
+export type ICandlestickDataWithTimeSpan = {
+  [key in ITimeSpanUnion]: ICandlestickData[];
 };
 
 interface ITradeBookConfig {
   model?: string;
-  initialTrades?: ITrade[];
+  initialTrades?: ITradeInTradeBook[];
   intervalMs: number;
   minMsForLinearRegression: number; // Info: 拿幾秒內的資料做預測 (20230522 - Shirley)
   minLengthForLinearRegression: number; // Info: 規定幾秒內至少要有幾筆資料 (20230522 - Shirley)
@@ -47,8 +63,10 @@ function ensureTickerExistsDecorator(target: any, key: string, descriptor: Prope
 }
 
 class TradeBook {
-  private trades: Map<string, ITrade[]>;
-  private predictedTrades: Map<string, ITrade[]>;
+  private trades: Map<string, ITradeInTradeBook[]>;
+  private predictedTrades: Map<string, ITradeInTradeBook[]>;
+  private candlestickChart: Map<string, ICandlestickDataWithTimeSpan>;
+  private convertedTradeIds: Set<string> = new Set();
   private isPredicting: Map<string, boolean>;
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
@@ -58,13 +76,14 @@ class TradeBook {
     this.config = config;
     this.trades = new Map();
     this.predictedTrades = new Map();
+    this.candlestickChart = new Map();
     this.isPredicting = new Map();
     this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
   }
 
   @ensureTickerExistsDecorator
-  addTrades(instId: string, trades: ITrade[]) {
+  addTrades(instId: string, trades: ITradeInTradeBook[]) {
     const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
 
     this.resetPrediction(instId);
@@ -86,7 +105,7 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  add(instId: string, trade: ITrade): void {
+  add(instId: string, trade: ITradeInTradeBook): void {
     const trades = this.trades.get(instId)!;
 
     if (!this.isValidTrade(trade)) {
@@ -118,14 +137,18 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  private _add(instId: string, trade: ITrade): void {
-    const isPredictedData = trade.tradeId.includes('-');
+  private _add(instId: string, trade: ITradeInTradeBook): void {
+    let newTrade: ITradeInTradeBook = {...trade};
+
+    const isPredictedData = newTrade.tradeId.includes('-');
+
     const trades = this.trades.get(instId)!;
     const predictedTrades = this.predictedTrades.get(instId)!;
 
+    // Info: 檢查這筆trade是預測的還是真實的，然後存進不同變數裡 (20230816 - Shirley)
     if (!isPredictedData) {
-      trades.push(trade);
-      predictedTrades.push(trade);
+      trades.push(newTrade);
+      predictedTrades.push(newTrade);
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
@@ -136,6 +159,8 @@ class TradeBook {
           ? `${lastTradeId[0]}-${Number(lastTradeId[1]) + 1}`
           : `${lastTradeId[0]}-1`
       }`;
+
+      newTrade = {...trade, tradeId};
 
       this.predictedTrades.get(instId)!.push({...trade, tradeId});
     }
@@ -184,10 +209,13 @@ class TradeBook {
           .filter(trade => {
             return trade.timestampMs >= cutoffTime;
           })
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITradeInTradeBook}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.trades.set(instId, trimmedTrades);
@@ -195,10 +223,13 @@ class TradeBook {
       const trimmedPredictedTrades = Object.values(
         predictedTrades
           .filter(trade => trade.timestampMs >= cutoffTime)
-          .reduce((acc, cur) => {
-            acc[cur.tradeId] = cur;
-            return acc;
-          }, {} as {[key: string]: ITrade})
+          .reduce(
+            (acc, cur) => {
+              acc[cur.tradeId] = cur;
+              return acc;
+            },
+            {} as {[key: string]: ITradeInTradeBook}
+          )
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
@@ -228,8 +259,8 @@ class TradeBook {
     );
   }
 
-  predictNextTrade(instId: string, trades: ITrade[], periodMs: number, length: number) {
-    let prediction: ITrade[] | undefined;
+  predictNextTrade(instId: string, trades: ITradeInTradeBook[], periodMs: number, length: number) {
+    let prediction: ITradeInTradeBook[] | undefined;
 
     switch (this.model) {
       case Model.LINEAR_REGRESSION:
@@ -247,8 +278,196 @@ class TradeBook {
     }
   }
 
+  getAlignedTimeForCandlestick(currentTime: Date, timeSpan: ITimeSpanUnion): Date {
+    const minutes = currentTime.getMinutes();
+    let roundedMinutes = 0;
+
+    switch (timeSpan) {
+      case '5m':
+        roundedMinutes = Math.floor(minutes / 5) * 5;
+        break;
+      case '15m':
+        roundedMinutes = Math.floor(minutes / 15) * 15;
+        break;
+      case '30m':
+        roundedMinutes = Math.floor(minutes / 30) * 30;
+        break;
+      case '1h':
+      case '4h':
+      case '12h':
+        roundedMinutes = 0;
+        break;
+      case '1d':
+        return new Date(
+          currentTime.getFullYear(),
+          currentTime.getMonth(),
+          currentTime.getDate(),
+          0,
+          0,
+          0
+        );
+    }
+
+    return new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate(),
+      currentTime.getHours(),
+      roundedMinutes,
+      0
+    );
+  }
+
+  trimCandlestickData(length: number, instData?: Map<string, ICandlestickDataWithTimeSpan>) {
+    if (!instData) {
+      // Info: If instData doesn't exist, directly trim this.candlestickChart (20231019 - Shirley)
+      this.candlestickChart.forEach((dataWithTimeSpan, instId) => {
+        (Object.keys(dataWithTimeSpan) as ITimeSpanUnion[]).forEach((timeSpan: ITimeSpanUnion) => {
+          dataWithTimeSpan[timeSpan] = dataWithTimeSpan[timeSpan].slice(-length);
+        });
+      });
+    } else {
+      // Info: If instData exists, trim it and update this.candlestickChart  (20231019 - Shirley)
+      instData.forEach((dataWithTimeSpan, instId) => {
+        (Object.keys(dataWithTimeSpan) as ITimeSpanUnion[]).forEach((timeSpan: ITimeSpanUnion) => {
+          dataWithTimeSpan[timeSpan] = dataWithTimeSpan[timeSpan].slice(-length);
+        });
+        this.candlestickChart.set(instId, dataWithTimeSpan);
+      });
+    }
+  }
+
+  // Info: 找最後一根蠟燭的時間 (20231018 - Shirley)
+  getLatestTimestampMs(candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
+    if (candlesticks.length < 2) {
+      return;
+    }
+
+    const copy = [...candlesticks];
+    const now = new Date().getTime();
+
+    let timeForLatestCandle = 0;
+
+    for (let i = 1; i < copy.length; i++) {
+      const diff = copy[i].x.getTime() - copy[i - 1].x.getTime();
+      const tsMs = getTime(timeSpan);
+
+      if (
+        i === copy.length - 1 &&
+        (now - copy[i].x.getTime() > tsMs || now - copy[i].x.getTime() === tsMs)
+      ) {
+        timeForLatestCandle = copy[i].x.getTime() + tsMs;
+      } else if (diff > tsMs || diff === tsMs) {
+        timeForLatestCandle = copy[i - 1].x.getTime() + tsMs;
+      } else if (diff < tsMs) {
+        timeForLatestCandle = copy[i - 1].x.getTime();
+      }
+    }
+
+    return timeForLatestCandle;
+  }
+
+  // Info: (20231018 - Shirley)
+  alignCandlesticks(instId: string, candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
+    if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
+      // Deprecated: dev (20231118 - Shirley)
+      // eslint-disable-next-line no-console
+      console.error('candlesticks is either undefined or not an array in alignCandlesticks.');
+      return [];
+    }
+
+    const tsMs = getTime(timeSpan);
+    const interval = millisecondsToSeconds(tsMs);
+    const result: ICandlestickData[] = [];
+
+    // Info: (20231018 - Shirley) Start with the first candlestick
+    result.push(candlesticks[0]);
+
+    for (let i = 1; i < candlesticks.length; i++) {
+      const diff = candlesticks[i].x.getTime() - candlesticks[i - 1].x.getTime();
+
+      // Info: (20231018 - Shirley) If the difference between two timestamps is greater than the timeSpan
+      if (diff > tsMs) {
+        const missingCount = diff / tsMs - 1;
+        for (let j = 0; j < missingCount; j++) {
+          const alignedTime = candlesticks[i - 1].x.getTime() + (j + 1) * tsMs;
+          const newCandlestick = this.toCandlestick(instId, interval, 1, alignedTime);
+
+          result.push(...newCandlestick);
+        }
+      }
+
+      // Info: (20231018 - Shirley) If the difference between two timestamps is less than the timeSpan
+      else if (diff < tsMs) {
+        const alignedTime = candlesticks[i - 1].x.getTime();
+        const readyForMerge = [candlesticks[i - 1], candlesticks[i]];
+        const merged = this.mergeCandlesticks(readyForMerge, new Date(alignedTime));
+
+        if (!merged) return;
+        result[result.length - 1] = merged; // Info: (20231018 - Shirley) Replace the last candlestick with the merged one
+        continue; // Info: (20231018 - Shirley) Skip pushing the current candlestick as it's already merged
+      }
+
+      // Info: (20231018 - Shirley) Push the current candlestick
+      result.push(candlesticks[i]);
+    }
+
+    // Info: (20231018 - Shirley) Handle the case where the last timestamp is not up to the current time
+    const now = new Date().getTime();
+    let lastTimestamp = result[result.length - 1].x.getTime();
+
+    while (now - lastTimestamp > tsMs) {
+      const alignedTime = lastTimestamp + tsMs;
+      const newCandlestick = this.toCandlestick(instId, interval, 1, alignedTime);
+
+      result.push(...newCandlestick);
+
+      // Info: Update the lastTimestamp to the timestamp of the new candlestick (20231019 - Shirley)
+      lastTimestamp = newCandlestick[newCandlestick.length - 1].x.getTime();
+    }
+
+    return result;
+  }
+
+  // Info: (20231018 - Shirley)
+  mergeCandlesticks(
+    candlesticks: ICandlestickData[],
+    tunedTime: Date
+  ): ICandlestickData | undefined {
+    if (!Array.isArray(candlesticks) || candlesticks.length < 2) {
+      // Deprecated: dev (20231118 - Shirley)
+      // eslint-disable-next-line no-console
+      console.error('candlesticks is either undefined or not an array in mergeCandlesticks.');
+      return;
+    }
+
+    const copy = [...candlesticks];
+
+    const open = copy[0]?.y?.open ?? 0;
+    const close = copy[copy.length - 1]?.y?.close ?? 0;
+    const high = Math.max(...copy.map(c => c?.y?.high ?? 0));
+    const low = Math.min(...copy.map(c => c?.y?.low ?? 0));
+
+    const volume = copy.reduce((sum, c) => sum + (c?.y?.volume ?? 0), 0);
+    const value = copy.reduce((sum, c) => sum + (c?.y?.value ?? 0), 0);
+
+    const newCandlestick: ICandlestickData = {
+      x: new Date(tunedTime),
+      y: {
+        open,
+        close,
+        high,
+        low,
+        volume,
+        value,
+      },
+    };
+
+    return newCandlestick;
+  }
+
   @ensureTickerExistsDecorator
-  fillPredictedData(instId: string, trades: ITrade[], targetTimestampMs: number) {
+  fillPredictedData(instId: string, trades: ITradeInTradeBook[], targetTimestampMs: number) {
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 
     if (!!lastTradeTimestamp && !!targetTimestampMs) {
@@ -269,10 +488,14 @@ class TradeBook {
     }
   }
 
-  linearRegression(trades: ITrade[], periodMs: number, length: number): ITrade[] | undefined {
+  linearRegression(
+    trades: ITradeInTradeBook[],
+    periodMs: number,
+    length: number
+  ): ITradeInTradeBook[] | undefined {
     if (trades.length < this.config.minLengthForLinearRegression) return;
 
-    const newTrades: ITrade[] = [...trades];
+    const newTrades: ITradeInTradeBook[] = [...trades];
 
     const cutoffTimeMs = Date.now() - this.config.minMsForLinearRegression;
     const recentTrades = trades.filter(
@@ -325,7 +548,7 @@ class TradeBook {
     return prediction;
   }
 
-  private getLinearRegressionVariables(trades: ITrade[]): {m: number; b: number} {
+  private getLinearRegressionVariables(trades: ITradeInTradeBook[]): {m: number; b: number} {
     // Info: (20230522 - Shirley) Step 2: Prepare data for regression
     const totalQuantity = trades.reduce((total, trade) => total + trade.quantity, 0);
     const weightedPrices = trades.map(trade => trade.price * (trade.quantity / totalQuantity));
@@ -432,13 +655,62 @@ class TradeBook {
     return lines;
   }
 
+  /**
+   *
+   * @param instId
+   * @param interval in seconds
+   * @param length
+   * @param singleTimestampMs in milliseconds
+   * @param tradesArray
+   * @returns
+   */
   @ensureTickerExistsDecorator
-  toCandlestick(instId: string, interval: number, length: number): ICandlestickData[] {
-    const trades = this.predictedTrades.get(instId)!;
+  toCandlestick(
+    instId: string,
+    interval: number,
+    length: number,
+    singleTimestampMs?: number,
+    tradesArray?: ITradeInTradeBook[]
+  ): ICandlestickData[] {
+    const trades =
+      !tradesArray || tradesArray.length === 0 ? this.predictedTrades.get(instId)! : tradesArray;
 
     if (trades.length === 0) return [];
 
     const candleSticks: ICandlestickData[] = [];
+
+    // Info: generate one candlestick (20231018 - Shirley)
+    if (singleTimestampMs) {
+      const firstTimestamp = singleTimestampMs;
+      const lastTimestamp = singleTimestampMs + interval * 1000;
+      const tradesInInterval = trades.filter(
+        t => t.timestampMs >= firstTimestamp && t.timestampMs < lastTimestamp
+      );
+
+      const time = new Date(singleTimestampMs);
+
+      if (tradesInInterval.length > 0) {
+        const open = tradesInInterval[0].price;
+        const close = tradesInInterval[tradesInInterval.length - 1].price;
+        const high = Math.max(...tradesInInterval.map(t => t.price));
+        const low = Math.min(...tradesInInterval.map(t => t.price));
+        const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
+        const value = tradesInInterval.reduce((sum, t) => sum + t.quantity * t.price, 0);
+        candleSticks.push({
+          x: time,
+          y: {
+            open,
+            high,
+            low,
+            close,
+            volume,
+            value,
+          },
+        });
+      }
+      return candleSticks;
+    }
+
     const intervalMs = interval * 1000;
 
     let lastTimestamp = trades[trades.length - 1].timestampMs;
@@ -454,6 +726,8 @@ class TradeBook {
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
       );
 
+      const time = new Date(i);
+
       if (tradesInInterval.length > 0) {
         const open = tradesInInterval[0].price;
         const close = tradesInInterval[tradesInInterval.length - 1].price;
@@ -462,7 +736,7 @@ class TradeBook {
         const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
         const value = tradesInInterval.reduce((sum, t) => sum + t.quantity * t.price, 0);
         candleSticks.push({
-          x: new Date(i),
+          x: time,
           y: {
             open,
             high,
@@ -478,7 +752,23 @@ class TradeBook {
     return candleSticks;
   }
 
-  isValidTrade(trade: any): trade is ITrade {
+  getCandlestickData(instId: string): ICandlestickDataWithTimeSpan | undefined {
+    this.ensureCandlestickDataExists(instId);
+
+    return this.candlestickChart.get(instId);
+  }
+
+  addCandlestickData(instId: string, timeSpan: ITimeSpanUnion, data: ICandlestickData[]): void {
+    this.ensureCandlestickDataExists(instId);
+
+    const instData = this.getCandlestickData(instId);
+
+    if (instData) {
+      instData[timeSpan] = data;
+    }
+  }
+
+  isValidTrade(trade: any): trade is ITradeInTradeBook {
     return (
       'tradeId' in trade &&
       'targetAsset' in trade &&
@@ -511,6 +801,22 @@ class TradeBook {
     const predictedTrades = this.predictedTrades.get(instId);
     return predictedTrades![predictedTrades!.length - 1];
   }
+
+  private ensureCandlestickDataExists(instId: string) {
+    if (!this.candlestickChart.has(instId)) {
+      const initialData: ICandlestickDataWithTimeSpan = {
+        '1s': [],
+        '5m': [],
+        '15m': [],
+        '30m': [],
+        '1h': [],
+        '4h': [],
+        '12h': [],
+        '1d': [],
+      };
+      this.candlestickChart.set(instId, initialData);
+    }
+  }
 }
 
 const TradeBookInstance = new TradeBook({
@@ -518,7 +824,7 @@ const TradeBookInstance = new TradeBook({
   model: Model.LINEAR_REGRESSION,
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
-  holdingTradesMs: 1000 * 60 * 15, // Info: 15 minutes in milliseconds (ms) (20230601 - Tzuhan)
+  holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20231019 - Shirley)
 });
 
 export default TradeBookInstance;

@@ -9,6 +9,7 @@ const nextConfig = {
     PUSHER_HOST: process.env.PUSHER_HOST,
     PUSHER_PORT: process.env.PUSHER_PORT,
     API_URL: process.env.API_URL,
+    API_VERSION: process.env.API_VERSION,
     BAIFA_ID: process.env.BAIFA_ID,
     BAIFA_SECRET_KEY: process.env.BAIFA_SECRET_KEY,
     BAIFA_PROJECT_ID: process.env.BAIFA_PROJECT_ID,

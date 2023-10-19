@@ -57,7 +57,6 @@ const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
   openCfdRequest,
-  ...otherProps
 }: IPositionOpenModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -223,7 +222,7 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
+  const layoutInsideBorder = 'flex justify-between w-full';
 
   const getQuotation = async () => {
     let quotation = {...defaultResultSuccess};
@@ -430,136 +429,146 @@ const PositionOpenModal = ({
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 
+  const spreadSymbol = openCfdRequest.quotation.spreadFee >= 0 ? '+' : '-';
+
   const formContent = (
-    <div className="mt-4 flex flex-col px-6 pb-2">
-      <div className="flex items-center justify-center space-x-2 text-center">
-        <Image
-          src={marketCtx.selectedTicker?.tokenImg ?? ''}
-          width={30}
-          height={30}
-          alt="ticker icon"
-        />
-        <div className="text-2xl">{marketCtx.selectedTicker?.instId}</div>
-      </div>
-
-      <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
-        <BsClockHistory size={20} className="text-lightGray" />
-        <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
-      </div>
-
-      <div className="relative flex flex-col items-center pt-1">
-        <div
-          className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
-        >
-          <div className="flex flex-col justify-center text-center">
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-              <div className={`${displayedPositionColor}`}>
-                {displayedTypeOfPosition}
-                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-              <div className={`${dataRenewedStyle}`}>
-                {numberFormatted(openCfdRequest.price)}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
-              <div className="">
-                {openCfdRequest.amount}
-                <span className="ml-1 text-lightGray">{openCfdRequest.targetAsset}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder} whitespace-nowrap`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
-              <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.margin.amount}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-              <div className="">
-                {displayedTakeProfit} / {displayedStopLoss}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
-              <div className={`relative flex items-center`}>
-                {displayedGuaranteedStopSetting}
-
-                <Tooltip className="ml-1">
-                  <p className="w-56 text-left text-sm font-medium text-white">
-                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
-                  </p>
-                </Tooltip>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
-              <div className="">{t('POSITION_MODAL.LIQUIDATION_TIME')}</div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-              <div className={`${dataRenewedStyle}`}>
-                {numberFormatted(openCfdRequest.liquidationPrice)}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
-              </div>
-            </div>
-          </div>
+    <div className="mt-4 flex flex-col text-xs lg:text-sm">
+      <div className="flex items-end justify-between">
+        {/* Info: (20231003 - Julian) Ticker Title */}
+        <div className="flex items-center space-x-2 text-center">
+          <Image
+            src={marketCtx.selectedTicker?.tokenImg ?? ''}
+            width={30}
+            height={30}
+            alt="ticker icon"
+          />
+          <p className="text-2xl">{marketCtx.selectedTicker?.instId}</p>
         </div>
 
-        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
-
-        <RippleButton
-          disabled={secondsLeft < 1 || quotationErrorRef.current || invalidDataRef.current}
-          onClick={submitClickHandler}
-          buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
-        >
-          {t('POSITION_MODAL.CONFIRM_BUTTON')}
-        </RippleButton>
+        {/* Info: (20231003 - Julian) Timer */}
+        <div className="flex items-center space-x-1 text-center">
+          <BsClockHistory size={20} className="text-lightGray" />
+          <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
+        </div>
       </div>
+
+      <div
+        className={`${displayedBorderColor} mt-2 flex w-full flex-col items-center space-y-3 border-1px p-4 leading-relaxed text-lightWhite`}
+      >
+        {/* Info: (20231019 - Julian) Type */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+          <div className={`${displayedPositionColor}`}>
+            {displayedTypeOfPosition}
+            <span className="ml-1 text-lightGray text-xs">{displayedBuyOrSell}</span>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) Open Price */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+          <div className="flex items-baseline space-x-1">
+            {/* Info: (20231019 - Julian) Spot Price */}
+            {numberFormatted(openCfdRequest.quotation.spotPrice)}
+            {/* Info: (20231019 - Julian) Spread */}
+            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
+              {spreadSymbol}
+              {numberFormatted(openCfdRequest.quotation.spreadFee)}
+            </span>
+            {/* Info: (20231019 - Julian) Price */}
+            {<p>→ {numberFormatted(openCfdRequest.price)}</p>}
+            <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+            <Tooltip className="top-1 hidden lg:block">
+              <p className="w-40 text-sm font-medium text-white">
+                {t('POSITION_MODAL.SPREAD_HINT')}
+              </p>
+            </Tooltip>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) Amount */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+          <div className="">
+            {openCfdRequest.amount}
+            <span className="ml-1 text-lightGray text-xs">{openCfdRequest.targetAsset}</span>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) Required Margin */}
+        <div className={`${layoutInsideBorder} whitespace-nowrap`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
+          <div className={`${dataRenewedStyle}`}>
+            {openCfdRequest.margin.amount}
+            <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) TP/ SL */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+          <div className="">
+            {displayedTakeProfit} / {displayedStopLoss}
+            <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) Guaranteed Stop */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
+          <div className={`relative flex items-center`}>
+            {displayedGuaranteedStopSetting}
+            <Tooltip className="ml-1">
+              <p className="w-56 text-left text-sm font-medium text-white">
+                {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+              </p>
+            </Tooltip>
+          </div>
+        </div>
+        {/* Info: (20231019 - Julian) Expiration Time */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
+          <div className="">{t('POSITION_MODAL.LIQUIDATION_TIME')}</div>
+        </div>
+        {/* Info: (20231019 - Julian) Liquidation Price */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+          <div className={`${dataRenewedStyle}`}>
+            {numberFormatted(openCfdRequest.liquidationPrice)}
+            <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Info: (20231019 - Julian) CFD Content */}
+      <div className="my-3 text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+      {/* Info: (20231019 - Julian) Submit Button */}
+      <RippleButton
+        disabled={secondsLeft < 1 || quotationErrorRef.current || invalidDataRef.current}
+        onClick={submitClickHandler}
+        buttonType="button"
+        className={`w-full whitespace-nowrap rounded bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+      >
+        {t('POSITION_MODAL.CONFIRM_BUTTON')}
+      </RippleButton>
     </div>
   );
 
   const isDisplayedModal = modalVisible ? (
     <>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          <div
-            id="PositionOpenModal"
-            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-          >
-            <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
-                {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {formContent}
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
+      {/* Info: (20231019 - Julian) Blur Mask */}
+      <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+        <div
+          id="PositionOpenModal"
+          className="relative mx-auto flex p-6 sm:p-8 w-90vw items-center h-auto sm:w-400px flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80"
+        >
+          {/* Info: (20231019 - Julian) Header */}
+          <div className="flex items-center justify-between rounded-t">
+            <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
+              {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
+            </h3>
+            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+              <ImCross onClick={modalClickHandler} />
+            </button>
           </div>
+          {formContent}
         </div>
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
     </>
   ) : null;
 

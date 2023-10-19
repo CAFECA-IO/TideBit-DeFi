@@ -29,19 +29,63 @@ const NavBar = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {
-    targetRef: notifyRef,
-    componentVisible: notifyVisible,
-    setComponentVisible: setNotifyVisible,
+    targetRef: sidebarRef,
+    componentVisible: sidebarVisible,
+    setComponentVisible: setSidebarVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const sidebarOpenHandler = () => setNotifyVisible(!notifyVisible);
+  const [navOpen, setNavOpen] = useState(false);
+  const [notifyOpen, setNotifyOpen, notifyOpenRef] = useStateRef(false);
+  const [langIsOpen, setLangIsOpen] = useState(false);
+
+  /* Info: (20230327 - Julian) Menu Text */
+  const menuText = notifyOpenRef.current
+    ? t('NAV_BAR.NOTIFICATION_TITLE')
+    : langIsOpen
+    ? t('NAV_BAR.LANGUAGE')
+    : t('NAV_BAR.MENU');
+
+  const burgerClickHandler = () => {
+    if (notifyOpenRef.current) setNotifyOpen(false);
+    else if (langIsOpen) setLangIsOpen(false);
+    else setNavOpen(!navOpen);
+  };
+
+  const logoClickHandler = () => {
+    // Info: (20231019 - Julian) Close all menu
+    setNavOpen(false);
+    setNotifyOpen(false);
+    setLangIsOpen(false);
+  };
+  const sidebarOpenHandler = () => setSidebarVisible(!sidebarVisible);
+  const sidebarOpenHandlerMobile = () => setNotifyOpen(!notifyOpen);
+
+  const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
+
+  const menuItemStyles =
+    'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';
+
+  /* Info: (20230327 - Julian) Hamburger Animation */
+  const displayedMobileNavBarLine1 = !navOpen
+    ? 'translate-y-0 rotate-0'
+    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
+  const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5 w-full' : 'w-0';
+  const displayedMobileNavBarLine3 = !navOpen
+    ? 'translate-y-3 rotate-0'
+    : 'translate-y-0 origin-left w-3/4 rotate-35';
+
+  const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
+
+  const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <UserOverview
-      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
-      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
-    />
+    <div className="w-350px">
+      <UserOverview
+        depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+        marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+        profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+      />
+    </div>
   ) : null;
 
   const isDisplayedUser = userCtx.enableServiceTerm ? (
@@ -62,61 +106,22 @@ const NavBar = () => {
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
 
-  const [navOpen, setNavOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen, sidebarOpenRef] = useStateRef(false);
-
-  const [langIsOpen, setLangIsOpen] = useState(false);
-
-  /* Info: (20230327 - Julian) Menu Text */
-  const menuText = langIsOpen
-    ? t('NAV_BAR.LANGUAGE')
-    : sidebarOpenRef.current
-    ? t('NAV_BAR.NOTIFICATION_TITLE')
-    : t('NAV_BAR.MENU');
-
-  const clickHandler = () => {
-    if (langIsOpen) {
-      setLangIsOpen(false);
-    } else if (sidebarOpenRef.current) {
-      setSidebarOpen(!sidebarOpen);
-    } else {
-      setNavOpen(!navOpen);
-    }
-  };
-
-  const sidebarOpenHandlerMobile = () => setSidebarOpen(!sidebarOpen);
-
-  const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
-
-  const menuItemStyles =
-    'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';
-
-  /* Info: (20230327 - Julian) Hamburger Animation */
-  const displayedMobileNavBarLine1 = !navOpen
-    ? 'translate-y-0 rotate-0'
-    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5 w-full' : 'w-0';
-  const displayedMobileNavBarLine3 = !navOpen
-    ? 'translate-y-3 rotate-0'
-    : 'translate-y-0 origin-left w-3/4 rotate-35';
-
-  const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
-
-  const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
-
-  /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 5/10 讓頭貼可以被看到 */
-  const isDisplayedNotificationSidebarMobileCover = (
+  // Info: (20231019 - Julian) 選單打開時，顯示 menuText ，否則顯示 testnet 圖示
+  const menuTextBar = navOpen ? (
     <div
-      className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
-        navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed left-20 top-0 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
+      /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 5/10 讓頭貼可以被看到 */
+      className={`${
+        userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'
+      } fixed left-20 top-0 z-50 flex h-14 items-center bg-black`}
     >
-      <p className="pl-5">{menuText}</p>
+      <p className="ml-5">{menuText}</p>
     </div>
+  ) : (
+    <Image src="/elements/testnet_mobile@2x.png" width={33} height={33} alt="testnet" />
   );
 
   const isDisplayedUserMobile = userCtx.enableServiceTerm ? (
-    <User />
+    <User notifyOpen={notifyOpen} setNotifyOpen={setNotifyOpen} />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="px-3 py-2 text-sm" />
@@ -161,7 +166,7 @@ const NavBar = () => {
                 </Link>
                 {/* Info: (20230327 - Julian) Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
+                  <div className="ml-4 mt-8 flex flex-1 items-center space-x-4">
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
 
                     <Link href={tradeLink} className="hover:cursor-pointer hover:text-tidebitTheme">
@@ -205,7 +210,7 @@ const NavBar = () => {
                     />
                   </button>
                 </div>
-                <div className="mr-5 inline-flex">{isDisplayedUserMobile}</div>
+                <div className="mr-5 inline-flex">{isDisplayedUser}</div>
               </div>
             </div>
           </div>
@@ -213,7 +218,7 @@ const NavBar = () => {
       </div>
 
       {/* Info: (20230327 - Julian) Notification Sidebar */}
-      <Notification notifyRef={notifyRef} componentVisible={notifyVisible} />
+      <Notification notifyRef={sidebarRef} componentVisible={sidebarVisible} />
     </>
   );
 
@@ -224,7 +229,7 @@ const NavBar = () => {
           <div className="flex basis-full items-center">
             <div className="flex border-r border-lightGray1 lg:hidden">
               <button
-                onClick={clickHandler}
+                onClick={burgerClickHandler}
                 className="z-50 inline-flex items-center justify-center rounded-md px-3 py-2"
               >
                 <div className="relative h-20px w-30px cursor-pointer">
@@ -234,26 +239,20 @@ const NavBar = () => {
                 </div>
               </button>
             </div>
-            <div className="z-50 ml-4 flex">
-              <Image src="/elements/testnet_mobile@2x.png" width={33} height={33} alt="testnet" />
-            </div>
-
-            <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
-            <div className="invisible ml-auto lg:visible"></div>
+            {/* Info: (20231019 - Julian) Menu Text */}
+            <div className="z-50 ml-4">{menuTextBar}</div>
+            <div className="z-50 flex grow justify-end">{isDisplayedUserMobile}</div>
           </div>
         </div>
 
         <div
           className={`absolute inset-0 top-14 min-h-screen bg-darkGray/100 transition-all duration-300 lg:hidden ${isDisplayedMobileNavBar}`}
         >
-          {/* Info: (20230327 - Julian) Cover for mobile bell icon */}
-          {isDisplayedNotificationSidebarMobileCover}
-
           {/* Info: (20230327 - Julian) Mobile menu section */}
           <div className="flex h-screen flex-col items-center justify-start px-2 pb-24 pt-8 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex w-full items-center justify-around space-x-5 px-3 pt-3">
-                <Link className="shrink-0" href="/" onClick={clickHandler}>
+                <Link className="shrink-0" href="/" onClick={logoClickHandler}>
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -319,7 +318,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      <Notification componentVisible={sidebarOpenRef.current} />
+      <Notification componentVisible={notifyOpenRef.current} />
     </>
   );
 

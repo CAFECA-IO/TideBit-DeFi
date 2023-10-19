@@ -1,4 +1,4 @@
-import {useState, useContext, useId} from 'react';
+import {useState, useContext, useId, useEffect} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,
@@ -9,6 +9,9 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import useStateRef from 'react-usestateref';
+import {TideBitEvent} from '../../constants/tidebit_event';
+import {NotificationContext} from '../../contexts/notification_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -64,11 +67,25 @@ const TradingChartSwitch = ({
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const globalCtx = useGlobal();
+  const marketCtx = useContext(MarketContext);
+  const notificationCtx = useContext(NotificationContext);
   const {selectTimeSpanHandler} = useContext(MarketContext);
-  const [activeButton, setActiveButton] = useState('live');
+  const [activeButton, setActiveButton] = useState(TimeSpanUnion._1s);
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);
   const [activeChartTypeMobile, setActiveChartTypeMobile] = useState('candlestick');
+  const [disabled, setDisabled, disabledRef] = useStateRef(true);
+
+  useEffect(() => {
+    setDisabled(!marketCtx.isInit || marketCtx.candlestickIsLoading);
+  }, [marketCtx.isInit, marketCtx.candlestickIsLoading]);
+
+  useEffect(() => {
+    const handleTickerChange = () => {
+      setActiveButton(marketCtx.timeSpan);
+    };
+    handleTickerChange();
+  }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]); // add dependencies here if any other state/props are used in your effect
 
   const switchSize = getSwitchWidth();
 
@@ -77,26 +94,26 @@ const TradingChartSwitch = ({
   };
 
   const timeIntervalButtonStyle =
-    'mr-1 rounded-sm px-2 md:px-6 transition-all duration-300 text-white';
+    'mr-1 rounded-sm px-2 md:px-6 transition-all duration-300 text-white disabled:text-lightGray disabled:opacity-50';
 
   const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
   const liveButtonStyle =
-    activeButton === 'live' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._1s ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fiveMinButtonStyle =
-    activeButton === '5m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._5m ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fifteenMinButtonStyle =
-    activeButton === '15m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._15m ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const thirtyMinButtonStyle =
-    activeButton === '30m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._30m ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const oneHrButtonStyle =
-    activeButton === '1h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._1h ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fourHrButtonStyle =
-    activeButton === '4h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._4h ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const twelveHrButtonStyle =
-    activeButton === '12h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._12h ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const oneDayButtonStyle =
-    activeButton === '1d' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
+    activeButton === TimeSpanUnion._1d ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
 
   const stickSwitchHandler = () => {
     if (activeChartTypeMobile === 'candlestick') {
@@ -125,50 +142,50 @@ const TradingChartSwitch = ({
   };
 
   const liveButtonClickHandler = () => {
-    setActiveButton('live');
-    getTradingViewInterval('live');
+    setActiveButton(TimeSpanUnion._1s);
+    getTradingViewInterval(TimeSpanUnion._1s);
     selectTimeSpanHandler(TimeSpanUnion._1s);
   };
 
   const fiveMinButtonClickHandler = () => {
-    setActiveButton('5m');
-    getTradingViewInterval('5m');
+    setActiveButton(TimeSpanUnion._5m);
+    getTradingViewInterval(TimeSpanUnion._5m);
     selectTimeSpanHandler(TimeSpanUnion._5m);
   };
 
   const fifteenMinButtonClickHandler = () => {
-    setActiveButton('15m');
-    getTradingViewInterval('15m');
+    setActiveButton(TimeSpanUnion._15m);
+    getTradingViewInterval(TimeSpanUnion._15m);
     selectTimeSpanHandler(TimeSpanUnion._15m);
   };
 
   const thirtyMinButtonClickHandler = () => {
-    setActiveButton('30m');
-    getTradingViewInterval('30m');
+    setActiveButton(TimeSpanUnion._30m);
+    getTradingViewInterval(TimeSpanUnion._30m);
     selectTimeSpanHandler(TimeSpanUnion._30m);
   };
 
   const oneHrButtonClickHandler = () => {
-    setActiveButton('1h');
-    getTradingViewInterval('1h');
+    setActiveButton(TimeSpanUnion._1h);
+    getTradingViewInterval(TimeSpanUnion._1h);
     selectTimeSpanHandler(TimeSpanUnion._1h);
   };
 
   const fourHrButtonClickHandler = () => {
-    setActiveButton('4h');
-    getTradingViewInterval('4h');
+    setActiveButton(TimeSpanUnion._4h);
+    getTradingViewInterval(TimeSpanUnion._4h);
     selectTimeSpanHandler(TimeSpanUnion._4h);
   };
 
   const twelveHrButtonClickHandler = () => {
-    setActiveButton('12h');
-    getTradingViewInterval('12h');
+    setActiveButton(TimeSpanUnion._12h);
+    getTradingViewInterval(TimeSpanUnion._12h);
     selectTimeSpanHandler(TimeSpanUnion._12h);
   };
 
   const oneDayButtonClickHandler = () => {
-    setActiveButton('1d');
-    getTradingViewInterval('1d');
+    setActiveButton(TimeSpanUnion._1d);
+    getTradingViewInterval(TimeSpanUnion._1d);
     selectTimeSpanHandler(TimeSpanUnion._1d);
   };
 
@@ -411,10 +428,16 @@ const TradingChartSwitch = ({
           whiteSpace: 'nowrap',
         }}
       >
-        <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._1s}
+          type="button"
+          className={`${liveButtonStyle}`}
+          onClick={liveButtonClickHandler}
+        >
           Live
         </button>
         <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._5m}
           type="button"
           className={`${fiveMinButtonStyle}`}
           onClick={fiveMinButtonClickHandler}
@@ -422,6 +445,7 @@ const TradingChartSwitch = ({
           5 m
         </button>
         <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._15m}
           type="button"
           className={`${fifteenMinButtonStyle}`}
           onClick={fifteenMinButtonClickHandler}
@@ -429,26 +453,43 @@ const TradingChartSwitch = ({
           15 m
         </button>
         <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._30m}
           type="button"
           className={`${thirtyMinButtonStyle}`}
           onClick={thirtyMinButtonClickHandler}
         >
           30 m
         </button>
-        <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._1h}
+          type="button"
+          className={`${oneHrButtonStyle}`}
+          onClick={oneHrButtonClickHandler}
+        >
           1 h
         </button>
-        <button type="button" className={`${fourHrButtonStyle}`} onClick={fourHrButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._4h}
+          type="button"
+          className={`${fourHrButtonStyle}`}
+          onClick={fourHrButtonClickHandler}
+        >
           4 h
         </button>
         <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._12h}
           type="button"
           className={`${twelveHrButtonStyle}`}
           onClick={twelveHrButtonClickHandler}
         >
           12 h
         </button>
-        <button type="button" className={`${oneDayButtonStyle}`} onClick={oneDayButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._1d}
+          type="button"
+          className={`${oneDayButtonStyle}`}
+          onClick={oneDayButtonClickHandler}
+        >
           1 d
         </button>
       </div>
@@ -469,11 +510,17 @@ const TradingChartSwitch = ({
         </div>
       </div>
       <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 p-2">
-        <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._1s}
+          type="button"
+          className={`${liveButtonStyle}`}
+          onClick={liveButtonClickHandler}
+        >
           Live
         </button>
         <button
           type="button"
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._5m}
           className={`${fiveMinButtonStyle}`}
           onClick={fiveMinButtonClickHandler}
         >
@@ -481,22 +528,34 @@ const TradingChartSwitch = ({
         </button>
         <button
           type="button"
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._15m}
           className={`${fifteenMinButtonStyle}`}
           onClick={fifteenMinButtonClickHandler}
         >
           15 m
         </button>
-        <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._30m}
+          type="button"
+          className={`${oneHrButtonStyle}`}
+          onClick={oneHrButtonClickHandler}
+        >
           1 h
         </button>
         <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._4h}
           type="button"
           className={`${twelveHrButtonStyle}`}
           onClick={twelveHrButtonClickHandler}
         >
           12 h
         </button>
-        <button type="button" className={`${oneDayButtonStyle}`} onClick={oneDayButtonClickHandler}>
+        <button
+          disabled={disabledRef.current && activeButton !== TimeSpanUnion._1d}
+          type="button"
+          className={`${oneDayButtonStyle}`}
+          onClick={oneDayButtonClickHandler}
+        >
           1 d
         </button>
       </div>

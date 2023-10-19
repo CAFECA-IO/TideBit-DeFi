@@ -28,6 +28,7 @@ import {
   IInstCandlestick,
   ITrade,
   TradeSideText,
+  isIInstCandlestick,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -47,7 +48,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millisecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
+import {millisecondsToSeconds, roundToDecimalPlaces, wait} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -135,6 +136,8 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => Promise<IResult>;
+  candlestickIsLoading: boolean;
+  tradeBook: typeof TradeBookInstance;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -192,6 +195,8 @@ export const MarketContext = createContext<IMarketContext>({
   listCandlesticks: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  candlestickIsLoading: true,
+  tradeBook: TradeBookInstance,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -231,7 +236,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     [instId: string]: ITickerData;
   }>(toDummyTickers);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
-  const [candlestickId, setCandlestickId] = useState<string>('');
+  const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
   const [tidebitPromotion, setTidebitPromotion, tidebitPromotionRef] =
     useState<ITideBitPromotion>(dummyTideBitPromotion);
@@ -239,7 +244,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     useState<IWebsiteReserve>(dummyWebsiteReserve);
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
-  );
+  ); // Deprecated: stale (20231019 - Shirley)
+  const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
+    useState<boolean>(true);
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
@@ -285,11 +292,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return Object.values(availableTickers);
   }, [userCtx.favoriteTickers, availableTickersRef.current]);
 
-  const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion) => {
-    tickerBook.timeSpan = timeSpan;
-    setTimeSpan(tickerBook.timeSpan);
+  const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
+    let updatedTimeSpan = timeSpan;
 
-    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, timeSpan);
+    if (instId) {
+      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+      if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
+        updatedTimeSpan = TimeSpanUnion._1s;
+      }
+    }
+
+    tickerBook.timeSpan = updatedTimeSpan;
+    setTimeSpan(tickerBook.timeSpan);
+    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, updatedTimeSpan);
   }, []);
 
   const getTickerStatic = useCallback(async (instId: string) => {
@@ -343,7 +358,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerStatic(null);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
-    syncCandlestickData(ticker.instId);
+    selectTimeSpanHandler(timeSpanRef.current, ticker.instId);
     // ++ TODO: get from api
     const getTickerStaticResult = await getTickerStatic(ticker.instId);
     if (getTickerStaticResult?.success)
@@ -592,6 +607,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const processCandlesticks = useCallback(
     (timeSpan: ITimeSpanUnion, instCandlestick: IInstCandlestick) => {
+      if (!instCandlestick || !isIInstCandlestick(instCandlestick)) return [];
       // Info: 轉換成圖表要的格式 (20230817 - Shirley)
       const dataWithDate = instCandlestick.candlesticks.map(candlestick => ({
         x: new Date(candlestick.x),
@@ -620,24 +636,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       const organizedData = alignedData
         ? uniqueData.slice(0, -SAMPLE_NUMBER).concat(alignedData)
         : uniqueData;
-
-      // // Info: 如果該時間區間的資料是空白的，就將整理好的蠟燭圖資料放進去 (20230817 - Shirley)
-      // let candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
-      // const targetedCandlestick = candlestickDataGot?.[timeSpan];
-      // if (!targetedCandlestick || targetedCandlestick?.length === 0) {
-      //   tradeBook.addCandlestickData(instCandlestick.instId, timeSpan, organizedData ?? uniqueData);
-      //   candlestickDataGot = tradeBook.getCandlestickData(instCandlestick.instId);
-      // } else {
-      //   // Info: 如果該時間密度的資料不是空白的，就直接切換蠟燭圖資料 (20231018 - Shirley)
-      //   const newData = candlestickDataGot?.[timeSpan] || null;
-      //   setCandlestickChartData(newData);
-      // }
-      // // Deprecated: dev (20231118 - Shirley)
-      // // eslint-disable-next-line no-console
-      // console.log('uniqueData (candle from API)', uniqueData);
-      // // Deprecated: dev (20231118 - Shirley)
-      // // eslint-disable-next-line no-console
-      // console.log('organizedData (candle from API but after sorted)', organizedData);
 
       return organizedData;
     },
@@ -668,8 +666,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }
       } catch (error) {
         if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
+          if (result && typeof result === 'object') {
+            result.code = Code.INTERNAL_SERVER_ERROR;
+            result.reason = Reason[result.code];
+          } else {
+            result = {
+              ...defaultResultFailed,
+              code: Code.INTERNAL_SERVER_ERROR,
+              reason: Reason[Code.INTERNAL_SERVER_ERROR],
+            };
+          }
         }
       }
       return result;
@@ -701,9 +707,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }
 
         const get = (await tradeBook.getCandlestickData(instId)?.[timeSpan]) || null;
-        // Deprecated: dev (20231118 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('timeSpan', timeSpan, 'get in initCandlestickData', get);
       } else {
         for (const timeSpan of Object.values(TimeSpanUnion)) {
           if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length > 0) {
@@ -731,6 +734,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       setCandlestickInterval(null);
     }
 
+    setCandlestickIsLoading(true);
+
     const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
 
     if (timeSpan) setTimeSpan(timeSpan);
@@ -742,9 +747,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
 
     const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
-    // Deprecated: dev (20231118 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('candlesticks after init', ts, candlesticks);
+
     setCandlestickChartData(candlesticks);
 
     // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
@@ -812,11 +815,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           console.log('newCandle', newCandle, 'merged', merged, 'result', result);
 
           tradeBook.addCandlestickData(instId, ts, result);
-        } else if (latestTimestampMs > lastTsOfOrigin || now > futureTs) {
+        } else if (latestTimestampMs > lastTsOfOrigin) {
           // Deprecated: dev (20231118 - Shirley)
           // eslint-disable-next-line no-console
           console.log(
             'latestTimestampMs > origin[origin.length - 1]?.x.getTime()',
+            latestTimestampMs > lastTsOfOrigin,
+            'now>futureTs (removed)',
+            now > futureTs,
             'add candle directly'
           );
           const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
@@ -826,13 +832,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }
 
         const newData = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        // Deprecated: dev (20231118 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('origin last 1', origin.slice(-1), 'newData last 1', newData.slice(-1));
+        const fiveMinData =
+          ts === TimeSpanUnion._5m
+            ? newData
+            : tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
+
+        if (fiveMinData.length > CANDLESTICK_SIZE) {
+          tradeBook.trimCandlestickData(CANDLESTICK_SIZE);
+        }
+
         setCandlestickChartData(newData);
       }
     }, 100);
+
     setCandlestickInterval(candlestickInterval);
+
+    setCandlestickIsLoading(false);
   }, []);
 
   const getWebsiteReserve = useCallback(async () => {
@@ -988,7 +1003,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   );
 
   const defaultValue = {
-    isInit,
+    isInit: isInitRef.current,
     selectedTicker: selectedTickerRef.current,
     selectedTickerRef,
     guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
@@ -1024,6 +1039,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getTickerSpread,
     predictCFDClosePrice,
     listCandlesticks,
+    candlestickIsLoading: candlestickIsLoadingRef.current,
+    tradeBook,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

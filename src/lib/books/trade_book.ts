@@ -318,6 +318,25 @@ class TradeBook {
     );
   }
 
+  trimCandlestickData(length: number, instData?: Map<string, ICandlestickDataWithTimeSpan>) {
+    if (!instData) {
+      // Info: If instData doesn't exist, directly trim this.candlestickChart (20231019 - Shirley)
+      this.candlestickChart.forEach((dataWithTimeSpan, instId) => {
+        (Object.keys(dataWithTimeSpan) as ITimeSpanUnion[]).forEach((timeSpan: ITimeSpanUnion) => {
+          dataWithTimeSpan[timeSpan] = dataWithTimeSpan[timeSpan].slice(-length);
+        });
+      });
+    } else {
+      // Info: If instData exists, trim it and update this.candlestickChart  (20231019 - Shirley)
+      instData.forEach((dataWithTimeSpan, instId) => {
+        (Object.keys(dataWithTimeSpan) as ITimeSpanUnion[]).forEach((timeSpan: ITimeSpanUnion) => {
+          dataWithTimeSpan[timeSpan] = dataWithTimeSpan[timeSpan].slice(-length);
+        });
+        this.candlestickChart.set(instId, dataWithTimeSpan);
+      });
+    }
+  }
+
   // Info: 找最後一根蠟燭的時間 (20231018 - Shirley)
   // TODO: 包含下一根蠟燭（新的一根）的時間 (20231018 - Shirley)
   getLatestTimestampMs(candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
@@ -362,8 +381,8 @@ class TradeBook {
     console.log('alignCandlesticks', candlesticks, timeSpan);
 
     const tsMs = getTime(timeSpan);
+    const interval = millisecondsToSeconds(tsMs);
     const result: ICandlestickData[] = [];
-    const interval = millisecondsToSeconds(getTime(timeSpan));
 
     // Info: (20231018 - Shirley) Start with the first candlestick
     result.push(candlesticks[0]);
@@ -377,6 +396,7 @@ class TradeBook {
         for (let j = 0; j < missingCount; j++) {
           const alignedTime = candlesticks[i - 1].x.getTime() + (j + 1) * tsMs;
           const newCandlestick = this.toCandlestick(instId, interval, 1, alignedTime);
+
           result.push(...newCandlestick);
         }
       }
@@ -398,11 +418,16 @@ class TradeBook {
 
     // Info: (20231018 - Shirley) Handle the case where the last timestamp is not up to the current time
     const now = new Date().getTime();
-    const lastTimestamp = result[result.length - 1].x.getTime();
+    let lastTimestamp = result[result.length - 1].x.getTime();
+
     while (now - lastTimestamp > tsMs) {
       const alignedTime = lastTimestamp + tsMs;
       const newCandlestick = this.toCandlestick(instId, interval, 1, alignedTime);
+
       result.push(...newCandlestick);
+
+      // Info: Update the lastTimestamp to the timestamp of the new candlestick (20231019 - Shirley)
+      lastTimestamp = newCandlestick[newCandlestick.length - 1].x.getTime();
     }
 
     return result;
@@ -441,14 +466,6 @@ class TradeBook {
         value,
       },
     };
-    // Deprecated: dev (20231118 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log(
-      'candlesticks in mergeCandlesticks',
-      candlesticks,
-      'merged candlestick: ',
-      newCandlestick
-    );
 
     return newCandlestick;
   }
@@ -811,7 +828,7 @@ const TradeBookInstance = new TradeBook({
   model: Model.LINEAR_REGRESSION,
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
-  holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20230601 - Tzuhan)
+  holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20231019 - Shirley)
 });
 
 export default TradeBookInstance;

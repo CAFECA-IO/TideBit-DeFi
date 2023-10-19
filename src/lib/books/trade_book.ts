@@ -338,7 +338,6 @@ class TradeBook {
   }
 
   // Info: 找最後一根蠟燭的時間 (20231018 - Shirley)
-  // TODO: 包含下一根蠟燭（新的一根）的時間 (20231018 - Shirley)
   getLatestTimestampMs(candlesticks: ICandlestickData[], timeSpan: ITimeSpanUnion) {
     if (candlesticks.length < 2) {
       return;
@@ -376,9 +375,6 @@ class TradeBook {
       console.error('candlesticks is either undefined or not an array in alignCandlesticks.');
       return [];
     }
-    // Deprecated: dev (20231118 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('alignCandlesticks', candlesticks, timeSpan);
 
     const tsMs = getTime(timeSpan);
     const interval = millisecondsToSeconds(tsMs);
@@ -408,8 +404,8 @@ class TradeBook {
         const merged = this.mergeCandlesticks(readyForMerge, new Date(alignedTime));
 
         if (!merged) return;
-        result[result.length - 1] = merged; // Replace the last candlestick with the merged one
-        continue; // Skip pushing the current candlestick as it's already merged
+        result[result.length - 1] = merged; // Info: (20231018 - Shirley) Replace the last candlestick with the merged one
+        continue; // Info: (20231018 - Shirley) Skip pushing the current candlestick as it's already merged
       }
 
       // Info: (20231018 - Shirley) Push the current candlestick

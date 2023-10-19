@@ -85,7 +85,7 @@ const TradingChartSwitch = ({
       setActiveButton(marketCtx.timeSpan);
     };
     handleTickerChange();
-  }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]); // add dependencies here if any other state/props are used in your effect
+  }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]);
 
   const switchSize = getSwitchWidth();
 

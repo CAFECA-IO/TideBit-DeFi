@@ -137,7 +137,6 @@ export interface IMarketContext {
     }
   ) => Promise<IResult>;
   candlestickIsLoading: boolean;
-  tradeBook: typeof TradeBookInstance;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -196,7 +195,6 @@ export const MarketContext = createContext<IMarketContext>({
     throw new Error('Function not implemented.');
   },
   candlestickIsLoading: true,
-  tradeBook: TradeBookInstance,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -687,26 +685,23 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     async (instId: string, timeSpan?: ITimeSpanUnion) => {
       const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
       // Info: initialize the candlestick chart data (20231018 - Shirley)
-
       if (timeSpan) {
         if (timeSpan !== TimeSpanUnion._1s) {
           const result = await listCandlesticks(instId, {
             timeSpan,
             limit: CANDLESTICK_SIZE,
           });
-          const candlesticks = (await result.data) as IInstCandlestick;
-          const data = await processCandlesticks(timeSpan, candlesticks);
-          await tradeBook.addCandlestickData(instId, timeSpan, data);
+          const candlesticks = result.data as IInstCandlestick;
+          const data = processCandlesticks(timeSpan, candlesticks);
+          tradeBook.addCandlestickData(instId, timeSpan, data);
         } else {
-          const candlesticks = await tradeBook.toCandlestick(
+          const candlesticks = tradeBook.toCandlestick(
             instId,
             millisecondsToSeconds(getTime(timeSpan)),
             CANDLESTICK_SIZE
           );
-          await tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
+          tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
         }
-
-        const get = (await tradeBook.getCandlestickData(instId)?.[timeSpan]) || null;
       } else {
         for (const timeSpan of Object.values(TimeSpanUnion)) {
           if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length > 0) {
@@ -717,9 +712,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
                 timeSpan,
                 limit: CANDLESTICK_SIZE,
               });
-              const candlesticks = (await result.data) as IInstCandlestick;
-              const data = await processCandlesticks(timeSpan, candlesticks);
-              await tradeBook.addCandlestickData(instId, timeSpan, data);
+              const candlesticks = result.data as IInstCandlestick;
+              const data = processCandlesticks(timeSpan, candlesticks);
+              tradeBook.addCandlestickData(instId, timeSpan, data);
             }
           }
         }
@@ -774,35 +769,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const now = new Date().getTime();
         const futureTs = latestTimestampMs + interval * 1000;
 
-        // Info: 如果最新的時間戳記是最後一筆資料的時間戳記，就合併最後一筆資料 (20231018 - Shirley)
-        // Info: 如果最新的時間戳記大於最後一筆資料的時間戳記，就直接加入最後一筆資料 (20231018 - Shirley)
-        // Deprecated: dev (20231118 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log(
-          'latestTimestampMs',
-          new Date(latestTimestampMs),
-          ' origin[origin.length - 1]',
-          new Date(origin[origin.length - 1]?.x.getTime()),
-          latestTimestampMs > lastTsOfOrigin,
-          'latestTimestampMs === lastTsOfOrigin',
-          latestTimestampMs === lastTsOfOrigin,
-          'latestTimestampMs < now',
-          latestTimestampMs < now,
-          'now < futureTs',
-          now < futureTs,
-          'now',
-          new Date(now),
-          'futureTs',
-          new Date(futureTs)
-        );
+        /* 
+        Info: 如果最新的時間戳記是最後一筆資料的時間戳記，就合併最後一筆資料 (20231018 - Shirley)
+        如果最新的時間戳記大於最後一筆資料的時間戳記，就直接加入最後一筆資料 (20231018 - Shirley)
+        */
         if (latestTimestampMs === lastTsOfOrigin && latestTimestampMs < now && now < futureTs) {
-          // Deprecated: dev (20231118 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log(
-            'latestTimestampMs === origin[origin.length - 1]?.x.getTime()',
-            'merge function called'
-          );
-
           const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
           const merged =
             tradeBook.mergeCandlesticks(
@@ -810,21 +781,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
               new Date(latestTimestampMs)
             ) ?? [];
           const result = origin.slice(0, origin.length - 1).concat(merged);
-          // Deprecated: dev (20231118 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('newCandle', newCandle, 'merged', merged, 'result', result);
 
           tradeBook.addCandlestickData(instId, ts, result);
         } else if (latestTimestampMs > lastTsOfOrigin) {
-          // Deprecated: dev (20231118 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log(
-            'latestTimestampMs > origin[origin.length - 1]?.x.getTime()',
-            latestTimestampMs > lastTsOfOrigin,
-            'now>futureTs (removed)',
-            now > futureTs,
-            'add candle directly'
-          );
           const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
           const result = origin.concat(newCandle);
 
@@ -1040,7 +999,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     predictCFDClosePrice,
     listCandlesticks,
     candlestickIsLoading: candlestickIsLoadingRef.current,
-    tradeBook,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

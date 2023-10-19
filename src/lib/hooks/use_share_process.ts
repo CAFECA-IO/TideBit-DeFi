@@ -2,7 +2,7 @@ import {findCodeByReason, locker} from '../common';
 import {useTranslation} from 'next-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
-import {API_URL, DOMAIN} from '../../constants/config';
+import {API_URL, API_VERSION, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CustomError, isCustomError} from '../custom_error';
@@ -70,7 +70,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
   };
 
   const getCFDOrder = async (): Promise<ISharingOrder | undefined> => {
-    const apiUrl = `${API_URL}/public/shared/cfd/${shareId}`;
+    const apiUrl = `${API_URL}/api/${API_VERSION}/public/shared/cfd/${shareId}`;
     try {
       const res = await fetch(apiUrl);
       const data = await res.json();

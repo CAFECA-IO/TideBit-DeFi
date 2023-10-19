@@ -19,6 +19,7 @@ import {
 } from '../../../../constants/display';
 import {
   API_URL,
+  API_VERSION,
   DOMAIN,
   FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
@@ -47,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const cfdId = params.pop();
-  const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
+  const apiUrl = `${API_URL}/api/${API_VERSION}/public/shared/cfd/${cfdId}`;
   const tz = Number(url.searchParams.get('tz'));
 
   let sharingOrder: ISharingOrder = getInvalidSharingOrder();

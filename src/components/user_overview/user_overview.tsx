@@ -19,37 +19,34 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
   const pnl = numberFormatted(profitOrLossAmount);
 
   return (
-    <>
-      <div className="flex space-x-5">
-        <div className="flex flex-col items-center lg:items-start">
-          <div className="whitespace-nowrap text-sm text-lightGray4">
-            {t('USER.OVERVIEW_AVAILABLE')}
-          </div>
-          <div className="whitespace-nowrap text-sm lg:text-base">
-            {deposit} {unitAsset}
-          </div>
+    <div className="flex justify-between space-x-1 w-full">
+      <div className="flex flex-col items-center lg:items-start">
+        <div className="whitespace-nowrap text-sm text-lightGray4">
+          {t('USER.OVERVIEW_AVAILABLE')}
         </div>
-
-        <div className="flex flex-col items-center lg:items-start">
-          <div className="whitespace-nowrap text-sm text-lightGray4">
-            {t('USER.OVERVIEW_M_MARGIN')}
-          </div>
-          <div className="whitespace-nowrap text-sm lg:text-base">
-            {locked} {unitAsset}
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center lg:items-start">
-          <div className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
-          <div className="whitespace-nowrap text-sm lg:text-base">
-            <span className="mr-1 whitespace-nowrap">
-              {pnlSymbpl} {pnl}
-            </span>
-            {unitAsset}
-          </div>
+        <div className="whitespace-nowrap text-sm lg:text-base">
+          {deposit}
+          <span className="text-xs"> {unitAsset}</span>
         </div>
       </div>
-    </>
+
+      <div className="flex flex-col items-center lg:items-start">
+        <div className="whitespace-nowrap text-sm text-lightGray4">
+          {t('USER.OVERVIEW_M_MARGIN')}
+        </div>
+        <div className="whitespace-nowrap text-sm lg:text-base">
+          {locked} <span className="text-xs"> {unitAsset}</span>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center lg:items-start">
+        <div className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
+        <div className="whitespace-nowrap text-sm lg:text-base">
+          {pnlSymbpl} {pnl}
+          <span className="text-xs"> {unitAsset}</span>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -196,7 +196,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />
             </button>
           </div>
-          <div className="py-4">{isDisplayedUserOverviewMobile}</div>
+          <div className="w-full max-w-350px py-4">{isDisplayedUserOverviewMobile}</div>
         </div>
 
         <div className="flex justify-center">

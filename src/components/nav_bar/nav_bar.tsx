@@ -79,11 +79,13 @@ const NavBar = () => {
   const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <UserOverview
-      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
-      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
-    />
+    <div className="w-350px">
+      <UserOverview
+        depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+        marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+        profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+      />
+    </div>
   ) : null;
 
   const isDisplayedUser = userCtx.enableServiceTerm ? (
@@ -164,7 +166,7 @@ const NavBar = () => {
                 </Link>
                 {/* Info: (20230327 - Julian) Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
+                  <div className="ml-4 mt-8 flex flex-1 items-center space-x-4">
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
 
                     <Link href={tradeLink} className="hover:cursor-pointer hover:text-tidebitTheme">

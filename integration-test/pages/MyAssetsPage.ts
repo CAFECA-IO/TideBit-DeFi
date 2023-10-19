@@ -8,7 +8,7 @@ export class MyAssetsPage {
   constructor(page: Page) {
     this.page = page;
     this.getAnncmnt = page.getByRole('button', {
-      name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON'),
+      name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string,
     });
   }
 
@@ -42,13 +42,14 @@ export class MyAssetsPage {
         '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(3) > div > span:nth-child(1)'
       )
       .textContent();
-    const expectedNavAvailable = Number(assetsAvailable);
-    expect(expectedNavAvailable).toBeGreaterThan(20);
+    expect(Number((assetsAvailable as string).replace(',', '').trim())).toBeGreaterThan(20);
   }
 
   async checkTradeLog() {
     await this.page
-      .getByRole('button', {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')})
+      .getByRole('button', {
+        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE') as string,
+      })
       .click();
     await this.page
       .locator(
@@ -59,13 +60,15 @@ export class MyAssetsPage {
       .soft(
         this.page
           .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT'),
+            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT') as string,
           })
           .last()
       )
       .toBeVisible();
     await this.page
-      .getByRole('button', {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')})
+      .getByRole('button', {
+        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT') as string,
+      })
       .nth(2)
       .click();
     await this.page
@@ -77,7 +80,7 @@ export class MyAssetsPage {
       .soft(
         this.page
           .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN'),
+            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN') as string,
           })
           .last()
       )
@@ -86,14 +89,14 @@ export class MyAssetsPage {
       .soft(
         this.page
           .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE'),
+            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE') as string,
           })
           .last()
       )
       .toBeVisible();
     await this.page
       .getByRole('button', {
-        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN'),
+        name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN') as string,
       })
       .first()
       .click();
@@ -106,7 +109,7 @@ export class MyAssetsPage {
       .soft(
         this.page
           .getByRole('button', {
-            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE'),
+            name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE') as string,
           })
           .last()
       )

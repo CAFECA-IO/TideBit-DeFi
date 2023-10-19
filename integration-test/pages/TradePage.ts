@@ -8,7 +8,9 @@ export class TradePage {
 
   constructor(page: Page, context: BrowserContext) {
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')});
+    this.getAnncmnt = page.getByRole('button', {
+      name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string,
+    });
     this.context = context;
   }
 
@@ -28,16 +30,18 @@ export class TradePage {
     }
   }
   // Info: (20231013 - Jacky) open position amount can be changed
-  async inputAmount(amount = '0.01') {
+  async inputAmount(amount = '0.03') {
     await this.page.getByPlaceholder('amount input').fill(amount);
   }
 
-  async openLongPosition(extensionId) {
+  async openLongPosition(extensionId: string) {
     const pagePromise = this.context.newPage();
     await this.page
-      .getByRole('button', {name: i18next.t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')})
+      .getByRole('button', {name: i18next.t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON') as string})
       .click();
-    await this.page.getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')}).click();
+    await this.page
+      .getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON') as string})
+      .click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();
@@ -47,12 +51,14 @@ export class TradePage {
       .click();
     newPage.close();
   }
-  async openShortPosition(extensionId) {
+  async openShortPosition(extensionId: string) {
     const pagePromise = this.context.newPage();
     await this.page
-      .getByRole('button', {name: i18next.t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')})
+      .getByRole('button', {name: i18next.t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON') as string})
       .click();
-    await this.page.getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')}).click();
+    await this.page
+      .getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON') as string})
+      .click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();
@@ -64,8 +70,10 @@ export class TradePage {
   }
 
   // Info: (20231013 - Jacky) number="1" means the last position
-  async updatePosition(extensionId, number = '1') {
-    await this.page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB')}).click();
+  async updatePosition(extensionId: string, number = '1') {
+    await this.page
+      .getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB') as string})
+      .click();
     await this.page
       .locator(
         '#__next > div > main > div > div:nth-child(3) > div > div > div > div > div:nth-last-child(' +
@@ -88,7 +96,9 @@ export class TradePage {
         '#__next > div > div:nth-child(11) > div > div > div.flex-col.items-center.text-xs > div.mt-3.flex-col.leading-relaxed.text-lightWhite > div:nth-child(3) > button'
       )
       .click();
-    await this.page.getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')}).click();
+    await this.page
+      .getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON') as string})
+      .click();
     const pagePromise = this.context.newPage();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');
@@ -101,8 +111,10 @@ export class TradePage {
   }
 
   // Info: (20231013 - Jacky) number="1" means the last position
-  async closePosition(extensionId, number = '1') {
-    await this.page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB')}).click();
+  async closePosition(extensionId: string, number = '1') {
+    await this.page
+      .getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB') as string})
+      .click();
     await this.page
       .locator(
         '#__next > div > main > div > div:nth-child(3) > div > div > div > div > div:nth-last-child(' +
@@ -111,7 +123,9 @@ export class TradePage {
       )
       .click();
     const pagePromise = this.context.newPage();
-    await this.page.getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')}).click();
+    await this.page
+      .getByRole('button', {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON') as string})
+      .click();
     // await this.page.waitForTimeout(2000);
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');

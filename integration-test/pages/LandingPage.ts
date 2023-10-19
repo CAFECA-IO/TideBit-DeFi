@@ -7,7 +7,9 @@ export class LandingPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')});
+    this.getAnncmnt = page.getByRole('button', {
+      name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string,
+    });
   }
 
   async goto() {

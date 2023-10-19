@@ -4,7 +4,7 @@ import i18next from '../i18n';
 
 test('Connect Metamask', async ({page, context}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
   await page.goto('chrome://extensions/');
   await page.locator('#devMode').click();
   const extensionId = (await page.locator('#extension-id').textContent()).substring(3).trim();
@@ -36,9 +36,9 @@ test('Connect Metamask', async ({page, context}) => {
   await page.getByTestId('pin-extension-done').click();
   await page.getByTestId('popover-close').click();
   await page.goto('./');
-  page.getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')}).click();
+  page.getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON') as string}).click();
   const pagePromise1 = context.newPage();
-  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT')}).click();
+  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT') as string}).click();
   await page
     .locator('div')
     .filter({hasText: /^MetaMask$/})
@@ -51,12 +51,12 @@ test('Connect Metamask', async ({page, context}) => {
   const pagePromise2 = context.newPage();
   await page
     .getByRole('button', {
-      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON'),
+      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON') as string,
     })
     .click();
   const newPage2 = await pagePromise2;
   await newPage2.goto('chrome-extension://' + extensionId + '/popup.html');
   await newPage2.getByTestId('signature-request-scroll-button').click();
   await newPage2.getByTestId('page-container-footer-next').click();
-  await page.getByRole('button', {name: i18next.t('WALLET_PANEL.DONE_BUTTON')}).click();
+  await page.getByRole('button', {name: i18next.t('WALLET_PANEL.DONE_BUTTON') as string}).click();
 });

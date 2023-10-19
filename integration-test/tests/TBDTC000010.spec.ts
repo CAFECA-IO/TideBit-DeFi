@@ -5,7 +5,7 @@ import {LeaderboardPage} from '../pages/LeaderboardPage';
 
 test.beforeEach(async ({page}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
 });
 
 test('1. 進入 TideBit-DeFi 首頁，將錢包連接到網站上，完成登入。', async ({page, context}) => {
@@ -60,7 +60,7 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
       )
     )
     .toBeVisible();
-  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.DAILY')}).click();
+  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.DAILY') as string}).click();
   // cant locate the text
   await expect
     .soft(
@@ -69,7 +69,7 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
       )
     )
     .toContainText(today.toISOString().slice(0, 10));
-  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.WEEKLY')}).click();
+  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.WEEKLY') as string}).click();
   await expect
     .soft(
       await page.locator(
@@ -84,7 +84,7 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
       )
     )
     .toContainText(lastWeekEnd.toISOString().slice(0, 10));
-  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.MONTHLY')}).click();
+  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.MONTHLY') as string}).click();
   await expect
     .soft(
       await page.locator(
@@ -103,7 +103,7 @@ test('4. 點擊此帳號的地址後點擊入金徽章並將徽章分享至FB。
   const leaderboardPage = new LeaderboardPage(page);
   await leaderboardPage.goto();
   await leaderboardPage.clickAnncmnt();
-  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.DAILY')}).click();
+  await page.getByRole('button', {name: i18next.t('LEADERBOARD_PAGE.DAILY') as string}).click();
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.min-h-screen > div > div.pt-150px > div > div.my-10.w-screen> div.flex.w-full.flex-col.bg-darkGray7.pt-2 > div.sticky.bottom-0.z-30> div > div.flex.flex-1.items-center.space-x-2'

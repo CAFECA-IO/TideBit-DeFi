@@ -5,14 +5,14 @@ import {LandingPage} from '../pages/LandingPage';
 
 test.beforeEach(async ({page}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
 });
 
 test('1. 進入 TideBit-DeFi 首頁，確定語言為英文，點擊錢包連接', async ({page, context}) => {
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await landingPage.clickAnncmnt();
-  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT')}).click();
+  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT') as string}).click();
   await expect(page.getByRole('img', {name: 'MetaMask'})).toHaveAttribute('alt', 'MetaMask');
 });
 
@@ -27,7 +27,7 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await landingPage.clickAnncmnt();
-  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT')}).click();
+  await page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT') as string}).click();
   await expect(page.getByRole('img', {name: 'MetaMask'})).toHaveAttribute('alt', 'MetaMask');
   await page.getByRole('img', {name: 'MetaMask'}).click();
   const pagePromise1 = context.newPage();
@@ -43,14 +43,14 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   await newPage1.getByRole('button', {name: 'GOT IT'}).click();
   await page
     .getByRole('button', {
-      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON'),
+      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON') as string,
     })
     .click();
   await expect(
     page.locator(
       '#connectModal > div.flex.flex-auto.flex-col.items-center.py-5 > div > div > div.space-y-12.flex.flex-col.px-4.pt-16 > div:nth-child(2) > div.-mb-5.mt-7.w-271px.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
     )
-  ).toContainText(i18next.t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE'));
+  ).toContainText(i18next.t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE') as string);
 });
 
 test('3. 至metamask切換到ETH主鏈上，重新發送請求。', async ({page, context}) => {

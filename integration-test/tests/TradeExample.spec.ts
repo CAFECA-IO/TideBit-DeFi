@@ -3,10 +3,9 @@ import i18next from '../i18n';
 import {WalletConnect} from '../pages/WalletConnect';
 import {TradePage} from '../pages/TradePage';
 
-// change to correspond i18n
 test.beforeEach(async ({page}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
 });
 
 test('Trade example', async ({page, context}) => {

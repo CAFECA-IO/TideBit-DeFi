@@ -29,40 +29,36 @@ const NavBar = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {
-    targetRef: notifyRef,
-    componentVisible: notifyVisible,
-    setComponentVisible: setNotifyVisible,
+    targetRef: sidebarRef,
+    componentVisible: sidebarVisible,
+    setComponentVisible: setSidebarVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
   const [navOpen, setNavOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen, sidebarOpenRef] = useStateRef(false);
+  const [notifyOpen, setNotifyOpen, notifyOpenRef] = useStateRef(false);
   const [langIsOpen, setLangIsOpen] = useState(false);
 
   /* Info: (20230327 - Julian) Menu Text */
-  const menuText = sidebarOpenRef.current
+  const menuText = notifyOpenRef.current
     ? t('NAV_BAR.NOTIFICATION_TITLE')
     : langIsOpen
     ? t('NAV_BAR.LANGUAGE')
     : t('NAV_BAR.MENU');
 
   const burgerClickHandler = () => {
-    if (sidebarOpenRef.current) {
-      setSidebarOpen(false);
-    } else if (langIsOpen) {
-      setLangIsOpen(false);
-    } else {
-      setNavOpen(!navOpen);
-    }
+    if (notifyOpenRef.current) setNotifyOpen(false);
+    else if (langIsOpen) setLangIsOpen(false);
+    else setNavOpen(!navOpen);
   };
 
   const logoClickHandler = () => {
     // Info: (20231019 - Julian) Close all menu
     setNavOpen(false);
-    setSidebarOpen(false);
+    setNotifyOpen(false);
     setLangIsOpen(false);
   };
-  const sidebarOpenHandler = () => setNotifyVisible(!notifyVisible);
-  const sidebarOpenHandlerMobile = () => setSidebarOpen(!sidebarOpen);
+  const sidebarOpenHandler = () => setSidebarVisible(!sidebarVisible);
+  const sidebarOpenHandlerMobile = () => setNotifyOpen(!notifyOpen);
 
   const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
 
@@ -123,7 +119,7 @@ const NavBar = () => {
   );
 
   const isDisplayedUserMobile = userCtx.enableServiceTerm ? (
-    <User />
+    <User notifyOpen={notifyOpen} setNotifyOpen={setNotifyOpen} />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="px-3 py-2 text-sm" />
@@ -212,7 +208,7 @@ const NavBar = () => {
                     />
                   </button>
                 </div>
-                <div className="mr-5 inline-flex">{isDisplayedUserMobile}</div>
+                <div className="mr-5 inline-flex">{isDisplayedUser}</div>
               </div>
             </div>
           </div>
@@ -220,7 +216,7 @@ const NavBar = () => {
       </div>
 
       {/* Info: (20230327 - Julian) Notification Sidebar */}
-      <Notification notifyRef={notifyRef} componentVisible={notifyVisible} />
+      <Notification notifyRef={sidebarRef} componentVisible={sidebarVisible} />
     </>
   );
 
@@ -243,8 +239,7 @@ const NavBar = () => {
             </div>
             {/* Info: (20231019 - Julian) Menu Text */}
             <div className="z-50 ml-4">{menuTextBar}</div>
-
-            <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
+            <div className="z-50 flex grow justify-end">{isDisplayedUserMobile}</div>
           </div>
         </div>
 
@@ -321,7 +316,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      <Notification componentVisible={sidebarOpenRef.current} />
+      <Notification componentVisible={notifyOpenRef.current} />
     </>
   );
 

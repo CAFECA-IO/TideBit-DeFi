@@ -96,11 +96,6 @@ export default function Notification({
         {/* Info: (20230420 - Julian) Notification List */}
         <div className="flex h-80vh w-full flex-col space-y-5 overflow-y-auto overflow-x-hidden pb-40 pt-5 sm:pb-10">
           {displayedNotificationList}
-          {displayedNotificationList}
-          {displayedNotificationList}
-          {displayedNotificationList}
-          {displayedNotificationList}
-          {displayedNotificationList}
         </div>
       </div>
     </div>

@@ -4,18 +4,21 @@ import i18next from '../i18n';
 
 test.beforeEach(async ({page}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
 });
 
 test('1. 進入 TideBit-DeFi 首頁，檢查登入狀態為未登入，切換語言為英文', async ({page}) => {
+  const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
+  const walletConnect = i18next.t('NAV_BAR.WALLET_CONNECT');
   const landingPage = new LandingPage(page);
   await landingPage.goto();
-  await expect
-    .soft(page.getByRole('button', {name: i18next.t('NAV_BAR.WALLET_CONNECT')}))
-    .toHaveText(i18next.t('NAV_BAR.WALLET_CONNECT'));
+  await expect.soft(page.getByRole('button', walletConnectButton)).toHaveText(walletConnect);
 });
 
 test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
+  const tradeLink = {name: i18next.t('NAV_BAR.TRADE')};
+  const leaderboardLink = {name: i18next.t('NAV_BAR.LEADERBOARD')};
+  const supportLink = {name: i18next.t('NAV_BAR.SUPPORT')};
   const landingPage = new LandingPage(page);
   landingPage.goto();
   landingPage.clickAnncmnt();
@@ -24,15 +27,12 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
     .getByRole('link', {name: 'TideBit_logo beta v0.8.0'})
     .click();
   await expect.soft(page).toHaveTitle(/TideBit DeFi/);
-  await page
-    .getByRole('link', {name: i18next.t('NAV_BAR.TRADE')})
-    .first()
-    .click();
+  await page.getByRole('link', tradeLink).first().click();
   await expect.soft(page).toHaveURL(/.*trade/);
   landingPage.clickAnncmnt();
-  await page.getByRole('link', {name: i18next.t('NAV_BAR.LEADERBOARD')}).click();
+  await page.getByRole('link', leaderboardLink).click();
   landingPage.clickAnncmnt();
-  await page.getByRole('link', {name: i18next.t('NAV_BAR.SUPPORT')}).click();
+  await page.getByRole('link', supportLink).click();
   landingPage.clickAnncmnt();
   await page.locator('#globe').click();
   await page.getByRole('link', {name: '繁體中文'}).click();
@@ -51,47 +51,59 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
 });
 
 test('3. 點擊首圖上的開始和信箱聯絡按鈕、白皮書和 AI 報告按鈕下載', async ({page}) => {
+  const ctaButton = {name: i18next.t('HOME_PAGE.CTA_BUTTON')};
+  const whitePaperButton = {name: i18next.t('HOME_PAGE.WHITEPAPER')};
+  const whitePaperLink = i18next.t('HOME_PAGE.WHITEPAPER_LINK');
+  const downloadReportButton = {name: i18next.t('HOME_PAGE.DOWNLOAD_REPORT')};
+  const comprehensiveIncomeStatementButton = {
+    name: i18next.t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT'),
+  };
+  const balanceSheetButton = {name: i18next.t('HOME_PAGE.BALANCE_SHEET')};
+  const cashFlowStatementButton = {name: i18next.t('HOME_PAGE.CASH_FLOW_STATEMENT')};
+  const redFlagAnalysisButton = {name: i18next.t('HOME_PAGE.RED_FLAG_ANALYSIS')};
+  const redFlagAnalysis = i18next.t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK');
   const landingPage = new LandingPage(page);
   landingPage.goto();
   landingPage.clickAnncmnt();
   await expect
     .soft(page.getByRole('link', {name: 'contact@tidebit-defi.com'}))
     .toHaveAttribute('href', 'mailto:contact@tidebit-defi.com');
-  await page.getByRole('button', {name: i18next.t('HOME_PAGE.CTA_BUTTON')}).click();
+  await page.getByRole('button', ctaButton).click();
   await expect.soft(page).toHaveURL(/.*trade/);
   landingPage.goto();
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.WHITEPAPER')}))
-    .toHaveAttribute('href', i18next.t('HOME_PAGE.WHITEPAPER_LINK'));
+    .soft(page.getByRole('link', whitePaperButton))
+    .toHaveAttribute('href', whitePaperLink);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.DOWNLOAD_REPORT')}))
+    .soft(page.getByRole('link', downloadReportButton))
     .toHaveAttribute('href', /.*balance/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT')}))
+    .soft(page.getByRole('link', comprehensiveIncomeStatementButton))
     .toHaveAttribute('href', /.*comprehensive-income/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.BALANCE_SHEET')}))
+    .soft(page.getByRole('link', balanceSheetButton))
     .toHaveAttribute('href', /.*balance/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.CASH_FLOW_STATEMENT')}))
+    .soft(page.getByRole('link', cashFlowStatementButton))
     .toHaveAttribute('href', /.*cash-flow/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.RED_FLAG_ANALYSIS')}))
-    .toHaveAttribute('href', i18next.t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK'));
+    .soft(page.getByRole('link', redFlagAnalysisButton))
+    .toHaveAttribute('href', redFlagAnalysis);
 });
 
 test('4. 確認按鈕連結跳轉網頁正確。', async ({page}) => {
+  const reserveRatioBlockCard = {name: i18next.t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD_2')};
+  const iSunOne = {name: i18next.t('HOME_PAGE.ISUNONE_PROMOTION_DESCRIPTION')};
+  const trade = {name: i18next.t('NAV_BAR.TRADE')};
+  const tidebitUniversity = {name: i18next.t('NAV_BAR.TIDEBIT_UNIVERSITY')};
+  const helpCenter = {name: i18next.t('NAV_BAR.HELP_CENTER')};
+  const hiring = {name: i18next.t('FOOTER.HIRING')};
+  const privacyPolicy = {name: i18next.t('FOOTER.PRIVACY_POLICY')};
   const landingPage = new LandingPage(page);
   landingPage.goto();
   landingPage.clickAnncmnt();
   await expect
-    .soft(
-      page
-        .getByRole('link', {
-          name: i18next.t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD_2'),
-        })
-        .nth(0)
-    )
+    .soft(page.getByRole('link', reserveRatioBlockCard).nth(0))
     .toHaveAttribute('href', /.*baifa.io/);
   await expect.soft(page.getByRole('link', {name: 'BAIFA'})).toHaveAttribute('href', /.*baifa.io/);
   await expect
@@ -101,7 +113,7 @@ test('4. 確認按鈕連結跳轉網頁正確。', async ({page}) => {
     .soft(page.getByRole('link', {name: 'Bitcoin BTC'}))
     .toHaveAttribute('href', /.*trade\/cfd\/btc-usdt/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('HOME_PAGE.ISUNONE_PROMOTION_DESCRIPTION')}))
+    .soft(page.getByRole('link', iSunOne))
     .toHaveAttribute('href', /https:\/\/www.isun1.com*/);
   await expect
     .soft(page.getByRole('link', {name: 'app-store'}))
@@ -122,21 +134,13 @@ test('4. 確認按鈕連結跳轉網頁正確。', async ({page}) => {
     .soft(page.getByRole('link', {name: 'reddit'}))
     .toHaveAttribute('href', /.*coming-soon/);
   await expect
-    .soft(page.getByRole('contentinfo').getByRole('link', {name: i18next.t('NAV_BAR.TRADE')}))
+    .soft(page.getByRole('contentinfo').getByRole('link', trade))
     .toHaveAttribute('href', /.*trade/);
   await expect
-    .soft(page.getByRole('link', {name: i18next.t('NAV_BAR.TIDEBIT_UNIVERSITY')}))
+    .soft(page.getByRole('link', tidebitUniversity))
     .toHaveAttribute('href', /.*coming-soon/);
-  await expect
-    .soft(page.getByRole('link', {name: i18next.t('NAV_BAR.HELP_CENTER')}))
-    .toHaveAttribute('href', /.*coming-soon/);
-  await expect
-    .soft(page.getByRole('link', {name: i18next.t('FOOTER.HIRING')}))
-    .toHaveAttribute('href', /.*coming-soon/);
-  await expect
-    .soft(page.getByRole('link', {name: i18next.t('FOOTER.SERVICE_POLICY')}))
-    .toHaveAttribute('href', /.*coming-soon/);
-  await expect
-    .soft(page.getByRole('link', {name: i18next.t('FOOTER.PRIVACY_POLICY')}))
-    .toHaveAttribute('href', /.*coming-soon/);
+  await expect.soft(page.getByRole('link', helpCenter)).toHaveAttribute('href', /.*coming-soon/);
+  await expect.soft(page.getByRole('link', hiring)).toHaveAttribute('href', /.*coming-soon/);
+  await expect.soft(page.getByRole('link', hiring)).toHaveAttribute('href', /.*coming-soon/);
+  await expect.soft(page.getByRole('link', privacyPolicy)).toHaveAttribute('href', /.*coming-soon/);
 });

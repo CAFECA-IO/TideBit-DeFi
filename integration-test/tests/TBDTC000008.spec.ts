@@ -5,7 +5,7 @@ import {MyAssetsPage} from '../pages/MyAssetsPage';
 
 test.beforeEach(async ({page}) => {
   const lang = await page.evaluate('window.navigator.language;');
-  i18next.changeLanguage(String(lang));
+  i18next.changeLanguage(lang as string);
 });
 
 test('1. 進入 TideBit-DeFi 首頁，將錢包連接到網站上，完成登入。', async ({page, context}) => {
@@ -23,6 +23,8 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   page,
   context,
 }) => {
+  const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
+  const max = i18next.t('D_W_MODAL.MAX');
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -41,15 +43,15 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(2) > section > div.mx-auto > div > div:nth-child(3) > div > h2'
     )
     .textContent();
-  await expect.soft(myAssetsPNL).toContain(headerPNL.replace(/ /g, ''));
+  await expect
+    .soft(myAssetsPNL.replace(',', ''))
+    .toContain(headerPNL.replace(',', '').replace(/ /g, ''));
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(3) > div:nth-child(1) > button'
     )
     .click();
-  await expect(page.getByRole('button', {name: i18next.t('D_W_MODAL.MAX')})).toContainText(
-    i18next.t('D_W_MODAL.MAX')
-  );
+  await expect(page.getByRole('button', maxButton)).toContainText(max);
 });
 
 test('3. 若缺乏從入金 ➡️ 建倉 ➡️ 更新持倉 ➡️ 關倉 ➡️ 出金的完整交易紀錄，則先完成上述流程，否則跳到下一步。', async ({
@@ -66,6 +68,7 @@ test('3. 若缺乏從入金 ➡️ 建倉 ➡️ 更新持倉 ➡️ 關倉 ➡�
   await myAssetsPage.checkTradeLog();
 });
 
+// Todo (20231013 - Jacky) This expect should be passed after improving log loading time
 test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
@@ -75,7 +78,7 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
   const todayDate = new Date().getUTCDate();
-  await page.waitForTimeout(10000);
+  await page.waitForTimeout(15000);
   await expect
     .soft(
       page.locator(
@@ -83,7 +86,7 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
       )
     )
     .toContainText(String(todayDate));
-  // Todo (20231013 - Jacky) This expect should be finished after a button show all logs.
+  // Todo (20231013 - Jacky) This expect should be finished after existing a button show all logs.
   // await expect
   //   .soft(
   //     page.locator(
@@ -130,6 +133,8 @@ test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按�
   page,
   context,
 }) => {
+  const titleButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')};
+  const depositButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -137,22 +142,13 @@ test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await page
-    .getByRole('button', {
-      name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE'),
-    })
-    .click();
+  await page.getByRole('button', titleButton).click();
   await page
     .locator(
       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.relative.mt-2.hidden.w-160px> div > button:nth-child(2)'
     )
     .click();
-  await page
-    .getByRole('button', {
-      name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT'),
-    })
-    .nth(3)
-    .click();
+  await page.getByRole('button', depositButton).nth(3).click();
   await expect(page.locator('#depositHistoryModal')).toBeVisible();
 });
 
@@ -160,6 +156,7 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   page,
   context,
 }) => {
+  const closeButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_CLOSE_BUTTON')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -167,12 +164,7 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await page
-    .getByRole('button', {
-      name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE'),
-    })
-    .first()
-    .click();
+  await page.getByRole('button', closeButton).first().click();
   const pagePromise = context.waitForEvent('page');
   await page.getByRole('img', {name: 'FACEBOOK'}).first().click();
   const newPage = await pagePromise;

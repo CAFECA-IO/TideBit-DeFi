@@ -6,8 +6,9 @@ export class LandingPage {
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
+    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')});
+    this.getAnncmnt = page.getByRole('button', okButton);
   }
 
   async goto() {
@@ -15,7 +16,6 @@ export class LandingPage {
     await expect.soft(this.page).toHaveTitle(/TideBit DeFi/);
   }
 
-  // Info: click the button to close the announcement modal
   async clickAnncmnt() {
     if (this.getAnncmnt) {
       await this.getAnncmnt.click();

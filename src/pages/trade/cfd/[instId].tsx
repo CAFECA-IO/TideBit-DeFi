@@ -25,6 +25,8 @@ interface IPageProps {
   briefs: IRecommendedNews[];
 }
 
+const HIDDEN = 'hidden';
+
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
   const appCtx = useContext(AppContext);
@@ -34,6 +36,9 @@ const Trading = (props: IPageProps) => {
   const router = useRouter();
   const instId = router.query?.instId as string;
   const ticker = instId?.toUpperCase();
+
+  const hideTradingView = router.query?.trading_view === HIDDEN;
+  const hideOpenLineGraph = router.query?.open_line_graph === HIDDEN;
 
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && ticker) {
@@ -63,7 +68,11 @@ const Trading = (props: IPageProps) => {
       {displayedNavBar}
 
       <main>
-        <TradePageBody briefs={props.briefs} />
+        <TradePageBody
+          briefs={props.briefs}
+          hideTradingView={hideTradingView}
+          hideOpenLineGraph={hideOpenLineGraph}
+        />
       </main>
     </>
   ) : (

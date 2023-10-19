@@ -33,6 +33,7 @@ import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_w
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 import {Code, Reason} from '../constants/code';
 import {
+  areArraysEqual,
   getCookieByName,
   getServiceTermContract,
   getTimestamp,
@@ -86,8 +87,8 @@ export interface IUserContext {
   connect: () => Promise<IResult>;
   signServiceTerm: () => Promise<IResult>;
   disconnect: () => Promise<IResult>;
-  addFavorites: (props: string) => Promise<IResult>;
-  removeFavorites: (props: string) => Promise<IResult>;
+  addFavorites: (props: string[]) => Promise<IResult>;
+  removeFavorites: (props: string[]) => Promise<IResult>;
   listHistories: () => Promise<IResult>;
   listCFDs: (props: string) => Promise<IResult>;
   getCFD: (props: string) => ICFDOrder | null;
@@ -644,8 +645,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         eip712signature = await lunar.signTypedData(serviceTermContract);
         resultCode = Code.FAILED_TO_VERIFY_SIGNATURE;
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
-        // eslint-disable-next-line no-console
-        console.log(`verifyR`, verifyR);
         if (verifyR) {
           const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
           setDeWT(deWT);
@@ -671,8 +670,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         }
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`signServiceTerm error`, error);
       result.code = resultCode;
       result.reason = Reason[resultCode];
       return result;
@@ -701,23 +698,27 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const addFavorites = useCallback(async (instId: string) => {
+  const addFavorites = useCallback(async (instIds: string[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickersRef.current];
-        (await workerCtx.requestHandler({
-          name: APIName.ADD_FAVORITE_TICKERS,
-          method: Method.PUT,
-          body: {
-            instId,
-            starred: true,
-          },
-        })) as string[];
-        updatedFavoriteTickers.push(instId);
-        setFavoriteTickers(updatedFavoriteTickers);
-        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
-        result = defaultResultSuccess;
+        const originFavoriteTickers = [...favoriteTickersRef.current];
+        if (!areArraysEqual(originFavoriteTickers, instIds)) {
+          const newFavoriteTickers = originFavoriteTickers.concat(instIds);
+
+          await workerCtx.requestHandler({
+            name: APIName.ADD_FAVORITE_TICKERS,
+            method: Method.PUT,
+            body: {
+              instId: instIds,
+              starred: true,
+            },
+          });
+
+          setFavoriteTickers(newFavoriteTickers);
+          notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
+          result = defaultResultSuccess;
+        }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
@@ -726,29 +727,32 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
       }
     }
+
     return result;
   }, []);
 
-  const removeFavorites = useCallback(async (instId: string) => {
+  const removeFavorites = useCallback(async (instIds: string[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickersRef.current];
-        const index: number = updatedFavoriteTickers.findIndex(id => id === instId);
-        if (index !== -1) {
-          (await privateRequestHandler({
+        const originFavoriteTickers = [...favoriteTickersRef.current];
+        const newFavoriteTickers = originFavoriteTickers.filter(
+          ticker => !instIds.includes(ticker)
+        );
+        if (newFavoriteTickers.length !== originFavoriteTickers.length) {
+          await privateRequestHandler({
             name: APIName.REMOVE_FAVORITE_TICKERS,
             method: Method.PUT,
             body: {
-              instId,
+              instId: instIds,
               starred: false,
             },
-          })) as string[];
-          updatedFavoriteTickers.splice(index, 1);
+          });
+
+          setFavoriteTickers(newFavoriteTickers);
+          notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, newFavoriteTickers);
+          result = defaultResultSuccess;
         }
-        setFavoriteTickers(updatedFavoriteTickers);
-        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
-        result = defaultResultSuccess;
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
@@ -757,6 +761,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
       }
     }
+
     return result;
   }, []);
 
@@ -823,8 +828,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('error in updateBalance in ctx', error);
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
     }

@@ -32,19 +32,11 @@ const User = () => {
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
-  const avatarClickHandler = () => {
-    setUserVisible(!userVisible);
-  };
-
+  const avatarClickHandler = () => setUserVisible(!userVisible);
   const avatarMobileClickHandler = () => setAvatarMenuVisible(!avatarMenuVisible);
 
-  const depositClickHandler = () => {
-    globalCtx.visibleDepositModalHandler();
-  };
-
-  const withdrawClickHandler = () => {
-    globalCtx.visibleWithdrawalModalHandler();
-  };
+  const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
+  const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div

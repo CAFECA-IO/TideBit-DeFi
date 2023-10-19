@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import {useContext, useMemo} from 'react';
 import Image from 'next/image';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
@@ -26,9 +26,10 @@ import SafeMath from '../../lib/safe_math';
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
   openCfdDetails: IDisplayCFDOrder;
+  hideOpenLineGraph?: boolean;
 }
 
-const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
+const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext(MarketContext);
@@ -60,9 +61,12 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   } = openCfdDetails;
 
   const spread = marketCtx.getTickerSpread(openCfdDetails.instId);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.instId, {
-    begin: openCfdDetails.createTimestamp,
-  });
+  const positionLineGraph = useMemo(() => {
+    const lineData = marketCtx.listTickerPositions(openCfdDetails.instId, {
+      begin: openCfdDetails.createTimestamp,
+    });
+    return lineData;
+  }, []);
 
   const positionLineGraphWithSpread =
     typeOfPosition === TypeOfPosition.BUY
@@ -260,8 +264,25 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     : numberFormatted(pnl?.value);
 
   const displayedCreateTime = timestampToString(createTimestamp ?? 0);
+
+  const displayedLineGraph = hideOpenLineGraph ? null : (
+    <div className="-mx-4 mb-0 mt-3 h-60px">
+      <PositionLineGraph
+        strokeColor={[
+          displayedColorHex,
+          displayedAnnotationColor.DASH_LINE,
+          displayedAnnotationColor.STRING,
+        ]}
+        dataArray={positionLineGraphWithSpread}
+        lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
+        annotatedValue={displayedAnnotation.VALUE}
+        annotatedString={displayedAnnotation.STRING}
+      />
+    </div>
+  );
+
   return (
-    <div className="relative my-2 min-h-140px">
+    <div className={`relative my-2 ${hideOpenLineGraph ? `min-h-50px` : `min-h-140px`}`}>
       <div
         className="absolute z-10 h-160px w-280px bg-transparent hover:cursor-pointer"
         onClick={updatedModalClickHandler}
@@ -291,19 +312,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-mx-4 mb-0 mt-3 h-60px">
-        <PositionLineGraph
-          strokeColor={[
-            displayedColorHex,
-            displayedAnnotationColor.DASH_LINE,
-            displayedAnnotationColor.STRING,
-          ]}
-          dataArray={positionLineGraphWithSpread}
-          lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={displayedAnnotation.VALUE}
-          annotatedString={displayedAnnotation.STRING}
-        />
-      </div>
+      {displayedLineGraph}
 
       <div className="mt-1 flex justify-between">
         <div className="">

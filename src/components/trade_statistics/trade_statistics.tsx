@@ -1,6 +1,3 @@
-import React from 'react';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 import {numberFormatted} from '../../lib/common';
 
@@ -26,18 +23,6 @@ const TradeStatistics = ({
 
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  // const displayedBBI = `w-${bullAndBearIndex}`;
-
-  // const fiveMinNow = `ml-${fiveMin.now} -mb-4`;
-  // const sixtyMinNow = `ml-${sixtyMin.now} -mb-4`;
-  // const oneDayNow = `ml-${oneDay.now} -mb-4`;
-
-  // const fiveMinStyle = {
-  //   '@media (minWidth: 1024px)': {marginLeft: `${fiveMin.now}rem`},
-  //   '@media (minWidth: 700px)': {marginLeft: `${Number(fiveMin.now) / 2}rem`},
-  // };
-
-  // console.log('oneDay', oneDay);
 
   const nowPointer = (
     <div className="">
@@ -71,12 +56,12 @@ const TradeStatistics = ({
         </h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
 
-        {/* ----------Sellers vs. Buyers---------- */}
+        {/* ----------Info: (20231013 - Shirley) Sellers vs. Buyers---------- */}
         <p className="mb-3 text-base text-lightGray">
           {t('TRADE_PAGE.TRADE_STATISTICS_TRADERS_SENTIMENT')}
         </p>
         <div className={`${overallWidth}`}>
-          {/* Text */}
+          {/* Info: (20231013 - Shirley) Text */}
           <div className="flex w-full justify-between">
             <p className="text-sm text-lightRed">
               {short}% {t('TRADE_PAGE.TRADE_STATISTICS_SELLERS')}
@@ -85,7 +70,7 @@ const TradeStatistics = ({
               {long}% {t('TRADE_PAGE.TRADE_STATISTICS_BUYERS')}
             </p>
           </div>
-          {/* Bar */}
+          {/* Info: (20231013 - Shirley) Bar */}
           <div className={`relative mb-4 h-2 w-full rounded-full bg-lightGreen5`}>
             <div
               className={`absolute left-0 top-0 h-2 rounded-l bg-lightRed`}
@@ -94,18 +79,18 @@ const TradeStatistics = ({
           </div>
         </div>
 
-        {/* ----------High and Low vs. Now---------- */}
+        {/* ----------Info: (20231013 - Shirley) High and Low vs. Now---------- */}
         <p className="mb-3 text-base text-lightGray">
           {t('TRADE_PAGE.TRADE_STATISTICS_HIGH_AND_LOW')}
         </p>
         <div className={`${overallWidth}`}>
-          {/* Text */}
+          {/* Info: (20231013 - Shirley) Text */}
           <div className="-mb-2 flex w-full justify-between">
             <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_LOW')}</p>
             <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_HIGH')}</p>
           </div>
 
-          {/* [5 min] Progress bar and triangle */}
+          {/* Info: (20231013 - Shirley) [5 min] Progress bar and triangle */}
           <div className="mb-3">
             <div>
               <div className={`-mb-4`} style={{marginLeft: `${fiveMin.now}%`}}>
@@ -123,7 +108,7 @@ const TradeStatistics = ({
             </div>
           </div>
 
-          {/* [60 min] Progress bar and triangle */}
+          {/* Info: (20231013 - Shirley) [60 min] Progress bar and triangle */}
           <div className="mb-3">
             <div>
               <div className={`-mb-4`} style={{marginLeft: `${sixtyMin.now}%`}}>
@@ -141,7 +126,7 @@ const TradeStatistics = ({
             </div>
           </div>
 
-          {/* [1 day] Progress bar and triangle */}
+          {/* Info: (20231013 - Shirley) [1 day] Progress bar and triangle */}
           <div className="mb-3">
             <div>
               <div className={`-mb-4`} style={{marginLeft: `${oneDay.now}%`}}>

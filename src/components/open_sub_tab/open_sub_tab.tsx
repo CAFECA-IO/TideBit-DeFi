@@ -9,7 +9,11 @@ import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 
-const OpenSubTab = () => {
+interface IOpenSubTab {
+  hideOpenLineGraph?: boolean;
+}
+
+const OpenSubTab = (props: IOpenSubTab) => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -57,7 +61,7 @@ const OpenSubTab = () => {
     cfds.map(cfd => {
       return (
         <div key={cfd.id}>
-          {<OpenPositionItem openCfdDetails={cfd} />}
+          {<OpenPositionItem openCfdDetails={cfd} hideOpenLineGraph={props?.hideOpenLineGraph} />}
           <div className="my-auto h-px w-full rounded bg-white/50"></div>
         </div>
       );

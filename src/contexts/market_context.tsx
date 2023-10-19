@@ -738,11 +738,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
     // Info: initialize the candlestick chart data (20231018 - Shirley)
     if (candlestickDataByInstId && candlestickDataByInstId?.[ts]?.length <= 0) {
-      if (ts === TimeSpanUnion._1s) {
-        await initCandlestickData(instId, TimeSpanUnion._5m);
-      } else {
-        await initCandlestickData(instId, ts);
-      }
+      await initCandlestickData(instId, ts);
     }
 
     const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];

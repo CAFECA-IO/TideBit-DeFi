@@ -4,12 +4,8 @@ import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import {
-  TypeOfPnLColor,
-  SKELETON_DISPLAY_TIME,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {ProfitState} from '../../constants/profit_state';

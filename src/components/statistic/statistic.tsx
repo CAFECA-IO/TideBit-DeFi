@@ -1,7 +1,5 @@
 import React, {useContext} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {numberFormatted} from '../../lib/common';

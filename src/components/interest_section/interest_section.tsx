@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import Lottie from 'lottie-react';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
-import {DEFAULT_INTEREST_RATE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
+import {DEFAULT_INTEREST_RATE} from '../../constants/display';
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';

@@ -2,16 +2,11 @@ import {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
-import {
-  DEFAULT_FLUCTUATION,
-  DEFAULT_ICON,
-  DEFAULT_PRICE_CHANGE,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {DEFAULT_FLUCTUATION, DEFAULT_ICON, DEFAULT_PRICE_CHANGE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import {useTranslation} from 'next-i18next';
-import {DEFAULT_CRYPTO, FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {DEFAULT_CRYPTO, unitAsset} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 import {numberFormatted} from '../../lib/common';

@@ -29,7 +29,6 @@ const LoadingModal = ({
   btnMsg,
   btnUrl,
   isShowZoomOutBtn,
-  ...otherProps
 }: ILoadingModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useContext(GlobalContext);

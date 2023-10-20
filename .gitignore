@@ -96,6 +96,12 @@ package-lock.json
 # vuepress build output
 .vuepress/dist
 
+# Playwright output
+/test-results/
+/playwright-report/
+/playwright/.cache/
+metamask-chrome-11.0.0
+
 # Serverless directories
 .serverless/
 
@@ -127,6 +133,7 @@ src/constants/walletconnect.js
 .DS_Store
 
 .vscode
-intergration-test/metamask-chrome-11.0.0/
+
+integration-test/metamask-chrome-11.0.0/
 playwright-report/
 test-results/

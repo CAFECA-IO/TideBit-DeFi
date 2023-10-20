@@ -1,6 +1,10 @@
 import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
-import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
+import {
+  CANDLESTICK_SIZE,
+  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
+  SAMPLE_NUMBER,
+} from '../constants/display';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
@@ -21,8 +25,10 @@ import {
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
   ICandlestickData,
+  IInstCandlestick,
   ITrade,
   TradeSideText,
+  isIInstCandlestick,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -42,7 +48,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
+import {millisecondsToSeconds, roundToDecimalPlaces, wait} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -130,6 +136,7 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => Promise<IResult>;
+  candlestickIsLoading: boolean;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -187,6 +194,7 @@ export const MarketContext = createContext<IMarketContext>({
   listCandlesticks: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  candlestickIsLoading: true,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -226,7 +234,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     [instId: string]: ITickerData;
   }>(toDummyTickers);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
-  const [candlestickId, setCandlestickId] = useState<string>('');
+  const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
   const [tidebitPromotion, setTidebitPromotion, tidebitPromotionRef] =
     useState<ITideBitPromotion>(dummyTideBitPromotion);
@@ -234,7 +242,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     useState<IWebsiteReserve>(dummyWebsiteReserve);
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
-  );
+  ); // Deprecated: stale (20231019 - Shirley)
+  const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
+    useState<boolean>(true);
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
@@ -280,11 +290,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return Object.values(availableTickers);
   }, [userCtx.favoriteTickers, availableTickersRef.current]);
 
-  const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion) => {
-    tickerBook.timeSpan = timeSpan;
-    setTimeSpan(tickerBook.timeSpan);
+  const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
+    let updatedTimeSpan = timeSpan;
 
-    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, timeSpan);
+    if (instId) {
+      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+      if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
+        updatedTimeSpan = TimeSpanUnion._1s;
+      }
+    }
+
+    tickerBook.timeSpan = updatedTimeSpan;
+    setTimeSpan(tickerBook.timeSpan);
+    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, updatedTimeSpan);
   }, []);
 
   const getTickerStatic = useCallback(async (instId: string) => {
@@ -338,7 +356,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerStatic(null);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
-    syncCandlestickData(ticker.instId);
+    selectTimeSpanHandler(timeSpanRef.current, ticker.instId);
     // ++ TODO: get from api
     const getTickerStaticResult = await getTickerStatic(ticker.instId);
     if (getTickerStaticResult?.success)
@@ -585,6 +603,43 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     [tradeBook]
   );
 
+  const processCandlesticks = useCallback(
+    (timeSpan: ITimeSpanUnion, instCandlestick: IInstCandlestick) => {
+      if (!instCandlestick || !isIInstCandlestick(instCandlestick)) return [];
+      // Info: 轉換成圖表要的格式 (20230817 - Shirley)
+      const dataWithDate = instCandlestick.candlesticks.map(candlestick => ({
+        x: new Date(candlestick.x),
+        y: candlestick.y,
+      }));
+
+      // Info: 避免重複的資料並從舊到新排序資料 (20230817 - Shirley)
+      const uniqueData = dataWithDate
+        .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
+          const xtime = current.x.getTime();
+          if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
+            acc.push(current);
+          }
+          return acc;
+        }, [])
+        .sort((a, b) => a.x.getTime() - b.x.getTime());
+
+      const partialData = uniqueData.slice(-SAMPLE_NUMBER);
+
+      const alignedData = tradeBook.alignCandlesticks(
+        instCandlestick?.instId ?? '',
+        partialData,
+        timeSpan
+      );
+
+      const organizedData = alignedData
+        ? uniqueData.slice(0, -SAMPLE_NUMBER).concat(alignedData)
+        : uniqueData;
+
+      return organizedData;
+    },
+    []
+  );
+
   const listCandlesticks = useCallback(
     async (
       instId: string,
@@ -604,12 +659,21 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           query: {...options},
         })) as IResult;
         if (result.success) {
-          const candlesticks = result.data as ICandlestick;
+          // Info: call API 拿到資料
+          // const candlesticks = result.data as IInstCandlestick;
         }
       } catch (error) {
         if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
+          if (result && typeof result === 'object') {
+            result.code = Code.INTERNAL_SERVER_ERROR;
+            result.reason = Reason[result.code];
+          } else {
+            result = {
+              ...defaultResultFailed,
+              code: Code.INTERNAL_SERVER_ERROR,
+              reason: Reason[Code.INTERNAL_SERVER_ERROR],
+            };
+          }
         }
       }
       return result;
@@ -617,22 +681,132 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  const syncCandlestickData = useCallback((instId: string, timeSpan?: ITimeSpanUnion) => {
+  const initCandlestickData = useCallback(
+    async (instId: string, timeSpan?: ITimeSpanUnion) => {
+      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+      // Info: initialize the candlestick chart data (20231018 - Shirley)
+      if (timeSpan) {
+        if (timeSpan !== TimeSpanUnion._1s) {
+          const result = await listCandlesticks(instId, {
+            timeSpan,
+            limit: CANDLESTICK_SIZE,
+          });
+          const candlesticks = result.data as IInstCandlestick;
+          const data = processCandlesticks(timeSpan, candlesticks);
+          tradeBook.addCandlestickData(instId, timeSpan, data);
+        } else {
+          const candlesticks = tradeBook.toCandlestick(
+            instId,
+            millisecondsToSeconds(getTime(timeSpan)),
+            CANDLESTICK_SIZE
+          );
+          tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
+        }
+      } else {
+        for (const timeSpan of Object.values(TimeSpanUnion)) {
+          if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length > 0) {
+            setCandlestickChartData(candlestickDataByInstId?.[timeSpan] || null);
+          } else {
+            if (timeSpan !== TimeSpanUnion._1s) {
+              const result = await listCandlesticks(instId, {
+                timeSpan,
+                limit: CANDLESTICK_SIZE,
+              });
+              const candlesticks = result.data as IInstCandlestick;
+              const data = processCandlesticks(timeSpan, candlesticks);
+              tradeBook.addCandlestickData(instId, timeSpan, data);
+            }
+          }
+        }
+      }
+    },
+    [tradeBook]
+  );
+
+  const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
     if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
     }
 
+    setCandlestickIsLoading(true);
+
+    const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+
+    if (timeSpan) setTimeSpan(timeSpan);
+    const ts = timeSpan ? timeSpan : timeSpanRef.current;
+
+    // Info: initialize the candlestick chart data (20231018 - Shirley)
+    if (candlestickDataByInstId && candlestickDataByInstId?.[ts]?.length <= 0) {
+      await initCandlestickData(instId, ts);
+    }
+
+    const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+
+    setCandlestickChartData(candlesticks);
+
+    // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
     const candlestickInterval = window.setInterval(() => {
-      const ts = timeSpan ? timeSpan : timeSpanRef.current;
-      if (timeSpan) setTimeSpan(timeSpan);
-      const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
+      const interval = millisecondsToSeconds(getTime(ts));
 
-      const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
+      if (ts === TimeSpanUnion._1s) {
+        const candlesticks = tradeBook.toCandlestick(
+          instId,
+          millisecondsToSeconds(getTime(ts)),
+          CANDLESTICK_SIZE
+        );
 
-      setCandlestickChartData(candlesticks);
+        tradeBook.addCandlestickData(instId, ts, candlesticks);
+        const liveCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+
+        setCandlestickChartData(liveCandlesticks);
+      } else {
+        const origin = tradeBook.getCandlestickData(instId)?.[ts] || [];
+        const sample = origin.slice(-SAMPLE_NUMBER);
+        const latestTimestampMs = tradeBook.getLatestTimestampMs(sample, ts) ?? 0;
+        const lastOfOrigin = origin[origin.length - 1];
+        const lastTsOfOrigin = lastOfOrigin?.x.getTime() ?? 0;
+        const now = new Date().getTime();
+        const futureTs = latestTimestampMs + interval * 1000;
+
+        /* 
+        Info: 如果最新的時間戳記是最後一筆資料的時間戳記，就合併最後一筆資料 (20231018 - Shirley)
+        如果最新的時間戳記大於最後一筆資料的時間戳記，就直接加入最後一筆資料 (20231018 - Shirley)
+        */
+        if (latestTimestampMs === lastTsOfOrigin && latestTimestampMs < now && now < futureTs) {
+          const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
+          const merged =
+            tradeBook.mergeCandlesticks(
+              [lastOfOrigin, ...newCandle],
+              new Date(latestTimestampMs)
+            ) ?? [];
+          const result = origin.slice(0, origin.length - 1).concat(merged);
+
+          tradeBook.addCandlestickData(instId, ts, result);
+        } else if (latestTimestampMs > lastTsOfOrigin) {
+          const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
+          const result = origin.concat(newCandle);
+
+          tradeBook.addCandlestickData(instId, ts, result);
+        }
+
+        const newData = tradeBook.getCandlestickData(instId)?.[ts] || [];
+        const fiveMinData =
+          ts === TimeSpanUnion._5m
+            ? newData
+            : tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
+
+        if (fiveMinData.length > CANDLESTICK_SIZE) {
+          tradeBook.trimCandlestickData(CANDLESTICK_SIZE);
+        }
+
+        setCandlestickChartData(newData);
+      }
     }, 100);
+
     setCandlestickInterval(candlestickInterval);
+
+    setCandlestickIsLoading(false);
   }, []);
 
   const getWebsiteReserve = useCallback(async () => {
@@ -728,8 +902,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const {success: listCurrenciesIsSuccess} = await listCurrencies();
     const {success: listTickersIsSuccess} = await listTickers();
     const {success: getStopFeeIsSuccess} = await getGuaranteedStopFeePercentage();
-    if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess)
+    if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess) {
       setIsCFDTradable(true);
+      setTimeSpan(TimeSpanUnion._1s);
+    }
     setIsInit(true);
     return await Promise.resolve();
   }, []);
@@ -786,7 +962,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   );
 
   const defaultValue = {
-    isInit,
+    isInit: isInitRef.current,
     selectedTicker: selectedTickerRef.current,
     selectedTickerRef,
     guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
@@ -822,6 +998,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getTickerSpread,
     predictCFDClosePrice,
     listCandlesticks,
+    candlestickIsLoading: candlestickIsLoadingRef.current,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

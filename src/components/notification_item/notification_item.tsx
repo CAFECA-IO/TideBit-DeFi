@@ -51,46 +51,41 @@ export default function NotificationItem(notificationItem: INotificationItem) {
 
   return (
     <div
-      className={`relative cursor-pointer ${itemStyle} w-full transition-all duration-100 ease-in-out lg:duration-500`}
+      className={`cursor-pointer overflow-hidden ${itemStyle} w-full transition-all duration-100 ease-in-out lg:duration-500`}
       onClick={itemClickHandler}
     >
       <div className="flex">
         {/* Info: (20230420 - Julian) Vertical line */}
-        <span className={`mx-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
+        <span className={`ml-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
 
         {/* Info: (20230420 - Julian) contain divider */}
-        <div>
-          {/* Info: (20230420 - Julian) Speaker & Heading & Date */}
-          <div className="flex items-start">
-            <Image
-              className="sm:ml-8px"
-              src="/elements/megaphone.svg"
-              width={30}
-              height={26}
-              alt="megaphone icon"
-            />
-
-            <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
-              <div className="mx-auto flex justify-between">
-                <div className="mr-5px line-clamp-1 text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
-                  {t(title)}
-                </div>
-                <div className="whitespace-nowrap text-end text-xs text-lightGray">
-                  <div>{displayTime.date}</div>
-                  <div>{displayTime.time}</div>
-                </div>
-              </div>
+        <div className="flex items-start space-x-2 border-b border-lightGray">
+          {/* Info: (20231019 - Julian) Speaker */}
+          <Image
+            className="ml-2"
+            src="/elements/megaphone.svg"
+            width={30}
+            height={26}
+            alt="megaphone icon"
+          />
+          {/* Info: (20231019 - Julian) Heading & Content */}
+          <div className="flex flex-col items-start">
+            {/* Info: (20231019 - Julian) Heading */}
+            <div className="text-xl text-lightWhite sm:text-2xl">
+              <h2 className="line-clamp-1">{t(title)}</h2>
+            </div>
+            {/* Info: (20230420 - Julian) Content */}
+            <div className="h-full w-full py-4 text-xs text-lightGray">
+              <p className="line-clamp-5">{t(content)}</p>
             </div>
           </div>
-
-          {/* Info: (20230420 - Julian) Content */}
-          <div className="mb-5 line-clamp-4 h-80px w-500px pl-12 text-xs text-lightGray">
-            {t(content)}
+          {/* Info: (20231019 - Julian) Date */}
+          <div className="whitespace-nowrap text-end text-xs text-lightGray">
+            <p>{displayTime.date}</p>
+            <p>{displayTime.time}</p>
           </div>
         </div>
       </div>
-
-      <div className="ml-2 border-b border-lightGray"></div>
     </div>
   );
 }

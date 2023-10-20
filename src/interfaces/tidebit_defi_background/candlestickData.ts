@@ -18,6 +18,11 @@ export interface ISortedCandlestick {
   [second: number]: ICandlestickData;
 }
 
+export interface IInstCandlestick {
+  instId: string;
+  candlesticks: {x: string; y: ICandle}[];
+}
+
 export type ITradeSideText = 'BUY' | 'SELL';
 export const TradeSideText: {[key: number]: ITradeSideText} = {
   0: 'BUY',
@@ -56,6 +61,33 @@ export interface ICandlestickData {
 export interface ICandlestick {
   instId: string;
   candlesticks: ICandlestickData[];
+}
+
+export function isCandlestickData(obj: any): obj is ICandlestickData {
+  return (
+    obj &&
+    obj.x instanceof Date &&
+    obj.y &&
+    typeof obj.y.open === 'number' &&
+    typeof obj.y.close === 'number' &&
+    typeof obj.y.high === 'number' &&
+    typeof obj.y.low === 'number' &&
+    typeof obj.y.volume === 'number' &&
+    typeof obj.y.value === 'number'
+  );
+}
+
+export function isIInstCandlestick(obj: any): obj is IInstCandlestick {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.instId === 'string' &&
+    Array.isArray(obj.candlesticks) &&
+    obj.candlesticks.every(
+      (item: {x: string; y: ICandle}) =>
+        typeof item.x === 'string' && isCandlestickData({x: new Date(item.x), y: item.y})
+    )
+  );
 }
 
 /* Till: remove generate dummy price data (20230327 - Tzuhan)

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import {useContext, useState, Dispatch, SetStateAction} from 'react';
 import Link from 'next/link';
 import {UserContext} from '../../contexts/user_context';
 import {ImCross, ImExit} from 'react-icons/im';
@@ -16,7 +16,12 @@ import Image from 'next/image';
 
 type TranslateFunction = (s: string) => string;
 
-const User = () => {
+interface IUserProps {
+  notifyOpen?: boolean;
+  setNotifyOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
+const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
@@ -33,7 +38,11 @@ const User = () => {
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
   const avatarClickHandler = () => setUserVisible(!userVisible);
-  const avatarMobileClickHandler = () => setAvatarMenuVisible(!avatarMenuVisible);
+  const avatarMobileClickHandler = () => {
+    // Info: (20231019 - Julian) close notify first
+    if (notifyOpen && setNotifyOpen) setNotifyOpen(false);
+    setAvatarMenuVisible(!avatarMenuVisible);
+  };
 
   const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
   const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
@@ -187,7 +196,7 @@ const User = () => {
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />
             </button>
           </div>
-          <div className="py-4">{isDisplayedUserOverviewMobile}</div>
+          <div className="w-full max-w-350px py-4">{isDisplayedUserOverviewMobile}</div>
         </div>
 
         <div className="flex justify-center">

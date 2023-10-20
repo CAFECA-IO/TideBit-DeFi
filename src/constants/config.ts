@@ -79,6 +79,7 @@ export const unitAsset = 'USDT';
 
 export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
 // export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
+export const API_VERSION = 'v1';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 
@@ -301,7 +302,7 @@ export const DEFAULT_CURRENCY = Currency.ETH;
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
 export const MIN_FEE_RATE = 0;
 export const MAX_FEE_RATE = 0.2;
-export const INITIAL_TRADES_INTERVAL = 1000 * 60 * 15; // Info: 15 minutes in milliseconds (ms) (20230601 - Tzuhan)
+export const INITIAL_TRADES_INTERVAL = 1000 * 60 * 1; // Info: 1 minutes in milliseconds (ms) (20231004 - Shirley)
 export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)
 export const ETH_NEWS_FOLDER = 'src/news/eth';
 export const BTC_NEWS_FOLDER = 'src/news/btc';

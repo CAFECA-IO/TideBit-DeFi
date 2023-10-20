@@ -1,10 +1,5 @@
 import {ImCross} from 'react-icons/im';
-import {
-  DELAYED_HIDDEN_SECONDS,
-  TypeOfBorderColor,
-  TypeOfPnLColor,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor, TypeOfPnLColor} from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {
@@ -23,14 +18,13 @@ import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
-import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {unitAsset} from '../../constants/config';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
-import {CustomError, isCustomError} from '../../lib/custom_error';
+import {isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
@@ -46,7 +40,6 @@ const PositionUpdatedModal = ({
   modalClickHandler,
   openCfdDetails,
   updatedProps,
-  ...otherProps
 }: IPositionUpdatedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 

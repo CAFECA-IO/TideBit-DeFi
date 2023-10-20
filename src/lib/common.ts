@@ -304,7 +304,7 @@ export const getTimestamp = () => Math.ceil(Date.now() / 1000);
 
 export const getTimestampInMilliseconds = () => Date.now();
 
-export const millesecondsToSeconds = (milleseconds: number) => Math.ceil(milleseconds / 1000);
+export const millisecondsToSeconds = (milliseconds: number) => Math.ceil(milliseconds / 1000);
 
 export const getNowSeconds = () => {
   return Math.ceil(new Date().getTime() / 1000);

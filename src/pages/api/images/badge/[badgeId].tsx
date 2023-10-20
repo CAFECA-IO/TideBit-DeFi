@@ -8,7 +8,7 @@ import {
   BG_WIDTH_OF_SHARING_RECORD,
   BG_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
-import {DOMAIN, API_URL} from '../../../../constants/config';
+import {DOMAIN, API_URL, API_VERSION} from '../../../../constants/config';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
 
@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const badgeId = params.pop();
-  const apiUrl = `${API_URL}/badges/${badgeId}`;
+  const apiUrl = `${API_URL}/api/${API_VERSION}/badges/${badgeId}`;
   const tz = Number(url.searchParams.get('tz'));
 
   const dummySharingBadge: IBadge = {

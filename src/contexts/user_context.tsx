@@ -472,10 +472,13 @@ export const UserProvider = ({children}: IUserProvider) => {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`getUserAssets error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
       }
     }
     return result;
@@ -498,10 +501,13 @@ export const UserProvider = ({children}: IUserProvider) => {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`getBadge error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
       }
     }
     return result;

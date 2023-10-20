@@ -108,7 +108,7 @@ export class TradePage {
   // Info: (20231013 - Jacky) number="1" means the last position
   async closePosition(extensionId: string, number = '1') {
     const POSITION_TAB = {name: i18next.t('TRADE_PAGE.POSITION_TAB')};
-    const CLOSE_POSITION_TITLE = {name: i18next.t('POSITION_MODAL.CLOSE_POSITION_TITLE')};
+    const CLOSE_POSITION_TITLE = {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')};
     await this.page.getByRole('button', POSITION_TAB).click();
     await this.page
       .locator(
@@ -117,6 +117,9 @@ export class TradePage {
           ') > div > div:nth-child(3) > div:nth-child(3)'
       )
       .click();
+    // if (this.page.locator('body > vercel-live-feedback')) {
+    //   await this.page.$eval('vercel-live-feedback', el => el.remove());
+    // }
     const pagePromise = this.context.newPage();
     await this.page.getByRole('button', CLOSE_POSITION_TITLE).click();
     // await this.page.waitForTimeout(2000);

@@ -67,7 +67,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     const description = truncateText(news.description, NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH);
     return {
       newsId: news.slug ?? '',
-      img: `/news/${news.slug}@2x.png`,
+      img: `/news/${news.slug}.png`,
       timestamp: news.date,
       title: news.title,
       description: description,

@@ -4,11 +4,11 @@ import {BiArrowBack} from 'react-icons/bi';
 import NavBar from '../nav_bar/nav_bar';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
-import {timestampToString} from '../../lib/common';
+import {timestampToString, truncateText} from '../../lib/common';
 import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
-import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
+import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH} from '../../constants/display';
 import {IPost} from '../../lib/posts';
 
 interface IRecommendedNews {
@@ -74,7 +74,6 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
         <div className="px-1 w-90vw md:w-80vw lg:w-70vw">
           <Image
             src={img}
-            // fill={true}
             style={{width: '100%', height: 'auto'}}
             sizes="80vw"
             width={0}
@@ -128,14 +127,16 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
                   <Link href={`/news/${item.newsId}`}>
                     <Image
                       className=""
-                      src={item.img}
+                      src={`${item.img}`}
                       style={{objectFit: 'cover'}}
                       width={400}
                       height={100}
                       alt={`news img`}
                     />
                     <div className="my-5 text-xl text-lightWhite">{item.title}</div>
-                    <div className="text-sm text-lightWhite">{item.description}</div>
+                    <div className="text-sm text-lightWhite">
+                      {truncateText(item.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH)}
+                    </div>
                     <div className="my-5 text-sm text-lightGray">
                       {timestampToString(item.timestamp).date}
                     </div>

@@ -87,9 +87,9 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.instId.toLowerCase().split('-')[0];
+  const currency = params.instId.toLowerCase().split('-')[0];
   const slugs = await getSlugs(NEWS_FOLDER);
-  const certainSlugs = slugs ? slugs.filter(slug => slug.includes(dir)) : [];
+  const certainSlugs = slugs ? slugs.filter(slug => slug.includes(currency)) : [];
 
   const newsData = [];
 
@@ -106,7 +106,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
       const description = truncateText(news.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH);
       return {
         newsId: news.slug ?? '',
-        img: `/news/${news.slug}@2x.png`,
+        img: `/news/${news.slug}.png`,
         timestamp: news.date,
         title: news.title,
         description: description,

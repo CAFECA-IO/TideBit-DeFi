@@ -1,6 +1,26 @@
 import {roundToDecimalPlaces} from '../lib/common';
 import {RoundCondition} from '../interfaces/tidebit_defi_background/round_condition';
 
+test('Round 0.02 number with SHRINK condition to 2 decimal places', () => {
+  expect(roundToDecimalPlaces(0.02, 2, RoundCondition.SHRINK)).toBe(0.02);
+});
+
+test('Round 0.02 number with ENLARGE condition to 2 decimal places', () => {
+  expect(roundToDecimalPlaces(0.02, 2, RoundCondition.ENLARGE)).toBe(0.03);
+});
+
+test('Round 0.5 number with SHRINK condition to 2 decimal places', () => {
+  expect(roundToDecimalPlaces(0.5, 2, RoundCondition.SHRINK)).toBe(0.5);
+});
+
+test('Round 0.5 number with ENLARGE condition to 2 decimal places', () => {
+  expect(roundToDecimalPlaces(0.5, 2, RoundCondition.ENLARGE)).toBe(0.51);
+});
+
+test('Round 0.5 number with default condition to 2 decimal places', () => {
+  expect(roundToDecimalPlaces(0.5, 2)).toBe(0.51);
+});
+
 test('Round positive number with SHRINK condition to 1 decimal places', () => {
   expect(roundToDecimalPlaces(6.618689, 1, RoundCondition.SHRINK)).toBe(6.6);
 });

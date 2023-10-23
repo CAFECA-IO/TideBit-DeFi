@@ -46,6 +46,13 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
+/**
+ * (20231023 - Shirley)
+ * @param number
+ * @param decimal target number digits
+ * @param condition `RoundCondition.SHRINK` 使負數無條件進位，正數無條件捨去； `RoundCondition.ENLARGE || !condition` 使負數無條件捨去，正數無條件進位
+ * @returns
+ */
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -65,8 +72,8 @@ export const roundToDecimalPlaces = (
     } else if (SafeMath.gt(number, 0)) {
       roundedNumber = Math.floor(number * factor) / factor;
     }
-  } else {
-    roundedNumber = Math.ceil((+number + Number.EPSILON) * factor) / factor;
+  } else if (condition === RoundCondition.ENLARGE || !condition) {
+    roundedNumber = Math.ceil((number + Number.EPSILON) * factor) / factor;
   }
 
   if (roundedNumber === -0) {
@@ -610,7 +617,7 @@ export function getChainNameByCurrency(
 }
 
 /** (20231017 - Shirley)
- * @description 這個函數將檢查輸入的 n 是否為數字，使用 SafeMath 的 isNumber 方法進行判斷。預設使用 roundToDecimalPlaces 的 ROUND 方法。如果你希望該數字無條件進位或是趨近於0，則在放進 numberFormatted 之前，應該先用 roundToDecimalPlaces 來調整它。函數的輸出將是一個字串格式。
+ * @description 這個函數將檢查輸入的 n 是否為數字，使用 SafeMath 的 isNumber 方法進行判斷。預設使用 roundToDecimalPlaces 的 SHRINK 方法。如果你希望該數字放大，則在放進 numberFormatted 之前，應該先用 roundToDecimalPlaces 來調整它。函數的輸出將是一個字串格式。
  * @param n
  * @param dash
  * @param sign

@@ -42,6 +42,10 @@ test('Round zero to 1 decimal place with ENLARGE condition', () => {
   expect(roundToDecimalPlaces(0, 1, RoundCondition.ENLARGE)).toBe(0);
 });
 
+test('Round zero-like value (close to EPSILON) to 1 decimal place with SHRINK condition', () => {
+  expect(roundToDecimalPlaces(Number.EPSILON, 1, RoundCondition.SHRINK)).toBe(0);
+});
+
 test('Round zero-like value (close to EPSILON) to 1 decimal place with ENLARGE condition', () => {
   expect(roundToDecimalPlaces(Number.EPSILON, 1, RoundCondition.ENLARGE)).toBe(0.1);
 });
@@ -69,13 +73,29 @@ test('Round very large number to 2 decimal places with SHRINK condition', () => 
   expect(roundToDecimalPlaces(123456789.98765, 2, RoundCondition.SHRINK)).toBe(123456789.98);
 });
 
+test('Round very large number to 2 decimal places with ENLARGE condition', () => {
+  expect(roundToDecimalPlaces(123456789.98765, 2, RoundCondition.ENLARGE)).toBe(123456789.99);
+});
+
 test('Round very small number (close to EPSILON) to 5 decimal places with SHRINK condition', () => {
   expect(roundToDecimalPlaces(0.0000012345, 5, RoundCondition.SHRINK)).toBe(0.0);
+});
+
+test('Round very small number (close to EPSILON) to 5 decimal places with ENLARGE condition', () => {
+  expect(roundToDecimalPlaces(0.0000012345, 5, RoundCondition.ENLARGE)).toBe(0.00001);
 });
 
 // Info: (20231023 - Shirley) Maximum and minimum decimal places
 test('Round 6.618689 to maximum decimal places with SHRINK condition', () => {
   expect(roundToDecimalPlaces(6.618689, 15, RoundCondition.SHRINK)).toBeCloseTo(6.618689, 15);
+});
+
+test('Round 6.618689 to maximum decimal places with ENLARGE condition', () => {
+  expect(roundToDecimalPlaces(6.618689, 15, RoundCondition.ENLARGE)).toBeCloseTo(6.618689, 15);
+});
+
+test('Round 6.618689 to 0 decimal places with SHRINK condition', () => {
+  expect(roundToDecimalPlaces(6.618689, 0, RoundCondition.SHRINK)).toBe(6);
 });
 
 test('Round 6.618689 to 0 decimal places with ENLARGE condition', () => {

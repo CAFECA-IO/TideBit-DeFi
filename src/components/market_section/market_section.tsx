@@ -1,7 +1,6 @@
 import {useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
-import {useGlobal} from '../../contexts/global_context';
 import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';

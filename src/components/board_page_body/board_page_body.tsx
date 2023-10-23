@@ -14,8 +14,9 @@ import {useTranslation} from 'next-i18next';
 type TranslateFunction = (s: string) => string;
 const BoardPageBody = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
   const marketCtx = useContext(MarketContext);
+  // Info: (20231020 - Julian) 取得當前時區
+  const offset = new Date().getTimezoneOffset() / -60;
 
   const [isLoading, setIsLoading] = useState(true);
   // Info: (20230626 - Julian) 倒數計時的 loading 另外處理
@@ -60,8 +61,8 @@ const BoardPageBody = () => {
     return () => clearTimeout(timer);
   }, [leaderboardLiveRemains]);
 
-  const timeSpanStart = timestampToString(startTime).date;
-  const timeSpanEnd = timestampToString(endTime).date; //new Date(endTime * 1000).toISOString().slice(0, 10);
+  const timeSpanStart = timestampToString(startTime, offset).date;
+  const timeSpanEnd = timestampToString(endTime, offset).date; //new Date(endTime * 1000).toISOString().slice(0, 10);
   /* Info: (20230816 - Julian) Trick: 月榜的時間固定在 UTC 0:00:00，以避免時區誤差 */
   const timeSpanMonthly = timestampToString(startTime, 0).monthAndYear;
 

@@ -318,10 +318,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerStatic error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -339,10 +342,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // eslint-disable-next-line no-console
       console.error(`getTickerLiveStatistics error`, error);
       setIsCFDTradable(false);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -387,10 +393,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getCFDQuotation error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -412,10 +421,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         // Deprecate: error handle (Tzuhan - 20230321)
         // eslint-disable-next-line no-console
         console.error(`getCFDSuggestion error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
       }
       return result;
     },
@@ -458,10 +470,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getGuaranteedStopFeePercentage error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -485,10 +500,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listTickers error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -510,10 +528,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listTickers error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -540,10 +561,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listCurrencies error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   }, []);
@@ -593,10 +617,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         // Deprecate: error handle (Tzuhan - 20230321)
         // eslint-disable-next-line no-console
         console.error(`listMarketTrades error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
       }
       return result;
     },
@@ -663,18 +690,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           // const candlesticks = result.data as IInstCandlestick;
         }
       } catch (error) {
-        if (!isCustomError(error)) {
-          if (result && typeof result === 'object') {
-            result.code = Code.INTERNAL_SERVER_ERROR;
-            result.reason = Reason[result.code];
-          } else {
-            result = {
-              ...defaultResultFailed,
-              code: Code.INTERNAL_SERVER_ERROR,
-              reason: Reason[Code.INTERNAL_SERVER_ERROR],
-            };
-          }
-        }
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
       }
       return result;
     },
@@ -820,10 +842,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getWebsiteReserve error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     if (result.success) {
       // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
@@ -853,10 +878,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTideBitPromotion error`, error);
-      if (!isCustomError(error)) {
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
-      }
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     if (result.success) {
       setTidebitPromotion(result.data as ITideBitPromotion);

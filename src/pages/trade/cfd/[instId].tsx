@@ -10,14 +10,14 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {hasValue, truncateText} from '../../../lib/common';
-import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, instIds} from '../../../constants/config';
+import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, NEWS_FOLDER, instIds} from '../../../constants/config';
 import {Ticker} from '../../../constants/ticker';
 import {
   NEWS_AMOUNT_ON_TRADE_PAGE,
   NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH,
   TIDEBIT_FAVICON,
 } from '../../../constants/display';
-import {getPosts} from '../../../lib/posts';
+import {getPost, getPosts, getSlugs} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
 
 interface IPageProps {
@@ -87,9 +87,20 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.instId.toUpperCase() === Ticker.ETH_USDT ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+  const dir = params.instId.toLowerCase().split('-')[0];
+  const slugs = await getSlugs(NEWS_FOLDER);
+  const certainSlugs = slugs ? slugs.filter(slug => slug.includes(dir)) : [];
 
-  const newsData = await getPosts(dir);
+  const newsData = [];
+
+  for (let i = 0; i < certainSlugs.length; i++) {
+    const slug = certainSlugs[i];
+    const news = await getPost(NEWS_FOLDER, slug);
+    if (news) {
+      newsData.push({...news});
+    }
+  }
+
   const briefs: IRecommendedNews[] = newsData
     .map(news => {
       const description = truncateText(news.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH);

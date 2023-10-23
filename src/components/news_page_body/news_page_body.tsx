@@ -19,9 +19,9 @@ const NewsPageBody = (props: IPageProps) => {
   const [activePage, setActivePage] = React.useState(1);
   const [search, setSearch, searchRef] = useStateRef('');
 
-  const recommenation = props.briefs;
+  const recommendation = props.briefs;
 
-  const filteredNews = recommenation
+  const filteredNews = recommendation
     .sort((a, b) => b.timestamp - a.timestamp)
     .filter(
       news =>

@@ -23,7 +23,7 @@ export async function getPost(src: string, slug: string): Promise<IPost | null> 
     marked.setOptions({headerIds: false, mangle: false});
 
     const body = marked(content);
-    return {date, title, description, body};
+    return {slug, date, title, description, body};
   } catch (error) {
     // Info: (20230609 - Shirley) If the file can't be read (for example, if it doesn't exist), return null
     return null;

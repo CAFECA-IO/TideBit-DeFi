@@ -8,7 +8,7 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
 import {IPost, getPost, getPosts, getSlugs} from '../lib/posts';
-import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER} from '../constants/config';
+import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, NEWS_FOLDER} from '../constants/config';
 import {GetStaticProps} from 'next';
 import {IRecommendedNews} from '../interfaces/tidebit_defi_background/news';
 import {truncateText} from '../lib/common';
@@ -20,7 +20,6 @@ interface IPageProps {
 }
 
 const News = (props: IPageProps) => {
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);
@@ -62,7 +61,7 @@ const News = (props: IPageProps) => {
 export default News;
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-  const newsData = await getPosts();
+  const newsData = await getPosts(NEWS_FOLDER);
 
   const briefs: IRecommendedNews[] = newsData.map(news => {
     const description = truncateText(news.description, NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH);

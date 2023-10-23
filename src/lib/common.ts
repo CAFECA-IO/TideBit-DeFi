@@ -46,62 +46,6 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
-/**
- * (20230928 - Shirley)
- * @param number
- * @param decimal
- * @param condition undefined/RoundCondition.ENLARGE -> Math.ceil, RoundCondition.SHRINK -> truncate number towards 0, RoundCondition.SHRINK -> round the number
- * @returns
- */
-// export const roundToDecimalPlaces = (
-//   number: number,
-//   decimal: number,
-//   condition?: IRoundConditionConstant
-// ): number => {
-//   const factor = new BigNumber(10).pow(decimal);
-//   const n = new BigNumber(number);
-
-//   // Handle extremely small numbers
-//   if (n.abs().lt(1e-15)) {
-//     return 0;
-//   }
-
-//   // Handle numbers close to 0.5
-//   if (n.minus(0.5).abs().lt(1e-15)) {
-//     return 0.5;
-//   }
-
-//   // Handle numbers close to -0.5
-//   if (n.plus(0.5).abs().lt(1e-15)) {
-//     return -0.5;
-//   }
-
-//   // Handle extremely large numbers
-//   if (n.abs().gt(Number.MAX_SAFE_INTEGER)) {
-//     return n.toNumber();
-//   }
-
-//   if (SafeMath.eq(+n, 0)) {
-//     return parseFloat(`0.${'0'.repeat(decimal)}`);
-//   }
-
-//   let roundedNumber = new BigNumber(0);
-
-//   if (condition === RoundCondition.SHRINK) {
-//     if (SafeMath.lt(n, 0)) {
-//       roundedNumber = n.abs().plus(Number.EPSILON).times(factor).ceil().times(-1).div(factor);
-//     } else if (SafeMath.gt(n, 0)) {
-//       roundedNumber = n.times(factor).floor().div(factor);
-//     }
-//   } else if (condition === RoundCondition.SHRINK) {
-//     roundedNumber = n.plus(Number.EPSILON).times(factor).round().div(factor);
-//   } else {
-//     roundedNumber = n.plus(Number.EPSILON).times(factor).ceil().div(factor);
-//   }
-
-//   return roundedNumber.toNumber();
-// };
-
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
@@ -123,6 +67,10 @@ export const roundToDecimalPlaces = (
     }
   } else {
     roundedNumber = Math.ceil((+number + Number.EPSILON) * factor) / factor;
+  }
+
+  if (roundedNumber === -0) {
+    return 0;
   }
 
   return roundedNumber;

@@ -41,7 +41,7 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
       <div className="flex flex-col items-center lg:items-start">
         <div className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
         <div className="whitespace-nowrap text-sm lg:text-base">
-          {pnlSymbpl} {pnl}
+          {pnl}
           <span className="text-xs"> {unitAsset}</span>
         </div>
       </div>

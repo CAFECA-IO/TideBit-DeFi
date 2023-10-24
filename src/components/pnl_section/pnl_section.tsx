@@ -6,6 +6,7 @@ import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 

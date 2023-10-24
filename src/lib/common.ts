@@ -30,6 +30,12 @@ import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
 import SafeMath from './safe_math';
+import {
+  IRoundConditionConstant,
+  RoundCondition,
+} from '../interfaces/tidebit_defi_background/round_condition';
+import BigNumber from 'bignumber.js';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
 
@@ -41,16 +47,16 @@ interface IValidateInput {
 }
 
 /**
- * (20230928 - Shirley)
+ * (20231023 - Shirley)
  * @param number
- * @param decimal
- * @param condition true -> floor, false -> ceil
+ * @param decimal target number digits
+ * @param condition `RoundCondition.SHRINK` 使負數無條件進位，正數無條件捨去； `RoundCondition.ENLARGE || !condition` 使負數無條件捨去，正數無條件進位
  * @returns
  */
 export const roundToDecimalPlaces = (
   number: number,
   decimal: number,
-  condition = false
+  condition?: IRoundConditionConstant
 ): number => {
   const factor = Math.pow(10, decimal);
 
@@ -58,15 +64,23 @@ export const roundToDecimalPlaces = (
     return Number(`0.${'0'.repeat(decimal)}`);
   }
 
-  if (condition) {
+  let roundedNumber = 0;
+
+  if (condition === RoundCondition.SHRINK) {
     if (SafeMath.lt(number, 0)) {
-      return (Math.ceil((Math.abs(number) + Number.EPSILON) * factor) / factor) * -1;
+      roundedNumber = (Math.ceil((Math.abs(number) + Number.EPSILON) * factor) / factor) * -1;
     } else if (SafeMath.gt(number, 0)) {
-      return Math.floor((number + Number.EPSILON) * factor) / factor;
+      roundedNumber = Math.floor(number * factor) / factor;
     }
+  } else if (condition === RoundCondition.ENLARGE || !condition) {
+    roundedNumber = Math.ceil((number + Number.EPSILON) * factor) / factor;
   }
 
-  return Math.ceil((number + Number.EPSILON) * factor) / factor;
+  if (roundedNumber === -0) {
+    return 0;
+  }
+
+  return roundedNumber;
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -275,7 +289,7 @@ export const toPnl = (data: {
       data.amount *
       (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
     2,
-    true
+    RoundCondition.SHRINK
   );
   const pnlType = getProfitState(pnlValue);
   const pnl = {
@@ -286,7 +300,11 @@ export const toPnl = (data: {
 };
 
 export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
-  const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2, true);
+  const openValue = roundToDecimalPlaces(
+    cfdOrder.openPrice * cfdOrder.amount,
+    2,
+    RoundCondition.SHRINK
+  );
   /** Deprecated: (20230608 - tzuhan)
   const spreadValue = spread ? spread : 0;
   const closeValue =
@@ -598,16 +616,33 @@ export function getChainNameByCurrency(
   }
 }
 
-// TODO: 用 SafeMath isNumber 判斷數字 (20230919 - Shirley)
-export const numberFormatted = (n: number | string | undefined, dash = false) => {
+/** (20231017 - Shirley)
+ * @description 這個函數將檢查輸入的 n 是否為數字，使用 SafeMath 的 isNumber 方法進行判斷。預設使用 roundToDecimalPlaces 的 SHRINK 方法。如果你希望該數字放大，則在放進 numberFormatted 之前，應該先用 roundToDecimalPlaces 來調整它。函數的輸出將是一個字串格式。
+ * @param n
+ * @param dash
+ * @param sign
+ * @returns string
+ */
+export const numberFormatted = (n: number | string | undefined, dash = false, sign = false) => {
   const zero = dash ? '-' : '0';
+  if (!n) return zero;
+  const signStr = SafeMath.gt(+n, 0) ? '' : '-';
+  const number = Math.abs(+n);
+
   const result =
-    !n || n === '0'
+    !n || n === '0' || !SafeMath.isNumber(number)
       ? zero
-      : Math.abs(roundToDecimalPlaces(+n, 2)).toLocaleString(
+      : sign
+      ? signStr +
+        Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )
+      : Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         );
+
   return result;
 };
 

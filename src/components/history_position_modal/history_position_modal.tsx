@@ -15,6 +15,7 @@ import {ShareType} from '../../constants/share_type';
 import {ISocialMedia, ShareSettings} from '../../constants/social_media';
 import {MarketContext} from '../../contexts/market_context';
 import SafeMath from '../../lib/safe_math';
+import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -55,7 +56,7 @@ const HistoryPositionModal = ({
   const closeValue = roundToDecimalPlaces(
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2,
-    true
+    RoundCondition.SHRINK
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl =

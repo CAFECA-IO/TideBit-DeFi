@@ -123,9 +123,7 @@ const NewsPage = (props: IPageProps) => {
 export default NewsPage;
 
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  const folders = await getDirectories(NEWS_FOLDER);
-  const allSlugs = await Promise.all(folders.map(folder => getSlugs(folder)));
-  const slugs = allSlugs.flat();
+  const slugs = (await getSlugs(NEWS_FOLDER)) ?? [];
 
   const paths = slugs
     .flatMap(slug => {
@@ -143,17 +141,22 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = await getDirectoryById(params.newsId);
-  if (!dir) {
-    return {
-      notFound: true,
-    };
-  }
+  const article = await getPost(NEWS_FOLDER, params.newsId);
 
-  const newsData = await getPost(dir, params.newsId);
-  const allPost = await getFilteredPosts(dir, [params.newsId]);
+  const newsId = params.newsId.toLowerCase();
+  const currency = newsId.toLowerCase().split('-')[1];
+  const slugs = await getSlugs(NEWS_FOLDER);
 
-  const recommendations = allPost.map(news => {
+  // Info: 排除此篇文章以及其他幣種的文章 (20231023 - Shirley)
+  const exclusiveSlugs = slugs
+    ? slugs.filter(slug => slug.includes(newsId) || !slug.includes(currency))
+    : [];
+
+  const recommendationPosts = (await getFilteredPosts(NEWS_FOLDER, exclusiveSlugs)).sort(
+    (a, b) => b.date - a.date
+  );
+
+  const recommendations = recommendationPosts.map(news => {
     return {
       newsId: news.slug ?? '',
       img: `/news/${news.slug}@2x.png`,
@@ -163,7 +166,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   });
 
-  if (!newsData) {
+  if (!article) {
     return {
       notFound: true,
     };
@@ -172,7 +175,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
   return {
     props: {
       newsId: params.newsId,
-      newsData,
+      newsData: article,
       brief: recommendations,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },

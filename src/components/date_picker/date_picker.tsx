@@ -36,9 +36,9 @@ const PopulateDates = ({
 }: IPopulateDatesParams) => {
   const formatDaysInMonth = daysInMonth.map((el: Dates, index) => {
     const date = el ? new Date(`${selectedYear}/${selectedMonth}/${el.date}`) : null;
-    const isSelected = date?.getTime() && el.date === selectedTime ? true : false;
+    const isSelected = el?.date && date?.getTime() === selectedTime * 1000 ? true : false;
 
-    const formatDate = el?.date !== undefined ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
+    const formatDate = el?.date ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
 
     const dateClickHandler = () => {
       if (el?.date && !el?.disable) selectDate(el);
@@ -47,9 +47,9 @@ const PopulateDates = ({
     return (
       <div
         key={index}
-        className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer hover:bg-cuteBlue ${
-          isSelected ? 'bg-tidebitTheme' : ''
-        }${el?.disable ? 'text-lightGray' : ''}`}
+        className={`whitespace-nowrap rounded-full text-center ${
+          isSelected ? 'bg-tidebitTheme hover:bg-tidebitTheme' : ''
+        }${el?.disable ? 'text-lightGray' : 'hover:bg-cuteBlue hover:cursor-pointer'}`}
         onClick={dateClickHandler}
       >
         {formatDate}
@@ -65,9 +65,9 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const [selectedYear, setSelectedYear] = useState(+timestampToString(date).year);
   const {targetRef, componentVisible, setComponentVisible} = useOuterClick<HTMLDivElement>(false);
 
-  const displayWeek = WEEK_LIST.map(v => {
-    return <div key={v}>{v}</div>;
-  });
+  const displayWeek = WEEK_LIST.map(v => <div key={v}>{v}</div>);
+
+  const openDateHandler = () => setComponentVisible(!componentVisible);
 
   // Info: (20230601 - Julian) 取得該月份第一天是星期幾
   const firstDayOfMonth = (year: number, month: number) => {
@@ -99,8 +99,8 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     let month = selectedMonth;
     let year = selectedYear;
     month++;
-    if (month > 11) {
-      month = 0;
+    if (month > 12) {
+      month = 1;
       year++;
     }
     setSelectedMonth(month);
@@ -111,8 +111,8 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     let month = selectedMonth;
     let year = selectedYear;
     month--;
-    if (month < 0) {
-      month = 11;
+    if (month < 1) {
+      month = 12;
       year--;
     }
     setSelectedMonth(month);
@@ -127,13 +127,11 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     [minDate, maxDate, selectedMonth, selectedYear, date]
   );
 
-  const openDateHandler = () => setComponentVisible(!componentVisible);
-
   return (
     <div
-      className={`relative flex h-48px flex-col items-start justify-center transition-all duration-200 ease-in-out ${
+      className={`relative flex h-48px flex-col items-start justify-center ${
         componentVisible ? 'bg-darkGray8' : 'bg-darkGray7'
-      } transition-all duration-200 ease-in-out hover:cursor-pointer`}
+      } transition-all duration-200 ease-in-out`}
     >
       <button
         className="inline-flex w-140px items-center justify-between px-5 py-3"
@@ -142,12 +140,12 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         <div className="mr-2 whitespace-nowrap text-sm text-lightGray4">
           {timestampToString(date).date}
         </div>
-        <Image src="/elements/date_icon.svg" alt="" width={20} height={20} />
+        <Image src="/elements/date_icon.svg" alt="date_icon" width={20} height={20} />
       </button>
 
       <div
         ref={targetRef}
-        className={`absolute top-10 z-10 flex h-auto w-320px flex-col bg-darkGray2 p-6 ${
+        className={`absolute top-12 z-10 flex h-auto w-320px flex-col bg-darkGray2 p-6 ${
           componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } transition-all duration-200 ease-in-out`}
       >
@@ -155,15 +153,15 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
           <div className="text-2xl">{`${
             MONTH_FULL_NAME_LIST[selectedMonth - 1]
           } ${selectedYear}`}</div>
-          <div className="flex">
-            <div
-              className="h-10px w-10px rotate-45 border-b-2 border-l-2 border-lightWhite"
+          <div className="flex items-center space-x-4">
+            <button
+              className="h-10px w-10px rotate-45 border-b-2 border-l-2 border-lightWhite hover:opacity-50"
               onClick={goToPrevMonth}
-            ></div>
-            <div
-              className="ml-4 h-10px w-10px -rotate-45 border-b-2 border-r-2 border-lightWhite"
+            ></button>
+            <button
+              className="h-10px w-10px -rotate-45 border-b-2 border-r-2 border-lightWhite hover:opacity-50"
               onClick={goToNextMonth}
-            ></div>
+            ></button>
           </div>
         </div>
         <div className={`my-4 ${formatGridStyle} text-center text-xxs text-lightGray`}>

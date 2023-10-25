@@ -5,19 +5,16 @@ import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Footer from '../components/footer/footer';
 import {AppContext} from '../contexts/app_context';
-import {useGlobal} from '../contexts/global_context';
 import {TIDEBIT_FAVICON} from '../constants/display';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Head from 'next/head';
 import {useTranslation} from 'next-i18next';
-import {LayoutAssertion} from '../constants/layout_assertion';
 
 type TranslateFunction = (s: string) => string;
 
 const Custom404 = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
   const appCtx = useContext(AppContext);
 

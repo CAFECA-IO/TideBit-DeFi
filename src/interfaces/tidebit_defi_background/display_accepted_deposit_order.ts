@@ -1,6 +1,4 @@
-import {IAcceptedDepositOrder} from './accepted_deposit_order';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {OrderType} from '../../constants/order_type';
 import {IBalance} from './balance';
 
 export interface IDisplayAcceptedDepositOrder {

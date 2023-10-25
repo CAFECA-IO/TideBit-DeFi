@@ -5,10 +5,8 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {numberFormatted, timestampToString} from '../../lib/common';
 import {useTranslation} from 'next-i18next';
-import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 

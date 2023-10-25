@@ -1,11 +1,9 @@
 import {ICurrency} from '../../constants/currency';
-import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
-import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
 import {randomIntFromInterval} from '../../lib/common';
 import {IApplyCFDOrder} from './apply_cfd_order';
 import {getDummyApplyCloseCFDOrder} from './apply_close_cfd_order';
-import {IApplyCreateCFDOrder, getDummyApplyCreateCFDOrder} from './apply_create_cfd_order';
+import {getDummyApplyCreateCFDOrder} from './apply_create_cfd_order';
 import {getDummyApplyUpdateCFDOrder} from './apply_update_cfd_order';
 import {IPnL} from './pnl';
 

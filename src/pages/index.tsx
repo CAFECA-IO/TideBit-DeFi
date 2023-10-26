@@ -3,15 +3,12 @@ import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
 import {useContext, useEffect} from 'react';
-import {useGlobal} from '../contexts/global_context';
 import {AppContext} from '../contexts/app_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';
-import {LayoutAssertion} from '../constants/layout_assertion';
 import Footer from '../components/footer/footer';
 
 const Home = () => {
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);

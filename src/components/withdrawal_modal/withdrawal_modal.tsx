@@ -11,8 +11,7 @@ import {
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
 import {findCodeByReason, getTimestamp, locker, numberFormatted, wait} from '../../lib/common';
-import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'next-i18next';
@@ -27,12 +26,7 @@ interface IWithdrawalModal {
   getTransferData: (props: {asset: string; amount: number}) => void;
 }
 
-const WithdrawalModal = ({
-  modalVisible,
-  modalClickHandler,
-  getTransferData,
-  ...otherProps
-}: IWithdrawalModal) => {
+const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWithdrawalModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);

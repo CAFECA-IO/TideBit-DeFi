@@ -1,9 +1,7 @@
-import {useEffect, useRef, useContext, useState} from 'react';
-import {ImCross, ImUpload2} from 'react-icons/im';
+import {useContext} from 'react';
+import {ImCross} from 'react-icons/im';
 import WalletOption from '../wallet_option/wallet_option';
-import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
-import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import {
@@ -22,8 +20,8 @@ interface IWalletPanelProps {
 }
 
 export default function WalletPanel({
-  className,
-  getUserLoginState,
+  //className,
+  //getUserLoginState,
   panelVisible,
   panelClickHandler,
 }: IWalletPanelProps) {

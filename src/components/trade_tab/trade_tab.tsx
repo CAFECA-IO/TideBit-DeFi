@@ -841,10 +841,7 @@ const TradeTab = () => {
       unitAsset: unitAsset,
       amount: roundToDecimalPlaces(targetInputValueRef.current, 2, RoundCondition.SHRINK),
       leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
-      margin: {
-        asset: unitAsset,
-        amount: requiredMarginLongRef.current,
-      },
+
       liquidationTime: getTimestamp() + CFD_LIQUIDATION_TIME,
     };
 
@@ -853,6 +850,10 @@ const TradeTab = () => {
       orderType: OrderType.CFD,
       operation: CFDOperation.CREATE,
       price: long.price,
+      margin: {
+        asset: unitAsset,
+        amount: requiredMarginLongRef.current,
+      },
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(
@@ -875,6 +876,10 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.SELL,
       quotation: short,
       price: short.price,
+      margin: {
+        asset: unitAsset,
+        amount: requiredMarginShortRef.current,
+      },
       liquidationPrice: roundToDecimalPlaces(
         +SafeMath.mult(short.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE)),
         2

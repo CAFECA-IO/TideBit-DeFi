@@ -197,17 +197,6 @@ const UpdateFormModal = ({
 
     const inadequateBalanceForGSL = SafeMath.lt(availableBalance, guaranteedStopFeeRef.current);
 
-    // Deprecated: [debug] (20231026 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log(
-      'in guaranteedCheckedChangeHandler (inadequateBalanceForGSL): ',
-      inadequateBalanceForGSL,
-      'availableBalance',
-      availableBalance,
-      'guaranteedStopFeeRef.current',
-      guaranteedStopFeeRef.current
-    );
-
     // INFO: 之前沒有設定GSL，停在update form modal太久，當 GSL fee 變動時，會出現 GSL fee 不足的情況 (20231026 - Shirley)
     if (!openCfdDetails.guaranteedStop) {
       if (inadequateBalanceForGSL) {

@@ -790,9 +790,6 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const getBalance = useCallback((currency: string) => {
     let balance: IBalance | null = null;
-    // Deprecated: [debug] (20231026 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('in getBalance, balancesRef.current', balancesRef.current);
     if (balancesRef.current) {
       const index: number = balancesRef.current.findIndex(wb => wb.currency === currency);
       if (index !== -1) balance = balancesRef.current[index];
@@ -895,18 +892,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               applyCreateCFDOrder?.guaranteedStopFee ?? 0
             )
           );
-
-        // Deprecated: [debug] (20231026 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log(
-          'balance in _createCFDOrder',
-          balance,
-          applyCreateCFDOrder.margin.amount,
-          applyCreateCFDOrder?.guaranteedStopFee,
-          'isBalanceInadequate',
-          isBalanceInadequate
-        );
-
         if (isBalanceInadequate) throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
         if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
@@ -1159,16 +1144,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         const balance: IBalance | null = getBalance(updateAppliedCFD.margin.asset);
         const isBalanceInadequate =
           !balance || SafeMath.lt(balance.available, applyUpdateCFDOrder?.guaranteedStopFee ?? 0);
-        // Deprecated: [debug] (20231026 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log(
-          'balance in updateCFDOrder',
-          balance,
-          applyUpdateCFDOrder?.guaranteedStopFee,
-          'isBalanceInadequate',
-          isBalanceInadequate
-        );
-
         if (isBalanceInadequate) throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
         if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);

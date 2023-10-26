@@ -730,13 +730,13 @@ const TradeTab = () => {
       roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current), 2)
     );
 
-    const adequateBalanceForLongGSL = SafeMath.gt(
+    const inadequateBalanceForLongGSL = SafeMath.lt(
       availableBalance,
       SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
     );
 
     setLongGuaranteedStopChecked(prev => {
-      if (prev === true && !adequateBalanceForLongGSL) {
+      if (prev === true && inadequateBalanceForLongGSL) {
         globalCtx.toast({
           type: ToastTypeAndText.WARNING.type,
           toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
@@ -776,13 +776,13 @@ const TradeTab = () => {
       roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current), 2)
     );
 
-    const adequateBalanceForShortGSL = SafeMath.gt(
+    const inadequateBalanceForShortGSL = SafeMath.lt(
       availableBalance,
       SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
     );
 
     setShortGuaranteedStopChecked(prev => {
-      if (prev === true && !adequateBalanceForShortGSL) {
+      if (prev === true && inadequateBalanceForShortGSL) {
         globalCtx.toast({
           type: ToastTypeAndText.WARNING.type,
           toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
@@ -968,15 +968,15 @@ const TradeTab = () => {
   );
 
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const adequateBalanceForLongGSL = SafeMath.gt(
+    const inadequateBalanceForLongGSL = SafeMath.lt(
       availableBalance,
       SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
     );
 
-    if (adequateBalanceForLongGSL) {
-      setLongGuaranteedStopChecked(e.target.checked);
-    } else {
+    if (inadequateBalanceForLongGSL) {
       setLongGuaranteedStopChecked(false);
+    } else {
+      setLongGuaranteedStopChecked(e.target.checked);
     }
   };
 
@@ -1067,12 +1067,10 @@ const TradeTab = () => {
     >
       <input
         type="checkbox"
-        disabled={
-          !SafeMath.gt(
-            availableBalance,
-            SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
-          )
-        }
+        disabled={SafeMath.lt(
+          availableBalance,
+          SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
+        )}
         checked={longGuaranteedStopCheckedRef.current}
         onChange={longGuaranteedStopChangeHandler}
         className={`h-5 w-5 rounded text-lightWhite accent-tidebitTheme`}
@@ -1109,15 +1107,15 @@ const TradeTab = () => {
   );
 
   const shortGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const adequateBalanceForShortGSL = SafeMath.gt(
+    const inadequateBalanceForShortGSL = SafeMath.lt(
       availableBalance,
       SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
     );
 
-    if (adequateBalanceForShortGSL) {
-      setShortGuaranteedStopChecked(e.target.checked);
-    } else {
+    if (inadequateBalanceForShortGSL) {
       setShortGuaranteedStopChecked(false);
+    } else {
+      setShortGuaranteedStopChecked(e.target.checked);
     }
   };
 
@@ -1209,12 +1207,10 @@ const TradeTab = () => {
       <div className="mt-0 flex items-center">
         <input
           type="checkbox"
-          disabled={
-            !SafeMath.gt(
-              availableBalance,
-              SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
-            )
-          }
+          disabled={SafeMath.lt(
+            availableBalance,
+            SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
+          )}
           checked={shortGuaranteedStopCheckedRef.current}
           onChange={shortGuaranteedStopChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"

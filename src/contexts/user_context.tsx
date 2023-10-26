@@ -61,6 +61,7 @@ import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {OrderType} from '../constants/order_type';
 import {ICFDReceipt} from '../interfaces/tidebit_defi_background/receipt';
+import SafeMath from '../lib/safe_math';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -789,6 +790,9 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const getBalance = useCallback((currency: string) => {
     let balance: IBalance | null = null;
+    // Deprecated: [debug] (20231026 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('in getBalance, balancesRef.current', balancesRef.current);
     if (balancesRef.current) {
       const index: number = balancesRef.current.findIndex(wb => wb.currency === currency);
       if (index !== -1) balance = balancesRef.current[index];
@@ -882,8 +886,28 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
         if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
-        if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
-          throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
+        const isBalanceInadequate =
+          !balance ||
+          SafeMath.lt(
+            balance.available,
+            SafeMath.plus(
+              applyCreateCFDOrder.margin.amount,
+              applyCreateCFDOrder?.guaranteedStopFee ?? 0
+            )
+          );
+
+        // Deprecated: [debug] (20231026 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log(
+          'balance in _createCFDOrder',
+          balance,
+          applyCreateCFDOrder.margin.amount,
+          applyCreateCFDOrder?.guaranteedStopFee,
+          'isBalanceInadequate',
+          isBalanceInadequate
+        );
+
+        if (isBalanceInadequate) throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
         if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
         const signature: string = await lunar.signTypedData(typeData);
@@ -1132,6 +1156,20 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
         if (updateAppliedCFD.state !== OrderState.OPENING)
           throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
+        const balance: IBalance | null = getBalance(updateAppliedCFD.margin.asset);
+        const isBalanceInadequate =
+          !balance || SafeMath.lt(balance.available, applyUpdateCFDOrder?.guaranteedStopFee ?? 0);
+        // Deprecated: [debug] (20231026 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log(
+          'balance in updateCFDOrder',
+          balance,
+          applyUpdateCFDOrder?.guaranteedStopFee,
+          'isBalanceInadequate',
+          isBalanceInadequate
+        );
+
+        if (isBalanceInadequate) throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
         const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
         if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
         // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)

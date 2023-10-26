@@ -1,6 +1,6 @@
 import React, {createContext, useState, useContext, useMemo, useCallback} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
-import {LAYOUT_BREAKPOINT} from '../constants/display';
+import {LAYOUT_BREAKPOINT, TOAST_DURATION} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
@@ -640,7 +640,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-              autoClose: autoClose ?? 3000,
+              autoClose: autoClose ?? TOAST_DURATION,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -669,7 +669,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-              autoClose: autoClose ?? 3000,
+              autoClose: autoClose ?? TOAST_DURATION,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -698,7 +698,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-              autoClose: autoClose ?? 3000,
+              autoClose: autoClose ?? TOAST_DURATION,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -727,7 +727,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-              autoClose: autoClose ?? 3000,
+              autoClose: autoClose ?? TOAST_DURATION,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,

@@ -10,6 +10,7 @@ import {
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_USER_BALANCE,
+  TOAST_DURATION,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
@@ -50,6 +51,9 @@ import {LayoutAssertion} from '../../constants/layout_assertion';
 import UserOverview from '../user_overview/user_overview';
 import {ImCross} from 'react-icons/im';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 
@@ -123,8 +127,10 @@ const TradeTab = () => {
   const [estimatedShortLossValue, setEstimatedShortLossValue, estimatedShortLossValueRef] =
     useStateRef(initialState);
 
-  const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
-  const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
+  const [longGuaranteedStopChecked, setLongGuaranteedStopChecked, longGuaranteedStopCheckedRef] =
+    useStateRef(false);
+  const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked, shortGuaranteedStopCheckedRef] =
+    useStateRef(false);
 
   const [requiredMarginLong, setRequiredMarginLong, requiredMarginLongRef] = useStateRef(
     roundToDecimalPlaces(
@@ -724,6 +730,30 @@ const TradeTab = () => {
       roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current), 2)
     );
 
+    const adequateBalanceForLongGSL = SafeMath.gt(
+      availableBalance,
+      SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
+    );
+
+    setLongGuaranteedStopChecked(prev => {
+      if (prev === true && !adequateBalanceForLongGSL) {
+        globalCtx.toast({
+          type: ToastTypeAndText.WARNING.type,
+          toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+          message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+            Code.INADEQUATE_AVAILABLE_BALANCE
+          })`,
+          typeText: t(ToastTypeAndText.WARNING.text),
+          isLoading: false,
+          autoClose: TOAST_DURATION,
+        });
+
+        return false;
+      } else {
+        return prev;
+      }
+    });
+
     // Info: (20230927 - Shirley) Short
     const newShortValue = +SafeMath.mult(targetInputValueRef.current, shortPriceRef.current);
 
@@ -745,6 +775,30 @@ const TradeTab = () => {
     setGuaranteedStopFeeShort(
       roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current), 2)
     );
+
+    const adequateBalanceForShortGSL = SafeMath.gt(
+      availableBalance,
+      SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
+    );
+
+    setShortGuaranteedStopChecked(prev => {
+      if (prev === true && !adequateBalanceForShortGSL) {
+        globalCtx.toast({
+          type: ToastTypeAndText.WARNING.type,
+          toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+          message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+            Code.INADEQUATE_AVAILABLE_BALANCE
+          })`,
+          typeText: t(ToastTypeAndText.WARNING.text),
+          isLoading: false,
+          autoClose: TOAST_DURATION,
+        });
+
+        return false;
+      } else {
+        return prev;
+      }
+    });
   };
 
   const targetAmountDetection = (value?: number) => renewPosition();
@@ -909,7 +963,16 @@ const TradeTab = () => {
   );
 
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLongGuaranteedStopChecked(e.target.checked);
+    const adequateBalanceForLongGSL = SafeMath.gt(
+      availableBalance,
+      SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
+    );
+
+    if (adequateBalanceForLongGSL) {
+      setLongGuaranteedStopChecked(e.target.checked);
+    } else {
+      setLongGuaranteedStopChecked(false);
+    }
   };
 
   const displayedLongTpSetting = (
@@ -999,7 +1062,13 @@ const TradeTab = () => {
     >
       <input
         type="checkbox"
-        value=""
+        disabled={
+          !SafeMath.gt(
+            availableBalance,
+            SafeMath.plus(guaranteedStopFeeLongRef.current, requiredMarginLongRef.current)
+          )
+        }
+        checked={longGuaranteedStopCheckedRef.current}
         onChange={longGuaranteedStopChangeHandler}
         className={`h-5 w-5 rounded text-lightWhite accent-tidebitTheme`}
       />
@@ -1035,7 +1104,16 @@ const TradeTab = () => {
   );
 
   const shortGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShortGuaranteedStopChecked(e.target.checked);
+    const adequateBalanceForShortGSL = SafeMath.gt(
+      availableBalance,
+      SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
+    );
+
+    if (adequateBalanceForShortGSL) {
+      setShortGuaranteedStopChecked(e.target.checked);
+    } else {
+      setShortGuaranteedStopChecked(false);
+    }
   };
 
   const displayedShortTpSetting = (
@@ -1126,7 +1204,13 @@ const TradeTab = () => {
       <div className="mt-0 flex items-center">
         <input
           type="checkbox"
-          value=""
+          disabled={
+            !SafeMath.gt(
+              availableBalance,
+              SafeMath.plus(guaranteedStopFeeShortRef.current, requiredMarginShortRef.current)
+            )
+          }
+          checked={shortGuaranteedStopCheckedRef.current}
           onChange={shortGuaranteedStopChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"
         />

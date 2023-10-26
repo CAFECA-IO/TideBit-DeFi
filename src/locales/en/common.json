@@ -361,7 +361,9 @@
     "INTERNAL_SERVER_ERROR": "Internal server error",
     "THIRD_PARTY_LIBRARY_ERROR": "Third party library error",
     "DEPOSIT_INTERVAL_TOO_SHORT": "you can deposit at most 1 times in 24 hours, next available deposit time is: {{nextAvailableTime}}",
-    "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid"
+    "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid",
+    "INADEQUATE_AVAILABLE_BALANCE": "Inadequate available balance",
+    "BALANCE_IS_NOT_ENOUGH_TO_UPDATE_ORDER": "Balance is not enough to update order"
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "Leaderboard",

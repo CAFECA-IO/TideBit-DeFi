@@ -1,6 +1,12 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {TypeOfBorderColor, TypeOfPnLColor, TypeOfPnLColorHex} from '../../constants/display';
+import {
+  DEFAULT_USER_BALANCE,
+  TOAST_DURATION,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
+  TypeOfPnLColorHex,
+} from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {useContext, useEffect} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -36,6 +42,7 @@ import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
+import {UserContext} from '../../contexts/user_context';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -54,13 +61,15 @@ const UpdateFormModal = ({
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
-  const gsl = marketCtx.guaranteedStopFeePercentage;
+  const gslPercent = marketCtx.guaranteedStopFeePercentage;
+  const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const initialTpInput = cfdTp ?? openCfdDetails?.suggestion?.takeProfit;
   const initialSlInput = cfdSl ?? openCfdDetails?.suggestion?.takeProfit;
@@ -71,7 +80,7 @@ const UpdateFormModal = ({
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedCheckedRef] = useState(
     openCfdDetails.guaranteedStop
   );
 
@@ -89,7 +98,7 @@ const UpdateFormModal = ({
 
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
     +SafeMath.mult(
-      Number(gsl),
+      Number(gslPercent),
       SafeMath.mult(openCfdDetails?.openPrice ?? 0, openCfdDetails?.amount ?? 0)
     )
   );
@@ -167,7 +176,7 @@ const UpdateFormModal = ({
     >
       <div className="text-lightWhite">
         *
-        {guaranteedpCheckedRef.current
+        {guaranteedCheckedRef.current
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : {estimatedLossValueRef.current.symbol}{' '}
@@ -186,11 +195,37 @@ const UpdateFormModal = ({
   const guaranteedCheckedChangeHandler = () => {
     validateInput();
 
-    if (!openCfdDetails.guaranteedStop) {
-      setGuaranteedChecked(!guaranteedChecked);
-      setSlToggle(true);
+    const inadequateBalanceForGSL = SafeMath.lt(availableBalance, guaranteedStopFeeRef.current);
 
-      return;
+    // INFO: 之前沒有設定GSL，停在update form modal太久，當 GSL fee 變動時，會出現 GSL fee 不足的情況 (20231026 - Shirley)
+    if (!openCfdDetails.guaranteedStop) {
+      if (inadequateBalanceForGSL) {
+        setGuaranteedChecked(prev => {
+          if (prev === true) {
+            globalCtx.toast({
+              type: ToastTypeAndText.WARNING.type,
+              toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+              message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+                Code.INADEQUATE_AVAILABLE_BALANCE
+              })`,
+              typeText: t(ToastTypeAndText.WARNING.text),
+              isLoading: false,
+              autoClose: TOAST_DURATION,
+            });
+
+            return false;
+          } else {
+            return prev;
+          }
+        });
+
+        return;
+      } else {
+        setGuaranteedChecked(!guaranteedChecked);
+        setSlToggle(true);
+
+        return;
+      }
     } else {
       setGuaranteedChecked(true);
 
@@ -457,7 +492,8 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          checked={guaranteedpCheckedRef.current}
+          disabled={SafeMath.lt(availableBalance, guaranteedStopFeeRef.current)}
+          checked={guaranteedCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
@@ -546,7 +582,7 @@ const UpdateFormModal = ({
     } else if (
       tpToggleRef.current !== initialTpToggle ||
       slToggleRef.current !== initialSlToggle ||
-      guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop
+      guaranteedCheckedRef.current !== openCfdDetails?.guaranteedStop
     ) {
       setSubmitDisabled(false);
     }
@@ -762,24 +798,32 @@ const UpdateFormModal = ({
     calculateLoss();
   };
 
+  // Info: 用戶在輸入時不要檢查 tp/sl 是否在範圍內 (20231026 - Shirley)
   useEffect(() => {
     if (!isTypingRef.current.tp && !isTypingRef.current.sl) {
       checkTpSlWithinBounds();
     }
   }, [isTypingRef.current]);
 
+  // Info: 計算 GSL fee (20231026 - Shirley)
   useEffect(() => {
+    if (!gslPercent) {
+      setSubmitDisabled(true);
+      return;
+    }
+
     setGuaranteedStopFee(
       roundToDecimalPlaces(
         +SafeMath.mult(
-          Number(gsl),
+          Number(gslPercent),
           SafeMath.mult(openCfdDetails?.openPrice, openCfdDetails?.amount)
         ),
         2
       )
     );
-  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+  }, [gslPercent, openCfdDetails?.openPrice, openCfdDetails?.amount]);
 
+  // Info: 確認 tp/sl/gsl 格式是否正確 (20231026 - Shirley)
   useEffect(() => {
     setSubmitDisabled(true);
 
@@ -793,9 +837,10 @@ const UpdateFormModal = ({
     slValueRef.current,
     tpToggleRef.current,
     slToggleRef.current,
-    guaranteedpCheckedRef.current,
+    guaranteedCheckedRef.current,
   ]);
 
+  // Info: 顯示視窗之前確保拿到該筆 CFD 的資料 (20231026 - Shirley)
   useEffect(() => {
     setSubmitDisabled(true);
 

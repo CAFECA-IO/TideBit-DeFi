@@ -8,7 +8,7 @@ import {
   dummyUnReadNotifications,
 } from '../interfaces/tidebit_defi_background/notification_item';
 import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
-import {getCookieByName} from '../lib/common';
+import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -33,40 +33,6 @@ export const NotificationContext = createContext<INotificationContext>({
   init: () => Promise.resolve(),
   reset: () => null,
 });
-
-const addDaysToDate = (days: number): number => {
-  const result = new Date();
-  result.setDate(result.getDate() + days);
-  return result.getTime();
-};
-
-const setCookie = (name: string, value: number, expirationTimestamp: number) => {
-  const expires = `expires=${new Date(expirationTimestamp).toUTCString()}`;
-  document.cookie = `${name}=${value};${expires};path=/`;
-};
-
-const getCookie = (name: string): string | undefined => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-
-  if (parts.length === 2) {
-    const cookiePart = parts.pop();
-    if (cookiePart) {
-      return cookiePart.split(';').shift();
-    }
-  }
-};
-
-const isCookieExpired = (cookieValue: string): boolean => {
-  const expirationTimestamp = parseInt(cookieValue, 10);
-
-  if (isNaN(expirationTimestamp)) {
-    return true;
-  }
-  const expired = expirationTimestamp < new Date().getTime();
-
-  return expired;
-};
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
@@ -110,8 +76,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     });
 
     if (isUpdated) {
-      setNotifications(updatedNotifications);
-      setUnreadNotifications(updatedNotifications.filter(n => !n.isRead));
+      updateNotifications(updatedNotifications);
     }
   };
 
@@ -135,7 +100,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const init = async () => {
     checkAndResetNotifications();
-
     return await Promise.resolve();
   };
 

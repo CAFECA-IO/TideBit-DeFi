@@ -7,6 +7,8 @@ import {
   dummyNotifications,
   dummyUnReadNotifications,
 } from '../interfaces/tidebit_defi_background/notification_item';
+import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
+import {getCookieByName} from '../lib/common';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -32,9 +34,41 @@ export const NotificationContext = createContext<INotificationContext>({
   reset: () => null,
 });
 
-export const NotificationProvider = ({children}: INotificationProvider) => {
-  // const marketCtx = useContext(MarketContext);
+const addDaysToDate = (days: number): number => {
+  const result = new Date();
+  result.setDate(result.getDate() + days);
+  return result.getTime();
+};
 
+const setCookie = (name: string, value: number, expirationTimestamp: number) => {
+  const expires = `expires=${new Date(expirationTimestamp).toUTCString()}`;
+  document.cookie = `${name}=${value};${expires};path=/`;
+};
+
+const getCookie = (name: string): string | undefined => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+
+  if (parts.length === 2) {
+    const cookiePart = parts.pop();
+    if (cookiePart) {
+      return cookiePart.split(';').shift();
+    }
+  }
+};
+
+const isCookieExpired = (cookieValue: string): boolean => {
+  const expirationTimestamp = parseInt(cookieValue, 10);
+
+  if (isNaN(expirationTimestamp)) {
+    return true;
+  }
+  const expired = expirationTimestamp < new Date().getTime();
+
+  return expired;
+};
+
+export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const [notifications, setNotifications, notificationsRef] =
     useState<INotificationItem[]>(dummyNotifications);
@@ -49,10 +83,36 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         ...updatedNotifications[index],
         isRead: true,
       };
+
+      const expirationTimestamp = addDaysToDate(COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT);
+      setCookie(`notificationRead_${id}`, expirationTimestamp, expirationTimestamp);
     }
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
     updateNotifications(updatedNotifications);
+
     return;
+  };
+
+  const checkAndResetNotifications = async (): Promise<void> => {
+    const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
+    let isUpdated = false;
+
+    updatedNotifications.forEach(notification => {
+      const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+      if (cookieValue) {
+        if (!isCookieExpired(cookieValue)) {
+          notification.isRead = true;
+        } else {
+          notification.isRead = false;
+        }
+        isUpdated = true;
+      }
+    });
+
+    if (isUpdated) {
+      setNotifications(updatedNotifications);
+      setUnreadNotifications(updatedNotifications.filter(n => !n.isRead));
+    }
   };
 
   const readAll = async () => {
@@ -74,6 +134,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const init = async () => {
+    checkAndResetNotifications();
+
     return await Promise.resolve();
   };
 

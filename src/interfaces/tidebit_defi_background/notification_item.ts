@@ -46,7 +46,7 @@ export const createDummyPrivateNotificationItem = (userId: string | null, greeti
 
 export const createDummyImportantNotificationItem = (greetings: string) => {
   const dummyNotificationItem: INotificationItem = {
-    id: `public-${Date.now()}-${(Math.random() * 1000).toFixed(0)}`,
+    id: `public-1684461092000-1`,
     title: greetings,
     content: `ANNOUNCEMENT_MODAL.ANTI_FRAUD_CONTENT`,
     timestamp: Math.floor(Date.now() / 1000),

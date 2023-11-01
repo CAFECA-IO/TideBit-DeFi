@@ -26,6 +26,7 @@ import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
 import {isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
+import Tooltip from '../tooltip/tooltip';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -42,6 +43,8 @@ const PositionUpdatedModal = ({
   updatedProps,
 }: IPositionUpdatedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const {i18n} = useTranslation('common');
+  const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
 
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
@@ -51,6 +54,11 @@ const PositionUpdatedModal = ({
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
   const [disabled, setDisabled] = useState(false);
+
+  const displayedPositionColor = 'text-tidebitTheme';
+  const displayedBorderColor = TypeOfBorderColor.EQUAL;
+  const layoutInsideBorder = 'flex justify-between w-full px-2 my-2';
+  const spreadSymbol = openCfdDetails.openSpreadFee > 0 ? '+' : '-';
 
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
@@ -257,19 +265,33 @@ const PositionUpdatedModal = ({
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
+  const displayedGuaranteesStopFee = gtslTextStyle === 'text-lightYellow2' &&
+    (updatedProps?.guaranteedStop || openCfdDetails.guaranteedStop) && (
+      <div className={`${layoutInsideBorder}`}>
+        <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
+        <div className={`${TypeOfPnLColor.LOSS}`}>
+          {`- $ ${numberFormatted(
+            (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
+          )}`}
+        </div>
+      </div>
+    );
+
+  const tooltipIconPosition = isMandarin ? '-ml-16' : '-ml-20';
+
   // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit
     ? openCfdDetails.takeProfit !== updatedProps.takeProfit
-      ? `$ ${numberFormatted(updatedProps.takeProfit)}`
-      : `$ ${numberFormatted(openCfdDetails.takeProfit)}`
+      ? `${numberFormatted(updatedProps.takeProfit)}`
+      : `${numberFormatted(openCfdDetails.takeProfit)}`
     : !!openCfdDetails.takeProfit !== !!updatedProps?.takeProfit
     ? '-'
     : '-';
 
   const displayedStopLoss = !!updatedProps?.stopLoss
     ? openCfdDetails.stopLoss !== updatedProps.stopLoss
-      ? `$ ${numberFormatted(updatedProps.stopLoss)}`
-      : `$ ${numberFormatted(openCfdDetails.stopLoss)}`
+      ? `${numberFormatted(updatedProps.stopLoss)}`
+      : `${numberFormatted(openCfdDetails.stopLoss)}`
     : !!openCfdDetails.stopLoss !== !!updatedProps?.stopLoss
     ? '-'
     : '-';
@@ -283,12 +305,6 @@ const PositionUpdatedModal = ({
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
-
-  const displayedPositionColor = 'text-tidebitTheme';
-
-  const displayedBorderColor = TypeOfBorderColor.EQUAL;
-
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
@@ -306,7 +322,7 @@ const PositionUpdatedModal = ({
 
       <div className="relative flex flex-col items-center pt-1">
         <div
-          className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 w-full border-1px py-3 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
             <div className={`${layoutInsideBorder}`}>
@@ -314,14 +330,19 @@ const PositionUpdatedModal = ({
 
               <div className={`${displayedPositionColor}`}>
                 {displayedTypeOfPosition}
-                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
+                <span className="ml-1 text-lightWhite">{displayedBuyOrSell}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-              <div className={``}>
-                {numberFormatted(openCfdDetails?.openPrice)}{' '}
+              <div className="flex items-baseline space-x-1">
+                {numberFormatted(openCfdDetails?.openSpotPrice)}{' '}
+                <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
+                  {spreadSymbol}
+                  {numberFormatted(openCfdDetails?.openSpreadFee)}
+                </span>
+                {<p>→ {numberFormatted(openCfdDetails.openPrice)}</p>}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -332,11 +353,17 @@ const PositionUpdatedModal = ({
                 {displayedTime.date} {displayedTime.time}
               </div>
             </div>
-            <div className={`${layoutInsideBorder}`}>
+            <div className={`${layoutInsideBorder} items-center`}>
               <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+              <Tooltip className={`${tooltipIconPosition}`} tooltipPosition="left-2">
+                <p className="w-56 text-left text-sm font-medium text-white">
+                  {t('POSITION_MODAL.TP_AND_SL_HINT')}
+                </p>
+              </Tooltip>
               <div className="">
                 <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
                 <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
+                <span className={`ml-1 text-lightGray`}>{unitAsset}</span>
               </div>
             </div>
 
@@ -345,16 +372,7 @@ const PositionUpdatedModal = ({
               <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
 
-            {(updatedProps?.guaranteedStop || openCfdDetails.guaranteedStop) && (
-              <div className={`${layoutInsideBorder}`}>
-                <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
-                <div className={`${TypeOfPnLColor.LOSS}`}>
-                  {`- $ ${numberFormatted(
-                    (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
-                  )}`}
-                </div>
-              </div>
-            )}
+            {displayedGuaranteesStopFee}
           </div>
         </div>
 

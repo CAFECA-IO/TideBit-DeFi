@@ -227,8 +227,8 @@
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_FEE": "Guaranteed Stop Fee",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
-    "GUARANTEED_STOP_YES": "Yes",
-    "GUARANTEED_STOP_NO": "No",
+    "GUARANTEED_STOP_YES": "On",
+    "GUARANTEED_STOP_NO": "Off",
     "EXPIRATION_TIME": "Expiration Time",
     "LIQUIDATION_TIME": "Close in 7 days",
     "LIQUIDATION_PRICE": "Liquidation Price",
@@ -251,7 +251,8 @@
     "SHARING_CANCELLED_TITLE": "You've cancelled sharing the post",
     "SHARING_LOADING": "Loading...",
     "SHARING_FAILED_CONTENT": "Failed to share the post",
-    "SPREAD_HINT": "Spot Price + Spread → Open/Close Price"
+    "SPREAD_HINT": "Spot Price + Spread → Open/Close Price",
+    "TP_AND_SL_HINT": "Take profit (TP) is an order that closes your position once it reaches a certain level of profit. Stop Loss (SL) is designed to be an exit order strategy to limit the amount of losses for a position."
   },
   "D_W_MODAL": {
     "DEPOSIT": "Deposit",

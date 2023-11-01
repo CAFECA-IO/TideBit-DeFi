@@ -575,6 +575,28 @@ export const getCookieByName = (name: string): string | undefined => {
   return cookieValue;
 };
 
+export const addDaysToDate = (days: number): number => {
+  const result = new Date();
+  result.setDate(result.getDate() + days);
+  return result.getTime();
+};
+
+export const setCookie = (name: string, value: number, expirationTimestamp: number) => {
+  const expires = `expires=${new Date(expirationTimestamp).toUTCString()}`;
+  document.cookie = `${name}=${value};${expires};path=/`;
+};
+
+export const isCookieExpired = (cookieValue: string): boolean => {
+  const expirationTimestamp = parseInt(cookieValue, 10);
+
+  if (isNaN(expirationTimestamp)) {
+    return true;
+  }
+
+  const expired = expirationTimestamp < new Date().getTime();
+  return expired;
+};
+
 export const hasValue = (obj: any) => {
   return Object?.values(obj)?.some(v => v !== null && v !== undefined);
 };

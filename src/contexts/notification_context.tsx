@@ -7,6 +7,8 @@ import {
   dummyNotifications,
   dummyUnReadNotifications,
 } from '../interfaces/tidebit_defi_background/notification_item';
+import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
+import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -33,8 +35,6 @@ export const NotificationContext = createContext<INotificationContext>({
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
-  // const marketCtx = useContext(MarketContext);
-
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const [notifications, setNotifications, notificationsRef] =
     useState<INotificationItem[]>(dummyNotifications);
@@ -49,10 +49,35 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         ...updatedNotifications[index],
         isRead: true,
       };
+
+      const expirationTimestamp = addDaysToDate(COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT);
+      setCookie(`notificationRead_${id}`, expirationTimestamp, expirationTimestamp);
     }
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
     updateNotifications(updatedNotifications);
+
     return;
+  };
+
+  const checkAndResetNotifications = async (): Promise<void> => {
+    const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
+    let isUpdated = false;
+
+    updatedNotifications.forEach(notification => {
+      const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+      if (cookieValue) {
+        if (!isCookieExpired(cookieValue)) {
+          notification.isRead = true;
+        } else {
+          notification.isRead = false;
+        }
+        isUpdated = true;
+      }
+    });
+
+    if (isUpdated) {
+      updateNotifications(updatedNotifications);
+    }
   };
 
   const readAll = async () => {
@@ -74,6 +99,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const init = async () => {
+    checkAndResetNotifications();
     return await Promise.resolve();
   };
 

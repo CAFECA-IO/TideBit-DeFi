@@ -412,7 +412,7 @@
     "CLOSE_BUTTON": "Close"
   },
   "ANNOUNCEMENT_MODAL": {
-    "CHECKBOX_DESCRIPTION": "Don’t show me this again",
+    "CHECKBOX_DESCRIPTION": "Don't show me this again for 7 days",
     "OK_BUTTON": "OK",
     "ANTI_FRAUD_TITLE": "【Important Announcement】Anti-Scam Reminder",
     "ANTI_FRAUD_CONTENT": "Dear TideBit-DeFi Users,\n\nWe would like to bring your attention to the increasing prevalence of scams. Please be reminded that TideBit-DeFi is solely a 'simulated trading' platform designed for users to learn and conduct research, without involving any real financial transactions.\nTideBit does not provide any form of financial advice, fund investment, or discretionary account operation. We also do not offer custody or management services for cryptocurrencies and trading activities. Furthermore, we do not draft any investment contracts for our users.\nIf you receive any communication, SMS, phone call, or invitation through social media to join an investment group that guarantees high profits and low risks, we strongly urge you to immediately dial 165 for the Anti-Scam Hotline to verify the legitimacy. Do not disclose any financial information or personal data to these parties to ensure the protection of your rights.\n\nBest regards,\nTideBit-DeFi Team"

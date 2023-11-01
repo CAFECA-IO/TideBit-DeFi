@@ -251,7 +251,8 @@
     "SHARING_CANCELLED_TITLE": "您已取消分享",
     "SHARING_LOADING": "正在载入...",
     "SHARING_FAILED_CONTENT": "分享失败",
-    "SPREAD_HINT": "市场价格 + 点差 = 建仓/关仓价格"
+    "SPREAD_HINT": "市场价格 + 点差 = 建仓/关仓价格",
+    "TP_AND_SL_HINT": "止盈 (TP) 是一种一旦达到特定利润水平就会关闭您的持仓的订单。止损 (SL) 是设计成一种退出订单策略，以限制持仓的损失额度。"
   },
   "D_W_MODAL": {
     "DEPOSIT": "入金",

@@ -1,11 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import {BiLinkAlt} from 'react-icons/bi';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
 import {BAIFA_LINK} from '../../constants/config';
-import {useEffect, useState} from 'react';
-import useStateRef from 'react-usestateref';
 import useCheckLink from '../../lib/hooks/use_check_link';
 import {getTimestamp, timestampToString} from '../../lib/common';
 import {ONE_DAY_IN_SECONDS} from '../../constants/display';

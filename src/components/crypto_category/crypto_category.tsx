@@ -7,7 +7,7 @@ import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data'
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-const CryptoCategory = ({...otherProps}) => {
+const CryptoCategory = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext<IMarketContext>(MarketContext);

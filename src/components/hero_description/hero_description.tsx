@@ -41,23 +41,29 @@ export default function HeroDescription() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
       <div className="w-full">
-        <Cta />
-        <div className="py-0"></div>
+        <div className="">
+          <Cta />
+        </div>
 
-        <StatisticBlock />
-        <div className="py-10"></div>
+        <div className="py-10">
+          <StatisticBlock />
+        </div>
 
-        <ReserveRatio />
-        <div className="py-10 lg:py-0"></div>
+        <div id="reserve-ratio" className="py-16">
+          <ReserveRatio />
+        </div>
 
-        <AuditReport />
-        <div className="py-10"></div>
+        <div id="audit-report" className="py-16">
+          <AuditReport />
+        </div>
 
-        <CryptoCategory />
-        <div className="py-10 lg:py-144px"></div>
+        <div id="crypto-category" className="py-20">
+          <CryptoCategory />
+        </div>
 
-        <Banner />
-        <div className="py-20 lg:py-200px"></div>
+        <div className="py-20">
+          <Banner />
+        </div>
 
         {/* Web3.0 */}
         <HeroReverse

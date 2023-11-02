@@ -24,7 +24,7 @@ const AuditReport = () => {
         <div className="flex items-center justify-center">
           <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
           <h1 className="mx-3 text-center">
-            <span className="text-tidebitTheme">{t('HOME_PAGE.SMART')} </span>{' '}
+            <span className="text-tidebitTheme">{t('HOME_PAGE.SMART')}</span>
             {t('HOME_PAGE.AUDITING_REPORTS')}
           </h1>
           <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>

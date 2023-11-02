@@ -72,7 +72,7 @@ export default function HeroDescription() {
         <Hero
           heading={
             <div className="font-bold">
-              <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>{' '}
+              <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>
               {t('HOME_PAGE.EASY_TRADE_TITLE')}
             </div>
           }
@@ -87,7 +87,7 @@ export default function HeroDescription() {
             <div className="font-bold">
               <span className="text-tidebitTheme">
                 {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
-              </span>{' '}
+              </span>
               {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
             </div>
           }
@@ -102,7 +102,7 @@ export default function HeroDescription() {
             <div className="font-bold">
               <span className="text-tidebitTheme">
                 {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
-              </span>{' '}
+              </span>
               {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
             </div>
           }

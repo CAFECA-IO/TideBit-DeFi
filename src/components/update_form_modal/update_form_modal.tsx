@@ -58,6 +58,9 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const {i18n} = useTranslation('common');
+  const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
+  const tooltipIconPosition = isMandarin ? '-ml-40' : '-ml-44';
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -923,6 +926,11 @@ const UpdateFormModal = ({
         {/* Info: (20231004 - Julian) TP/SL */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+          <Tooltip className={`${tooltipIconPosition}`} tooltipPosition="left-2">
+            <p className="w-56 text-left text-sm font-medium text-white">
+              {t('POSITION_MODAL.TP_AND_SL_HINT')}
+            </p>
+          </Tooltip>
           <div className="">
             <span className={`text-lightWhite`}>{numberFormatted(cfdTp, true)}</span> /{' '}
             <span className={`text-lightWhite`}>{numberFormatted(cfdSl, true)}</span>

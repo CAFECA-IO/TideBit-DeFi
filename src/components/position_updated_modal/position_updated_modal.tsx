@@ -45,6 +45,7 @@ const PositionUpdatedModal = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {i18n} = useTranslation('common');
   const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
+  const tooltipIconPosition = isMandarin ? '-ml-20' : '-ml-24';
 
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
@@ -264,8 +265,6 @@ const PositionUpdatedModal = ({
     : openCfdDetails?.guaranteedStop
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
-
-  const tooltipIconPosition = isMandarin ? '-ml-20' : '-ml-24';
 
   // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit

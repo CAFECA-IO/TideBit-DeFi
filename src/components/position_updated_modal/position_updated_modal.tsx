@@ -57,7 +57,7 @@ const PositionUpdatedModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
   const displayedBorderColor = TypeOfBorderColor.EQUAL;
-  const layoutInsideBorder = 'flex justify-between w-full px-2 my-2';
+  const layoutInsideBorder = 'flex justify-between w-full px-5 my-2';
   const spreadSymbol = openCfdDetails.openSpreadFee > 0 ? '+' : '-';
 
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
@@ -265,19 +265,7 @@ const PositionUpdatedModal = ({
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
-  const displayedGuaranteesStopFee = gtslTextStyle === 'text-lightYellow2' &&
-    (updatedProps?.guaranteedStop || openCfdDetails.guaranteedStop) && (
-      <div className={`${layoutInsideBorder}`}>
-        <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
-        <div className={`${TypeOfPnLColor.LOSS}`}>
-          {`- $ ${numberFormatted(
-            (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
-          )}`}
-        </div>
-      </div>
-    );
-
-  const tooltipIconPosition = isMandarin ? '-ml-16' : '-ml-20';
+  const tooltipIconPosition = isMandarin ? '-ml-20' : '-ml-24';
 
   // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
   const displayedTakeProfit = !!updatedProps?.takeProfit
@@ -309,8 +297,8 @@ const PositionUpdatedModal = ({
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const formContent = (
-    <div className="mt-8 flex flex-col px-6 pb-2">
-      <div className="flex items-center justify-center space-x-2 text-center">
+    <div className="mt-4 flex flex-col px-6 pb-2">
+      <div className="flex items-center justify-center space-x-2 text-center lg:text-sm">
         <Image
           src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
@@ -322,7 +310,7 @@ const PositionUpdatedModal = ({
 
       <div className="relative flex flex-col items-center pt-1">
         <div
-          className={`${displayedBorderColor} mt-1 w-full border-1px py-3 text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-3 w-full border-1px py-3 text-sm leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
             <div className={`${layoutInsideBorder}`}>
@@ -343,7 +331,7 @@ const PositionUpdatedModal = ({
                   {numberFormatted(openCfdDetails?.openSpreadFee)}
                 </span>
                 {<p>→ {numberFormatted(openCfdDetails.openPrice)}</p>}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
+                <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
               </div>
             </div>
 
@@ -363,26 +351,45 @@ const PositionUpdatedModal = ({
               <div className="">
                 <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
                 <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
-                <span className={`ml-1 text-lightGray`}>{unitAsset}</span>
+                <span className={`ml-1 text-lightGray text-xs`}>{unitAsset}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
-              <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
-            </div>
+              <div className="flex">
+                <div className={`${gtslTextStyle} flex`}>
+                  {displayedGuaranteedStopSetting}
 
-            {displayedGuaranteesStopFee}
+                  {updatedProps?.guaranteedStop || openCfdDetails?.guaranteedStop ? (
+                    <span className="flex items-baseline">
+                      <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
+                      <span className="">{`${numberFormatted(
+                        (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
+                      )}`}</span>
+                      <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                      <span className="text-lightGray text-sm">)</span>
+                    </span>
+                  ) : null}
+                </div>
+
+                <Tooltip className="top-px ml-1">
+                  <p className="w-56 text-left text-sm font-medium text-white">
+                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                  </p>
+                </Tooltip>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-5 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           disabled={disabled}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme w-90vw sm:w-300px py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -395,17 +402,22 @@ const PositionUpdatedModal = ({
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
-          <div className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
-            <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
-                {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
-              </h3>
+          <div className="relative flex h-auto w-90vw flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8">
+            <div className="flex items-start justify-between rounded-t pt-9 lg:pt-3">
+              <div className="flex w-full flex-col items-center">
+                <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
+                  {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
+                </h3>
+                <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
+              </div>
+
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>
             </div>
+
             {formContent}
 
             <div className="flex items-center justify-end rounded-b p-2"></div>

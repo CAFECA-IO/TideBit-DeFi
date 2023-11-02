@@ -100,7 +100,9 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop
+    ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
+    : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
   const displayedPnLSymbol = !!openCfdDetails.pnl?.value
     ? (openCfdDetails.pnl as IPnL).value > 0
@@ -610,6 +612,15 @@ const PositionClosedModal = ({
           <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
           <div className="flex">
             {displayedGuaranteedStopSetting}
+
+            {openCfdDetails?.guaranteedStop ? (
+              <span className="flex items-baseline">
+                <span className="text-lightGray mx-1">(</span>
+                <span className="">{`${numberFormatted(openCfdDetails.stopLoss ?? 0)}`}</span>
+                <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                <span className="text-lightGray text-sm">)</span>
+              </span>
+            ) : null}
             <Tooltip className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
@@ -617,14 +628,6 @@ const PositionClosedModal = ({
             </Tooltip>
           </div>
         </div>
-        {openCfdDetails.guaranteedStop && (
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
-            <div className={`${TypeOfPnLColor.LOSS}`}>
-              {`- $ ${numberFormatted(openCfdDetails?.guaranteedStopFee)}`}{' '}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Info: (20231003 - Julian) CFD Content */}

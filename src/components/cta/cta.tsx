@@ -29,7 +29,7 @@ const Cta = () => {
           <div className="max-w-200px text-lg font-bold tracking-wide text-white xs:text-2xl sm:max-w-350px sm:text-3xl md:max-w-sm md:text-4xl lg:max-w-lg lg:text-5xl xl:max-w-xl xl:text-6xl 2xl:max-w-2xl 2xl:text-7xl">
             <span className="leading-normal text-tidebitTheme">
               {t('HOME_PAGE.CTA_HIGHLIGHT_TITLE')}
-            </span>{' '}
+            </span>
             {t('HOME_PAGE.CTA_REST_TITLE')}
             <div className="mt-10 max-w-160px text-xxs font-normal leading-loose tracking-0.02rem text-lightGray xs:max-w-250px sm:max-w-200px sm:text-xs md:max-w-md md:text-sm lg:mt-14 lg:w-3/5 xl:text-lg 2xl:text-xl">
               {t('HOME_PAGE.CTA_DESCRIPTION')}
@@ -84,7 +84,7 @@ const Cta = () => {
           <div className="w-8/10">
             <span className="leading-normal text-tidebitTheme">
               {t('HOME_PAGE.CTA_HIGHLIGHT_TITLE')}
-            </span>{' '}
+            </span>
             {t('HOME_PAGE.CTA_REST_TITLE')}
           </div>
           <div className="mx-5 mt-4 w-278px text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">

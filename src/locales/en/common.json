@@ -34,7 +34,7 @@
     "OVERVIEW_PNL": "PNL"
   },
   "HOME_PAGE": {
-    "CTA_HIGHLIGHT_TITLE": "Trusted",
+    "CTA_HIGHLIGHT_TITLE": "Trusted ",
     "CTA_REST_TITLE": "platform for Crypto investment",
     "CTA_DESCRIPTION": "Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality.",
     "CTA_BUTTON": "GET STARTED",
@@ -50,7 +50,7 @@
     "RESERVE_RATIO_BLOCK_CARD_2": "Blockchain",
     "RESERVE_RATIO_BLOCK_DESCRIPTION": "TideBit user asset holdings",
     "RESERVE_RATIO_BLOCK_DESCRIPTION_2": "TideBit wallet assets",
-    "CRYPTO_CATEGORY_TITLE_HIGHLIGHT": "Popular",
+    "CRYPTO_CATEGORY_TITLE_HIGHLIGHT": "Popular ",
     "CRYPTO_CATEGORY_TITLE": "cryptocurrencies",
     "BANNER_TITLE": "New Wallet available",
     "BANNER_TITLE_HIGHLIGHT": "iSunOne",
@@ -58,13 +58,13 @@
     "WEB_3_TITLE": "Web",
     "WEB_3_TITLE_HIGHLIGHT": "3.0",
     "WEB_3_DESCRIPTION": "To fit in the new generation, TideBit uses Web 3.0 technology. Decentralized identity verification and regulation make it easier to buy and sell cryptocurrency.",
-    "EASY_TRADE_TITLE_HIGHLIGHT": "Easy",
+    "EASY_TRADE_TITLE_HIGHLIGHT": "Easy ",
     "EASY_TRADE_TITLE": "Trade",
     "EASY_TRADE_DESCRIPTION": "Our user-friendly interface makes trading easy and quick. With professional UI/UX design by our team, the interface of TideBit is more intuitive to operate, enabling users to smoothly complete each transaction and bring you excellent user experience!",
-    "SECURE_SYSTEM_TITLE_HIGHLIGHT": "Secure",
+    "SECURE_SYSTEM_TITLE_HIGHLIGHT": "Secure ",
     "SECURE_SYSTEM_TITLE": "System",
     "SECURE_SYSTEM_DESCRIPTION": "TideBit adopts a multi-level security system, including SSL encryption technology, multi-signature, and decentralized identity verification, etc., to ensure the security of customer transactions and assets. We are committed to providing the best security measures to ensure customers' peace of mind while trading.",
-    "FREE_ONLINE_COURSES_TITLE_HIGHLIGHT": "Free",
+    "FREE_ONLINE_COURSES_TITLE_HIGHLIGHT": "Free ",
     "FREE_ONLINE_COURSES_TITLE": "Online Courses",
     "FREE_ONLINE_COURSES_DESCRIPTION": "TideBit University provides free online courses to help beginners learn about knowledge of finance. The courses cover basic principle of blockchain, exchange usage and secure storage, and knowledge and related technologies of cryptocurrency. After completing all the courses, we will award a graduation certificate to you. Join us to start your journey into the world of cryptocurrency!",
     "APP_DOWLOAD_CONTAINER_TITLE": "Trade on",
@@ -76,7 +76,7 @@
     "BALANCE_SHEET_LINK": "https://baifa.io/reports/TBDJH4gK8Lp0Z/balance",
     "CASH_FLOW_STATEMENT_LINK": "https://baifa.io/reports/TBDJH4gK8Lp0Z/cash-flow",
     "RED_FLAG_ANALYSIS_LINK": "/reports/red_flag_analysis.pdf",
-    "SMART": "AI",
+    "SMART": "AI ",
     "AUDITING_REPORTS": "Supervision Reports",
     "LAST_UPDATED": "Last Updated",
     "COMPREHENSIVE_INCOME_STATEMENT": "Comprehensive Income Statement",
@@ -416,7 +416,7 @@
     "CHECKBOX_DESCRIPTION": "Don't show me this again for 7 days",
     "OK_BUTTON": "OK",
     "ANTI_FRAUD_TITLE": "【Important Announcement】Anti-Scam Reminder",
-    "ANTI_FRAUD_CONTENT": "Dear TideBit-DeFi Users,\n\nWe would like to bring your attention to the increasing prevalence of scams. Please be reminded that TideBit-DeFi is solely a 'simulated trading' platform designed for users to learn and conduct research, without involving any real financial transactions.\nTideBit does not provide any form of financial advice, fund investment, or discretionary account operation. We also do not offer custody or management services for cryptocurrencies and trading activities. Furthermore, we do not draft any investment contracts for our users.\nIf you receive any communication, SMS, phone call, or invitation through social media to join an investment group that guarantees high profits and low risks, we strongly urge you to immediately dial 165 for the Anti-Scam Hotline to verify the legitimacy. Do not disclose any financial information or personal data to these parties to ensure the protection of your rights.\n\nBest regards,\nTideBit-DeFi Team"
+    "ANTI_FRAUD_CONTENT": "Dear TideBit-DeFi Users,\n\nWe would like to bring your attention to the increasing prevalence of scams. Please be reminded that TideBit-DeFi is solely a 'simulated trading' platform designed for users to learn and conduct research, without involving any real financial transactions.\nTideBit does not provide any form of financial advice, fund investment, or discretionary account operation. We also do not offer custody or management services for cryptocurrencies and trading activities. Furthermore, we do not draft any investment contracts for our users.\nIf you receive any communication, SMS, phone call, or invitation through social media to join an investment group that guarantees high profits and low risks, we strongly urge you to immediately dial 165 for the Anti-Scam Hotline to verify the legitimacy. Do not disclose any financial information or personal data to these parties to ensure the protection of your rights.\n\nTideBit-DeFi serves as our company's AI real-time accounting and auditing system platform. You can download four documents in the ‘AI Supervision Reports’ section below:\n1. Balance Sheet\n2. Comprehensive Income Statement\n3. Cash Flow Statement\n4. Red Flag Analysis\nThese documents are provided to allow users and regulatory authorities to gain insight into the financial condition of the exchange.\n\nBest regards,\nTideBit-DeFi Team"
   },
   "CANDLESTICK_CHART": {
     "LONG": "Buy at",

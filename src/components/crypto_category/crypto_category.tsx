@@ -7,7 +7,7 @@ import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data'
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-const CryptoCategory = ({...otherProps}) => {
+const CryptoCategory = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext<IMarketContext>(MarketContext);
@@ -74,7 +74,7 @@ const CryptoCategory = ({...otherProps}) => {
             <h1 className="mx-1 text-center xl:w-410px">
               <span className="text-tidebitTheme">
                 {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE_HIGHLIGHT')}
-              </span>{' '}
+              </span>
               {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE')}
             </h1>
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>

@@ -28,9 +28,7 @@ const AnnouncementModal = ({
   const checkmark =
     'before:hidden before:h-3 before:w-2 before:rotate-45 before:rounded-sm before:border-b-3px before:border-r-3px before:border-lightWhite before:absolute before:top-3px before:left-5px';
 
-  const checkHandler = () => {
-    setIsChecked(!isChecked);
-  };
+  const checkHandler = () => setIsChecked(!isChecked);
 
   /* Info:(20230522 - Julian)
    * notification -> 在 NotificationItem 裡設定

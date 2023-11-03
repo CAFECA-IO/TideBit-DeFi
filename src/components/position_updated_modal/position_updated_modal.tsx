@@ -43,9 +43,6 @@ const PositionUpdatedModal = ({
   updatedProps,
 }: IPositionUpdatedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const {i18n} = useTranslation('common');
-  const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
-  const tooltipIconPosition = isMandarin ? '-ml-20' : '-ml-24';
 
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
@@ -217,7 +214,7 @@ const PositionUpdatedModal = ({
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    // 如果原本是０、undefined，updatedProps也是０、undefined，則不顯示
+    // Info: 如果原本是0、undefined，updatedProps也是０、undefined，則不顯示 (20231103 - Shirley)
     (!openCfdDetails.takeProfit && !!updatedProps.takeProfit === !!openCfdDetails.takeProfit) ||
     updatedProps.takeProfit === openCfdDetails?.takeProfit
       ? setTpTextStyle('text-lightWhite')
@@ -341,12 +338,15 @@ const PositionUpdatedModal = ({
               </div>
             </div>
             <div className={`${layoutInsideBorder} items-center`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-              <Tooltip className={`${tooltipIconPosition}`} tooltipPosition="left-2">
-                <p className="w-56 text-left text-sm font-medium text-white">
-                  {t('POSITION_MODAL.TP_AND_SL_HINT')}
-                </p>
-              </Tooltip>
+              <div className="flex">
+                <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+                <Tooltip className={``} tooltipPosition="left-2">
+                  <p className="w-56 text-left text-sm font-medium text-white">
+                    {t('POSITION_MODAL.TP_AND_SL_HINT')}
+                  </p>
+                </Tooltip>
+              </div>
+
               <div className="">
                 <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
                 <span className={`${slTextStyle}`}>{displayedStopLoss}</span>

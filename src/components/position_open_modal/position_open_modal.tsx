@@ -59,9 +59,6 @@ const PositionOpenModal = ({
   openCfdRequest,
 }: IPositionOpenModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const {i18n} = useTranslation('common');
-  const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
-  const tooltipIconPosition = isMandarin ? 'ml-1' : 'ml-1';
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -507,16 +504,17 @@ const PositionOpenModal = ({
         </div>
         {/* Info: (20231019 - Julian) TP/ SL */}
         <div className={`${layoutInsideBorder}`}>
-          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-
-          <div className="flex items-baseline">
-            {displayedTakeProfit} / {displayedStopLoss}
-            <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
-            <Tooltip className={`ml-1 top-1`} tooltipPosition="left-2">
+          <div className="flex">
+            <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+            <Tooltip className={``} tooltipPosition="left-2">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.TP_AND_SL_HINT')}
               </p>
             </Tooltip>
+          </div>
+          <div className="flex items-baseline">
+            {displayedTakeProfit} / {displayedStopLoss}
+            <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
           </div>
         </div>
         {/* Info: (20231019 - Julian) Guaranteed Stop */}

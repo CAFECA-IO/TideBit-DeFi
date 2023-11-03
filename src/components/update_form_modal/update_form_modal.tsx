@@ -922,7 +922,15 @@ const UpdateFormModal = ({
         </div>
         {/* Info: (20231004 - Julian) TP/SL */}
         <div className={`${layoutInsideBorder}`}>
-          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+          <div className="flex">
+            <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+            <Tooltip className={``} tooltipPosition="left-2">
+              <p className="w-56 text-left text-sm font-medium text-white">
+                {t('POSITION_MODAL.TP_AND_SL_HINT')}
+              </p>
+            </Tooltip>
+          </div>
+
           <div className="">
             <span className={`text-lightWhite`}>{numberFormatted(cfdTp, true)}</span> /{' '}
             <span className={`text-lightWhite`}>{numberFormatted(cfdSl, true)}</span>

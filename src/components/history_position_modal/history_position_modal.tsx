@@ -47,7 +47,9 @@ const HistoryPositionModal = ({
       ? t('POSITION_MODAL.CLOSED_REASON_STOP_LOSS')
       : '';
 
-  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop
+    ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
+    : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -230,7 +232,14 @@ const HistoryPositionModal = ({
         </div>
         {/* Info: (20231005 - Julian) TP/SL */}
         <div className={`${layoutInsideBorder}`}>
-          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
+          <div className="flex">
+            <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+            <Tooltip className={``} tooltipPosition="left-2">
+              <p className="w-56 text-left text-sm font-medium text-white">
+                {t('POSITION_MODAL.TP_AND_SL_HINT')}
+              </p>
+            </Tooltip>
+          </div>{' '}
           <div className="">
             <span className={`text-lightWhite`}>
               {numberFormatted(closedCfdDetails?.takeProfit, true)}
@@ -238,23 +247,45 @@ const HistoryPositionModal = ({
             /{' '}
             <span className={`text-lightWhite`}>
               {numberFormatted(closedCfdDetails?.stopLoss, true)}
+              <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
             </span>
           </div>
         </div>
         {/* Info: (20231005 - Julian) Guaranteed Stop */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
-          <div className={``}>{displayedGuaranteedStopSetting}</div>
-        </div>
-        {/* Info: (20231005 - Julian) Guaranteed Stop Fee */}
-        {closedCfdDetails.guaranteedStop && (
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
-            <div className={`${TypeOfPnLColor.LOSS}`}>
-              {`- $ ${numberFormatted(closedCfdDetails?.guaranteedStopFee)}`}{' '}
+          <div className="flex">
+            <div className={`flex`}>
+              {displayedGuaranteedStopSetting}
+              {closedCfdDetails?.guaranteedStop ? (
+                <span className="flex items-baseline">
+                  <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
+                  <span className="">{`${numberFormatted(
+                    closedCfdDetails.guaranteedStopFee ?? 0
+                  )}`}</span>
+                  <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                  <span className="text-lightGray text-sm">)</span>
+                </span>
+              ) : null}
             </div>
+
+            <Tooltip className="top-px ml-1">
+              <p className="w-56 text-left text-sm font-medium text-white">
+                {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+              </p>
+            </Tooltip>
           </div>
-        )}
+        </div>
+
+        {/* Info: Liquidation price (20231103 - Shirley) */}
+        <div className={`${layoutInsideBorder}`}>
+          <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+          <div className="flex">
+            {numberFormatted(closedCfdDetails.liquidationPrice, true)}{' '}
+            <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+          </div>{' '}
+        </div>
+
         {/* Info: (20231005 - Julian) State */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>

@@ -44,11 +44,11 @@ export const createDummyPrivateNotificationItem = (userId: string | null, greeti
   return dummyNotificationItem;
 };
 
-export const createDummyImportantNotificationItem = (greetings: string) => {
+export const createDummyImportantNotificationItem = (title: string, content: string) => {
   const dummyNotificationItem: INotificationItem = {
     id: `public-1684461092000-1`,
-    title: greetings,
-    content: `ANNOUNCEMENT_MODAL.ANTI_FRAUD_CONTENT`,
+    title: title,
+    content: content,
     timestamp: Math.floor(Date.now() / 1000),
     duration: [
       Math.floor(new Date('2023-01-01').getTime() / 1000),
@@ -88,7 +88,10 @@ export const getDummyNotifications = (numbers: number) => {
 /* ToDo: (20230424 - Julian) replace dummy data */
 export const dummyNotifications: INotificationItem[] = [
   ...getDummyNotifications(1),
-  createDummyImportantNotificationItem('ANNOUNCEMENT_MODAL.ANTI_FRAUD_TITLE'),
+  createDummyImportantNotificationItem(
+    'ANNOUNCEMENT_MODAL.ANTI_FRAUD_TITLE',
+    'ANNOUNCEMENT_MODAL.ANTI_FRAUD_CONTENT'
+  ),
 ];
 
 export const dummyUnReadNotifications: INotificationItem[] = dummyNotifications.filter(

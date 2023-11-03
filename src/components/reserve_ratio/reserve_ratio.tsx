@@ -1,15 +1,10 @@
 import React, {useContext} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'next-i18next';
-import SafeMath from '../../lib/safe_math';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {BAIFA_LINK, FRACTION_DIGITS} from '../../constants/config';
+import {BAIFA_LINK} from '../../constants/config';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import Link from 'next/link';
 import ReserveCard from '../reserve_card/reserve_card';
 import {FiDownload} from 'react-icons/fi';
-import {useGlobal} from '../../contexts/global_context';
-import {ToastTypeAndText} from '../../constants/toast_type';
 import {numberFormatted} from '../../lib/common';
 import useCheckLink from '../../lib/hooks/use_check_link';
 
@@ -41,7 +36,7 @@ const ReserveRatio = () => {
   return (
     <>
       <section className="text-white">
-        <div className="mb-10 items-center font-medium text-white text-2xl xs:text-3xl sm:text-4xl">
+        <div className="mb-10 items-center font-medium text-2xl xs:text-3xl sm:text-4xl">
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
             <h1 className="mx-0 sm:mx-1 w-220px xs:w-340px md:w-auto text-center">

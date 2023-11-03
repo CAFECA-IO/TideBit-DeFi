@@ -2,7 +2,7 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {
   DEFAULT_USER_BALANCE,
-  TOAST_DURATION,
+  TOAST_DURATION_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
   TypeOfPnLColorHex,
@@ -210,7 +210,7 @@ const UpdateFormModal = ({
               })`,
               typeText: t(ToastTypeAndText.WARNING.text),
               isLoading: false,
-              autoClose: TOAST_DURATION,
+              autoClose: TOAST_DURATION_SECONDS,
             });
 
             return false;

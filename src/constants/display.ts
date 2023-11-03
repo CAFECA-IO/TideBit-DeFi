@@ -288,4 +288,6 @@ export const DEFAULT_ICON = '/asset_icon/eth.svg';
 export const DEFAULT_RECEIPTS_SHOW_ROW = 10;
 export const ONE_DAY_IN_SECONDS = 86400;
 export const SAMPLE_NUMBER = 3;
-export const TOAST_DURATION = 3000;
+export const TOAST_DURATION_SECONDS = 3000;
+export const CHINESE_CHARACTER_LENGTH_FOR_ALERT = 80;
+export const ENGLISH_CHARACTER_LENGTH_FOR_ALERT = 150;

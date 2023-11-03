@@ -203,7 +203,9 @@ const PositionOpenModal = ({
     }
   };
 
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop
+    ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
+    : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
   const displayedTypeOfPosition =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
@@ -502,8 +504,15 @@ const PositionOpenModal = ({
         </div>
         {/* Info: (20231019 - Julian) TP/ SL */}
         <div className={`${layoutInsideBorder}`}>
-          <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-          <div className="">
+          <div className="flex">
+            <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+            <Tooltip className={``} tooltipPosition="left-2">
+              <p className="w-56 text-left text-sm font-medium text-white">
+                {t('POSITION_MODAL.TP_AND_SL_HINT')}
+              </p>
+            </Tooltip>
+          </div>
+          <div className="flex items-baseline">
             {displayedTakeProfit} / {displayedStopLoss}
             <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
           </div>
@@ -513,6 +522,18 @@ const PositionOpenModal = ({
           <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
           <div className={`relative flex items-center`}>
             {displayedGuaranteedStopSetting}
+
+            {openCfdRequest.guaranteedStop ? (
+              <span className="flex items-baseline">
+                <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
+                <span className="">{`${numberFormatted(
+                  openCfdRequest.guaranteedStopFee ?? 0
+                )}`}</span>
+                <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                <span className="text-lightGray text-sm">)</span>
+              </span>
+            ) : null}
+
             <Tooltip className="ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
@@ -559,9 +580,14 @@ const PositionOpenModal = ({
         >
           {/* Info: (20231019 - Julian) Header */}
           <div className="flex items-center justify-between rounded-t">
-            <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
-              {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
-            </h3>
+            <div className="flex w-full flex-col items-center">
+              <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
+                {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
+              </h3>
+
+              <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
+            </div>
+
             <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
               <ImCross onClick={modalClickHandler} />
             </button>

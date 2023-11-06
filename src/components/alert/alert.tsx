@@ -1,7 +1,5 @@
-import {useEffect, useState} from 'react';
 import {AlertState, IAlertData, IAlertStateType} from '../../interfaces/alert';
 import {
-  TOAST_DURATION_SECONDS,
   CHINESE_CHARACTER_LENGTH_FOR_ALERT,
   ENGLISH_CHARACTER_LENGTH_FOR_ALERT,
 } from '../../constants/display';
@@ -80,7 +78,7 @@ function getAlertSvg(type: IAlertStateType) {
   }
 }
 
-const Alert = ({modalVisible, modalClickHandler, data}: IAlertProps) => {
+const Alert = ({modalVisible, data}: IAlertProps) => {
   const message = isIncludingChinese(data.message)
     ? truncateText(data.message, CHINESE_CHARACTER_LENGTH_FOR_ALERT)
     : truncateText(data.message, ENGLISH_CHARACTER_LENGTH_FOR_ALERT);

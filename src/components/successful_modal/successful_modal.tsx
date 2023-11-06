@@ -14,14 +14,12 @@ export interface ISuccessfulModal {
 }
 
 const SuccessfulModal = ({
-  modalRef: modalRef,
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
   modalContent,
   btnMsg,
   btnUrl,
-  ...otherProps
 }: ISuccessfulModal) => {
   const successContent = (
     <div className="relative flex-auto pt-1">

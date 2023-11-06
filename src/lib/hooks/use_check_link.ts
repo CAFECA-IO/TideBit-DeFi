@@ -11,6 +11,8 @@ enum ISunOne {
 
 function useCheckLink(defaultLink: string, baseLink: string) {
   const {i18n} = useTranslation('common');
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [link, setLink, linkRef] = useStateRef(defaultLink);
 
   useEffect(() => {

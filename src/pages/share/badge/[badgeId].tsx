@@ -18,7 +18,8 @@ interface IPageProps {
 const BadgeSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
-
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230525 - Julian)

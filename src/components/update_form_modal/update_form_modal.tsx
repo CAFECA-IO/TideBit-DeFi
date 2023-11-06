@@ -28,7 +28,6 @@ import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {unitAsset, TARGET_MAX_DIGITS, TP_SL_LIMIT_RATIO} from '../../constants/config';
-import useStateRef from 'react-usestateref';
 import {useTranslation} from 'next-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
@@ -47,7 +46,7 @@ import {UserContext} from '../../contexts/user_context';
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
   modalVisible: boolean;
-  modalClickHandler: (bool?: boolean | any) => void;
+  modalClickHandler: () => void;
   openCfdDetails: IDisplayCFDOrder;
 }
 
@@ -83,29 +82,33 @@ const UpdateFormModal = ({
   const [guaranteedChecked, setGuaranteedChecked, guaranteedCheckedRef] = useState(
     openCfdDetails.guaranteedStop
   );
-
+  // Info: for the use of useState (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tpLowerLimit, setTpLowerLimit, tpLowerLimitRef] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tpUpperLimit, setTpUpperLimit, tpUpperLimitRef] = useState(0);
-
-  const [submitDisabled, setSubmitDisabled, submitDisabledRef] = useStateRef(true);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [submitDisabled, setSubmitDisabled, submitDisabledRef] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedProfitValue, setEstimatedProfitValue, estimatedProfitValueRef] =
-    useStateRef(initialState);
-  const [estimatedLossValue, setEstimatedLossValue, estimatedLossValueRef] =
-    useStateRef(initialState);
-
-  const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
+    useState(initialState);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [estimatedLossValue, setEstimatedLossValue, estimatedLossValueRef] = useState(initialState);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useState(
     +SafeMath.mult(
       Number(gslPercent),
       SafeMath.mult(openCfdDetails?.openPrice ?? 0, openCfdDetails?.amount ?? 0)
     )
   );
-
-  const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
-
-  const [isTyping, setIsTyping, isTypingRef] = useStateRef({tp: false, sl: false});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [disableSlInput, setDisableSlInput, disableSlInputRef] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isTyping, setIsTyping, isTypingRef] = useState({tp: false, sl: false});
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -391,7 +394,7 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
-  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+  const handleTypingStatusChangeRouter = () => {
     const tp = (typingStatus: boolean) => {
       setIsTyping(prev => ({
         ...prev,
@@ -412,7 +415,7 @@ const UpdateFormModal = ({
     };
   };
 
-  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+  const handleTypingStatusChange = handleTypingStatusChangeRouter();
 
   const checkTpSlWithinBounds = () => {
     if (validateNumberFormat(tpValueRef.current)) {
@@ -1033,8 +1036,11 @@ const UpdateFormModal = ({
             </div>
 
             {/* Info: (20231004 - Julian) Close Button */}
-            <button className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5">
-              <ImCross onClick={modalClickHandler} />
+            <button
+              onClick={modalClickHandler}
+              className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
+            >
+              <ImCross />
             </button>
           </div>
           {/* Info: (20231004 - Julian) Form Content */}

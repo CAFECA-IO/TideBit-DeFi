@@ -1,31 +1,15 @@
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsArticle from '../../components/news_article/news_article';
-import {useGlobal} from '../../contexts/global_context';
 import NavBar from '../../components/nav_bar/nav_bar';
 import Head from 'next/head';
 import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
-import {MarketContext} from '../../contexts/market_context';
-import {
-  BTC_NEWS_FOLDER,
-  DOMAIN,
-  ETH_NEWS_FOLDER,
-  NEWS_FOLDER,
-  USDC_NEWS_FOLDER,
-} from '../../constants/config';
+import {DOMAIN, NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {
-  IPost,
-  getDirectories,
-  getDirectoryById,
-  getFilteredPosts,
-  getPost,
-  getSlugs,
-} from '../../lib/posts';
-import {LayoutAssertion} from '../../constants/layout_assertion';
+import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
@@ -34,11 +18,9 @@ interface IPageProps {
 }
 
 const NewsPage = (props: IPageProps) => {
-  const {layoutAssertion} = useGlobal();
   const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);
-  const marketCtx = useContext(MarketContext);
 
   // TODO: get news from context (20230613 - Shirley)
   // const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');

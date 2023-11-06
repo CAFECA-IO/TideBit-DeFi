@@ -10,7 +10,7 @@ interface ISearchingModalProps {
   modalClickHandler: () => void;
 }
 
-const SearchingModal = ({className, modalVisible, modalClickHandler}: ISearchingModalProps) => {
+const SearchingModal = ({modalVisible, modalClickHandler}: ISearchingModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const searchingSection = (

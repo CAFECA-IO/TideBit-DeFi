@@ -1,5 +1,5 @@
 import {ImCross} from 'react-icons/im';
-import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor, TypeOfPnLColor} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor} from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {
@@ -174,7 +174,7 @@ const PositionUpdatedModal = ({
 
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

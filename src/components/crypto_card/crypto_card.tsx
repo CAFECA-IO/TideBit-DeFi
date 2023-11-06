@@ -1,5 +1,5 @@
 import {BsStar, BsStarFill} from 'react-icons/bs';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
@@ -73,7 +73,8 @@ const CryptoCard = ({
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
-
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
 
   fluctuating = Number(fluctuating);

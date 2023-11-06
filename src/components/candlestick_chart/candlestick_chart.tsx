@@ -23,23 +23,17 @@ import {
   IPriceLine,
   LogicalRange,
   LogicalRangeChangeEventHandler,
-  LineStyle,
 } from 'lightweight-charts';
-import {DEFAULT_SPREAD, LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
+import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
-import {roundToDecimalPlaces} from '../../lib/common';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {GlobalContext} from '../../contexts/global_context';
-import {UserContext} from '../../contexts/user_context';
-import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
-import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {getTime} from '../../constants/time_span_union';
 
 interface ITradingChartGraphProps {
   candleSize: number;
-  // timeSpan: number;
   strokeColor: string[];
   candlestickOn: boolean;
   lineGraphOn: boolean;
@@ -58,8 +52,6 @@ interface IOHLCInfo {
 // Info: Get candlestick data from market context, check the data format and merge with `initData` (20230411 - Shirley)
 const candlestickDataCleaning = (dataArray: CandlestickData[]) => {
   const data = [...dataArray];
-
-  // TODO: 1.檢查high、low 2.檢查資料時間是否重複，重複就整理 high、low (合併為一筆) 3. (20230331 - Shirley)
 
   return data;
 };
@@ -188,36 +180,10 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   };
 };
 
-const toICandlestickData = (data: CandlestickData): ICandlestickData => {
-  return {
-    x: new Date((data.time as number) * 1000),
-    y: {
-      open: data.open,
-      high: data.high,
-      low: data.low,
-      close: data.close,
-      volume: 0,
-      value: 0,
-    },
-  };
-};
-
-// ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
-export default function CandlestickChart({
-  candleSize,
-  strokeColor,
-  candlestickOn,
-  lineGraphOn,
-  showPositionLabel,
-  candlestickChartWidth,
-  candlestickChartHeight,
-  ...otherProps
-}: ITradingChartGraphProps) {
-  const {t}: {t: TranslateFunction} = useTranslation('common');
-
+// Info: 從外面傳進來的參數: 1.timespan 2.style of chart (20231106 - Shirley)
+export default function CandlestickChart({candleSize}: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
   const globalCtx = useContext(GlobalContext);
-  const userCtx = useContext(UserContext);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
     open: 0,
@@ -225,6 +191,8 @@ export default function CandlestickChart({
     low: 0,
     close: 0,
   });
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cursorStyle, setCursorStyle, cursorStyleRef] = useStateRef<
     'hover:cursor-crosshair' | 'hover:cursor-pointer'
   >('hover:cursor-crosshair');
@@ -290,127 +258,69 @@ export default function CandlestickChart({
     });
   };
 
+  // TODO: to show the number (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const priceRangeChangeHandler = (newVisibleLogicalRange: LogicalRange) => {
     const lastData = tuned[tuned.length - 1] as CandlestickData;
 
     updatePriceLine(lastData?.close);
   };
 
-  const longShortPriceLine = () => {
-    const price = marketCtx.selectedTicker?.price ?? 0;
-    const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD; //
+  // TODO: feat: open price line (20231106 - Shirley)
+  // const openPriceLine = () => {
+  //   // ToDo: get the open position from user context (20230411 - Shirley)
+  //   const numOfPosition = 1;
+  //   for (let i = 0; i < numOfPosition; i++) {
+  //     const price = i === 0 ? 1705 : 2500 - 1 * i;
+  //     const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
 
-    const buyPrice = price * (1 + spread);
-    const sellPrice = price * (1 - spread);
+  //     const lineSeries = chart.addLineSeries({
+  //       color: color,
+  //       lineWidth: 1,
+  //       lineStyle: LineStyle.Solid,
+  //       priceLineStyle: LineStyle.Solid,
+  //       crosshairMarkerVisible: false,
+  //       lastValueVisible: false,
+  //       title: `Position: ${roundToDecimalPlaces(price, 2)}　Close`,
+  //       baseLineVisible: true,
+  //     });
 
-    const buyLineSeries = chart.addLineSeries({
-      color: LINE_GRAPH_STROKE_COLOR.UP,
-      priceLineVisible: true,
-      lineWidth: 1,
-      lineStyle: LineStyle.SparseDotted,
-      priceLineStyle: LineStyle.Dashed,
-      crosshairMarkerVisible: false,
-      lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.LONG')} ${roundToDecimalPlaces(buyPrice, 2)}`,
-      baseLineVisible: true,
-    });
+  //     if (!lineSeries || !tuned || tuned.length === 0) return;
 
-    const sellLineSeries = chart.addLineSeries({
-      color: LINE_GRAPH_STROKE_COLOR.DOWN,
-      priceLineVisible: true,
-      lineWidth: 1,
-      lineStyle: LineStyle.SparseDotted,
-      priceLineStyle: LineStyle.Dashed,
-      crosshairMarkerVisible: false,
-      lastValueVisible: false,
-      title: `${t('CANDLESTICK_CHART.SHORT')} ${roundToDecimalPlaces(sellPrice, 2)}`,
-      baseLineVisible: true,
-    });
+  //     try {
+  //       const time = [
+  //         (tuned[0]?.time as number) - 1,
+  //         (tuned[tuned.length - 1]?.time as number) + 1,
+  //       ];
+  //       lineSeries.setData([
+  //         {
+  //           time: time[0] as UTCTimestamp,
+  //           value: price,
+  //         },
+  //         {
+  //           time: time[1] as UTCTimestamp,
+  //           value: price,
+  //         },
+  //       ]);
+  //     } catch (err) {
+  //       // Info: Catch the error and do nothing (20230411 - Shirley)
+  //     }
 
-    if (!buyLineSeries || !tuned || tuned.length === 0) return;
+  //     // ToDo: When clicking, pop up the position closed modal with position information (20230411 - Shirley)
+  //     // ToDo: unsubscribe the event listener (20230411 - Shirley)
+  //     chart.subscribeClick((param: MouseEventParams) => {
+  //       // Info: Get the clicked point (20230411 - Shirley)
+  //       const point = param?.point;
 
-    try {
-      const time = [(tuned[0]?.time as number) - 1, (tuned[tuned.length - 1]?.time as number) + 1];
-      buyLineSeries.setData([
-        {
-          time: time[0] as UTCTimestamp,
-          value: buyPrice,
-        },
-        {
-          time: time[1] as UTCTimestamp,
-          value: buyPrice,
-        },
-      ]);
+  //       if (point === undefined) return;
 
-      sellLineSeries.setData([
-        {
-          time: time[0] as UTCTimestamp,
-          value: sellPrice,
-        },
-        {
-          time: time[1] as UTCTimestamp,
-          value: sellPrice,
-        },
-      ]);
-    } catch (err) {
-      // Info: Catch the error and do nothing (20230411 - Shirley)
-    }
-  };
+  //       globalCtx.visiblePositionClosedModalHandler();
 
-  const openPriceLine = () => {
-    // ToDo: get the open position from user context (20230411 - Shirley)
-    const numOfPosition = 1;
-    for (let i = 0; i < numOfPosition; i++) {
-      const price = i === 0 ? 1705 : 2500 - 1 * i;
-      const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
-
-      const lineSeries = chart.addLineSeries({
-        color: color,
-        lineWidth: 1,
-        lineStyle: LineStyle.Solid,
-        priceLineStyle: LineStyle.Solid,
-        crosshairMarkerVisible: false,
-        lastValueVisible: false,
-        title: `Position: ${roundToDecimalPlaces(price, 2)}　Close`,
-        baseLineVisible: true,
-      });
-
-      if (!lineSeries || !tuned || tuned.length === 0) return;
-
-      try {
-        const time = [
-          (tuned[0]?.time as number) - 1,
-          (tuned[tuned.length - 1]?.time as number) + 1,
-        ];
-        lineSeries.setData([
-          {
-            time: time[0] as UTCTimestamp,
-            value: price,
-          },
-          {
-            time: time[1] as UTCTimestamp,
-            value: price,
-          },
-        ]);
-      } catch (err) {
-        // Info: Catch the error and do nothing (20230411 - Shirley)
-      }
-
-      // ToDo: When clicking, pop up the position closed modal with position information (20230411 - Shirley)
-      // ToDo: unsubscribe the event listener (20230411 - Shirley)
-      chart.subscribeClick((param: MouseEventParams) => {
-        // Info: Get the clicked point (20230411 - Shirley)
-        const point = param?.point;
-
-        if (point === undefined) return;
-
-        globalCtx.visiblePositionClosedModalHandler();
-
-        // ToDo: (lottie) Get the time value from the clicked point (20230411 - Shirley)
-        // const time = chart.timeScale().coordinateToTime(point.x);
-      });
-    }
-  };
+  //       // ToDo: (lottie) Get the time value from the clicked point (20230411 - Shirley)
+  //       // const time = chart.timeScale().coordinateToTime(point.x);
+  //     });
+  //   }
+  // };
 
   const fetchCandlestickData = () => {
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];

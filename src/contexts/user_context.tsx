@@ -215,7 +215,7 @@ export const UserContext = createContext<IUserContext>({
   getUserAssets: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
-  getBadge: function (badgeId: string): Promise<IResult> {
+  getBadge: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -225,33 +225,54 @@ export const UserProvider = ({children}: IUserProvider) => {
   const lunar = React.useMemo(() => Lunar.getInstance(), []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingCFDs, setIsLoadingCFDs, isLoadingCFDsRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser, userRef] = useState<IUser | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userAssets, setUserAssets, userAssetsRef] = useState<IUserAssets | null>(null);
-  // const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [balances, setBalances, balancesRef] = useState<IBalance[] | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [favoriteTickers, setFavoriteTickers, favoriteTickersRef] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [histories, setHistories, historiesRef] = useState<IAcceptedOrder[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [CFDs, setCFDs, CFDsRef] = useState<{[orderId: string]: ICFDOrder}>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<ICFDOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<ICFDOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deposits, setDeposits, depositsRef] = useState<Array<IDepositOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [withdraws, setWithdraws, withdrawsRef] = useState<Array<IWithdrawOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSubscibedNewsletters, setIsSubscibedNewsletters, isSubscibedNewslettersRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isEnabledEmailNotification, setIsEnabledEmailNotification, isEnabledEmailNotificationRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnectedWithEmail, setIsConnectedWithEmail, isConnectedWithEmailRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
     [WalletExtension.META_MASK]
   ); // ToDo: Get user wallet extension (20230419 - Shirley)
@@ -1381,7 +1402,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sendEmailCode = useCallback(async (email: string, hashCash: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1392,7 +1413,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const connectEmail = useCallback(async (email: string, code: number) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1403,7 +1424,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleEmailNotification = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1413,7 +1434,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const subscribeNewsletters = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1423,7 +1444,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const connectTideBit = useCallback(async (email: string, password: string) => {
     let result: IResult = {...defaultResultFailed};
     try {

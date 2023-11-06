@@ -48,7 +48,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millisecondsToSeconds, roundToDecimalPlaces, wait} from '../lib/common';
+import {millisecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -63,13 +63,7 @@ import {
   getDummyNews,
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
-import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestick';
 import SafeMath from '../lib/safe_math';
-import {useGlobal} from './global_context';
-import {ToastTypeAndText} from '../constants/toast_type';
-import {ToastId} from '../constants/toast_id';
-import {useTranslation} from 'react-i18next';
-import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -151,10 +145,6 @@ export const MarketContext = createContext<IMarketContext>({
   timeSpan: TimeSpanUnion._1s,
   guaranteedStopFeePercentage: null,
   selectTimeSpanHandler: () => null,
-  // liveStatstics: null,
-  // bullAndBearIndex: 0,
-  // cryptoBriefNews: [],
-  // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
   depositCryptocurrencies: [...dummyCryptocurrencies],
@@ -168,7 +158,7 @@ export const MarketContext = createContext<IMarketContext>({
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
-  getLeaderboard: function (timeSpan: IRankingTimeSpan): Promise<IResult> {
+  getLeaderboard: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
   getTickerLiveStatistics: () => Promise.resolve(defaultResultSuccess),
@@ -179,10 +169,10 @@ export const MarketContext = createContext<IMarketContext>({
   getNews: () => dummyNews,
   getPaginationNews: () => dummyRecommendedNewsList,
   getRecommendedNews: () => dummyRecommendationNews,
-  getTickerSpread: function (instId: string): number {
+  getTickerSpread: function (): number {
     throw new Error('Function not implemented.');
   },
-  predictCFDClosePrice: function (instId: string, typeOfPosition: ITypeOfPosition): number {
+  predictCFDClosePrice: function (): number {
     throw new Error('Function not implemented.');
   },
   getTideBitPromotion: function (): Promise<IResult> {
@@ -198,51 +188,66 @@ export const MarketContext = createContext<IMarketContext>({
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
-  const {t}: {t: TranslateFunction} = useTranslation('common');
-  const globalCtx = useGlobal();
-
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cryptocurrencies, setCryptocurrencies, cryptocurrenciesRef] = useState<ICryptocurrency[]>(
     []
   );
   const [
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     guaranteedStopFeePercentage,
     setGuaranteedStopFeePercentage,
     guaranteedStopFeePercentageRef,
   ] = useState<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [depositCryptocurrencies, setDepositCryptocurrencies, depositCryptocurrenciesRef] =
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [withdrawCryptocurrencies, setWithdrawCryptocurrencies, withdrawCryptocurrenciesRef] =
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tickerStatic, setTickerStatic, tickerStaticRef] = useState<ITickerStatic | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tickerLiveStatistics, setTickerLiveStatistics, tickerLiveStatisticsRef] =
     useState<ITickerLiveStatistics | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
     ICandlestickData[] | null
   >(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] = useState<
     number | null
   >(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [instId: string]: ITickerData;
   }>(toDummyTickers);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tidebitPromotion, setTidebitPromotion, tidebitPromotionRef] =
     useState<ITideBitPromotion>(dummyTideBitPromotion);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [websiteReserve, setWebsiteReserve, websiteReserveRef] =
     useState<IWebsiteReserve>(dummyWebsiteReserve);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   ); // Deprecated: stale (20231019 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
     useState<boolean>(true);
 
@@ -254,14 +259,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setCandlestickId(id);
   };
 
+  // TODO: 從 API 拿新聞資料 (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getNews = (currency: ICurrency, newsId: string) => {
-    const news: INews = getDummyNews(currency);
+    const news: INews = getDummyNews();
     return news;
   };
 
+  // TODO:? 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPaginationNews = (currency: ICurrency, page?: number, itemsPerPage?: number) => {
     const paginationNews: IRecommendedNews[] = dummyRecommendedNewsList;
-    // TODO:? 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
+
     // if (page && itemsPerPage) {
     //   const start = (page - 1) * itemsPerPage;
     //   const end = start + itemsPerPage;
@@ -271,8 +280,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return paginationNews;
   };
 
+  // TODO: 從 API 拿新聞資料 (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getRecommendedNews = (currency: ICurrency) => {
-    const briefNews = getDummyRecommendationNews(currency);
+    const briefNews = getDummyRecommendationNews();
     return briefNews;
   };
 
@@ -436,17 +447,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const listTickerPositions = useCallback(
     (
-      instId: string,
-      options: {
-        timespan?: ITimeSpanUnion;
-        begin?: number;
-        end?: number;
-        limit?: number;
-      }
+      instId: string
+      // Deprecated: defined but never used ub TickerBook (20231120 - Shirley)
+      // options: {
+      //   timespan?: ITimeSpanUnion;
+      //   begin?: number;
+      //   end?: number;
+      //   limit?: number;
+      // }
     ) => {
       let positions: number[] = [];
       try {
-        positions = tickerBook.listTickerPositions(instId, options);
+        positions = tickerBook.listTickerPositions(instId);
       } catch (error) {
         // TODO: error handle (20230331 - tzuhan)
       }
@@ -852,9 +864,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     if (result.success) {
       // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
-      const valid = isIWebsiteReserve(result.data);
+      const valid = isIWebsiteReserve(result.data as IWebsiteReserve);
+      // console.log('result.data', result.data);
       if (!valid) {
         const dummy = {...dummyWebsiteReserve};
+        // console.log('dummy in getWebisteReserve', dummy);
         setWebsiteReserve(dummy);
 
         // Deprecate: error handle (Shirley - 20230914)

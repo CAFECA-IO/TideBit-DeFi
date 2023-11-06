@@ -46,7 +46,7 @@ export const getDummySharingOrder = (
   return order;
 };
 
-export const isSharingOrder = (order: any) => {
+export const isSharingOrder = (order: ISharingOrder) => {
   if (
     // TODO: Validate the `instId` when data has the property (20230724 - Shirley)
     // typeof order.instId !== 'string' ||
@@ -103,10 +103,7 @@ export const isDummySharingOrder = (order: ISharingOrder): boolean => {
   return true;
 };
 
-export const getInvalidSharingOrder = (
-  currency?: ICurrency,
-  typeOfPosition?: ITypeOfPosition
-): ISharingOrder => {
+export const getInvalidSharingOrder = (): ISharingOrder => {
   const now = getTimestamp();
   const order: ISharingOrder = {
     id: '_id',

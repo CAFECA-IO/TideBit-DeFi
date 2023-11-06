@@ -3,7 +3,6 @@ import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT, TOAST_DURATION} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
-import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
 import FailedModal from '../components/failed_modal/failed_modal';
@@ -15,14 +14,12 @@ import DepositHistoryModal from '../components/deposit_history_modal/deposit_his
 import WalletPanel from '../components/wallet_panel/wallet_panel';
 import HelloModal from '../components/hello_modal/hello_modal';
 import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
-import {UserContext} from './user_context';
 import PositionOpenModal from '../components/position_open_modal/position_open_modal';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 import WarningModal from '../components/warning_modal/warning_modal';
 import {OrderType} from '../constants/order_type';
-import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {
   IDisplayCFDOrder,
   getDummyDisplayCFDOrder,
@@ -52,10 +49,6 @@ import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy
 import {IToastType, ToastType} from '../constants/toast_type';
 import {Code, Reason} from '../constants/code';
 import PersonalAchievementModal from '../components/personal_achievement_modal/personal_achievement_modal';
-import {
-  IPersonalAchievement,
-  defaultPersonalAchievement,
-} from '../interfaces/tidebit_defi_background/personal_achievement';
 import BadgeModal from '../components/badge_modal/badge_modal';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import AnnouncementModal from '../components/announcement_modal/announcement_modal';
@@ -587,8 +580,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
 
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
-
+  // Deprecated:  (20231120 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   const windowSize = useWindowSize();
@@ -1238,7 +1233,8 @@ export const useGlobal = () => {
   const context = useContext(GlobalContext);
   // Info: If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
 
-  // Deprecated: Debug tool [to be removed](20230317 - Shirley)
+  // Deprecated: Debug tool [to be removed](20231120 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

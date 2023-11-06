@@ -11,8 +11,7 @@ export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
   pnl?: IPnL;
 }
 
-export const getDummyDisplayApplyCreateCFDOrder = (currency: ICurrency, id?: string) => {
-  // const date = new Date();
+export const getDummyDisplayApplyCreateCFDOrder = (currency: ICurrency) => {
   const dummyApplyCreateCFDOrder: IDisplayApplyCFDOrder = {
     ...getDummyApplyCreateCFDOrder(currency),
   };
@@ -20,7 +19,6 @@ export const getDummyDisplayApplyCreateCFDOrder = (currency: ICurrency, id?: str
 };
 
 export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
   const dummyApplyUpdateCFDOrder: IDisplayApplyCFDOrder = {
     ...getDummyApplyUpdateCFDOrder(currency, id),
     pnl: {
@@ -32,7 +30,6 @@ export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string
 };
 
 export const getDummyDisplayApplyCloseCFDOrder = (currency: ICurrency, id?: string) => {
-  const date = new Date();
   const dummyApplyCloseCFDOrder: IDisplayApplyCFDOrder = {
     ...getDummyApplyCloseCFDOrder(currency, id),
     pnl: {

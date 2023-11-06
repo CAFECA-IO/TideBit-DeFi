@@ -4,14 +4,11 @@ interface IRippleButtonProps {
   className?: string;
   buttonStyle?: string;
   children: React.ReactNode | string;
-  buttonType: 'button' | 'submit' | 'reset'; // declare the possible values for buttonType
+  buttonType: 'button' | 'submit' | 'reset';
   onClick?: () => void;
   disabled?: boolean;
 }
 
-// interface RefObject<T> {
-//   readonly current: T | null;
-// }
 /**
  * @dev `disabledStyle` is regulated separate component, because the disabled state should be changed dynamically
  * @dev const disabledStyle = submitDisabled ? 'cursor-not-allowed' : ' hover:cursor-pointer';
@@ -19,40 +16,21 @@ interface IRippleButtonProps {
 const RippleButton = ({
   onClick,
   className,
-  buttonStyle,
   children,
   buttonType = 'button',
   disabled,
   ...otherProps
 }: IRippleButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  // const disabledCursor = disabled ? ' cursor-not-allowed' : '';
 
   useEffect(() => {
-    // // const box: Element | null
-    // const element = document.querySelector('#effectContainer') as HTMLElement | null;
-
-    // // box has type Element or null here
-
-    // if (element != null) {
-    //   // box has type Element here
-    //   element.style.backgroundColor = 'salmon';
-    // }
-
     const applyContainerProperties = () => {
       if (!buttonRef) return;
       buttonRef?.current?.classList.add('effectContainer');
     };
 
-    // MouseEvent property
     const applyStyles = (e: MouseEvent) => {
-      // Array.from(
-      //   document.getElementsByClassName('effectContainer') as HTMLCollectionOf<HTMLElement>
-      // );
-      // Array.from(document.getElementsByClassName('effectContainer')).forEach((el: any) => {}));
-
       const {offsetX, offsetY} = e;
-      // const {style} = buttonRef.current;
 
       const sizeOffset = 50;
 
@@ -61,27 +39,19 @@ const RippleButton = ({
     };
 
     const onClick = (e: MouseEvent) => {
-      // if (buttonRef)
       buttonRef?.current?.classList.remove('active');
       applyStyles(e);
 
       buttonRef?.current?.classList.add('active');
-
-      // setTimeout(() => {
-      //   buttonRef?.current.classList.add('active');
-      // }, 1);
     };
 
     applyContainerProperties();
 
-    // Add the event listener on mount
     buttonRef?.current?.addEventListener('mouseup', onClick);
 
-    // Needed for referencing the ref in the return function
     const cleanupRef = buttonRef?.current;
 
     return () => {
-      // Remove the event listener on unmount
       cleanupRef?.removeEventListener('mouseup', onClick);
     };
   });
@@ -98,7 +68,6 @@ const RippleButton = ({
       >
         {children}
       </button>
-      {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}
     </div>
   );
 };

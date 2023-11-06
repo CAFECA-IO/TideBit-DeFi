@@ -1,11 +1,8 @@
-import {NextApiRequest, NextApiResponse} from 'next';
+import {NextApiRequest} from 'next';
 import {ImageResponse} from 'next/server';
 import {
   adjustTimestamp,
-  getTimestamp,
-  getTimestampInMilliseconds,
   numberFormatted,
-  randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
 } from '../../../../lib/common';
@@ -14,28 +11,21 @@ import {
   BG_WIDTH_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
   TypeOfPnLColorHex,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
   WIDTH_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {
   API_URL,
   API_VERSION,
   DOMAIN,
-  FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
   unitAsset,
 } from '../../../../constants/config';
-import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
-import {Currency} from '../../../../constants/currency';
 import {
   ISharingOrder,
-  getDummySharingOrder,
   getInvalidSharingOrder,
-  isDummySharingOrder,
   isSharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
-import {useRouter} from 'next/router';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
 import SafeMath from '../../../../lib/safe_math';
@@ -44,7 +34,7 @@ export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const cfdId = params.pop();
@@ -92,14 +82,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   // TODO: Show the `instId` when data has the property (20230724 - Shirley)
   const {
-    instId,
     userName,
     targetAsset,
     targetAssetName,
     typeOfPosition,
     openPrice,
     closePrice,
-    leverage,
     createTimestamp,
     closeTimestamp,
   } = sharingOrder;

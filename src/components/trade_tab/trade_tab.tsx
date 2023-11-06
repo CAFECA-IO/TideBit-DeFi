@@ -77,8 +77,9 @@ const TradeTab = () => {
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
-
-  const [longPrice, setLongPrice, longPriceRef] = useStateRef(DEFAULT_BUY_PRICE);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longPrice, setLongPrice, longPriceRef] = useStateRef(DEFAULT_BUY_PRICE); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shortPrice, setShortPrice, shortPriceRef] = useStateRef(DEFAULT_SELL_PRICE);
 
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
@@ -114,16 +115,16 @@ const TradeTab = () => {
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedLongProfitValue, setEstimatedLongProfitValue, estimatedLongProfitValueRef] =
     useStateRef(initialState);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedLongLossValue, setEstimatedLongLossValue, estimatedLongLossValueRef] =
     useStateRef(initialState);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedShortProfitValue, setEstimatedShortProfitValue, estimatedShortProfitValueRef] =
     useStateRef(initialState);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedShortLossValue, setEstimatedShortLossValue, estimatedShortLossValueRef] =
     useStateRef(initialState);
 
@@ -131,13 +132,14 @@ const TradeTab = () => {
     useStateRef(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked, shortGuaranteedStopCheckedRef] =
     useStateRef(false);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [requiredMarginLong, setRequiredMarginLong, requiredMarginLongRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.div(SafeMath.mult(targetInputValue, longPriceRef.current), leverage),
       2
     )
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.mult(targetInputValue, longPriceRef.current),
@@ -145,13 +147,14 @@ const TradeTab = () => {
       RoundCondition.SHRINK
     )
   );
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [requiredMarginShort, setRequiredMarginShort, requiredMarginShortRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.div(SafeMath.mult(targetInputValue, shortPriceRef.current), leverage),
       2
     )
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [valueOfPositionShort, setValueOfPositionShort, valueOfPositionShortRef] = useStateRef(
     roundToDecimalPlaces(
       +SafeMath.mult(targetInputValue, shortPriceRef.current),
@@ -159,11 +162,13 @@ const TradeTab = () => {
       RoundCondition.SHRINK
     )
   );
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [marginWarningShort, setMarginWarningShort, marginWarningShortRef] = useStateRef(false);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [longBtnDisabled, setLongBtnDisabled, longBtnDisabledRef] = useStateRef(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shortBtnDisabled, setShortBtnDisabled, shortBtnDisabledRef] = useStateRef(false);
 
   const [targetLengthLong, setTargetLengthLong] = useState(
@@ -187,26 +192,27 @@ const TradeTab = () => {
     roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2).toString()
       .length
   );
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guaranteedStopFeeLong, setGuaranteedStopFeeLong, guaranteedStopFeeLongRef] = useStateRef(
     +SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current)
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guaranteedStopFeeShort, setGuaranteedStopFeeShort, guaranteedStopFeeShortRef] =
     useStateRef(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current));
-
-  const [longSlLowerLimit, setLongSlLowerLimit, longSlLowerLimitRef] = useStateRef(0);
-  const [longSlUpperLimit, setLongSlUpperLimit, longSlUpperLimitRef] = useStateRef(0);
-  const [shortSlLowerLimit, setShortSlLowerLimit, shortSlLowerLimitRef] = useStateRef(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longSlLowerLimit, setLongSlLowerLimit, longSlLowerLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longSlUpperLimit, setLongSlUpperLimit, longSlUpperLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [shortSlLowerLimit, setShortSlLowerLimit, shortSlLowerLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shortSlUpperLimit, setShortSlUpperLimit, shortSlUpperLimitRef] = useStateRef(0);
-
-  const [longTpLowerLimit, setLongTpLowerLimit, longTpLowerLimitRef] = useStateRef(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longTpLowerLimit, setLongTpLowerLimit, longTpLowerLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shortTpUpperLimit, setShortTpUpperLimit, shortTpUpperLimitRef] = useStateRef(0);
-
-  const [longTpSuggestion, setLongTpSuggestion, longTpSuggestionRef] = useStateRef(0);
-  const [longSlSuggestion, setLongSlSuggestion, longSlSuggestionRef] = useStateRef(0);
-  const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longTpSuggestion, setLongTpSuggestion, longTpSuggestionRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [longSlSuggestion, setLongSlSuggestion, longSlSuggestionRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isTyping, setIsTyping, isTypingRef] = useStateRef({
     target: false,
     longTp: false,
@@ -286,7 +292,7 @@ const TradeTab = () => {
     targetInputValueRef.current,
   ]);
 
-  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+  const handleTypingStatusChangeRouter = () => {
     const target = (typingStatus: boolean) => {
       setIsTyping(prev => ({
         ...prev,
@@ -331,7 +337,7 @@ const TradeTab = () => {
     };
   };
 
-  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+  const handleTypingStatusChange = handleTypingStatusChangeRouter();
 
   const setPrice = () => {
     if (marketCtx.selectedTicker?.instId) {
@@ -482,7 +488,7 @@ const TradeTab = () => {
 
   const getTargetInputValue = (value: number) => {
     setTargetInputValue(value);
-    targetAmountDetection(value);
+    targetAmountDetection();
 
     calculateLongProfit();
     calculateLongLoss();
@@ -801,7 +807,7 @@ const TradeTab = () => {
     });
   };
 
-  const targetAmountDetection = (value?: number) => renewPosition();
+  const targetAmountDetection = () => renewPosition();
 
   const tabBodyWidth = 'w-320px';
 

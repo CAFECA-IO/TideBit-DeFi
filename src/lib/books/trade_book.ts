@@ -13,15 +13,9 @@
  * 1.
  */
 
-import {
-  ICandlestickData,
-  isCandlestickData,
-} from '../../interfaces/tidebit_defi_background/candlestickData';
-import {Code} from '../../constants/code';
+import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {Model} from '../../constants/model';
-import {CustomError} from '../custom_error';
-import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../../constants/time_span_union';
-import {CANDLESTICK_SIZE} from '../../constants/display';
+import {ITimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {millisecondsToSeconds} from '../common';
 
 interface ITradeInTradeBook {
@@ -53,9 +47,27 @@ interface ITradeBookConfig {
   holdingTradesMs: number; // Info: 持有多久的資料 (20230601 - Tzuhans)
 }
 
-function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
+// function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
+//   const originalMethod = descriptor.value;
+//   descriptor.value = function (this: any, instId: string, ...args: any[]) {
+//     this.ensureTickerExists(instId);
+//     return originalMethod.apply(this, [instId, ...args]);
+//   };
+//   return descriptor;
+// }
+
+type TradeBookLike = {
+  ensureTickerExists: (instId: string) => void;
+  // Include any other methods or properties expected to be used within the decorator
+};
+
+function ensureTickerExistsDecorator<T extends TradeBookLike>(
+  target: T,
+  key: string,
+  descriptor: PropertyDescriptor
+) {
   const originalMethod = descriptor.value;
-  descriptor.value = function (this: any, instId: string, ...args: any[]) {
+  descriptor.value = function (this: T, instId: string, ...args: unknown[]) {
     this.ensureTickerExists(instId);
     return originalMethod.apply(this, [instId, ...args]);
   };
@@ -66,7 +78,6 @@ class TradeBook {
   private trades: Map<string, ITradeInTradeBook[]>;
   private predictedTrades: Map<string, ITradeInTradeBook[]>;
   private candlestickChart: Map<string, ICandlestickDataWithTimeSpan>;
-  private convertedTradeIds: Set<string> = new Set();
   private isPredicting: Map<string, boolean>;
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
@@ -84,12 +95,13 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   addTrades(instId: string, trades: ITradeInTradeBook[]) {
-    const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
+    const validTrades = trades.filter(trade => this.isValidTrade(trade));
 
     this.resetPrediction(instId);
 
-    for (const trade of vaildTrades) {
-      if (this.trades.get(instId)!.length >= this.config.minLengthForLinearRegression) {
+    for (const trade of validTrades) {
+      const trades = this.getTrades(instId);
+      if (trades.length >= this.config.minLengthForLinearRegression) {
         const lastTrade = this.getLastTrade(instId);
         const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
@@ -106,7 +118,7 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   add(instId: string, trade: ITradeInTradeBook): void {
-    const trades = this.trades.get(instId)!;
+    const trades = this.getTrades(instId);
 
     if (!this.isValidTrade(trade)) {
       throw new Error('Invalid trade');
@@ -131,7 +143,7 @@ class TradeBook {
   @ensureTickerExistsDecorator
   private resetPrediction(instId: string): void {
     if (this.predictionTimers.has(instId)) {
-      clearTimeout(this.predictionTimers.get(instId)!);
+      clearTimeout(this.predictionTimers.get(instId));
       this.predictionTimers.delete(instId);
     }
   }
@@ -141,9 +153,8 @@ class TradeBook {
     let newTrade: ITradeInTradeBook = {...trade};
 
     const isPredictedData = newTrade.tradeId.includes('-');
-
-    const trades = this.trades.get(instId)!;
-    const predictedTrades = this.predictedTrades.get(instId)!;
+    const trades = this.getTrades(instId);
+    const predictedTrades = this.getPredictedTrades(instId);
 
     // Info: 檢查這筆trade是預測的還是真實的，然後存進不同變數裡 (20230816 - Shirley)
     if (!isPredictedData) {
@@ -161,8 +172,7 @@ class TradeBook {
       }`;
 
       newTrade = {...trade, tradeId};
-
-      this.predictedTrades.get(instId)!.push({...trade, tradeId});
+      predictedTrades.push({...trade, tradeId});
     }
   }
 
@@ -197,8 +207,8 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   private _trim(instId: string): void {
-    const trades = this.trades.get(instId)!;
-    const predictedTrades = this.predictedTrades.get(instId)!;
+    const trades = this.getTrades(instId);
+    const predictedTrades = this.getPredictedTrades(instId);
 
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
@@ -242,16 +252,13 @@ class TradeBook {
     this.togglePredicting(instId, true);
 
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
+    const predictedTrades = this.getPredictedTrades(instId);
+
     this.predictionTimers.set(
       instId,
       setTimeout(() => {
         if (this.isPredicting.get(instId)) {
-          this.predictNextTrade(
-            instId,
-            this.predictedTrades.get(instId)!,
-            this.config.intervalMs,
-            1
-          );
+          this.predictNextTrade(instId, predictedTrades, this.config.intervalMs, 1);
           this._trim(instId);
           this.startPredictionLoop(instId);
         }
@@ -321,7 +328,7 @@ class TradeBook {
   trimCandlestickData(length: number, instData?: Map<string, ICandlestickDataWithTimeSpan>) {
     if (!instData) {
       // Info: If instData doesn't exist, directly trim this.candlestickChart (20231019 - Shirley)
-      this.candlestickChart.forEach((dataWithTimeSpan, instId) => {
+      this.candlestickChart.forEach(dataWithTimeSpan => {
         (Object.keys(dataWithTimeSpan) as ITimeSpanUnion[]).forEach((timeSpan: ITimeSpanUnion) => {
           dataWithTimeSpan[timeSpan] = dataWithTimeSpan[timeSpan].slice(-length);
         });
@@ -558,7 +565,7 @@ class TradeBook {
     const wTimestampSum = weightedTimestamp.reduce((a, b) => a + b, 0);
     const wPriceSum = weightedPrices.reduce((a, b) => a + b, 0);
 
-    const x = trades.map((t, i) => t.timestampMs);
+    const x = trades.map(t => t.timestampMs);
     const y = trades.map(t => t.price);
 
     // Info: (20230522 - Shirley) Step 3: Calculate means
@@ -627,7 +634,7 @@ class TradeBook {
 
   @ensureTickerExistsDecorator
   toLineChart(instId: string, interval: number, length: number): ILine[] {
-    const trades = this.predictedTrades.get(instId)!;
+    const trades = this.getPredictedTrades(instId);
 
     if (trades.length === 0) return [];
 
@@ -672,8 +679,8 @@ class TradeBook {
     singleTimestampMs?: number,
     tradesArray?: ITradeInTradeBook[]
   ): ICandlestickData[] {
-    const trades =
-      !tradesArray || tradesArray.length === 0 ? this.predictedTrades.get(instId)! : tradesArray;
+    const predictedTrades = this.getPredictedTrades(instId);
+    const trades = !tradesArray || tradesArray.length === 0 ? predictedTrades : tradesArray;
 
     if (trades.length === 0) return [];
 
@@ -768,8 +775,10 @@ class TradeBook {
     }
   }
 
-  isValidTrade(trade: any): trade is ITradeInTradeBook {
+  isValidTrade(trade: unknown): trade is ITradeInTradeBook {
     return (
+      typeof trade === 'object' &&
+      trade !== null &&
       'tradeId' in trade &&
       'targetAsset' in trade &&
       'unitAsset' in trade &&
@@ -780,7 +789,7 @@ class TradeBook {
     );
   }
 
-  private ensureTickerExists(instId: string) {
+  ensureTickerExists(instId: string) {
     if (!this.trades.has(instId)) {
       this.trades.set(instId, []);
     }
@@ -788,18 +797,32 @@ class TradeBook {
     if (!this.predictedTrades.has(instId)) {
       this.predictedTrades.set(instId, []);
     }
+
+    this.ensureCandlestickDataExists(instId);
+  }
+
+  getTrades(instId: string) {
+    this.ensureTickerExists(instId);
+    const trades = this.trades.get(instId) ?? [];
+    return trades;
+  }
+
+  getPredictedTrades(instId: string) {
+    this.ensureTickerExists(instId);
+    const predictedTrades = this.predictedTrades.get(instId) ?? [];
+    return predictedTrades;
   }
 
   @ensureTickerExistsDecorator
   private getLastTrade(instId: string) {
-    const trades = this.trades.get(instId);
-    return trades![trades!.length - 1];
+    const trades = this.getTrades(instId);
+    return trades[trades.length - 1];
   }
 
   @ensureTickerExistsDecorator
   private getLastPredictedTrade(instId: string) {
-    const predictedTrades = this.predictedTrades.get(instId);
-    return predictedTrades![predictedTrades!.length - 1];
+    const predictedTrades = this.getPredictedTrades(instId);
+    return predictedTrades[predictedTrades.length - 1];
   }
 
   private ensureCandlestickDataExists(instId: string) {

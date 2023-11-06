@@ -1,4 +1,4 @@
-import {useState, useContext, useId, useEffect} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,
@@ -10,8 +10,6 @@ import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import useStateRef from 'react-usestateref';
-import {TideBitEvent} from '../../constants/tidebit_event';
-import {NotificationContext} from '../../contexts/notification_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -22,29 +20,9 @@ interface ITradingChartSwitchProps {
   getDisplayedPositionLabel: (bool: boolean) => void;
 }
 
-const DEFAULT_CHART_WIDTH = 900;
-const DEFAULT_CHART_HEIGHT = 400;
 const MIN_SCREEN_WIDTH = 1024;
 const TRADE_TAB_WIDTH = 350;
 const SWITCH_HEIGHT = 40;
-
-const getChartSize = () => {
-  const windowSize = useWindowSize();
-  const defaultChartSize = {
-    width: DEFAULT_CHART_WIDTH,
-    height: DEFAULT_CHART_HEIGHT,
-  };
-  const chartWidth =
-    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-      ? windowSize.width - TRADE_TAB_WIDTH
-      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
-  const chartSize = {
-    width: chartWidth.toString(),
-    height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
-  };
-
-  return chartSize;
-};
 
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
@@ -68,12 +46,13 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
-  const notificationCtx = useContext(NotificationContext);
   const {selectTimeSpanHandler} = useContext(MarketContext);
   const [activeButton, setActiveButton] = useState(TimeSpanUnion._1s);
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);
   const [activeChartTypeMobile, setActiveChartTypeMobile] = useState('candlestick');
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabled, setDisabled, disabledRef] = useStateRef(true);
 
   useEffect(() => {

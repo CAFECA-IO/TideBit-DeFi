@@ -15,7 +15,7 @@ import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
 import {ITicker, Ticker} from '../../constants/ticker';
-import {areArraysEqual, arrayDifferences} from '../../lib/common';
+import {arrayDifferences} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -65,6 +65,8 @@ const TickerSelectorBox = ({
   const [searches, setSearches] = useState<string>();
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
   const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [starredTickers, setStarredTickers, starredTickersRef] = useStateRef<string[]>([]);
 
   const generateStarredStateFunction = (ticker: ITicker) => (prop: boolean) => {

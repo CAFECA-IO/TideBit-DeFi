@@ -13,26 +13,6 @@ interface IAlertProps {
   data: IAlertData;
 }
 
-const healthySvg = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
-    <path
-      d="M20.1875 37.1875C29.6799 37.1875 37.375 29.4924 37.375 20C37.375 10.5076 29.6799 2.8125 20.1875 2.8125C10.6951 2.8125 3 10.5076 3 20C3 29.4924 10.6951 37.1875 20.1875 37.1875Z"
-      stroke="#17BF88"
-      strokeWidth="5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M20 29.1667V20"
-      stroke="#17BF88"
-      strokeWidth="5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="20" cy="12" r="3" fill="#17BF88" />
-  </svg>
-);
-
 const warningSvg = (
   <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
     <path
@@ -78,64 +58,32 @@ const errorSvg = (
   </svg>
 );
 
-const crossSvg = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-    <path d="M13 1L1.00001 13" stroke="#8B8E91" strokeWidth="2" strokeLinecap="round" />
-    <path d="M1 1L13 13" stroke="#8B8E91" strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-
 function getBorderColor(type: IAlertStateType) {
   switch (type) {
-    case AlertState.HEALTHY:
-      return 'border-lightGreen5';
     case AlertState.WARNING:
       return 'border-lightYellow2';
     case AlertState.ERROR:
       return 'border-lightRed';
     default:
-      return 'border-lightGreen';
+      return 'border-lightYellow2';
   }
 }
 
 function getAlertSvg(type: IAlertStateType) {
   switch (type) {
-    case AlertState.HEALTHY:
-      return healthySvg;
     case AlertState.WARNING:
       return warningSvg;
     case AlertState.ERROR:
       return errorSvg;
     default:
-      return healthySvg;
+      return warningSvg;
   }
 }
 
 const Alert = ({modalVisible, modalClickHandler, data}: IAlertProps) => {
-  const [timer, setTimer] = useState<NodeJS.Timeout>();
-
   const message = isIncludingChinese(data.message)
     ? truncateText(data.message, CHINESE_CHARACTER_LENGTH_FOR_ALERT)
     : truncateText(data.message, ENGLISH_CHARACTER_LENGTH_FOR_ALERT);
-
-  useEffect(() => {
-    if (modalVisible && data.type === AlertState.HEALTHY) {
-      setTimer(
-        setTimeout(() => {
-          modalClickHandler();
-        }, TOAST_DURATION_SECONDS)
-      );
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [modalVisible]);
-
-  const crossClickHandler = () => {
-    clearTimeout(timer);
-    modalClickHandler();
-  };
 
   const alertUI = (
     <div
@@ -153,19 +101,15 @@ const Alert = ({modalVisible, modalClickHandler, data}: IAlertProps) => {
           {message}
         </div>
       </div>
-      <div className="w-6 h-6 p-1.5 justify-center items-center flex">
-        <button className="" onClick={crossClickHandler}>
-          {crossSvg}
-        </button>
-      </div>
+      <div className="w-6 h-6 p-1.5 justify-center items-center flex"></div>
     </div>
   );
 
   const isDisplayedAlert = (
     <div>
       <div
-        className={`fixed inset-0 z-80 flex items-start ${
-          modalVisible ? `translate-y-14 ` : `-translate-y-40`
+        className={`fixed inset-0 z-60 flex items-start ${
+          modalVisible ? `translate-y-11` : `-translate-y-40`
         } duration-300 justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-none focus:outline-none pointer-events-none`}
       >
         <div className={`relative mx-auto my-6`}>

@@ -1,12 +1,10 @@
-export type IAlertStateType = 'HEALTHY' | 'WARNING' | 'ERROR';
+export type IAlertStateType = 'WARNING' | 'ERROR';
 export interface IAlertStateConstant {
-  HEALTHY: IAlertStateType;
   WARNING: IAlertStateType;
   ERROR: IAlertStateType;
 }
 
 export const AlertState: IAlertStateConstant = {
-  HEALTHY: 'HEALTHY',
   WARNING: 'WARNING',
   ERROR: 'ERROR',
 };

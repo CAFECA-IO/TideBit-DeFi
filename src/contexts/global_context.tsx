@@ -774,7 +774,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
-    setVisibleAlert(false);
   }, []);
 
   const eliminateToasts = useCallback((id: string) => {

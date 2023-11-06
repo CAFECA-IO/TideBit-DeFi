@@ -7,7 +7,7 @@ interface Hero1Props {
   img?: string;
 }
 
-const Hero1 = ({heading, content, img, ...otherProps}: Hero1Props) => {
+const Hero1 = ({heading, content, img}: Hero1Props) => {
   const displayedHeading = heading
     ? heading
     : `

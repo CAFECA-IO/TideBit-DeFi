@@ -9,7 +9,7 @@ interface HeroReverseProps {
 }
 
 // ml-20 & mr-40 are used to center the content
-const HeroReverse = ({heading, highlight, content, img, ...otherProps}: HeroReverseProps) => {
+const HeroReverse = ({heading, highlight, content, img}: HeroReverseProps) => {
   const displayedHeading = highlight ? (
     <div className="font-bold">
       {heading} <span className="text-tidebitTheme">{highlight}</span>

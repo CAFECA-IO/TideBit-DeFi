@@ -13,7 +13,7 @@ const HistorySubTab = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const cfds = userCtx.closedCFDs.sort((a, b) => b.closeTimestamp! - a.closeTimestamp!);
+  const cfds = userCtx.closedCFDs.sort((a, b) => (b.closeTimestamp ?? 0) - (a.closeTimestamp ?? 0));
 
   const historyPositionList = isLoading ? (
     <Skeleton count={10} height={55} />

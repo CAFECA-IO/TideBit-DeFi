@@ -20,7 +20,6 @@ export interface IFailedModal {
 }
 
 const FailedModal = ({
-  modalRef: modalRef,
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
@@ -30,7 +29,6 @@ const FailedModal = ({
   failedTitle,
   failedMsg,
   btnFunction,
-  ...otherProps
 }: IFailedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 

@@ -11,68 +11,31 @@
  * 2.3 draw candlestick chart with data
  */
 
-import React, {useState, useContext, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useContext, useEffect, useRef} from 'react';
 import {
   createChart,
-  CrosshairMode,
   ColorType,
-  ChartOptions,
   CandlestickData,
-  WhitespaceData,
   UTCTimestamp,
-  LocalizationOptions,
   IChartApi,
   ISeriesApi,
-  BarData,
   MouseEventParams,
   IPriceLine,
   LogicalRange,
   LogicalRangeChangeEventHandler,
   LineStyle,
-  SeriesMarker,
-  Time,
-  TimeScaleOptions,
 } from 'lightweight-charts';
-import Lottie, {useLottie} from 'lottie-react';
-import spotAnimation from '../../../public/animation/circle.json';
-import {
-  DEFAULT_SPREAD,
-  EXAMPLE_BLUE_COLOR,
-  LIGHT_GRAY_COLOR,
-  LINE_GRAPH_STROKE_COLOR,
-  TRADING_CHART_BORDER_COLOR,
-  TypeOfPnLColorHex,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
-import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
-import {MarketContext, MarketProvider} from '../../contexts/market_context';
-import {
-  getNowSeconds,
-  getTimestamp,
-  randomFloatFromInterval,
-  randomIntFromInterval,
-  timestampToString,
-  roundToDecimalPlaces,
-} from '../../lib/common';
-import {
-  ICandlestickData,
-  getDummyCandlestickChartData,
-  updateDummyCandlestickChartData,
-} from '../../interfaces/tidebit_defi_background/candlestickData';
+import {DEFAULT_SPREAD, LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
+import {MarketContext} from '../../contexts/market_context';
+import {roundToDecimalPlaces} from '../../lib/common';
+import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import {AppContext} from '../../contexts/app_context';
-import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {ProfitState} from '../../constants/profit_state';
-import {TypeOfPosition} from '../../constants/type_of_position';
-import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
-import {freemem} from 'os';
-import {normalize} from 'path';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
-import {create} from 'domain';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import {getTime} from '../../constants/time_span_union';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -127,7 +90,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
     rightOffset: 12,
   };
 
-  const chartOptions: any = {
+  const chartOptions = {
     width: chartWidth,
     height: chartHeight,
     layout: {

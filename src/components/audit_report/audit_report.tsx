@@ -13,7 +13,6 @@ const reportDate = timestampToString(yesterday);
 const AuditReport = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
-  const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
   return (
     <section>

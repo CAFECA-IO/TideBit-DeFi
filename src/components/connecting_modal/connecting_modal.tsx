@@ -14,20 +14,8 @@ const ConnectingModal = ({
   connectingModalRef,
   connectingModalVisible = false,
   connectingClickHandler,
-  ...otherProps
 }: IConnectingModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // const {isShowing} = props;
-
-  // const {
-  //   ref: connectingModalRef,
-  //   componentVisible: connectingModalVisible,
-  //   setComponentVisible: setConnectingModalVisible,
-  // } = useOuterClick(isShowing);
-
-  // const connectingClickHandler = () => {
-  //   setConnectingModalVisible(!connectingModalVisible);
-  // };
 
   const isDisplayedConnecting = connectingModalVisible ? (
     <>

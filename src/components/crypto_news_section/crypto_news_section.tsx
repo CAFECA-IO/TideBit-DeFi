@@ -22,7 +22,7 @@ const CryptoNewsSection = (props: ICryptoNewsSectionProps) => {
     cryptoBriefNews instanceof Array &&
     cryptoBriefNews
       ?.sort((a, b) => b.timestamp - a.timestamp)
-      ?.map((news, index) => {
+      ?.map(news => {
         return (
           <CryptoNewsItem
             key={news.img}

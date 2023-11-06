@@ -1,11 +1,9 @@
 import Image from 'next/image';
 import React from 'react';
 import {BiArrowBack} from 'react-icons/bi';
-import NavBar from '../nav_bar/nav_bar';
-import {useRouter} from 'next/router';
 import Link from 'next/link';
 import {timestampToString, truncateText} from '../../lib/common';
-import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
+import {ISocialMedia, ShareSettings} from '../../constants/social_media';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH} from '../../constants/display';
@@ -17,14 +15,6 @@ interface IRecommendedNews {
   timestamp: number;
   title: string;
   description: string;
-}
-
-interface INews {
-  newsId: string;
-  img: string;
-  timestamp: number;
-  title: string;
-  content: string;
 }
 
 interface INewsArticle {

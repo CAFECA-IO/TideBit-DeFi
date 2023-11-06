@@ -14,14 +14,12 @@ export interface IFailedModal {
 }
 
 const CanceledModal = ({
-  modalRef: modalRef,
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
   modalContent,
   btnMsg,
   btnUrl,
-  ...otherProps
 }: IFailedModal) => {
   const cancellationContent = (
     <div className="relative flex-auto pt-1">

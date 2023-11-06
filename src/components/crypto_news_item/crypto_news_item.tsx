@@ -1,17 +1,10 @@
 import Image from 'next/image';
 import React from 'react';
 import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_news_item';
-import {truncateText, timestampToString} from '../../lib/common';
+import {timestampToString} from '../../lib/common';
 import Link from 'next/link';
 
-const CryptoNewsItem = ({
-  id: id,
-  timestamp,
-  title: heading,
-  content,
-  img,
-  ...otherProps
-}: IBriefNewsItem) => {
+const CryptoNewsItem = ({id: id, timestamp, title: heading, content, img}: IBriefNewsItem) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
 
   const displayedHeading = <div className="">{heading}</div>;

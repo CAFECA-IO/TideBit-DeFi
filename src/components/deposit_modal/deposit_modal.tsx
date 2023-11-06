@@ -28,12 +28,7 @@ interface IDepositModal {
   getTransferData: (props: {asset: string; amount: number}) => void;
 }
 
-const DepositModal = ({
-  modalVisible,
-  modalClickHandler,
-  getTransferData,
-  ...otherProps
-}: IDepositModal) => {
+const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {t: _t} = useTranslation();
   const {depositCryptocurrencies} = useContext(MarketContext);
@@ -41,8 +36,8 @@ const DepositModal = ({
   const userCtx = useContext(UserContext);
   const {locale} = useRouter();
 
-  const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
-  const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
+  const [showCryptoMenu, setShowCryptoMenu] = useStateRef(false);
+  const [selectedCrypto, setSelectedCrypto] = useStateRef(
     depositCryptocurrencies[0] ?? defaultCryptocurrency
   );
   const [amountInput, setAmountInput] = useState<number | undefined>();
@@ -172,7 +167,7 @@ const DepositModal = ({
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
       globalCtx.eliminateAllModals();
 
       // ToDo: Report error to backend (20230413 - Shirley)

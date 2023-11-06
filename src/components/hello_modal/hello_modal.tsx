@@ -12,12 +12,7 @@ interface IHelloModal {
   helloClickHandler?: () => void;
 }
 
-const HelloModal = ({
-  helloModalRef,
-  helloModalVisible = false,
-  helloClickHandler,
-  ...otherProps
-}: IHelloModal) => {
+const HelloModal = ({helloModalRef, helloModalVisible = false, helloClickHandler}: IHelloModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const isDisplayedHelloModal = helloModalVisible ? (

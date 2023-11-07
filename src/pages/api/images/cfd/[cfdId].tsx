@@ -22,7 +22,6 @@ import {
   isSharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
-// import {Buffer} from 'buffer';
 import SafeMath from '../../../../lib/safe_math';
 import React from 'react';
 import {
@@ -30,7 +29,7 @@ import {
   numberFormatted,
   roundToDecimalPlaces,
   timestampToString,
-} from '../../../../lib/common_for_edge';
+} from '../../../../lib/common';
 
 export const config = {
   runtime: 'edge',

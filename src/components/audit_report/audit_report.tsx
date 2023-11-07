@@ -6,6 +6,7 @@ import {BAIFA_LINK} from '../../constants/config';
 import useCheckLink from '../../lib/hooks/use_check_link';
 import {getTimestamp, timestampToString} from '../../lib/common';
 import {ONE_DAY_IN_SECONDS} from '../../constants/display';
+import React from 'react';
 
 const yesterday = getTimestamp() - ONE_DAY_IN_SECONDS;
 const reportDate = timestampToString(yesterday);
@@ -46,6 +47,7 @@ const AuditReport = () => {
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={`${t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}`}
                 target="_blank"
+                rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
               >
                 <Image
@@ -66,6 +68,7 @@ const AuditReport = () => {
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={`${t('HOME_PAGE.BALANCE_SHEET_LINK')}`}
                 target="_blank"
+                rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
               >
                 <Image
@@ -84,6 +87,7 @@ const AuditReport = () => {
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={`${t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}`}
                 target="_blank"
+                rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
               >
                 <Image
@@ -107,6 +111,7 @@ const AuditReport = () => {
                 href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
                 download
                 target="_blank"
+                rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
               >
                 <Image
@@ -129,6 +134,7 @@ const AuditReport = () => {
           <a
             href={baifaLink}
             target="_blank"
+            rel="noreferrer"
             className={`flex w-105px items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
           >
             <p className="">BAIFA</p>

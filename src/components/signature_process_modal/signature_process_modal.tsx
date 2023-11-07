@@ -6,7 +6,7 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
 import Lottie from 'lottie-react';
 import {UserContext} from '../../contexts/user_context';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';

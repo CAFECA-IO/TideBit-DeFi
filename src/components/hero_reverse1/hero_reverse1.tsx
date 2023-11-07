@@ -28,7 +28,7 @@ chambray.`;
   const displayedImg = img ? (
     <Image src={img} width={1366} height={930} alt="picture" />
   ) : (
-    <img
+    <Image
       className="rounded object-cover object-center"
       alt="hero"
       src="https://dummyimage.com/500x400"

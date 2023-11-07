@@ -2,6 +2,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 interface IQrcodeModal {

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import TideButton from '../../components/tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 

@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';

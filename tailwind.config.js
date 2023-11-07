@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode: 'jit',
   content: ['./src/**/**/*.{js,ts,jsx,tsx}'],
-
   theme: {
     container: {},
     content: {
@@ -605,9 +603,6 @@ module.exports = {
           },
         },
         openMenu: {
-          // '0%': {transform: 'scaleY(0)'},
-          // '80%': {transform: 'scaleY(1.2)'},
-          // '100%': {transform: 'scaleY(1)'},
           '0%, 20%': {transform: 'rotate(-3deg)'},
         },
       }),

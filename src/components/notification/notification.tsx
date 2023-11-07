@@ -1,4 +1,4 @@
-import {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';

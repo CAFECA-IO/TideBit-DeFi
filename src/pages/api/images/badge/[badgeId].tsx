@@ -1,6 +1,6 @@
+/*eslint-disable @next/next/no-img-element*/
 import {NextApiRequest} from 'next';
-import {ImageResponse} from 'next/server';
-import {timestampToString, adjustTimestamp, accountTruncate} from '../../../../lib/common';
+import {ImageResponse} from 'next/og';
 import {IBadge} from '../../../../interfaces/tidebit_defi_background/badge';
 import {
   BADGE_LIST,
@@ -9,8 +9,10 @@ import {
   BG_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {DOMAIN, API_URL, API_VERSION} from '../../../../constants/config';
-import {BARLOW_BASE64} from '../../../../constants/fonts';
-import {Buffer} from 'buffer';
+// import {BARLOW_BASE64} from '../../../../constants/fonts';
+// import {Buffer} from 'buffer';
+import React from 'react';
+import {accountTruncate, adjustTimestamp, timestampToString} from '../../../../lib/common_for_edge';
 
 export const config = {
   runtime: 'edge',
@@ -84,7 +86,12 @@ export default async function handler(req: NextApiRequest) {
   const marketIconUrl = DOMAIN + '/elements/market_icon@2x.png';
   const leaderboardIconUrl = DOMAIN + '/elements/leaderboard_icon@2x.png';
 
-  const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  // const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  // const BarlowBuffer = new Uint8Array(
+  //   atob(BARLOW_BASE64)
+  //     .split('')
+  //     .map(char => char.charCodeAt(0))
+  // ).buffer;
 
   const imageResponse = new ImageResponse(
     (
@@ -250,14 +257,14 @@ export default async function handler(req: NextApiRequest) {
     {
       width: BG_WIDTH_OF_SHARING_RECORD,
       height: BG_HEIGHT_OF_SHARING_RECORD,
-      fonts: [
-        {
-          name: 'Barlow',
-          data: BarlowBuffer,
-          weight: 400,
-          style: 'normal',
-        },
-      ],
+      // fonts: [
+      //   {
+      //     name: 'Barlow',
+      //     data: BarlowBuffer,
+      //     weight: 400,
+      //     style: 'normal',
+      //   },
+      // ],
     }
   );
   return imageResponse;

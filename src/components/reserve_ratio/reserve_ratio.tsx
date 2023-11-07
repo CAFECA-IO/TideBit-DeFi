@@ -75,6 +75,7 @@ const ReserveRatio = () => {
             href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t('HOME_PAGE.REPORTS_LINK')}`}
             download
             target="_blank"
+            rel="noreferrer"
             className="flex space-x-2 hover:text-tidebitTheme"
           >
             <p className="text-sm">{t('HOME_PAGE.DOWNLOAD_REPORT')}</p>

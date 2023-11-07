@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';

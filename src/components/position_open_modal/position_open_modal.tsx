@@ -17,7 +17,7 @@ import {
   validateNumberFormat,
   getValueByProp,
 } from '../../lib/common';
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';

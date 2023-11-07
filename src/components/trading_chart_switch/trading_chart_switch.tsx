@@ -1,4 +1,4 @@
-import {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,

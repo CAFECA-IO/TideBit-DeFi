@@ -14,7 +14,7 @@ const NewsItem = ({newsId, timestamp, title, description, img}: IRecommendedNews
   const displayedImg = img ? (
     <Image src={img} alt="news" width={900} height={500} />
   ) : (
-    <img
+    <Image
       className="rounded object-cover object-center"
       alt="news"
       src="https://dummyimage.com/200x115"

@@ -34,7 +34,6 @@ import {
   IRoundConditionConstant,
   RoundCondition,
 } from '../interfaces/tidebit_defi_background/round_condition';
-import BigNumber from 'bignumber.js';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
@@ -268,7 +267,7 @@ export const getNowSeconds = () => {
 export const toQuery = (params: {[key: string]: string | number | boolean} | undefined) => {
   const query: string = params
     ? `?${Object.keys(params)
-        .map(key => `${key}=${params![key]}`)
+        .map(key => `${key}=${params[key]}`)
         .join('&')}`
     : ``;
   return query;
@@ -597,7 +596,13 @@ export const isCookieExpired = (cookieValue: string): boolean => {
   return expired;
 };
 
-export const hasValue = (obj: any) => {
+export const hasValue = (
+  obj:
+    | {
+        [s: string]: unknown;
+      }
+    | ArrayLike<unknown>
+) => {
   return Object?.values(obj)?.some(v => v !== null && v !== undefined);
 };
 
@@ -736,6 +741,8 @@ export const validateNumberFormat = (value: number | string) => {
   return regex.test(value?.toString());
 };
 
+// Info: for unknown type (20231106 - Shirley)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getValueByProp(obj: any, prop: string) {
   const keys = prop.split('.');
   return keys.reduce((o, k) => (o || {})[k], obj);

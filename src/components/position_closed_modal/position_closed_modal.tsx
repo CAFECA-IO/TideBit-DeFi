@@ -21,7 +21,7 @@ import {
   toPnl,
   numberFormatted,
 } from '../../lib/common';
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,

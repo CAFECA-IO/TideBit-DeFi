@@ -1,5 +1,6 @@
 import {useTranslation} from 'next-i18next';
 import {numberFormatted} from '../../lib/common';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 interface ITradeStatistics {

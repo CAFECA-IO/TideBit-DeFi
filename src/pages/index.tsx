@@ -2,7 +2,7 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AppContext} from '../contexts/app_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';

@@ -1,7 +1,11 @@
 import {TRADING_CRYPTO_DATA} from '../../constants/config';
 import {Currency, ICurrency} from '../../constants/currency';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
-import {getChainNameByCurrency, getTimestamp, randomIntFromInterval} from '../../lib/common';
+import {
+  getChainNameByCurrency,
+  getTimestamp,
+  randomIntFromInterval,
+} from '../../lib/common_for_edge';
 
 export interface ISharingOrder {
   id: string;

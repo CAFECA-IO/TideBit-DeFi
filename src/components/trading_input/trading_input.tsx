@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useEffect, useCallback} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useCallback} from 'react';
 import {
   INPUT_VALIDATION_DELAY,
   TRADING_INPUT_STEP,

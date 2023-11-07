@@ -3,6 +3,7 @@ import failedAnimation from '../../../public/animation/Lottie_Main_Comp.json';
 import RippleButton from '../ripple_button/ripple_button';
 import {ImCross} from 'react-icons/im';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 
@@ -67,7 +68,7 @@ const FailedModal = ({
 
       <div className="relative">
         {btnUrl && btnMsg ? (
-          <a href={btnUrl} target="_blank">
+          <a href={btnUrl} target="_blank" rel="noreferrer">
             <RippleButton
               className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
               buttonType="button"

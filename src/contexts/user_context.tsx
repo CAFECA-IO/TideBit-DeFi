@@ -1584,37 +1584,35 @@ export const UserProvider = ({children}: IUserProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      lunar.on('connected', async () => {
-        setIsConnected(true);
-        // TODO: Remove log when we can use lunar.on('connected') (20230727 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('lunar.on(connected), isConnectedRef.current', isConnectedRef.current);
-        if (!userRef.current) {
-          const {isDeWTLegit, signer, deWT} = checkDeWT();
-          if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-        }
-      }),
-    [lunar]
-  );
-
-  React.useMemo(
-    () =>
-      lunar.on('disconnected', () => {
-        // Deprecate: [debug] (20230524 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`lunar.on('disconnected') => clearPrivateData`);
-        setIsConnected(false);
-        clearPrivateData();
-      }),
-    [lunar]
-  );
-
-  React.useMemo(() => {
+  React.useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log(`add lunar.on('accountsChanged')`);
-    lunar.on('accountsChanged', async (address: string) => {
+    console.log('in UserContext useEffect');
+    const handleConnected = async () => {
+      // eslint-disable-next-line no-console
+      console.log('handleConnected');
+      setIsConnected(true);
+
+      if (!userRef.current) {
+        const {isDeWTLegit, signer, deWT} = checkDeWT();
+        if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+      }
+    };
+
+    const handleDisconnected = () => {
+      // eslint-disable-next-line no-console
+      console.log('handleDisconnected');
+
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`lunar.on('disconnected') => clearPrivateData`);
+      setIsConnected(false);
+      clearPrivateData();
+    };
+
+    const handleAccountsChanged = async (address: string) => {
+      // eslint-disable-next-line no-console
+      console.log('handleAccountsChanged');
+
       const checksumAddress = toChecksumAddress(address);
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
@@ -1633,8 +1631,68 @@ export const UserProvider = ({children}: IUserProvider) => {
         );
         clearPrivateData();
       }
-    });
+    };
+
+    lunar.on('connected', handleConnected);
+    lunar.on('disconnected', handleDisconnected);
+    lunar.on('accountsChanged', handleAccountsChanged);
+
+    return () => {
+      // eslint-disable-next-line no-console
+      console.log('cleanup function in useEffect in UserContext');
+      lunar.resetEvents();
+    };
   }, [lunar]);
+
+  // React.useMemo(
+  //   () =>
+  //     lunar.on('connected', async () => {
+  //       setIsConnected(true);
+
+  //       if (!userRef.current) {
+  //         const {isDeWTLegit, signer, deWT} = checkDeWT();
+  //         if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+  //       }
+  //     }),
+  //   [lunar]
+  // );
+
+  // React.useMemo(
+  //   () =>
+  //     lunar.on('disconnected', () => {
+  //       // Deprecate: [debug] (20230524 - tzuhan)
+  //       // eslint-disable-next-line no-console
+  //       console.log(`lunar.on('disconnected') => clearPrivateData`);
+  //       setIsConnected(false);
+  //       clearPrivateData();
+  //     }),
+  //   [lunar]
+  // );
+
+  // React.useMemo(() => {
+  //   // eslint-disable-next-line no-console
+  //   console.log(`add lunar.on('accountsChanged')`);
+  //   lunar.on('accountsChanged', async (address: string) => {
+  //     const checksumAddress = toChecksumAddress(address);
+  //     // Deprecate: [debug] (20230524 - tzuhan)
+  //     // eslint-disable-next-line no-console
+  //     console.log(
+  //       `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
+  //     );
+  //     if (!!userRef.current && checksumAddress !== userRef.current.address) {
+  //       // Deprecate: [debug] (20230524 - tzuhan)
+  //       // eslint-disable-next-line no-console
+  //       console.log(
+  //         `userRef.current: ${JSON.stringify(
+  //           userRef.current
+  //         )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
+  //           !!userRef.current && checksumAddress !== userRef.current?.address
+  //         }? clearPrivateData`
+  //       );
+  //       clearPrivateData();
+  //     }
+  //   });
+  // }, [lunar]);
 
   const defaultValue = {
     isInit: isInitRef.current,

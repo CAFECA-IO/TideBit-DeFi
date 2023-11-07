@@ -1,11 +1,6 @@
+/*eslint-disable @next/next/no-img-element*/
 import {NextApiRequest} from 'next';
-import {ImageResponse} from 'next/server';
-import {
-  adjustTimestamp,
-  numberFormatted,
-  roundToDecimalPlaces,
-  timestampToString,
-} from '../../../../lib/common';
+import {ImageResponse} from 'next/og';
 import {
   BG_HEIGHT_OF_SHARING_RECORD,
   BG_WIDTH_OF_SHARING_RECORD,
@@ -27,8 +22,15 @@ import {
   isSharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
-import {Buffer} from 'buffer';
+// import {Buffer} from 'buffer';
 import SafeMath from '../../../../lib/safe_math';
+import React from 'react';
+import {
+  adjustTimestamp,
+  numberFormatted,
+  roundToDecimalPlaces,
+  timestampToString,
+} from '../../../../lib/common_for_edge';
 
 export const config = {
   runtime: 'edge',
@@ -69,13 +71,13 @@ export default async function handler(req: NextApiRequest) {
     await fetchOrder();
 
     const offset = new Date().getTimezoneOffset() / 60;
-    const adCreateTimstamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
-    const adCloseTimstamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
+    const adCreateTimestamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
+    const adCloseTimestamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
 
     sharingOrder = {
       ...sharingOrder,
-      createTimestamp: adCreateTimstamp,
-      closeTimestamp: adCloseTimstamp,
+      createTimestamp: adCreateTimestamp,
+      closeTimestamp: adCloseTimestamp,
     };
   } catch (e) {
     // Info: show the invalid dummy order img (20230523 - Shirley)
@@ -136,7 +138,12 @@ export default async function handler(req: NextApiRequest) {
 
   const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC${tz}`;
 
-  const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  // const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  const BarlowBuffer = new Uint8Array(
+    atob(BARLOW_BASE64)
+      .split('')
+      .map(char => char.charCodeAt(0))
+  ).buffer;
 
   const upArrow = (
     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 28.125 36">

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 
 interface ITooltipProps {

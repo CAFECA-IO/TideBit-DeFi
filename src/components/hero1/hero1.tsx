@@ -22,7 +22,7 @@ neutra sustainable fingerstache kickstarter.`;
   const displayedImg = img ? (
     <Image src={img} width={1364} height={820} alt="picture" />
   ) : (
-    <img
+    <Image
       className="h-full w-full object-cover object-center"
       src="https://dummyimage.com/600x300"
       alt="stats"

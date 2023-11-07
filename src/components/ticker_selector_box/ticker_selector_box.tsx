@@ -1,6 +1,6 @@
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {CgSearch} from 'react-icons/cg';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';

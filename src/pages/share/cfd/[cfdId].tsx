@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
@@ -10,6 +10,7 @@ import {BG_HEIGHT_OF_SHARING_RECORD, BG_WIDTH_OF_SHARING_RECORD} from '../../../
 
 import useStateRef from 'react-usestateref';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface IPageProps {
   cfdId: string;
@@ -51,7 +52,7 @@ const CfdSharing = (props: IPageProps) => {
   const displayedImage = appCtx.isInit ? (
     <Link href="/">
       <div className="flex w-full justify-center">
-        <img
+        <Image
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}
           height={BG_HEIGHT_OF_SHARING_RECORD}

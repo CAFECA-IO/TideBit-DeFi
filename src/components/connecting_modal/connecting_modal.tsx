@@ -2,6 +2,7 @@ import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import {ImCross} from 'react-icons/im';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 interface IConnectingModal {

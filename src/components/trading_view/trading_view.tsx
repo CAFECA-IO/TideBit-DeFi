@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import useWindowSize from '../../lib/hooks/use_window_size';

@@ -8,7 +8,7 @@ import {
   TypeOfPnLColorHex,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import Tooltip from '../tooltip/tooltip';
 import RippleButton from '../ripple_button/ripple_button';

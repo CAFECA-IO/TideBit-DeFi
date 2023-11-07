@@ -102,6 +102,7 @@ module.exports = {
         '3px': '3px',
         '4px': '4px',
         '5px': '5px',
+        '6px': '6px',
         '9px': '9px',
         '10px': '10px',
         '12px': '12px',
@@ -413,6 +414,7 @@ module.exports = {
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
+        inter: ['Inter', 'sans-serif', 'ui-sans-serif', 'system-ui'],
       },
 
       // animation class

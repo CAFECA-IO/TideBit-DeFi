@@ -1,6 +1,6 @@
 import React, {createContext, useState, useContext, useMemo, useCallback} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
-import {LAYOUT_BREAKPOINT, TOAST_DURATION} from '../constants/display';
+import {LAYOUT_BREAKPOINT, TOAST_DURATION_SECONDS} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
@@ -61,6 +61,8 @@ import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import AnnouncementModal from '../components/announcement_modal/announcement_modal';
 import {MessageType, IMessageType} from '../constants/message_type';
 import {ILayoutAssertion, LayoutAssertion} from '../constants/layout_assertion';
+import Alert from '../components/alert/alert';
+import {AlertState, IAlertData} from '../interfaces/alert';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -171,7 +173,6 @@ export const dummyWarningModal: IWarningModal = {
   pathOfButton: '/',
 };
 
-// TODO:(20230317 - Shirley) to be continued
 export interface IAnnouncementModal {
   id: string;
   title: string;
@@ -190,18 +191,12 @@ export const dummyAnnouncementModal: IAnnouncementModal = {
   messageType: MessageType.ANNOUNCEMENT,
 };
 
-// Deprecated: to be removed (20230517 - Julian)
-// export interface IAchievementSharingModal {
-//   userId: string;
-//   period: string;
-// }
+export const dummyAlertData: IAlertData = {
+  type: AlertState.ERROR,
+  message:
+    'Hic sunt ea eos et. Iste vel et fuga. Unde aliquam omnis et temporibus voluptatum itaque.',
+};
 
-// export const dummyAchievementSharingModal: IAchievementSharingModal = {
-//   userId: '202302220001234',
-//   period: '002',
-// };
-
-// TODO:(20230317 - Shirley) to be continued
 export interface IBadgeModal {
   badgeData: IBadge;
 }
@@ -214,15 +209,6 @@ export const dummyBadgeModal: IBadgeModal = {
     receiveTime: 1614556800,
   },
 };
-
-// Deprecated: to be removed (20230517 - Julian)
-// export interface IBadgeSharingModal {
-//   badgeId: string;
-// }
-
-// export const dummyBadgeSharingModal: IBadgeSharingModal = {
-//   badgeId: 'TBDFUTURES2023FEB05',
-// };
 
 export interface IGlobalProvider {
   children: React.ReactNode;
@@ -301,7 +287,6 @@ export interface IGlobalContext {
   dataHistoryPositionModalHandler: (data: IDisplayCFDOrder) => void;
 
   visiblePositionClosedModal: boolean;
-  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.MutableRefObject<boolean>;
   visiblePositionClosedModalHandler: () => void;
   dataPositionClosedModal: IDisplayCFDOrder | null;
   dataPositionClosedModalHandler: (data: IDisplayCFDOrder) => void;
@@ -356,6 +341,11 @@ export interface IGlobalContext {
 
   visibleSearchingModal: boolean;
   visibleSearchingModalHandler: () => void;
+
+  visibleAlert: boolean;
+  visibleAlertHandler: () => void;
+  dataAlert: IAlertData | null;
+  dataAlertHandler: (data: IAlertData) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -429,7 +419,6 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataHistoryPositionModalHandler: () => null,
 
   visiblePositionClosedModal: false,
-  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.createRef<boolean>(),
   visiblePositionClosedModalHandler: () => null,
   dataPositionClosedModal: null,
   dataPositionClosedModalHandler: () => null,
@@ -484,6 +473,11 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleSearchingModal: false,
   visibleSearchingModalHandler: () => null,
+
+  visibleAlert: false,
+  visibleAlertHandler: () => null,
+  dataAlert: null,
+  dataAlertHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -588,6 +582,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
 
+  const [visibleAlert, setVisibleAlert] = useState(false);
+  const [dataAlert, setDataAlert] = useState<IAlertData>(dummyAlertData);
+
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
@@ -640,7 +637,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-              autoClose: autoClose ?? TOAST_DURATION,
+              autoClose: autoClose ?? TOAST_DURATION_SECONDS,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -669,7 +666,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-              autoClose: autoClose ?? TOAST_DURATION,
+              autoClose: autoClose ?? TOAST_DURATION_SECONDS,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -698,7 +695,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-              autoClose: autoClose ?? TOAST_DURATION,
+              autoClose: autoClose ?? TOAST_DURATION_SECONDS,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -727,7 +724,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
                 </div>
               ),
               bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-              autoClose: autoClose ?? TOAST_DURATION,
+              autoClose: autoClose ?? TOAST_DURATION_SECONDS,
               closeOnClick: modalReOpenData ? false : true,
               onClick: modalReOpenHandler,
               delay: 150,
@@ -972,6 +969,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleSearchingModal(prev => !prev);
   }, []);
 
+  const visibleAlertHandler = useCallback(() => {
+    setVisibleAlert(prev => !prev);
+  }, []);
+
+  const dataAlertHandler = useCallback((data: IAlertData) => {
+    setDataAlert(data);
+  }, []);
+
   const defaultValue = {
     width,
     height,
@@ -1101,6 +1106,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleSearchingModal,
     visibleSearchingModalHandler,
+
+    visibleAlert,
+    visibleAlertHandler,
+    dataAlert,
+    dataAlertHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -1228,6 +1238,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
       {/* Info: One toast container avoids duplicate toast overlaying */}
       <Toast />
+
+      <Alert modalVisible={visibleAlert} modalClickHandler={visibleAlertHandler} data={dataAlert} />
 
       {children}
     </GlobalContext.Provider>

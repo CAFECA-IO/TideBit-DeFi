@@ -10,7 +10,7 @@ import {
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_USER_BALANCE,
-  TOAST_DURATION,
+  TOAST_DURATION_SECONDS,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
@@ -751,7 +751,7 @@ const TradeTab = () => {
           })`,
           typeText: t(ToastTypeAndText.WARNING.text),
           isLoading: false,
-          autoClose: TOAST_DURATION,
+          autoClose: TOAST_DURATION_SECONDS,
         });
 
         return false;
@@ -797,7 +797,7 @@ const TradeTab = () => {
           })`,
           typeText: t(ToastTypeAndText.WARNING.text),
           isLoading: false,
-          autoClose: TOAST_DURATION,
+          autoClose: TOAST_DURATION_SECONDS,
         });
 
         return false;

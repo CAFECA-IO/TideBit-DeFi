@@ -1,5 +1,5 @@
 import {expect, type Locator, type Page, type BrowserContext} from '@playwright/test';
-import i18next from 'i18next';
+import {t} from 'i18next';
 
 export class TradePage {
   readonly page: Page;
@@ -7,7 +7,7 @@ export class TradePage {
   readonly context: BrowserContext;
 
   constructor(page: Page, context: BrowserContext) {
-    const ANNOUCEMENT_MODAL_OK_BUTTON = i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON');
+    const ANNOUCEMENT_MODAL_OK_BUTTON = t('ANNOUNCEMENT_MODAL.OK_BUTTON');
     this.page = page;
     this.getAnncmnt = page.getByRole('button', {
       name: ANNOUCEMENT_MODAL_OK_BUTTON,
@@ -36,8 +36,8 @@ export class TradePage {
   }
 
   async openLongPosition(extensionId: string) {
-    const TRADE_TAB_LONG_BUTTON = i18next.t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON');
-    const CONFIRM_BUTTON = i18next.t('POSITION_MODAL.CONFIRM_BUTTON');
+    const TRADE_TAB_LONG_BUTTON = t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON');
+    const CONFIRM_BUTTON = t('POSITION_MODAL.CONFIRM_BUTTON');
     const pagePromise = this.context.newPage();
     await this.page.getByRole('button', {name: TRADE_TAB_LONG_BUTTON}).click();
     await this.page.getByRole('button', {name: CONFIRM_BUTTON}).click();
@@ -51,8 +51,8 @@ export class TradePage {
     newPage.close();
   }
   async openShortPosition(extensionId: string) {
-    const TRADE_TAB_SHORT_BUTTON = i18next.t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON');
-    const CONFIRM_BUTTON = i18next.t('POSITION_MODAL.CONFIRM_BUTTON');
+    const TRADE_TAB_SHORT_BUTTON = t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON');
+    const CONFIRM_BUTTON = t('POSITION_MODAL.CONFIRM_BUTTON');
     const pagePromise = this.context.newPage();
     await this.page.getByRole('button', {name: TRADE_TAB_SHORT_BUTTON}).click();
     await this.page.getByRole('button', {name: CONFIRM_BUTTON}).click();
@@ -68,9 +68,9 @@ export class TradePage {
 
   // Info: (20231013 - Jacky) number="1" means the last position
   async updatePosition(extensionId: string, number = '1') {
-    const positionTab = {name: i18next.t('TRADE_PAGE.POSITION_TAB')};
-    const updatePostion = {name: i18next.t('POSITION_MODAL.UPDATE_POSITION_TITLE')};
-    const confirmButton = {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')};
+    const positionTab = {name: t('TRADE_PAGE.POSITION_TAB')};
+    const updatePostion = {name: t('POSITION_MODAL.UPDATE_POSITION_TITLE')};
+    const confirmButton = {name: t('POSITION_MODAL.CONFIRM_BUTTON')};
     await this.page.getByRole('button', positionTab).click();
     await this.page
       .locator(
@@ -107,8 +107,8 @@ export class TradePage {
 
   // Info: (20231013 - Jacky) number="1" means the last position
   async closePosition(extensionId: string, number = '1') {
-    const POSITION_TAB = {name: i18next.t('TRADE_PAGE.POSITION_TAB')};
-    const CLOSE_POSITION_TITLE = {name: i18next.t('POSITION_MODAL.CONFIRM_BUTTON')};
+    const POSITION_TAB = {name: t('TRADE_PAGE.POSITION_TAB')};
+    const CLOSE_POSITION_TITLE = {name: t('POSITION_MODAL.CONFIRM_BUTTON')};
     await this.page.getByRole('button', POSITION_TAB).click();
     await this.page
       .locator(

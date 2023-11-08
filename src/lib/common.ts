@@ -795,6 +795,16 @@ export const validateAllInput = ({
   return isValid;
 };
 
+export const isIncludingChinese = (str: string) => {
+  // Regex to match Chinese characters
+  const chineseRegex = /[\u4e00-\u9fa5]/;
+
+  // Check if the text contains Chinese characters
+  const containsChinese = chineseRegex.test(str);
+
+  return containsChinese;
+};
+
 /**
  *
  * @param text to be truncated
@@ -802,22 +812,49 @@ export const validateAllInput = ({
  * @returns truncated text at word boundary
  */
 export const truncateText = (text: string, limitLength: number) => {
-  const words = text.split(' ');
+  const containsChinese = isIncludingChinese(text);
 
-  let result = '';
+  if (containsChinese) {
+    // For Chinese, we truncate by character
+    if (text.length <= limitLength) {
+      return text;
+    } else {
+      return text.substring(0, limitLength) + '...';
+    }
+  } else {
+    // For non-Chinese, we use the existing logic
+    const words = text.split(' ');
+    let result = '';
 
-  for (let i = 0; i < words.length; i++) {
-    if ((result + words[i]).length > limitLength) break;
+    for (let i = 0; i < words.length; i++) {
+      if ((result + words[i]).length > limitLength) break;
+      if (result.length != 0) result += ' ';
+      result += words[i];
+    }
 
-    if (result.length != 0) result += ' ';
+    if (text.length > limitLength) result += '...';
 
-    result += words[i];
+    return result;
   }
-
-  if (text.length > limitLength) result += '...';
-
-  return result;
 };
+
+// export const truncateText = (text: string, limitLength: number) => {
+//   const words = text.split(' ');
+
+//   let result = '';
+
+//   for (let i = 0; i < words.length; i++) {
+//     if ((result + words[i]).length > limitLength) break;
+
+//     if (result.length != 0) result += ' ';
+
+//     result += words[i];
+//   }
+
+//   if (text.length > limitLength) result += '...';
+
+//   return result;
+// };
 
 export const getKeccak256Hash = (data: string) => {
   data = data.toLowerCase().replace('0x', '');

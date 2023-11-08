@@ -1,4 +1,4 @@
-import i18next, {init} from 'i18next'; // Import the named export 'init'
+import i18next, {init} from 'i18next';
 import en from '../src/locales/en/common.json';
 import cn from '../src/locales/cn/common.json';
 import tw from '../src/locales/tw/common.json';

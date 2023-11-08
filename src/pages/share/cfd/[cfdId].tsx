@@ -11,6 +11,7 @@ import {BG_HEIGHT_OF_SHARING_RECORD, BG_WIDTH_OF_SHARING_RECORD} from '../../../
 import useStateRef from 'react-usestateref';
 import Link from 'next/link';
 import Image from 'next/image';
+import {TBDURL} from '../../../constants/api_request';
 
 interface IPageProps {
   cfdId: string;
@@ -50,8 +51,8 @@ const CfdSharing = (props: IPageProps) => {
   }
 
   const displayedImage = appCtx.isInit ? (
-    <Link href="/">
-      <div className="flex w-full justify-center">
+    <div className="flex w-full justify-center">
+      <Link href="/">
         <Image
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}
@@ -59,8 +60,21 @@ const CfdSharing = (props: IPageProps) => {
           alt="CFD record"
           className="hover:opacity-90"
         />
+      </Link>
+
+      <div className="absolute top-5 z-10 h-600px w-900px">
+        <div className="absolute bottom-5 right-0 mx-4 flex items-center space-x-8">
+          {/* Info:(20230714 - Julian) Market Link */}
+          <Link href={TBDURL.TRADE}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+          {/* Info:(20230714 - Julian) Leaderboard Link */}
+          <Link href={TBDURL.LEADERBOARD}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+        </div>
       </div>
-    </Link>
+    </div>
   ) : null;
 
   return (

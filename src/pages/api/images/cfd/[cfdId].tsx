@@ -59,6 +59,11 @@ export default async function handler(req: NextApiRequest) {
           sharingOrder = order?.data;
         }
       }
+      // eslint-disable-next-line no-console
+      console.log('orderResponse', order);
+
+      // eslint-disable-next-line no-console
+      console.log('sharingOrder', sharingOrder);
     } catch (e) {
       // TODO: error handling (20230523 - Shirley)
     }
@@ -139,7 +144,6 @@ export default async function handler(req: NextApiRequest) {
 
   const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC${tz}`;
 
-  // const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
   const BarlowBuffer = new Uint8Array(
     atob(BARLOW_BASE64)
       .split('')

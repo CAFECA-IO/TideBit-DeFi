@@ -1,19 +1,16 @@
 import React, {useContext, useEffect} from 'react';
 import NewsPageBody from '../components/news_page_body/news_page_body';
 import Head from 'next/head';
-import {useGlobal} from '../contexts/global_context';
 import {AppContext} from '../contexts/app_context';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
-import {IPost, getPost, getPosts, getSlugs} from '../lib/posts';
-import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, NEWS_FOLDER} from '../constants/config';
+import {getPosts} from '../lib/posts';
+import {NEWS_FOLDER} from '../constants/config';
 import {GetStaticProps} from 'next';
 import {IRecommendedNews} from '../interfaces/tidebit_defi_background/news';
 import {truncateText} from '../lib/common';
 import {NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH} from '../constants/display';
-import {LayoutAssertion} from '../constants/layout_assertion';
 
 interface IPageProps {
   briefs: IRecommendedNews[];
@@ -60,7 +57,7 @@ const News = (props: IPageProps) => {
 
 export default News;
 
-export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
+export const getStaticProps: GetStaticProps<IPageProps> = async ({locale}) => {
   const newsData = await getPosts(NEWS_FOLDER);
 
   const briefs: IRecommendedNews[] = newsData.map(news => {

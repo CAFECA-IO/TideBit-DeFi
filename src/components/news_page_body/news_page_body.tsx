@@ -1,22 +1,19 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import NewsHeader from '../news_header/news_header';
 import NewsSection from '../news_section/news_section';
 import Pagination from '../pagination/pagination';
-import {Currency} from '../../constants/currency';
-import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
-import {ETH_NEWS_FOLDER} from '../../constants/config';
 
 interface IPageProps {
   briefs: IRecommendedNews[];
 }
 
 const NewsPageBody = (props: IPageProps) => {
-  const marketCtx = useContext(MarketContext);
-  const allNews = marketCtx.getPaginationNews(Currency.ETH);
   const [activePage, setActivePage] = React.useState(1);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [search, setSearch, searchRef] = useStateRef('');
 
   const recommendation = props.briefs;

@@ -1,6 +1,7 @@
 import OrderSection from '../order_section/order_section';
 import MarketSection from '../market_section/market_section';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import React from 'react';
 
 interface ITradePageBodyProps {
   briefs: IRecommendedNews[];

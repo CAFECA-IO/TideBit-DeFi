@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import NewsItem from '../news_item/news_item';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
@@ -18,7 +18,7 @@ const NewsSection = ({
     newsForCurrentPage instanceof Array &&
     newsForCurrentPage
       .sort((a, b) => b.timestamp - a.timestamp)
-      .map((news, index) => {
+      .map(news => {
         return (
           <NewsItem
             key={news.newsId}

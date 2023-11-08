@@ -8,7 +8,7 @@ test.beforeEach(async ({page}) => {
   i18next.changeLanguage(lang as string);
 });
 
-test('1. 進入 TideBit-DeFi 首頁，確定語言為英文，點擊錢包連接', async ({page, context}) => {
+test('1. 進入 TideBit-DeFi 首頁，確定語言為英文，點擊錢包連接', async ({page}) => {
   const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
   const landingPage = new LandingPage(page);
   await landingPage.goto();

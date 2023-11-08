@@ -1,4 +1,5 @@
 import {ImCross} from 'react-icons/im';
+import React from 'react';
 
 interface IToastProps {
   title?: string;

@@ -27,7 +27,7 @@ const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
       : TypeOfTransaction.SHORT;
 
   const closeValue = roundToDecimalPlaces(
-    +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
+    +SafeMath.mult(closedCfdDetails.closePrice ?? 0, closedCfdDetails.amount),
     2,
     RoundCondition.SHRINK
   );
@@ -36,7 +36,7 @@ const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
     closedCfdDetails?.pnl ||
     toPnl({
       openPrice: closedCfdDetails.openPrice,
-      closePrice: closedCfdDetails.closePrice!,
+      closePrice: closedCfdDetails.closePrice ?? 0,
       amount: closedCfdDetails.amount,
       typeOfPosition: closedCfdDetails.typeOfPosition,
       spread: spread,

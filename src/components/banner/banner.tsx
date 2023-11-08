@@ -39,6 +39,7 @@ const Banner = () => {
                 className="flex text-center items-center tracking-wider"
                 href={iSunOneLink}
                 target="_blank"
+                rel="noreferrer"
               >
                 <Image
                   src={`/elements/isunone_logo.svg`}
@@ -95,6 +96,7 @@ const Banner = () => {
                   className="flex text-center items-center tracking-wider"
                   href={iSunOneLink}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <Image
                     src={`/elements/isunone_logo.svg`}

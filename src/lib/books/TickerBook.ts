@@ -1,7 +1,7 @@
 import {ITickerData, toDummyTickers} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 
-class TickerBook {
+export class TickerBook {
   private _dataLength = 1000;
   private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
@@ -11,11 +11,7 @@ class TickerBook {
     this._tickers = {...toDummyTickers};
   }
 
-  listTickerPositions(
-    instId: string
-    // Deprecated: defined but never used (20231120 - Shirley)
-    // options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
-  ): number[] {
+  listTickerPositions(instId: string): number[] {
     // TODO: temporary need further discussion on how to calculate the position (20230424 - tzuhan)
     return this.tickers[instId]?.lineGraphProps.dataArray || ([] as number[]);
   }
@@ -77,6 +73,3 @@ class TickerBook {
     this._limit = value;
   }
 }
-
-const TickerBookInstance = new TickerBook();
-export default TickerBookInstance;

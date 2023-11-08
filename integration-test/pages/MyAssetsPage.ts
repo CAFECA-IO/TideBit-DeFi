@@ -1,12 +1,12 @@
 import {expect, type Locator, type Page} from '@playwright/test';
-import i18next from 'i18next';
+import {t} from 'i18next';
 
 export class MyAssetsPage {
   readonly page: Page;
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
-    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
+    const okButton = {name: t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
     this.getAnncmnt = page.getByRole('button', okButton);
   }
@@ -45,13 +45,13 @@ export class MyAssetsPage {
   }
 
   async checkTradeLog() {
-    const titleButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')};
-    const depositButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')};
-    const openButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')};
+    const titleButton = {name: t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')};
+    const depositButton = {name: t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')};
+    const openButton = {name: t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')};
     const updateButton = {
-      name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE'),
+      name: t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE'),
     };
-    const closeButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')};
+    const closeButton = {name: t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')};
     await this.page.getByRole('button', titleButton).click();
     await this.page
       .locator(

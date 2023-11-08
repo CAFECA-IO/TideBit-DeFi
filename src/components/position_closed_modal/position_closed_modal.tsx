@@ -21,7 +21,7 @@ import {
   toPnl,
   numberFormatted,
 } from '../../lib/common';
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
@@ -73,8 +73,9 @@ const PositionClosedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
-
-  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed);
 
@@ -90,12 +91,10 @@ const PositionClosedModal = ({
     deadline: getDeadline(QUOTATION_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
-  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
-  );
+  const [secondsLeft, setSecondsLeft] = useStateRef(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
@@ -384,7 +383,7 @@ const PositionClosedModal = ({
 
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

@@ -1,8 +1,6 @@
 import {ICurrency} from '../../constants/currency';
 import {IBriefNewsItem} from './brief_news_item';
 import {ICryptoSummary} from './crypto_summary';
-import {IFluctuating} from './fluctuating';
-import {IPriceStatistics} from './price_statistics';
 import {getDummyTicker, ITickerData} from './ticker_data';
 
 export interface ITickerStatic {

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import TideButton from '../../components/tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 
@@ -12,12 +13,7 @@ interface IHelloModal {
   helloClickHandler?: () => void;
 }
 
-const HelloModal = ({
-  helloModalRef,
-  helloModalVisible = false,
-  helloClickHandler,
-  ...otherProps
-}: IHelloModal) => {
+const HelloModal = ({helloModalRef, helloModalVisible = false, helloClickHandler}: IHelloModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const isDisplayedHelloModal = helloModalVisible ? (

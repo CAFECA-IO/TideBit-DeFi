@@ -68,13 +68,6 @@ export interface IDomain {
   version: string;
 }
 
-interface IMessage {
-  title: string;
-  content: string;
-  from: string;
-  to: string;
-}
-
 export interface ITypes {
   [key: string]: IType[];
 }

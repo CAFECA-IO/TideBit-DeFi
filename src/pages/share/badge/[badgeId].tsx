@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
@@ -10,6 +10,7 @@ import {DOMAIN} from '../../../constants/config';
 import useStateRef from 'react-usestateref';
 import Link from 'next/link';
 import {TBDURL} from '../../../constants/api_request';
+import Image from 'next/image';
 
 interface IPageProps {
   badgeId: string;
@@ -18,7 +19,8 @@ interface IPageProps {
 const BadgeSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
-
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230525 - Julian)
@@ -50,7 +52,7 @@ const BadgeSharing = (props: IPageProps) => {
   const displayedImage = appCtx.isInit ? (
     <div className="flex w-full justify-center">
       <Link href="/">
-        <img
+        <Image
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}
           height={BG_HEIGHT_OF_SHARING_RECORD}

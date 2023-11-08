@@ -13,7 +13,7 @@ import {
   IPusherPrivateData,
   PusherChannel,
 } from '../interfaces/tidebit_defi_background/pusher_data';
-import {ICandlestick, ITrade} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ITrade} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getCookieByName} from '../lib/common';
 
 type IJobType = 'API' | 'WS';
@@ -48,15 +48,20 @@ let wsWorker: WebSocket | null;
 */
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
-  const pusherKey = process.env.PUSHER_APP_KEY!;
-  const pusherHost = process.env.PUSHER_HOST!;
-  const pusherPort = +process.env.PUSHER_PORT!;
+  const pusherKey = process.env.PUSHER_APP_KEY ?? '';
+  const pusherHost = process.env.PUSHER_HOST ?? '';
+  const pusherPort = +(process.env.PUSHER_PORT ?? '0');
   const notificationCtx = useContext(NotificationContext);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pusher, setPuser, pusherRef] = useState<Pusher | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [publicChannel, setPublicChannel, publicChannelRef] = useState<Channel | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socketId, setSocketId, socketIdRef] = useState<string | null>(null);
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
   const requests = useRef<IRequest>({});
@@ -184,10 +189,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const requestHandler = async (data: TypeRequest) => {
-    if (apiWorkerRef.current) {
+    const apiWorker = apiWorkerRef.current;
+
+    if (apiWorker) {
       const request: FormatedTypeRequest = formatAPIRequest(data);
       const promise = new Promise((resolve, reject) => {
-        apiWorkerRef.current!.onmessage = event => {
+        apiWorker.onmessage = event => {
           const {name, result, error} = event.data;
           if (name === request.name) {
             if (error) reject(error);

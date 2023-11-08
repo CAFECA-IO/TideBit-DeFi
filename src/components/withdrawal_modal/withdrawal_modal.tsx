@@ -34,11 +34,11 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
   const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
 
-  const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
-  const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
+  const [showCryptoMenu, setShowCryptoMenu] = useStateRef(false);
+  const [selectedCrypto, setSelectedCrypto] = useStateRef(
     withdrawCryptocurrencies[0] ?? defaultCryptocurrency
   );
-  const [amountInput, setAmountInput, amountInputRef] = useStateRef<number | undefined>();
+  const [amountInput, setAmountInput] = useStateRef<number | undefined>();
 
   const userAvailableBalance = userCtx.getBalance(selectedCrypto.symbol)?.available ?? 0;
 
@@ -147,7 +147,7 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
         globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
       // ToDo: Report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

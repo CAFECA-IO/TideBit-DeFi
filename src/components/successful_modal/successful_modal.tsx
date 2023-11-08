@@ -2,6 +2,7 @@ import Lottie from 'lottie-react';
 import successfulAnimation from '../../../public/animation/processing-success.json';
 import RippleButton from '../ripple_button/ripple_button';
 import {ImCross} from 'react-icons/im';
+import React from 'react';
 
 export interface ISuccessfulModal {
   modalRef?: React.RefObject<HTMLDivElement>;
@@ -14,14 +15,12 @@ export interface ISuccessfulModal {
 }
 
 const SuccessfulModal = ({
-  modalRef: modalRef,
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
   modalContent,
   btnMsg,
   btnUrl,
-  ...otherProps
 }: ISuccessfulModal) => {
   const successContent = (
     <div className="relative flex-auto pt-1">
@@ -44,7 +43,7 @@ const SuccessfulModal = ({
           </div>
           <div className="mt-5">
             {btnUrl && btnMsg ? (
-              <a href={btnUrl} target="_blank">
+              <a href={btnUrl} target="_blank" rel="noreferrer">
                 <RippleButton
                   className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"

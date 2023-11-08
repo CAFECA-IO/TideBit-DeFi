@@ -17,7 +17,7 @@ import {
   validateNumberFormat,
   getValueByProp,
 } from '../../lib/common';
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
@@ -64,13 +64,13 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
-  );
+  const [secondsLeft, setSecondsLeft] = useStateRef(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
-  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
-    useStateRef<IResult>(defaultResultFailed);
+    useStateRef<IResult>(defaultResultFailed); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
@@ -172,7 +172,7 @@ const PositionOpenModal = ({
 
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

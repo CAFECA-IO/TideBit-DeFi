@@ -1,18 +1,10 @@
 import Image from 'next/image';
 import React from 'react';
-import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_news_item';
 import {timestampToString} from '../../lib/common';
 import Link from 'next/link';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 
-const NewsItem = ({
-  newsId,
-  timestamp,
-  title,
-  description,
-  img,
-  ...otherProps
-}: IRecommendedNews) => {
+const NewsItem = ({newsId, timestamp, title, description, img}: IRecommendedNews) => {
   const overallWidth = 'mx-10 lg:mx-20';
 
   const displayedHeading = <div className="">{title}</div>;
@@ -22,7 +14,7 @@ const NewsItem = ({
   const displayedImg = img ? (
     <Image src={img} alt="news" width={900} height={500} />
   ) : (
-    <img
+    <Image
       className="rounded object-cover object-center"
       alt="news"
       src="https://dummyimage.com/200x115"

@@ -4,6 +4,7 @@ import {
   ENGLISH_CHARACTER_LENGTH_FOR_ALERT,
 } from '../../constants/display';
 import {isIncludingChinese, truncateText} from '../../lib/common';
+import React from 'react';
 
 interface IAlertProps {
   modalVisible: boolean;

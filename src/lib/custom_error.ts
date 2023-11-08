@@ -10,6 +10,6 @@ export class CustomError extends Error {
   }
 }
 
-export const isCustomError = (error: any): error is CustomError => {
+export const isCustomError = (error: unknown): error is CustomError => {
   return error instanceof CustomError;
 };

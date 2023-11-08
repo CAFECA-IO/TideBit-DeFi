@@ -59,11 +59,6 @@ export default async function handler(req: NextApiRequest) {
           sharingOrder = order?.data;
         }
       }
-      // eslint-disable-next-line no-console
-      console.log('orderResponse', order);
-
-      // eslint-disable-next-line no-console
-      console.log('sharingOrder', sharingOrder);
     } catch (e) {
       // TODO: error handling (20230523 - Shirley)
     }

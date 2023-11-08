@@ -45,8 +45,8 @@ export type ICode =
   | '60310001'
   | '80410001'
   | '80410002'
-  | '90000000'
-  | '90000001';
+  | '90100000'
+  | '90100001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -164,8 +164,8 @@ export const Code: ICodeConstant = {
   DEPOSIT_INTERVAL_TOO_SHORT: '80410001',
   BADGE_ALREADY_EXIST: '80410002',
 
-  UNKNOWN_ERROR: '90000000',
-  UNKNOWN_ERROR_IN_COMPONENT: '90000001',
+  UNKNOWN_ERROR: '90100000',
+  UNKNOWN_ERROR_IN_COMPONENT: '90100001',
 };
 
 export const Reason: IReason = {
@@ -221,6 +221,6 @@ export const Reason: IReason = {
   '80410001': 'ERROR_MESSAGE.DEPOSIT_INTERVAL_TOO_SHORT', //'Deposit interval too short, you can deposit at most 1 times in 24 hours, please try again later',
   '80410002': 'ERROR_MESSAGE.BADGE_ALREADY_EXIST', //'Badge already exist
 
-  '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
-  '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
+  '90100000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
+  '90100001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
 };

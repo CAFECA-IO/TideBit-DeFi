@@ -9,6 +9,7 @@ import {
 } from '../interfaces/tidebit_defi_background/notification_item';
 import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
 import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
+import ExceptionCollectorInstance from '../lib/exception_collector';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export interface INotificationContext {
   readAll: () => Promise<void>;
   init: () => Promise<void>;
   reset: () => void;
+  exceptionCollector: typeof ExceptionCollectorInstance;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -32,10 +34,13 @@ export const NotificationContext = createContext<INotificationContext>({
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
   reset: () => null,
+  exceptionCollector: ExceptionCollectorInstance,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
+  const exceptionCollector = React.useMemo(() => ExceptionCollectorInstance, []);
+
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [notifications, setNotifications, notificationsRef] =
@@ -139,6 +144,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     readAll,
     init,
     reset,
+    exceptionCollector,
   };
 
   return (

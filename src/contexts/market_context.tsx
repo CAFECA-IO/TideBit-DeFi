@@ -411,6 +411,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      // TODO: in dev (20231108 - Shirley)
+      // notificationCtx.exceptionCollector.add({
+      //   code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+      //   reason: isCustomError(error)
+      //     ? Reason[error.code]
+      //     : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      //   data: {
+      //     instId,
+      //     typeOfPosition,
+      //   },
+      // });
     }
     return result;
   }, []);

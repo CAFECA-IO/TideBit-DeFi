@@ -56,6 +56,10 @@ import {MessageType, IMessageType} from '../constants/message_type';
 import {ILayoutAssertion, LayoutAssertion} from '../constants/layout_assertion';
 import Alert from '../components/alert/alert';
 import {AlertState, IAlertData} from '../interfaces/alert';
+import {NotificationContext} from './notification_context';
+import {TideBitEvent} from '../constants/tidebit_event';
+import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
+import {useTranslation} from 'next-i18next';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -476,6 +480,9 @@ export const GlobalContext = createContext<IGlobalContext>({
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const notificationCtx = useContext(NotificationContext);
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
@@ -971,6 +978,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const dataAlertHandler = useCallback((data: IAlertData) => {
     setDataAlert(data);
+  }, []);
+
+  useMemo(() => {
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION, () => {
+      const all = notificationCtx.exceptionCollector.getExceptions();
+      // TODO: 把 error code 裡面會造成無法交易的羅列出來，不要用 level 來決定顯示 warning or error？？？
+      const severity =
+        all[0].level === 0 || all[0].level === 1 ? AlertState.ERROR : AlertState.WARNING;
+      dataAlertHandler({
+        type: severity,
+        message: `Exception: ${t(all[0].item.message)} ${all[0].item.code} ${all[0].item.where}`,
+      });
+      setVisibleAlert(true);
+      // visibleAlertHandler();
+    });
   }, []);
 
   const defaultValue = {

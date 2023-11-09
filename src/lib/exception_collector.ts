@@ -1,7 +1,7 @@
 interface IErrorItem {
+  reason: string;
+  code: string;
   message: string;
-  code: number;
-  exception: string;
   where: string;
   when: number;
 }
@@ -12,7 +12,6 @@ interface IException {
 }
 
 type ISearchProps = 'WHERE' | 'MESSAGE' | 'CODE' | 'EXCEPTION';
-
 export interface ISearchPropsConstant {
   WHERE: ISearchProps;
   MESSAGE: ISearchProps;
@@ -34,9 +33,12 @@ class ExceptionCollector {
   }
 
   add(exc: IErrorItem): void {
-    const exception = this.setLevel(exc);
-    this.exceptions.push(exception);
-    this.sort();
+    const exists = this.exceptions.some(exception => exception.item.code === exc.code);
+    if (!exists) {
+      const exception = this.setLevel(exc);
+      this.exceptions.push(exception);
+      this.sort();
+    }
   }
 
   remove(exc: IException[]): void {
@@ -56,7 +58,6 @@ class ExceptionCollector {
   // Info: compare the level of exception and callback (20231108 - Shirley)
   alert(callback: () => void) {
     callback();
-    this.exceptions = [];
   }
 
   search(props: ISearchProps, from: string): IException[] {
@@ -66,13 +67,13 @@ class ExceptionCollector {
         result = this.exceptions.filter(e => e.item.where === from);
         break;
       case SearchProps.MESSAGE:
-        result = this.exceptions.filter(e => e.item.message === from);
+        result = this.exceptions.filter(e => e.item.reason === from);
         break;
       case SearchProps.CODE:
-        result = this.exceptions.filter(e => e.item.code === +from);
+        result = this.exceptions.filter(e => e.item.code === from);
         break;
       case SearchProps.EXCEPTION:
-        result = this.exceptions.filter(e => e.item.exception === from);
+        result = this.exceptions.filter(e => e.item.message === from);
         break;
       default:
         result = [];
@@ -89,11 +90,10 @@ class ExceptionCollector {
     3：一般錯誤
     4：警告
    */
-  setLevel(item: IErrorItem): IException {
-    const code = item.code.toString();
-    const level = code.charAt(2);
+  setLevel(item: IErrorItem, severity?: string): IException {
+    const level = severity ? severity : item.code.charAt(2);
     const exception = {
-      level: +level,
+      level: parseInt(level, 10),
       item: item,
     };
 
@@ -122,7 +122,7 @@ class ExceptionCollector {
   }
 
   // Info: Utility function for deep object comparison (20231108 - Shirley)
-  private areItemsEqual(item1: IErrorItem, item2: IErrorItem): boolean {
+  areItemsEqual(item1: IErrorItem, item2: IErrorItem): boolean {
     return JSON.stringify(item1) === JSON.stringify(item2);
   }
 }

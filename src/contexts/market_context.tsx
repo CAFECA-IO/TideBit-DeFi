@@ -352,7 +352,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerLiveStatistics error`, error);
-      setIsCFDTradable(false);
+      // setIsCFDTradable(false);
       result = {
         success: false,
         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
@@ -413,16 +413,20 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       };
 
       // TODO: in dev (20231108 - Shirley)
-      // notificationCtx.exceptionCollector.add({
-      //   code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-      //   reason: isCustomError(error)
-      //     ? Reason[error.code]
-      //     : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-      //   data: {
-      //     instId,
-      //     typeOfPosition,
-      //   },
-      // });
+      notificationCtx.exceptionCollector.add({
+        code: Code.UNKNOWN_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        where: 'getCFDQuotation',
+        when: new Date().getTime(),
+        message: error as string,
+      });
+
+      const exception = notificationCtx.exceptionCollector.getSeverest();
+      if (exception) {
+        notificationCtx.emitter.emit(TideBitEvent.EXCEPTION, exception);
+      }
     }
     return result;
   }, []);
@@ -648,6 +652,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        // TODO: in dev (20231108 - Shirley)
+        notificationCtx.exceptionCollector.add({
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'listMarketTrades',
+          when: new Date().getTime(),
+          message: error as string,
+        });
+
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION, exception);
+        }
       }
       return result;
     },

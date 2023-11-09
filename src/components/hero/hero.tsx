@@ -7,7 +7,7 @@ interface HeroProps {
   img: string;
 }
 
-const Hero = ({heading, content, img, ...otherProps}: HeroProps): JSX.Element => {
+const Hero = ({heading, content, img}: HeroProps): JSX.Element => {
   const displayedHeading = heading
     ? heading
     : `

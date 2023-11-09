@@ -1,30 +1,17 @@
 import Head from 'next/head';
-import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
-import TradePageBody from '../../../components/trade_page_body/trade_page_body';
-import {MarketContext} from '../../../contexts/market_context';
-import {useGlobal} from '../../../contexts/global_context';
-import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
+import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, getTimestamp, hasValue, timestampToString} from '../../../lib/common';
-// import {tickerIds} from '../../../constants/config';
-import {Currency} from '../../../constants/currency';
-import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
-import Image from 'next/image';
 import {DOMAIN} from '../../../constants/config';
-import {
-  BG_HEIGHT_OF_SHARING_RECORD,
-  BG_WIDTH_OF_SHARING_RECORD,
-  HEIGHT_OF_SHARING_RECORD,
-  WIDTH_OF_SHARING_RECORD,
-} from '../../../constants/display';
-import {CustomError} from '../../../lib/custom_error';
-import {Code} from '../../../constants/code';
+import {BG_HEIGHT_OF_SHARING_RECORD, BG_WIDTH_OF_SHARING_RECORD} from '../../../constants/display';
+
 import useStateRef from 'react-usestateref';
 import Link from 'next/link';
+import Image from 'next/image';
+import {TBDURL} from '../../../constants/api_request';
 
 interface IPageProps {
   cfdId: string;
@@ -33,7 +20,8 @@ interface IPageProps {
 const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
-
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230505 - Shirley)
@@ -63,17 +51,30 @@ const CfdSharing = (props: IPageProps) => {
   }
 
   const displayedImage = appCtx.isInit ? (
-    <Link href="/">
-      <div className="flex w-full justify-center">
-        <img
+    <div className="flex w-full justify-center">
+      <Link href="/">
+        <Image
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}
           height={BG_HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
         />
+      </Link>
+
+      <div className="absolute top-5 z-10 h-600px w-900px">
+        <div className="absolute bottom-5 right-0 mx-4 flex items-center space-x-8">
+          {/* Info:(20230714 - Julian) Market Link */}
+          <Link href={TBDURL.TRADE}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+          {/* Info:(20230714 - Julian) Leaderboard Link */}
+          <Link href={TBDURL.LEADERBOARD}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+        </div>
       </div>
-    </Link>
+    </div>
   ) : null;
 
   return (

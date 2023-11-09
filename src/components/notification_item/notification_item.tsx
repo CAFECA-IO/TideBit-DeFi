@@ -72,11 +72,11 @@ export default function NotificationItem(notificationItem: INotificationItem) {
           <div className="flex flex-col items-start">
             {/* Info: (20231019 - Julian) Heading */}
             <div className="text-xl text-lightWhite sm:text-2xl">
-              <h2 className="line-clamp-1">{t(title)}</h2>
+              <h2 className="">{t(title)}</h2>
             </div>
             {/* Info: (20230420 - Julian) Content */}
             <div className="h-full w-full py-4 text-xs text-lightGray">
-              <p className="line-clamp-5">{t(content)}</p>
+              <p className="">{t(content)}</p>
             </div>
           </div>
           {/* Info: (20231019 - Julian) Date */}

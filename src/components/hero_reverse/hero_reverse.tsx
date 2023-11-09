@@ -9,7 +9,7 @@ interface HeroReverseProps {
 }
 
 // ml-20 & mr-40 are used to center the content
-const HeroReverse = ({heading, highlight, content, img, ...otherProps}: HeroReverseProps) => {
+const HeroReverse = ({heading, highlight, content, img}: HeroReverseProps) => {
   const displayedHeading = highlight ? (
     <div className="font-bold">
       {heading} <span className="text-tidebitTheme">{highlight}</span>
@@ -28,7 +28,7 @@ chambray.`;
   const displayedImg = img ? (
     <Image src={img} alt="hero" width={976} height={588} />
   ) : (
-    <img
+    <Image
       className="rounded object-cover object-center"
       alt="hero"
       src="https://dummyimage.com/500x400"

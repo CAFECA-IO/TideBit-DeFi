@@ -9,7 +9,6 @@ import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-import {MOBILE_WIDTH} from '../../constants/display';
 import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 interface IUseShareProcess {
@@ -199,7 +198,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         default:
           break;
       }
-    } catch (e: any) {
+    } catch (e) {
       globalCtx.eliminateAllProcessModals();
 
       if (isCustomError(e)) {

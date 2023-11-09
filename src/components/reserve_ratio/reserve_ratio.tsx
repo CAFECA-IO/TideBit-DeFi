@@ -7,6 +7,7 @@ import ReserveCard from '../reserve_card/reserve_card';
 import {FiDownload} from 'react-icons/fi';
 import {numberFormatted} from '../../lib/common';
 import useCheckLink from '../../lib/hooks/use_check_link';
+import SafeMath from '../../lib/safe_math';
 
 const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -18,17 +19,35 @@ const ReserveRatio = () => {
   const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
   // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
-  const usdtReserveRatio = numberFormatted(USDT.reserveRatio);
-  const usdtUserHolding = numberFormatted(USDT.usersHolding);
-  const usdtReserve = numberFormatted(USDT.tidebitReserve);
+  const usdtReserveRatio = SafeMath.isNumber(USDT.reserveRatio)
+    ? numberFormatted(USDT.reserveRatio)
+    : USDT.reserveRatio.toString();
+  const usdtUserHolding = SafeMath.isNumber(USDT.usersHolding)
+    ? numberFormatted(USDT.usersHolding)
+    : USDT.usersHolding;
+  const usdtReserve = SafeMath.isNumber(USDT.tidebitReserve)
+    ? numberFormatted(USDT.tidebitReserve)
+    : USDT.tidebitReserve;
 
-  const ethReserveRatio = numberFormatted(ETH.reserveRatio);
-  const ethUserHolding = numberFormatted(ETH.usersHolding);
-  const ethReserve = numberFormatted(ETH.tidebitReserve);
+  const ethReserveRatio = SafeMath.isNumber(ETH.reserveRatio)
+    ? numberFormatted(ETH.reserveRatio)
+    : ETH.reserveRatio.toString();
+  const ethUserHolding = SafeMath.isNumber(ETH.usersHolding)
+    ? numberFormatted(ETH.usersHolding)
+    : ETH.usersHolding;
+  const ethReserve = SafeMath.isNumber(ETH.tidebitReserve)
+    ? numberFormatted(ETH.tidebitReserve)
+    : ETH.tidebitReserve;
 
-  const btcReserveRatio = numberFormatted(BTC.reserveRatio);
-  const btcUserHolding = numberFormatted(BTC.usersHolding);
-  const btcReserve = numberFormatted(BTC.tidebitReserve);
+  const btcReserveRatio = SafeMath.isNumber(BTC.reserveRatio)
+    ? numberFormatted(BTC.reserveRatio)
+    : BTC.reserveRatio.toString();
+  const btcUserHolding = SafeMath.isNumber(BTC.usersHolding)
+    ? numberFormatted(BTC.usersHolding)
+    : BTC.usersHolding;
+  const btcReserve = SafeMath.isNumber(BTC.tidebitReserve)
+    ? numberFormatted(BTC.tidebitReserve)
+    : BTC.tidebitReserve;
 
   const mobileCardLayout =
     'mx-auto flex w-full flex-col items-center justify-center bg-center pb-0 lg:flex-row';
@@ -56,6 +75,7 @@ const ReserveRatio = () => {
             href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t('HOME_PAGE.REPORTS_LINK')}`}
             download
             target="_blank"
+            rel="noreferrer"
             className="flex space-x-2 hover:text-tidebitTheme"
           >
             <p className="text-sm">{t('HOME_PAGE.DOWNLOAD_REPORT')}</p>

@@ -1,13 +1,11 @@
-import {useState, Dispatch, SetStateAction, useEffect, useRef, useCallback} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useCallback} from 'react';
 import {
-  DELAYED_HIDDEN_SECONDS,
   INPUT_VALIDATION_DELAY,
   TRADING_INPUT_STEP,
   TYPING_KEYUP_DELAY,
 } from '../../constants/display';
 import useStateRef from 'react-usestateref';
 import SafeMath from '../../lib/safe_math';
-import {TARGET_MIN_DIGITS} from '../../constants/config';
 import {validateNumberFormat} from '../../lib/common';
 
 interface ITradingInputProps {
@@ -58,21 +56,20 @@ const TradingInput = ({
   reachOppositeLimit,
   disabled,
   onTypingStatusChange,
-
-  ...otherProps
 }: ITradingInputProps) => {
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
   const [inputValue, setInputValue, inputValueRef] = useStateRef<number | string>(
     inputInitialValue
   );
 
-  const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
+  const [validationTimeout, setValidationTimeout] = useStateRef<ReturnType<
     typeof setTimeout
   > | null>(null);
 
-  const [typingTimeout, setTypingTimeout, typingTimeoutRef] = useStateRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
+  const [typingTimeout, setTypingTimeout] = useStateRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isTyping, setIsTyping, isTypingRef] = useStateRef<boolean>(false);
 
   const regex = /^\d*\.?\d{0,2}$/;

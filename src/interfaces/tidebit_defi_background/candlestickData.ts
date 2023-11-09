@@ -1,9 +1,10 @@
 import {randomFloatFromInterval} from '../../lib/common';
 import {getTime, ITimeSpanUnion} from '../../constants/time_span_union';
 
-const chartBlank = 1.68;
+// Deprecated: defined but never used (20231120 - Shirley)
+// const chartBlank = 1.68;
+// const unitOfLive = 1000;
 const dummyDataSize = 80;
-const unitOfLive = 1000;
 
 export interface ICandle {
   open: number | null;
@@ -63,7 +64,7 @@ export interface ICandlestick {
   candlesticks: ICandlestickData[];
 }
 
-export function isCandlestickData(obj: any): obj is ICandlestickData {
+export function isCandlestickData(obj: ICandlestickData): obj is ICandlestickData {
   return (
     obj &&
     obj.x instanceof Date &&
@@ -77,7 +78,7 @@ export function isCandlestickData(obj: any): obj is ICandlestickData {
   );
 }
 
-export function isIInstCandlestick(obj: any): obj is IInstCandlestick {
+export function isIInstCandlestick(obj: IInstCandlestick): obj is IInstCandlestick {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -111,8 +112,8 @@ export const getDummyCandlestickChartData = (
   const nowSecond = now - (now % getTime(timeSpan));
   let point = 1288.4;
   let lastPrice = 0;
-  const data = new Array(dataSize).fill(0).map((v, i) => {
-    const y: [...number[]] = new Array(4).fill(0).map(v => {
+  const data = new Array(dataSize).fill(0).map(i => {
+    const y: [...number[]] = new Array(4).fill(0).map(() => {
       const rnd = Math.random() / 1.2;
       const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
       const price = point * ts;
@@ -136,13 +137,6 @@ export const getDummyCandlestickChartData = (
     };
     return result;
   });
-  // const addition = dataSize / chartBlank;
-
-  // null data
-  // data.push({
-  //   x: new Date(nowSecond + addition * getTime(timeSpan)),
-  //   y: [null, null, null, null],
-  // });
 
   return data;
 };
@@ -160,10 +154,7 @@ export const updateDummyCandlestickChartData = (
   const lastSecond = lastData.x.getTime();
   const point = lastData?.y.close as number;
 
-  const now = new Date().getTime();
-  const nowSecond = now - (now % getTime(timeSpan));
-
-  const y: [...number[]] = new Array(4).fill(0).map(v => {
+  const y: [...number[]] = new Array(4).fill(0).map(() => {
     const ts = randomFloatFromInterval(0.95, 1.05, 2);
     const price = point * ts;
 
@@ -172,7 +163,6 @@ export const updateDummyCandlestickChartData = (
   });
 
   const result: ICandlestickData = {
-    // x: new Date(nowSecond - 1 * getTime(timeSpan)),
     x: new Date(lastSecond + getTime(timeSpan)),
     y: {
       open: y[0],

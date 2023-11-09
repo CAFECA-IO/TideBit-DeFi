@@ -215,7 +215,7 @@ export const UserContext = createContext<IUserContext>({
   getUserAssets: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
-  getBadge: function (badgeId: string): Promise<IResult> {
+  getBadge: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -225,33 +225,54 @@ export const UserProvider = ({children}: IUserProvider) => {
   const lunar = React.useMemo(() => Lunar.getInstance(), []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingCFDs, setIsLoadingCFDs, isLoadingCFDsRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser, userRef] = useState<IUser | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userAssets, setUserAssets, userAssetsRef] = useState<IUserAssets | null>(null);
-  // const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [balances, setBalances, balancesRef] = useState<IBalance[] | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [favoriteTickers, setFavoriteTickers, favoriteTickersRef] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [histories, setHistories, historiesRef] = useState<IAcceptedOrder[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [CFDs, setCFDs, CFDsRef] = useState<{[orderId: string]: ICFDOrder}>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<ICFDOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<ICFDOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deposits, setDeposits, depositsRef] = useState<Array<IDepositOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [withdraws, setWithdraws, withdrawsRef] = useState<Array<IWithdrawOrder>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSubscibedNewsletters, setIsSubscibedNewsletters, isSubscibedNewslettersRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isEnabledEmailNotification, setIsEnabledEmailNotification, isEnabledEmailNotificationRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnectedWithEmail, setIsConnectedWithEmail, isConnectedWithEmailRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
     [WalletExtension.META_MASK]
   ); // ToDo: Get user wallet extension (20230419 - Shirley)
@@ -1381,7 +1402,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sendEmailCode = useCallback(async (email: string, hashCash: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1392,7 +1413,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const connectEmail = useCallback(async (email: string, code: number) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1403,7 +1424,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleEmailNotification = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1413,7 +1434,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const subscribeNewsletters = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1423,7 +1444,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const connectTideBit = useCallback(async (email: string, password: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1563,37 +1584,35 @@ export const UserProvider = ({children}: IUserProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      lunar.on('connected', async () => {
-        setIsConnected(true);
-        // TODO: Remove log when we can use lunar.on('connected') (20230727 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('lunar.on(connected), isConnectedRef.current', isConnectedRef.current);
-        if (!userRef.current) {
-          const {isDeWTLegit, signer, deWT} = checkDeWT();
-          if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-        }
-      }),
-    [lunar]
-  );
-
-  React.useMemo(
-    () =>
-      lunar.on('disconnected', () => {
-        // Deprecate: [debug] (20230524 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`lunar.on('disconnected') => clearPrivateData`);
-        setIsConnected(false);
-        clearPrivateData();
-      }),
-    [lunar]
-  );
-
-  React.useMemo(() => {
+  React.useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log(`add lunar.on('accountsChanged')`);
-    lunar.on('accountsChanged', async (address: string) => {
+    console.log('in UserContext useEffect');
+    const handleConnected = async () => {
+      // eslint-disable-next-line no-console
+      console.log('handleConnected');
+      setIsConnected(true);
+
+      if (!userRef.current) {
+        const {isDeWTLegit, signer, deWT} = checkDeWT();
+        if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+      }
+    };
+
+    const handleDisconnected = () => {
+      // eslint-disable-next-line no-console
+      console.log('handleDisconnected');
+
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`lunar.on('disconnected') => clearPrivateData`);
+      setIsConnected(false);
+      clearPrivateData();
+    };
+
+    const handleAccountsChanged = async (address: string) => {
+      // eslint-disable-next-line no-console
+      console.log('handleAccountsChanged');
+
       const checksumAddress = toChecksumAddress(address);
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
@@ -1612,8 +1631,68 @@ export const UserProvider = ({children}: IUserProvider) => {
         );
         clearPrivateData();
       }
-    });
+    };
+
+    lunar.on('connected', handleConnected);
+    lunar.on('disconnected', handleDisconnected);
+    lunar.on('accountsChanged', handleAccountsChanged);
+
+    return () => {
+      // eslint-disable-next-line no-console
+      console.log('cleanup function in useEffect in UserContext');
+      lunar.resetEvents();
+    };
   }, [lunar]);
+
+  // React.useMemo(
+  //   () =>
+  //     lunar.on('connected', async () => {
+  //       setIsConnected(true);
+
+  //       if (!userRef.current) {
+  //         const {isDeWTLegit, signer, deWT} = checkDeWT();
+  //         if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+  //       }
+  //     }),
+  //   [lunar]
+  // );
+
+  // React.useMemo(
+  //   () =>
+  //     lunar.on('disconnected', () => {
+  //       // Deprecate: [debug] (20230524 - tzuhan)
+  //       // eslint-disable-next-line no-console
+  //       console.log(`lunar.on('disconnected') => clearPrivateData`);
+  //       setIsConnected(false);
+  //       clearPrivateData();
+  //     }),
+  //   [lunar]
+  // );
+
+  // React.useMemo(() => {
+  //   // eslint-disable-next-line no-console
+  //   console.log(`add lunar.on('accountsChanged')`);
+  //   lunar.on('accountsChanged', async (address: string) => {
+  //     const checksumAddress = toChecksumAddress(address);
+  //     // Deprecate: [debug] (20230524 - tzuhan)
+  //     // eslint-disable-next-line no-console
+  //     console.log(
+  //       `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
+  //     );
+  //     if (!!userRef.current && checksumAddress !== userRef.current.address) {
+  //       // Deprecate: [debug] (20230524 - tzuhan)
+  //       // eslint-disable-next-line no-console
+  //       console.log(
+  //         `userRef.current: ${JSON.stringify(
+  //           userRef.current
+  //         )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
+  //           !!userRef.current && checksumAddress !== userRef.current?.address
+  //         }? clearPrivateData`
+  //       );
+  //       clearPrivateData();
+  //     }
+  //   });
+  // }, [lunar]);
 
   const defaultValue = {
     isInit: isInitRef.current,

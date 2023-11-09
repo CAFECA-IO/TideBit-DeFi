@@ -2,6 +2,7 @@ import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import {ImCross} from 'react-icons/im';
 import {useTranslation} from 'next-i18next';
+import React from 'react';
 
 type TranslateFunction = (s: string) => string;
 interface IConnectingModal {
@@ -14,20 +15,8 @@ const ConnectingModal = ({
   connectingModalRef,
   connectingModalVisible = false,
   connectingClickHandler,
-  ...otherProps
 }: IConnectingModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // const {isShowing} = props;
-
-  // const {
-  //   ref: connectingModalRef,
-  //   componentVisible: connectingModalVisible,
-  //   setComponentVisible: setConnectingModalVisible,
-  // } = useOuterClick(isShowing);
-
-  // const connectingClickHandler = () => {
-  //   setConnectingModalVisible(!connectingModalVisible);
-  // };
 
   const isDisplayedConnecting = connectingModalVisible ? (
     <>

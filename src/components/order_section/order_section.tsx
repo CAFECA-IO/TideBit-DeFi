@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import TradeTab from '../trade_tab/trade_tab';
 import PositionTab from '../position_tab/position_tab';
 import TradeSuspendedTab from '../trade_suspended_tab/trade_suspended_tab';

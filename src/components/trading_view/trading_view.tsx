@@ -1,14 +1,10 @@
-import {useState, useEffect, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
-import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 import useWindowSize from '../../lib/hooks/use_window_size';
-import Lottie from 'lottie-react';
-import spotAnimation from '../../../public/animation/circle.json';
 import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
-import {getTime} from '../../constants/time_span_union';
 import {unitAsset} from '../../constants/config';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
@@ -95,13 +91,16 @@ const TradingView = () => {
 
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickOn, setCandlestickOn, candlestickOnRef] = useStateRef(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(true);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedChartInterval, setSelectedChartInterval, selectedChartIntervalRef] =
     useStateRef('live');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );

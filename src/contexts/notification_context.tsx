@@ -36,8 +36,11 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [notifications, setNotifications, notificationsRef] =
     useState<INotificationItem[]>(dummyNotifications);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
 

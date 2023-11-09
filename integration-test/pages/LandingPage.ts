@@ -1,12 +1,12 @@
 import {expect, type Locator, type Page} from '@playwright/test';
-import i18next from 'i18next';
+import {t} from 'i18next';
 
 export class LandingPage {
   readonly page: Page;
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
-    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
+    const okButton = {name: t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
     this.getAnncmnt = page.getByRole('button', okButton);
   }

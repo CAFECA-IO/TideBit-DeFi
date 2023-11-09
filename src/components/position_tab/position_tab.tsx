@@ -6,6 +6,7 @@ import {LayoutAssertion} from '../../constants/layout_assertion';
 import {POSITION_TAB} from '../order_section/order_section';
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
+import React from 'react';
 
 interface PositionTabProps {
   showSubMenu: boolean;

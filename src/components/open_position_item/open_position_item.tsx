@@ -1,4 +1,4 @@
-import {useContext, useMemo} from 'react';
+import React, {useContext, useMemo} from 'react';
 import Image from 'next/image';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {

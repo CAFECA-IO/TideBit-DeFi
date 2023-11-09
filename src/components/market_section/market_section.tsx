@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
 import TradeStatistics from '../trade_statistics/trade_statistics';

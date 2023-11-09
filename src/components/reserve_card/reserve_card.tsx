@@ -29,7 +29,6 @@ const ReserveCard = ({
   const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
 
   const cardForTwMobile = isMandarin ? 'w-95px ml-40' : 'w-120px ml-36';
-  const cardForTwDesktop = isMandarin ? 'w-95px ml-52' : 'w-120px ml-48';
 
   return (
     <>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
 import {GlobalContext} from '../../contexts/global_context';
 import {ToastTypeAndText} from '../../constants/toast_type';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'next-i18next';
 import {ToastId} from '../../constants/toast_id';
 
@@ -105,7 +105,7 @@ const LoadingModal = ({
                   <div className="mt-2 mb-3 text-base">{modalContent}</div>
 
                   {btnUrl && btnMsg ? (
-                    <a href={btnUrl} target="_blank">
+                    <a href={btnUrl} target="_blank" rel="noreferrer">
                       <RippleButton
                         className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                         buttonType="button"

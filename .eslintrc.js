@@ -22,7 +22,12 @@ module.exports = {
       plugins: ['@typescript-eslint'],
     },
   ],
-  extends: ['plugin:import/typescript', 'plugin:tailwindcss/recommended'],
+  extends: [
+    'plugin:import/typescript',
+    'plugin:tailwindcss/recommended',
+    'plugin:@next/next/recommended',
+    'plugin:react/recommended',
+  ],
   // 加上 no console log 規則
   rules: {
     'no-console': 'error',
@@ -47,5 +52,9 @@ module.exports = {
       removeDuplicates: true,
       whitelist: [],
     },
+    react: {
+      version: 'detect',
+    },
   },
+  env: {browser: true, node: true, es6: true},
 };

@@ -3,7 +3,7 @@ import {ImCross} from 'react-icons/im';
 import {TypeOfBorderColor, TypeOfPnLColor} from '../../constants/display';
 import Tooltip from '../tooltip/tooltip';
 import {unitAsset} from '../../constants/config';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {numberFormatted, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
@@ -56,7 +56,7 @@ const HistoryPositionModal = ({
   const layoutInsideBorder = 'mx-5 flex justify-between';
 
   const closeValue = roundToDecimalPlaces(
-    +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
+    +SafeMath.mult(closedCfdDetails.closePrice ?? 0, closedCfdDetails.amount),
     2,
     RoundCondition.SHRINK
   );
@@ -65,7 +65,7 @@ const HistoryPositionModal = ({
     closedCfdDetails?.pnl ||
     toPnl({
       openPrice: closedCfdDetails.openPrice,
-      closePrice: closedCfdDetails.closePrice!,
+      closePrice: closedCfdDetails.closePrice ?? 0,
       amount: closedCfdDetails.amount,
       typeOfPosition: closedCfdDetails.typeOfPosition,
       spread: spread,

@@ -1,6 +1,6 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
-import {useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Image from 'next/image';
 import version from '../../lib/version';
 import useOuterClick from '../../lib/hooks/use_outer_click';

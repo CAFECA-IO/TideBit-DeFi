@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -10,6 +10,7 @@ import {DEFAULT_CRYPTO, unitAsset} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 import {numberFormatted} from '../../lib/common';
+import Image from 'next/image';
 
 type TranslateFunction = (s: string) => string;
 
@@ -55,9 +56,11 @@ const TradingHeader = () => {
             onClick={tickerBoxClickHandler}
           >
             <span className="relative h-40px w-40px">
-              <img
+              <Image
                 src={marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
                 alt={marketCtx.selectedTicker?.currency ?? DEFAULT_CRYPTO}
+                width={40}
+                height={40}
               />
             </span>
             {tickerTitle}
@@ -102,7 +105,7 @@ const TradingHeader = () => {
           >
             <span className="relative h-40px w-40px">
               {/* ToDo (20230419 - Julian) default currency icon */}
-              <img
+              <Image
                 src={marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
                 alt={marketCtx.selectedTicker?.currency ?? DEFAULT_CRYPTO}
                 width={40}

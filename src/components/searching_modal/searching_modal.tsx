@@ -3,6 +3,7 @@ import searching from '../../../public/animation/searching.json';
 import {ImCross} from 'react-icons/im';
 import {useTranslation} from 'next-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
+import React from 'react';
 
 interface ISearchingModalProps {
   className?: string;
@@ -10,7 +11,7 @@ interface ISearchingModalProps {
   modalClickHandler: () => void;
 }
 
-const SearchingModal = ({className, modalVisible, modalClickHandler}: ISearchingModalProps) => {
+const SearchingModal = ({modalVisible, modalClickHandler}: ISearchingModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const searchingSection = (

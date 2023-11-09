@@ -5,7 +5,7 @@ export interface IPnL {
   value: number;
 }
 
-const pnl: IPnL = {
+export const dummyPnl: IPnL = {
   type: ProfitState.PROFIT,
   value: 100,
 };

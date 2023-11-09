@@ -1,7 +1,5 @@
 import {ITickerData, toDummyTickers} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
-import {Currency, ICurrency} from '../../constants/currency';
-import {unitAsset} from '../../constants/config';
 
 class TickerBook {
   private _dataLength = 1000;
@@ -14,8 +12,9 @@ class TickerBook {
   }
 
   listTickerPositions(
-    instId: string,
-    options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
+    instId: string
+    // Deprecated: defined but never used (20231120 - Shirley)
+    // options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
   ): number[] {
     // TODO: temporary need further discussion on how to calculate the position (20230424 - tzuhan)
     return this.tickers[instId]?.lineGraphProps.dataArray || ([] as number[]);
@@ -37,16 +36,19 @@ class TickerBook {
   }
 
   updateTickers(value: ITickerData[]) {
-    const tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.instId])
-        prev[curr.instId] = {
-          ...curr,
-          lineGraphProps: {
-            dataArray: curr.lineGraphProps.dataArray ? [...curr.lineGraphProps.dataArray] : [],
-          },
-        };
-      return prev;
-    }, {} as {[instId: string]: ITickerData});
+    const tickers = [...value].reduce(
+      (prev, curr) => {
+        if (!prev[curr.instId])
+          prev[curr.instId] = {
+            ...curr,
+            lineGraphProps: {
+              dataArray: curr.lineGraphProps.dataArray ? [...curr.lineGraphProps.dataArray] : [],
+            },
+          };
+        return prev;
+      },
+      {} as {[instId: string]: ITickerData}
+    );
     this.tickers = tickers;
     return tickers;
   }

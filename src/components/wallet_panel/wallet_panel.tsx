@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {ImCross} from 'react-icons/im';
 import WalletOption from '../wallet_option/wallet_option';
 import {useTranslation} from 'next-i18next';

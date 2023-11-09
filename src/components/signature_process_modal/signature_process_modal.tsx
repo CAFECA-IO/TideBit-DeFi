@@ -4,10 +4,9 @@ import Link from 'next/link';
 import TideButton from '../../components/tide_button/tide_button';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
-import searching from '../../../public/animation/searching.json';
 import Lottie from 'lottie-react';
 import {UserContext} from '../../contexts/user_context';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
@@ -29,16 +28,9 @@ interface ISignatureProcessModal {
 }
 
 const SignatureProcessModal = ({
-  // loading = false,
-  // firstStepSuccess = false,
-  // firstStepError = false,
-  // secondStepSuccess = false,
-  // secondStepError = false,
-  // requestSendingHandler,
   processModalRef,
   processModalVisible = false,
   processClickHandler,
-  ...otherProps
 }: ISignatureProcessModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -63,6 +55,8 @@ const SignatureProcessModal = ({
 
   const [connectingProcess, setConnectingProcess, connectingProcessRef] =
     useStateRef<IConnectingProcessType>(ConnectingProcess.EMPTY);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [errorCode, setErrorCode, errorCodeRef] = useStateRef<ICode>(Code.SERVICE_TERM_DISABLE);
 
   const controlSpace =
@@ -111,17 +105,6 @@ const SignatureProcessModal = ({
     </div>
   );
 
-  const searchingSection = (
-    <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="relative h-32 w-32">
-        <Lottie animationData={searching} />
-      </div>
-      <p className="text-center text-2xl font-bold text-white">
-        {t('signature_process_modal.searching')}
-      </p>
-    </div>
-  );
-
   const requestSendingHandler = async () => {
     const [lock, unlock] = locker('signature_process_modal.RequestSendingHandler');
 
@@ -132,7 +115,7 @@ const SignatureProcessModal = ({
       try {
         setConnectingProcess(ConnectingProcess.CONNECTING);
 
-        const connectResult = await userCtx.connect();
+        await userCtx.connect();
       } catch (e) {
         // Info: 用戶拒絕連線，不會造成錯誤，如果有錯誤就是 component 跟 context 之間的錯誤
         // ToDo: Report the error which user rejected the signature in UserContext (20230411 - Shirley)
@@ -173,7 +156,7 @@ const SignatureProcessModal = ({
           await wait(DELAYED_HIDDEN_SECONDS / 5);
           setConnectingProcess(ConnectingProcess.REJECTED);
         }
-      } catch (error: any) {
+      } catch (error) {
         unlock();
 
         // ToDo: report error to backend (20230413 - Shirley)
@@ -215,17 +198,6 @@ const SignatureProcessModal = ({
       <div className="mt-1 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
-      </div>
-    </>
-  );
-
-  const firstStepErrorView = (
-    <>
-      <div className="mr-6 mt-0">{errorIcon}</div>
-      <div className="w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
-        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
-        <div className="text-sm text-lightRed3">{t('WALLET_PANEL.ERROR_MESSAGE')}</div>
       </div>
     </>
   );
@@ -319,7 +291,7 @@ const SignatureProcessModal = ({
     <div className={`${controlSpace} flex flex-col px-4 pt-16`}>
       <div className="flex items-center justify-center">{firstStepSectionHandler}</div>
 
-      {/* Second Step */}
+      {/* Info: Second Step (20231106 - Shirley) */}
       <div className="flex items-center justify-center">{secondStepSectionHandler}</div>
     </div>
   );

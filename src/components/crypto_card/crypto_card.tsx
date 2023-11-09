@@ -1,16 +1,15 @@
 import {BsStar, BsStarFill} from 'react-icons/bs';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {TypeOfPnLColorHex} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'next-i18next';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {numberFormatted} from '../../lib/common';
 import useStateRef from 'react-usestateref';
@@ -68,14 +67,14 @@ const CryptoCard = ({
   cardClickHandler,
   onTheSamePage = true,
   getStarredState,
-  getStarredInstId,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
-
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
 
   fluctuating = Number(fluctuating);
@@ -148,7 +147,6 @@ const CryptoCard = ({
     strokeColor = ['#3CC8C8'],
     dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
     lineGraphWidth,
-    ...otherProps
   }: ILineGraphProps) {
     const chartOptions: ApexOptions = {
       chart: {
@@ -193,7 +191,7 @@ const CryptoCard = ({
         enabled: false,
       },
     };
-    const [dataSample, setDataSample] = useState({
+    const dataSample = {
       options: chartOptions,
       toolbar: {
         show: false,
@@ -205,7 +203,7 @@ const CryptoCard = ({
           data: [...dataArray],
         },
       ],
-    });
+    };
 
     return (
       <div className="h-40px pt-8">

@@ -22,7 +22,9 @@ export type ITideBitEvent =
   // | 'WITHDRAW'
   | 'ORDER'
   | 'IS_CFD_TRADEBLE'
-  | 'EXCEPTION';
+  | 'EXCEPTION_THROWN'
+  | 'EXCEPTION_CLEARED';
+
 export interface ITideBitEventConstant {
   CONNECTED: ITideBitEvent;
   DISCONNECTED: ITideBitEvent;
@@ -47,7 +49,8 @@ export interface ITideBitEventConstant {
   // WITHDRAW: ITideBitEvent;
   ORDER: ITideBitEvent;
   IS_CFD_TRADEBLE: ITideBitEvent;
-  EXCEPTION: ITideBitEvent;
+  EXCEPTION_THROWN: ITideBitEvent;
+  EXCEPTION_CLEARED: ITideBitEvent;
 }
 export const TideBitEvent: ITideBitEventConstant = {
   CONNECTED: 'CONNECTED',
@@ -73,7 +76,8 @@ export const TideBitEvent: ITideBitEventConstant = {
   // WITHDRAW: 'WITHDRAW',
   ORDER: 'ORDER',
   IS_CFD_TRADEBLE: 'IS_CFD_TRADEBLE',
-  EXCEPTION: 'EXCEPTION',
+  EXCEPTION_THROWN: 'EXCEPTION_THROWN',
+  EXCEPTION_CLEARED: 'EXCEPTION_CLEARED',
 };
 
 export type IClickEvent = 'TICKER_CHANGED';

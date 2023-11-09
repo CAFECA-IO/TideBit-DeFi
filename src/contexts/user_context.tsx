@@ -347,6 +347,32 @@ export const UserProvider = ({children}: IUserProvider) => {
       // Deprecate: [debug] (20230717 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`privateRequestHandler error`, error);
+
+      if (
+        !isCustomError(error) ||
+        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      ) {
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'privateRequestHandler',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '5'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
+      }
       throw error;
     }
   }, []);
@@ -367,6 +393,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listFavoriteTickers error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listFavoriteTickers',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '4'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -412,6 +459,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listCFDs error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listCFDs',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '3'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     setIsLoadingCFDs(false);
@@ -439,6 +507,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listDeposits error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listDeposits',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '3'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -468,6 +557,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listWithdraws error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listWithdraws',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '3'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -501,6 +611,27 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'getUserAssets',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '0'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -530,6 +661,27 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'getBadge',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '5'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -555,6 +707,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listBalances error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listBalances',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '0'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -651,6 +824,32 @@ export const UserProvider = ({children}: IUserProvider) => {
         // Deprecate: after implementing error handle (20230508 - tzuhan)
         // eslint-disable-next-line no-console
         console.error(`deWTLogin error`, error);
+
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          // Info: add exception to exceptionCollector (20231109 - Shirley)
+          const rs = notificationCtx.exceptionCollector.add(
+            {
+              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+              reason: isCustomError(error)
+                ? Reason[error.code]
+                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+              where: 'deWTLogin',
+              when: new Date().getTime(),
+              message: (error as Error)?.message,
+            },
+            '0'
+          );
+
+          if (rs) {
+            const exception = notificationCtx.exceptionCollector.getSeverest();
+            if (exception?.length > 0) {
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            }
+          }
+        }
       }
     }
     return result;
@@ -700,6 +899,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     } catch (error) {
       result.code = resultCode;
       result.reason = Reason[resultCode];
+
       return result;
     }
   }, []);
@@ -753,6 +953,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.ADD_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'addFavorites',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '5'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
 
@@ -787,6 +1008,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.REMOVE_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'removeFavorites',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '5'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
 
@@ -837,6 +1079,27 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.error(`20230526 error`, error);
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getPersonalAchievements',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '5'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -856,6 +1119,27 @@ export const UserProvider = ({children}: IUserProvider) => {
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'updateBalance',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '0'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
+
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
     }
@@ -969,6 +1253,32 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          // Info: add exception to exceptionCollector (20231109 - Shirley)
+          const rs = notificationCtx.exceptionCollector.add(
+            {
+              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+              reason: isCustomError(error)
+                ? Reason[error.code]
+                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+              where: '_createCFDOrder',
+              when: new Date().getTime(),
+              message: (error as Error)?.message,
+            },
+            '0'
+          );
+
+          if (rs) {
+            const exception = notificationCtx.exceptionCollector.getSeverest();
+            if (exception?.length > 0) {
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            }
+          }
+        }
       }
       return result;
     },
@@ -1096,6 +1406,32 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          // Info: add exception to exceptionCollector (20231109 - Shirley)
+          const rs = notificationCtx.exceptionCollector.add(
+            {
+              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+              reason: isCustomError(error)
+                ? Reason[error.code]
+                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+              where: '_closeCFDOrder',
+              when: new Date().getTime(),
+              message: (error as Error)?.message,
+            },
+            '0'
+          );
+
+          if (rs) {
+            const exception = notificationCtx.exceptionCollector.getSeverest();
+            if (exception?.length > 0) {
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            }
+          }
+        }
       }
       return result;
     },
@@ -1213,6 +1549,32 @@ export const UserProvider = ({children}: IUserProvider) => {
           code: Code.INTERNAL_SERVER_ERROR,
           reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          // Info: add exception to exceptionCollector (20231109 - Shirley)
+          const rs = notificationCtx.exceptionCollector.add(
+            {
+              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+              reason: isCustomError(error)
+                ? Reason[error.code]
+                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+              where: 'updateCFDOrder',
+              when: new Date().getTime(),
+              message: (error as Error)?.message,
+            },
+            '0'
+          );
+
+          if (rs) {
+            const exception = notificationCtx.exceptionCollector.getSeverest();
+            if (exception?.length > 0) {
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            }
+          }
+        }
       }
 
       return result;
@@ -1254,6 +1616,32 @@ export const UserProvider = ({children}: IUserProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      if (
+        !isCustomError(error) ||
+        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      ) {
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'deposit',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '0'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
+      }
     }
     return result;
   }, []);
@@ -1313,6 +1701,32 @@ export const UserProvider = ({children}: IUserProvider) => {
                 code: Code.INTERNAL_SERVER_ERROR,
                 reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
               };
+
+              if (
+                !isCustomError(error) ||
+                (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+              ) {
+                // Info: add exception to exceptionCollector (20231109 - Shirley)
+                const rs = notificationCtx.exceptionCollector.add(
+                  {
+                    code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+                    reason: isCustomError(error)
+                      ? Reason[error.code]
+                      : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+                    where: 'withdraw',
+                    when: new Date().getTime(),
+                    message: (error as Error)?.message,
+                  },
+                  '0'
+                );
+
+                if (rs) {
+                  const exception = notificationCtx.exceptionCollector.getSeverest();
+                  if (exception?.length > 0) {
+                    notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+                  }
+                }
+              }
             }
           }
         }
@@ -1366,6 +1780,26 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.LIST_HISTORIES} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listHistories',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '3'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
     }
     return result;
@@ -1384,6 +1818,32 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as IResult;
     } catch (error) {
       result = {...defaultResultFailed};
+
+      if (
+        !isCustomError(error) ||
+        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      ) {
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'enableShare',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '0'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
+      }
     }
     return result;
   }, []);
@@ -1399,6 +1859,27 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as IResult;
     } catch (error) {
       result = {...defaultResultFailed};
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'shareTradeRecord',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '4'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -1465,6 +1946,32 @@ export const UserProvider = ({children}: IUserProvider) => {
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
         result = {...defaultResultFailed};
+
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          // Info: add exception to exceptionCollector (20231109 - Shirley)
+          const rs = notificationCtx.exceptionCollector.add(
+            {
+              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+              reason: isCustomError(error)
+                ? Reason[error.code]
+                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+              where: 'readNotifications',
+              when: new Date().getTime(),
+              message: (error as Error)?.message,
+            },
+            '4'
+          );
+
+          if (rs) {
+            const exception = notificationCtx.exceptionCollector.getSeverest();
+            if (exception?.length > 0) {
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            }
+          }
+        }
       }
     }
 
@@ -1585,11 +2092,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
 
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('in UserContext useEffect');
     const handleConnected = async () => {
-      // eslint-disable-next-line no-console
-      console.log('handleConnected');
       setIsConnected(true);
 
       if (!userRef.current) {
@@ -1599,9 +2102,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     };
 
     const handleDisconnected = () => {
-      // eslint-disable-next-line no-console
-      console.log('handleDisconnected');
-
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`lunar.on('disconnected') => clearPrivateData`);
@@ -1610,9 +2110,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     };
 
     const handleAccountsChanged = async (address: string) => {
-      // eslint-disable-next-line no-console
-      console.log('handleAccountsChanged');
-
       const checksumAddress = toChecksumAddress(address);
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
@@ -1638,61 +2135,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     lunar.on('accountsChanged', handleAccountsChanged);
 
     return () => {
-      // eslint-disable-next-line no-console
-      console.log('cleanup function in useEffect in UserContext');
       lunar.resetEvents();
     };
   }, [lunar]);
-
-  // React.useMemo(
-  //   () =>
-  //     lunar.on('connected', async () => {
-  //       setIsConnected(true);
-
-  //       if (!userRef.current) {
-  //         const {isDeWTLegit, signer, deWT} = checkDeWT();
-  //         if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-  //       }
-  //     }),
-  //   [lunar]
-  // );
-
-  // React.useMemo(
-  //   () =>
-  //     lunar.on('disconnected', () => {
-  //       // Deprecate: [debug] (20230524 - tzuhan)
-  //       // eslint-disable-next-line no-console
-  //       console.log(`lunar.on('disconnected') => clearPrivateData`);
-  //       setIsConnected(false);
-  //       clearPrivateData();
-  //     }),
-  //   [lunar]
-  // );
-
-  // React.useMemo(() => {
-  //   // eslint-disable-next-line no-console
-  //   console.log(`add lunar.on('accountsChanged')`);
-  //   lunar.on('accountsChanged', async (address: string) => {
-  //     const checksumAddress = toChecksumAddress(address);
-  //     // Deprecate: [debug] (20230524 - tzuhan)
-  //     // eslint-disable-next-line no-console
-  //     console.log(
-  //       `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
-  //     );
-  //     if (!!userRef.current && checksumAddress !== userRef.current.address) {
-  //       // Deprecate: [debug] (20230524 - tzuhan)
-  //       // eslint-disable-next-line no-console
-  //       console.log(
-  //         `userRef.current: ${JSON.stringify(
-  //           userRef.current
-  //         )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
-  //           !!userRef.current && checksumAddress !== userRef.current?.address
-  //         }? clearPrivateData`
-  //       );
-  //       clearPrivateData();
-  //     }
-  //   });
-  // }, [lunar]);
 
   const defaultValue = {
     isInit: isInitRef.current,

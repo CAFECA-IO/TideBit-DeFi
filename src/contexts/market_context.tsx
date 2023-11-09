@@ -336,6 +336,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getTickerStatic',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '3'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -360,6 +381,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getTickerLiveStatistics',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '3'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -412,20 +454,25 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
 
-      // TODO: in dev (20231108 - Shirley)
-      notificationCtx.exceptionCollector.add({
-        code: Code.UNKNOWN_ERROR,
-        reason: isCustomError(error)
-          ? Reason[error.code]
-          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-        where: 'getCFDQuotation',
-        when: new Date().getTime(),
-        message: error as string,
-      });
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getCFDQuotation',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '0'
+      );
 
-      const exception = notificationCtx.exceptionCollector.getSeverest();
-      if (exception) {
-        notificationCtx.emitter.emit(TideBitEvent.EXCEPTION, exception);
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
       }
     }
     return result;
@@ -455,33 +502,63 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        // Info: add exception to exceptionCollector (20231109 - Shirley)
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'getCFDSuggestion',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '3'
+        );
+
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
+        }
       }
       return result;
     },
     []
   );
 
-  const listTickerPositions = useCallback(
-    (
-      instId: string
-      // Deprecated: defined but never used ub TickerBook (20231120 - Shirley)
-      // options: {
-      //   timespan?: ITimeSpanUnion;
-      //   begin?: number;
-      //   end?: number;
-      //   limit?: number;
-      // }
-    ) => {
-      let positions: number[] = [];
-      try {
-        positions = tickerBook.listTickerPositions(instId);
-      } catch (error) {
-        // TODO: error handle (20230331 - tzuhan)
+  const listTickerPositions = useCallback((instId: string) => {
+    let positions: number[] = [];
+    try {
+      positions = tickerBook.listTickerPositions(instId);
+    } catch (error) {
+      // TODO: error handle (20230331 - tzuhan)
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'listTickerPositions',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '3'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
       }
-      return positions;
-    },
-    []
-  );
+    }
+    return positions;
+  }, []);
 
   const getGuaranteedStopFeePercentage = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
@@ -505,6 +582,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getGuaranteedStopFeePercentage',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '0'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -535,6 +633,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      // Info: add exception to exceptionCollector (20231109 - Shirley)
+      const rs = notificationCtx.exceptionCollector.add(
+        {
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+          where: 'getLeaderboard',
+          when: new Date().getTime(),
+          message: (error as Error)?.message,
+        },
+        '3'
+      );
+
+      if (rs) {
+        const exception = notificationCtx.exceptionCollector.getSeverest();
+        if (exception?.length > 0) {
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+        }
+      }
     }
     return result;
   }, []);
@@ -654,19 +773,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         };
 
         // TODO: in dev (20231108 - Shirley)
-        notificationCtx.exceptionCollector.add({
-          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-          reason: isCustomError(error)
-            ? Reason[error.code]
-            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-          where: 'listMarketTrades',
-          when: new Date().getTime(),
-          message: error as string,
-        });
+        const rs = notificationCtx.exceptionCollector.add(
+          {
+            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+            reason: isCustomError(error)
+              ? Reason[error.code]
+              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+            where: 'listMarketTrades',
+            when: new Date().getTime(),
+            message: (error as Error)?.message,
+          },
+          '4'
+        );
 
-        const exception = notificationCtx.exceptionCollector.getSeverest();
-        if (exception) {
-          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION, exception);
+        if (rs) {
+          const exception = notificationCtx.exceptionCollector.getSeverest();
+          if (exception?.length > 0) {
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          }
         }
       }
       return result;

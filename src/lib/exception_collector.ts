@@ -1,4 +1,4 @@
-interface IErrorItem {
+export interface IErrorItem {
   reason: string;
   code: string;
   message: string;
@@ -6,7 +6,7 @@ interface IErrorItem {
   when: number;
 }
 
-interface IException {
+export interface IException {
   level: number;
   item: IErrorItem;
 }
@@ -32,13 +32,15 @@ class ExceptionCollector {
     this.exceptions = [];
   }
 
-  add(exc: IErrorItem): void {
+  add(exc: IErrorItem, severity?: string): boolean {
     const exists = this.exceptions.some(exception => exception.item.code === exc.code);
     if (!exists) {
-      const exception = this.setLevel(exc);
+      const exception = this.setLevel(exc, severity);
       this.exceptions.push(exception);
       this.sort();
+      return true;
     }
+    return false;
   }
 
   remove(exc: IException[]): void {
@@ -47,6 +49,12 @@ class ExceptionCollector {
         exception => !this.areItemsEqual(exception.item, exceptionToRemove.item)
       );
     });
+
+    this.sort();
+  }
+
+  reset(): void {
+    this.exceptions = [];
   }
 
   // Info: report function with callback other function (20231108 - Shirley)
@@ -82,14 +90,6 @@ class ExceptionCollector {
     return result;
   }
 
-  /**
-   * Info:  (20231108 - Shirley)
-    第三位：錯誤級別
-    1：致命錯誤
-    2：嚴重錯誤
-    3：一般錯誤
-    4：警告
-   */
   setLevel(item: IErrorItem, severity?: string): IException {
     const level = severity ? severity : item.code.charAt(2);
     const exception = {
@@ -104,9 +104,9 @@ class ExceptionCollector {
   sort() {
     this.exceptions.sort((a, b) => {
       if (a.level === b.level) {
-        return a.item.when - b.item.when; // Secondary sort by timestamp if levels are equal
+        return +b.item.when - +a.item.when;
       }
-      return a.level - b.level;
+      return +a.level - +b.level;
     });
   }
 

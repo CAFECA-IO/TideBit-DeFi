@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext, useMemo, useCallback} from 'react';
+import React, {createContext, useState, useContext, useMemo, useCallback, useEffect} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT, TOAST_DURATION_SECONDS} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
@@ -60,6 +60,7 @@ import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
+import {IException} from '../lib/exception_collector';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -980,19 +981,33 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataAlert(data);
   }, []);
 
-  useMemo(() => {
-    notificationCtx.emitter.on(TideBitEvent.EXCEPTION, () => {
+  useEffect(() => {
+    const handleExceptionThrown = (arg: IException) => {
+      // TODO: in dev (20231109 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('severest from emit IException', arg);
       const all = notificationCtx.exceptionCollector.getExceptions();
-      // TODO: 把 error code 裡面會造成無法交易的羅列出來，不要用 level 來決定顯示 warning or error？？？
-      const severity =
-        all[0].level === 0 || all[0].level === 1 ? AlertState.ERROR : AlertState.WARNING;
+      const severity = all[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+
+      // TODO: i18n (20231109 - Shirley)
       dataAlertHandler({
         type: severity,
         message: `Exception: ${t(all[0].item.message)} ${all[0].item.code} ${all[0].item.where}`,
       });
       setVisibleAlert(true);
-      // visibleAlertHandler();
-    });
+    };
+
+    const handleExceptionCleared = () => {
+      setVisibleAlert(false);
+    };
+
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_THROWN, handleExceptionThrown);
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
+
+    return () => {
+      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_THROWN, handleExceptionThrown);
+      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
+    };
   }, []);
 
   const defaultValue = {

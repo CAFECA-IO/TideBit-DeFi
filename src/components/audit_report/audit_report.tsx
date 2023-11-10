@@ -109,7 +109,6 @@ const AuditReport = () => {
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
-                download
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"

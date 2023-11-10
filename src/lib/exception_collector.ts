@@ -1,29 +1,4 @@
-export interface IErrorItem {
-  reason: string;
-  code: string;
-  message: string;
-  where: string;
-  when: number;
-}
-
-export interface IException {
-  level: number;
-  item: IErrorItem;
-}
-
-type ISearchProps = 'WHERE' | 'MESSAGE' | 'CODE' | 'EXCEPTION';
-export interface ISearchPropsConstant {
-  WHERE: ISearchProps;
-  MESSAGE: ISearchProps;
-  CODE: ISearchProps;
-  EXCEPTION: ISearchProps;
-}
-export const SearchProps: ISearchPropsConstant = {
-  WHERE: 'WHERE',
-  MESSAGE: 'MESSAGE',
-  CODE: 'CODE',
-  EXCEPTION: 'EXCEPTION',
-};
+import {IErrorItem, IException, IErrorSearchProps, ErrorSearchProps} from '../constants/exception';
 
 class ExceptionCollector {
   private exceptions: IException[];
@@ -43,14 +18,20 @@ class ExceptionCollector {
     return false;
   }
 
-  remove(exc: IException[]): void {
-    exc.forEach(exceptionToRemove => {
-      this.exceptions = this.exceptions.filter(
-        exception => !this.areItemsEqual(exception.item, exceptionToRemove.item)
-      );
-    });
+  remove(props: IErrorSearchProps, searchBy: string): boolean {
+    const exc = this.search(props, searchBy);
+    if (exc.length > 0) {
+      exc.forEach(exceptionToRemove => {
+        this.exceptions = this.exceptions.filter(
+          exception => !this.areItemsEqual(exception.item, exceptionToRemove.item)
+        );
+      });
 
-    this.sort();
+      this.sort();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   reset(): void {
@@ -68,20 +49,23 @@ class ExceptionCollector {
     callback();
   }
 
-  search(props: ISearchProps, from: string): IException[] {
+  search(props: IErrorSearchProps, searchBy: string): IException[] {
     let result: IException[] = [];
     switch (props) {
-      case SearchProps.WHERE:
-        result = this.exceptions.filter(e => e.item.where === from);
+      case ErrorSearchProps.WHERE:
+        result = this.exceptions.filter(e => e.item.where === searchBy);
         break;
-      case SearchProps.MESSAGE:
-        result = this.exceptions.filter(e => e.item.reason === from);
+      case ErrorSearchProps.MESSAGE:
+        result = this.exceptions.filter(e => e.item.reason === searchBy);
         break;
-      case SearchProps.CODE:
-        result = this.exceptions.filter(e => e.item.code === from);
+      case ErrorSearchProps.CODE:
+        result = this.exceptions.filter(e => e.item.code === searchBy);
         break;
-      case SearchProps.EXCEPTION:
-        result = this.exceptions.filter(e => e.item.message === from);
+      case ErrorSearchProps.EXCEPTION:
+        result = this.exceptions.filter(e => e.item.message === searchBy);
+        break;
+      case ErrorSearchProps.LEVEL:
+        result = this.exceptions.filter(e => e.level === parseInt(searchBy, 10));
         break;
       default:
         result = [];

@@ -10,6 +10,9 @@ import {
 import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
 import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
 import ExceptionCollectorInstance from '../lib/exception_collector';
+import {CustomError, isCustomError} from '../lib/custom_error';
+import {Code, ICode, Reason} from '../constants/code';
+import {IErrorSearchProps} from '../constants/exception';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -24,6 +27,14 @@ export interface INotificationContext {
   init: () => Promise<void>;
   reset: () => void;
   exceptionCollector: typeof ExceptionCollectorInstance;
+  addException: (
+    from: string,
+    error: Error | CustomError,
+    alternativeCode: ICode,
+    severity?: string
+  ) => void;
+  clearException: () => void;
+  removeException: (props: IErrorSearchProps, searchBy: string) => void;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -35,6 +46,9 @@ export const NotificationContext = createContext<INotificationContext>({
   init: () => Promise.resolve(),
   reset: () => null,
   exceptionCollector: ExceptionCollectorInstance,
+  addException: () => null,
+  clearException: () => null,
+  removeException: () => null,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
@@ -48,6 +62,58 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
+
+  const addException = (
+    from: string,
+    error: Error | CustomError,
+    alternativeCode: ICode,
+    severity?: string
+  ) => {
+    const code = isCustomError(error) ? error.code : alternativeCode;
+    const reason = isCustomError(error)
+      ? Reason[error.code]
+      : (error as Error)?.message || Reason[alternativeCode];
+    const level =
+      severity ||
+      (!isCustomError(error) || (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ? '0'
+        : undefined);
+
+    const rs = exceptionCollector.add(
+      {
+        code: code,
+        reason: reason,
+        where: from,
+        when: new Date().getTime(),
+        message: (error as Error)?.message,
+      },
+      level
+    );
+
+    if (rs) {
+      const exception = exceptionCollector.getSeverest();
+      if (exception?.length > 0) {
+        emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
+      }
+    }
+  };
+
+  const removeException = (props: IErrorSearchProps, searchBy: string) => {
+    const rs = exceptionCollector.remove(props, searchBy);
+    if (rs) {
+      const exception = exceptionCollector.getSeverest();
+      if (exception?.length > 0) {
+        emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
+      } else {
+        emitter.emit(TideBitEvent.EXCEPTION_CLEARED, undefined);
+      }
+    }
+  };
+
+  const clearException = () => {
+    exceptionCollector.reset();
+    emitter.emit(TideBitEvent.EXCEPTION_CLEARED, undefined);
+  };
 
   const isRead = async (id: string) => {
     const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
@@ -145,6 +211,9 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     init,
     reset,
     exceptionCollector,
+    addException,
+    clearException,
+    removeException,
   };
 
   return (

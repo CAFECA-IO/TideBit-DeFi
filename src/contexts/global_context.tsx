@@ -60,7 +60,8 @@ import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
-import {IException} from '../lib/exception_collector';
+import {IException, isException} from '../constants/exception';
+
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -985,27 +986,36 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     const handleExceptionThrown = (arg: IException) => {
       // TODO: in dev (20231109 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('severest from emit IException', arg);
-      const all = notificationCtx.exceptionCollector.getExceptions();
-      const severity = all[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+      console.log('severest from emit arg handleExceptionThrown', arg);
+      const severest = notificationCtx.exceptionCollector.getSeverest();
+      const severity = severest[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+      // eslint-disable-next-line no-console
+      console.log('severest in handleExceptionThrown', severest);
 
       // TODO: i18n (20231109 - Shirley)
+      /*
+      
+      */
       dataAlertHandler({
         type: severity,
-        message: `Exception: ${t(all[0].item.message)} ${all[0].item.code} ${all[0].item.where}`,
+        message: `Exception: ${t(severest[0].item.message)} ${severest[0].item.code} ${
+          severest[0].item.where
+        } ${severest[0].level}`,
       });
       setVisibleAlert(true);
     };
 
     const handleExceptionCleared = () => {
+      // eslint-disable-next-line no-console
+      console.log('handleExceptionCleared called');
       setVisibleAlert(false);
     };
 
-    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_THROWN, handleExceptionThrown);
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_UPDATE, handleExceptionThrown);
     notificationCtx.emitter.on(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
 
     return () => {
-      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_THROWN, handleExceptionThrown);
+      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_UPDATE, handleExceptionThrown);
       notificationCtx.emitter.off(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
     };
   }, []);

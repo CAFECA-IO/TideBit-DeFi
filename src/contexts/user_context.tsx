@@ -369,7 +369,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -411,7 +411,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -477,7 +477,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -525,7 +525,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -575,7 +575,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -629,7 +629,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -679,7 +679,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -725,7 +725,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -846,7 +846,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (rs) {
             const exception = notificationCtx.exceptionCollector.getSeverest();
             if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
             }
           }
         }
@@ -971,7 +971,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -1026,7 +1026,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -1097,7 +1097,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (rs) {
         const exception = notificationCtx.exceptionCollector.getSeverest();
         if (exception?.length > 0) {
-          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
         }
       }
     }
@@ -1136,7 +1136,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
 
@@ -1275,7 +1275,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (rs) {
             const exception = notificationCtx.exceptionCollector.getSeverest();
             if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
             }
           }
         }
@@ -1428,7 +1428,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (rs) {
             const exception = notificationCtx.exceptionCollector.getSeverest();
             if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
             }
           }
         }
@@ -1571,7 +1571,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (rs) {
             const exception = notificationCtx.exceptionCollector.getSeverest();
             if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
             }
           }
         }
@@ -1638,7 +1638,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -1723,7 +1723,7 @@ export const UserProvider = ({children}: IUserProvider) => {
                 if (rs) {
                   const exception = notificationCtx.exceptionCollector.getSeverest();
                   if (exception?.length > 0) {
-                    notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+                    notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
                   }
                 }
               }
@@ -1797,7 +1797,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -1840,7 +1840,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (rs) {
           const exception = notificationCtx.exceptionCollector.getSeverest();
           if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
           }
         }
       }
@@ -1877,7 +1877,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (rs) {
         const exception = notificationCtx.exceptionCollector.getSeverest();
         if (exception?.length > 0) {
-          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
         }
       }
     }
@@ -1968,7 +1968,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (rs) {
             const exception = notificationCtx.exceptionCollector.getSeverest();
             if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_THROWN, exception);
+              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
             }
           }
         }

@@ -64,7 +64,6 @@ import {
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
 import SafeMath from '../lib/safe_math';
-import {ErrorSearchProps} from '../constants/exception';
 
 export interface IMarketProvider {
   children: React.ReactNode;

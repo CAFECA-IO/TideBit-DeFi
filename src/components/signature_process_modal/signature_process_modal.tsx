@@ -13,6 +13,7 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {Code, ICode} from '../../constants/code';
 import useStateRef from 'react-usestateref';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface ISignatureProcessModal {
@@ -36,6 +37,7 @@ const SignatureProcessModal = ({
 
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
+  const notificationCtx = useContext(NotificationContext);
 
   // TODO: 從 UserContext 拿字串狀態來判斷，取代`connectingProcess`跟`setConnectingProcess`，用來判斷第二步應顯示'打勾、打叉、數字'哪一種圖示
   type IConnectingProcessType = 'EMPTY' | 'CONNECTING' | 'CONNECTED' | 'REJECTED';
@@ -117,8 +119,12 @@ const SignatureProcessModal = ({
 
         await userCtx.connect();
       } catch (e) {
-        // Info: 用戶拒絕連線，不會造成錯誤，如果有錯誤就是 component 跟 context 之間的錯誤
-        // ToDo: Report the error which user rejected the signature in UserContext (20230411 - Shirley)
+        // Info: 用戶拒絕連線，不會造成錯誤，如果有錯誤就是 component 跟 context 之間的錯誤 (20231110 - Shirley)
+        notificationCtx.addException(
+          'requestSendingHandler[connect] signature_process_modal',
+          e as Error,
+          Code.UNKNOWN_ERROR
+        );
       } finally {
         unlock();
         setConnectingProcess(ConnectingProcess.EMPTY);
@@ -158,7 +164,11 @@ const SignatureProcessModal = ({
         }
       } catch (error) {
         unlock();
-
+        notificationCtx.addException(
+          'requestSendingHandler[sign] signature_process_modal',
+          error as Error,
+          Code.UNKNOWN_ERROR
+        );
         // ToDo: report error to backend (20230413 - Shirley)
         setErrorCode(Code.UNKNOWN_ERROR_IN_COMPONENT);
         setConnectingProcess(ConnectingProcess.REJECTED);

@@ -13,6 +13,7 @@ import Footer from '../footer/footer';
 import {useTranslation} from 'next-i18next';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import {Code} from '../../constants/code';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -22,6 +23,7 @@ const AssetsPageBody = () => {
   const [isLoading, setIsLoading] = useState(true);
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
+  const notificationCtx = useContext(NotificationContext);
 
   const redirect = () => {
     globalCtx.dataWarningModalHandler({
@@ -40,16 +42,11 @@ const AssetsPageBody = () => {
       const {success: isGetUserAssetsSuccess, code: userAssetsCode} = await userCtx.getUserAssets();
       if (!isGetUserAssetsSuccess)
         throw new CustomError(isCustomError(userAssetsCode) ? userAssetsCode : Code.UNKNOWN_ERROR);
-      // const {success: isListHistoriesSuccess, code: listHistoriesCode} =
-      //   await
       userCtx.listHistories();
-      // if (!isListHistoriesSuccess)
-      //   throw new CustomError(
-      //     isCustomError(listHistoriesCode) ? listHistoriesCode : Code.UNKNOWN_ERROR
-      //   );
       setIsInit(true);
       setIsLoading(false);
     } catch (err) {
+      notificationCtx.addException('getUserPrivateInfo', err as Error, Code.UNKNOWN_ERROR);
       // Deprecated: [debug] (20230608 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`MyAssets getUserAssets error: `, err);

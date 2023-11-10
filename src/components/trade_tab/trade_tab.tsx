@@ -412,6 +412,7 @@ const TradeTab = () => {
         shortQuotation = {...defaultResultFailed, data: sellQuotation};
       }
     } catch (err) {
+      notificationCtx.addException('getQuotation trade_tab', err as Error, Code.UNKNOWN_ERROR);
       const buyQuotation: IQuotation = {
         instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,

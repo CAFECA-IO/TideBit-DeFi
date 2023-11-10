@@ -11,7 +11,7 @@ import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
 import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
 import ExceptionCollectorInstance from '../lib/exception_collector';
 import {CustomError, isCustomError} from '../lib/custom_error';
-import {Code, ICode, Reason} from '../constants/code';
+import {ICode, Reason} from '../constants/code';
 import {IErrorSearchProps, IException} from '../constants/exception';
 import {SEVEREST_EXCEPTION_LEVEL} from '../constants/display';
 
@@ -82,7 +82,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
       : (error as Error)?.message || Reason[alternativeCode];
     const level =
       severity ||
-      (!isCustomError(error) || (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      (!isCustomError(error) || (isCustomError(error) && error.code === alternativeCode)
         ? SEVEREST_EXCEPTION_LEVEL
         : undefined);
 

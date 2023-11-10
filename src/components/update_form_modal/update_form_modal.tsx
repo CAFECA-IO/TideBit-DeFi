@@ -42,6 +42,7 @@ import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 import {UserContext} from '../../contexts/user_context';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -61,6 +62,7 @@ const UpdateFormModal = ({
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
@@ -669,6 +671,11 @@ const UpdateFormModal = ({
         });
       }
     } catch (err) {
+      notificationCtx.addException(
+        'getQuotation update_form_modal',
+        err as Error,
+        Code.UNKNOWN_ERROR
+      );
       // TODO: Report error to backend (20230613 - Shirley)
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,

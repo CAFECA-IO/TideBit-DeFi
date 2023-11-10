@@ -51,7 +51,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
-import {CustomError, isCustomError} from '../lib/custom_error';
+import {CustomError, MetaMaskError, isCustomError, isRejectedError} from '../lib/custom_error';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
@@ -999,9 +999,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.log('_createCFDOrder result', result);
         if (!result.success)
-          throw new CustomError(
-            isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
-          );
+          throw new CustomError(isCustomError(result.code) ? result.code : Code.REJECTED_SIGNATURE);
         const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
           txhash: string;
           orderSnapshot: ICFDOrder;
@@ -1025,8 +1023,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
         if (
-          !isCustomError(error) ||
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
           notificationCtx.addException(
@@ -1163,7 +1162,7 @@ export const UserProvider = ({children}: IUserProvider) => {
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
         if (
-          !isCustomError(error) ||
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
           notificationCtx.addException(
@@ -1290,7 +1289,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
         if (
-          !isCustomError(error) ||
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
           notificationCtx.addException(
@@ -1341,7 +1340,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
       if (
-        !isCustomError(error) ||
+        (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
         (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
       ) {
         notificationCtx.addException('deposit', error as Error, Code.INTERNAL_SERVER_ERROR);
@@ -1406,7 +1405,7 @@ export const UserProvider = ({children}: IUserProvider) => {
                 reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
               };
               if (
-                !isCustomError(error) ||
+                (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
                 (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
               ) {
                 notificationCtx.addException(

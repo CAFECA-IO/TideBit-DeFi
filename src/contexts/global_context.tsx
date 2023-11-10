@@ -60,7 +60,7 @@ import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
-import {IException, isException} from '../constants/exception';
+import {IException} from '../constants/exception';
 
 export interface IToastify {
   type: IToastType;

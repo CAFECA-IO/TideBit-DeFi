@@ -503,7 +503,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.addException(
         'getGuaranteedStopFeePercentage',
         error as Error,
-        Code.INTERNAL_SERVER_ERROR
+        Code.INTERNAL_SERVER_ERROR,
+        '0'
       );
     }
     return result;

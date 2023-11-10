@@ -27,7 +27,6 @@ export interface INotificationContext {
   readAll: () => Promise<void>;
   init: () => Promise<void>;
   reset: () => void;
-  exceptionCollector: typeof ExceptionCollectorInstance;
   addException: (
     from: string,
     error: Error | CustomError,
@@ -47,7 +46,6 @@ export const NotificationContext = createContext<INotificationContext>({
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
   reset: () => null,
-  exceptionCollector: ExceptionCollectorInstance,
   addException: () => null,
   clearException: () => null,
   removeException: () => null,
@@ -77,9 +75,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     severity?: string
   ) => {
     const code = isCustomError(error) ? error.code : alternativeCode;
-    const reason = isCustomError(error)
-      ? Reason[error.code]
-      : (error as Error)?.message || Reason[alternativeCode];
+    const reason = isCustomError(error) ? Reason[error.code] : Reason[alternativeCode];
     const level =
       severity ||
       (!isCustomError(error) || (isCustomError(error) && error.code === alternativeCode)
@@ -217,7 +213,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     readAll,
     init,
     reset,
-    exceptionCollector,
     addException,
     clearException,
     removeException,

@@ -983,30 +983,26 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   }, []);
 
   useEffect(() => {
-    const handleExceptionThrown = (arg: IException) => {
-      // TODO: in dev (20231109 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('severest from emit arg handleExceptionThrown', arg);
+    const handleExceptionThrown = () => {
       const severest = notificationCtx.getSeverestException();
-      // eslint-disable-next-line no-console
-      console.log('severest in handleExceptionThrown', severest);
 
       if (!severest || severest.length < 1) return;
       const severity = severest[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+      const start =
+        severity === AlertState.ERROR
+          ? 'ERROR_MESSAGE.ERROR_ALERT_TITLE'
+          : 'ERROR_MESSAGE.WARNING_ALERT_TITLE';
 
-      // TODO: i18n (20231109 - Shirley)
       dataAlertHandler({
         type: severity,
-        message: `Exception: ${t(severest[0].item.message)} ${severest[0].item.code} ${
-          severest[0].item.where
-        } ${severest[0].level}`,
+        message: `${t(start)}: ${t(severest[0].item.reason)} （${severest[0].item.code}） (${
+          severest[0].level
+        })`,
       });
       setVisibleAlert(true);
     };
 
     const handleExceptionCleared = () => {
-      // eslint-disable-next-line no-console
-      console.log('handleExceptionCleared called');
       setVisibleAlert(false);
     };
 

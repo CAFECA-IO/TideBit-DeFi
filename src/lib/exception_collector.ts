@@ -95,7 +95,7 @@ class ExceptionCollector {
   }
 
   // Info: return the severest exception, which might not be only one (20231108 - Shirley)
-  getSeverest() {
+  getSeverest(): IException[] {
     this.sort();
     const severest = this.exceptions.filter(e => e.level === this.exceptions[0].level);
     return severest;

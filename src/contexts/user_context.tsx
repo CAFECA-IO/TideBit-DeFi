@@ -348,31 +348,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       // eslint-disable-next-line no-console
       console.log(`privateRequestHandler error`, error);
 
-      if (
-        !isCustomError(error) ||
-        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
-      ) {
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'privateRequestHandler',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '5'
-        );
+      notificationCtx.addException(
+        'privateRequestHandler',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
 
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
-      }
       throw error;
     }
   }, []);
@@ -394,26 +375,11 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listFavoriteTickers',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '4'
+        notificationCtx.addException(
+          'listFavoriteTickers',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
         );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
       }
     }
     return result;
@@ -460,26 +426,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listCFDs',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '3'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('listCFDs', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     setIsLoadingCFDs(false);
@@ -508,26 +455,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listDeposits',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '3'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('listDeposits', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -558,26 +486,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listWithdraws',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '3'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('listWithdraws', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -612,26 +521,7 @@ export const UserProvider = ({children}: IUserProvider) => {
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'getUserAssets',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '0'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('getUserAssets', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -662,26 +552,7 @@ export const UserProvider = ({children}: IUserProvider) => {
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'getBadge',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '5'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('getBadge', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -708,26 +579,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listBalances',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '0'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('listBalances', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -824,31 +676,11 @@ export const UserProvider = ({children}: IUserProvider) => {
         // Deprecate: after implementing error handle (20230508 - tzuhan)
         // eslint-disable-next-line no-console
         console.error(`deWTLogin error`, error);
-
         if (
           !isCustomError(error) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
-          // Info: add exception to exceptionCollector (20231109 - Shirley)
-          const rs = notificationCtx.exceptionCollector.add(
-            {
-              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-              reason: isCustomError(error)
-                ? Reason[error.code]
-                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              where: 'deWTLogin',
-              when: new Date().getTime(),
-              message: (error as Error)?.message,
-            },
-            '0'
-          );
-
-          if (rs) {
-            const exception = notificationCtx.exceptionCollector.getSeverest();
-            if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-            }
-          }
+          notificationCtx.addException('deWTLogin', error as Error, Code.INTERNAL_SERVER_ERROR);
         }
       }
     }
@@ -953,26 +785,11 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.ADD_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
-
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'addFavorites',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '5'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException('addFavorites', error as Error, Code.INTERNAL_SERVER_ERROR);
         }
       }
     }
@@ -1008,26 +825,15 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.REMOVE_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
-
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'removeFavorites',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '5'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException(
+            'removeFavorites',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
         }
       }
     }
@@ -1080,26 +886,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
 
-      // Info: add exception to exceptionCollector (20231109 - Shirley)
-      const rs = notificationCtx.exceptionCollector.add(
-        {
-          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-          reason: isCustomError(error)
-            ? Reason[error.code]
-            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-          where: 'getPersonalAchievements',
-          when: new Date().getTime(),
-          message: (error as Error)?.message,
-        },
-        '5'
+      notificationCtx.addException(
+        'getPersonalAchievements',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
       );
-
-      if (rs) {
-        const exception = notificationCtx.exceptionCollector.getSeverest();
-        if (exception?.length > 0) {
-          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-        }
-      }
     }
     return result;
   }, []);
@@ -1119,26 +910,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'updateBalance',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '0'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('updateBalance', error as Error, Code.INTERNAL_SERVER_ERROR);
 
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
@@ -1253,31 +1025,15 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
-
         if (
           !isCustomError(error) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
-          // Info: add exception to exceptionCollector (20231109 - Shirley)
-          const rs = notificationCtx.exceptionCollector.add(
-            {
-              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-              reason: isCustomError(error)
-                ? Reason[error.code]
-                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              where: '_createCFDOrder',
-              when: new Date().getTime(),
-              message: (error as Error)?.message,
-            },
-            '0'
+          notificationCtx.addException(
+            '_createCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
           );
-
-          if (rs) {
-            const exception = notificationCtx.exceptionCollector.getSeverest();
-            if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-            }
-          }
         }
       }
       return result;
@@ -1406,31 +1162,15 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
-
         if (
           !isCustomError(error) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
-          // Info: add exception to exceptionCollector (20231109 - Shirley)
-          const rs = notificationCtx.exceptionCollector.add(
-            {
-              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-              reason: isCustomError(error)
-                ? Reason[error.code]
-                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              where: '_closeCFDOrder',
-              when: new Date().getTime(),
-              message: (error as Error)?.message,
-            },
-            '0'
+          notificationCtx.addException(
+            '_closeCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
           );
-
-          if (rs) {
-            const exception = notificationCtx.exceptionCollector.getSeverest();
-            if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-            }
-          }
         }
       }
       return result;
@@ -1549,31 +1289,15 @@ export const UserProvider = ({children}: IUserProvider) => {
           code: Code.INTERNAL_SERVER_ERROR,
           reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
-
         if (
           !isCustomError(error) ||
           (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
         ) {
-          // Info: add exception to exceptionCollector (20231109 - Shirley)
-          const rs = notificationCtx.exceptionCollector.add(
-            {
-              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-              reason: isCustomError(error)
-                ? Reason[error.code]
-                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              where: 'updateCFDOrder',
-              when: new Date().getTime(),
-              message: (error as Error)?.message,
-            },
-            '0'
+          notificationCtx.addException(
+            'updateCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
           );
-
-          if (rs) {
-            const exception = notificationCtx.exceptionCollector.getSeverest();
-            if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-            }
-          }
         }
       }
 
@@ -1616,31 +1340,11 @@ export const UserProvider = ({children}: IUserProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
-
       if (
         !isCustomError(error) ||
         (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
       ) {
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'deposit',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '0'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('deposit', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -1701,31 +1405,15 @@ export const UserProvider = ({children}: IUserProvider) => {
                 code: Code.INTERNAL_SERVER_ERROR,
                 reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
               };
-
               if (
                 !isCustomError(error) ||
                 (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
               ) {
-                // Info: add exception to exceptionCollector (20231109 - Shirley)
-                const rs = notificationCtx.exceptionCollector.add(
-                  {
-                    code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-                    reason: isCustomError(error)
-                      ? Reason[error.code]
-                      : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-                    where: 'withdraw',
-                    when: new Date().getTime(),
-                    message: (error as Error)?.message,
-                  },
-                  '0'
+                notificationCtx.addException(
+                  'withdraw',
+                  error as Error,
+                  Code.INTERNAL_SERVER_ERROR
                 );
-
-                if (rs) {
-                  const exception = notificationCtx.exceptionCollector.getSeverest();
-                  if (exception?.length > 0) {
-                    notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-                  }
-                }
               }
             }
           }
@@ -1781,25 +1469,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
 
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'listHistories',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '3'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('listHistories', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -1818,31 +1488,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as IResult;
     } catch (error) {
       result = {...defaultResultFailed};
-
       if (
         !isCustomError(error) ||
         (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
       ) {
-        // Info: add exception to exceptionCollector (20231109 - Shirley)
-        const rs = notificationCtx.exceptionCollector.add(
-          {
-            code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-            reason: isCustomError(error)
-              ? Reason[error.code]
-              : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            where: 'enableShare',
-            when: new Date().getTime(),
-            message: (error as Error)?.message,
-          },
-          '0'
-        );
-
-        if (rs) {
-          const exception = notificationCtx.exceptionCollector.getSeverest();
-          if (exception?.length > 0) {
-            notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-          }
-        }
+        notificationCtx.addException('enableShare', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -1860,26 +1510,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     } catch (error) {
       result = {...defaultResultFailed};
 
-      // Info: add exception to exceptionCollector (20231109 - Shirley)
-      const rs = notificationCtx.exceptionCollector.add(
-        {
-          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-          reason: isCustomError(error)
-            ? Reason[error.code]
-            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-          where: 'shareTradeRecord',
-          when: new Date().getTime(),
-          message: (error as Error)?.message,
-        },
-        '4'
-      );
-
-      if (rs) {
-        const exception = notificationCtx.exceptionCollector.getSeverest();
-        if (exception?.length > 0) {
-          notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-        }
-      }
+      notificationCtx.addException('shareTradeRecord', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -1947,31 +1578,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       } catch (error) {
         result = {...defaultResultFailed};
 
-        if (
-          !isCustomError(error) ||
-          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
-        ) {
-          // Info: add exception to exceptionCollector (20231109 - Shirley)
-          const rs = notificationCtx.exceptionCollector.add(
-            {
-              code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-              reason: isCustomError(error)
-                ? Reason[error.code]
-                : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              where: 'readNotifications',
-              when: new Date().getTime(),
-              message: (error as Error)?.message,
-            },
-            '4'
-          );
-
-          if (rs) {
-            const exception = notificationCtx.exceptionCollector.getSeverest();
-            if (exception?.length > 0) {
-              notificationCtx.emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
-            }
-          }
-        }
+        notificationCtx.addException(
+          'readNotifications',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
+        );
       }
     }
 

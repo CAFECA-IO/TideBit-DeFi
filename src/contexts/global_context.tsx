@@ -987,15 +987,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       // TODO: in dev (20231109 - Shirley)
       // eslint-disable-next-line no-console
       console.log('severest from emit arg handleExceptionThrown', arg);
-      const severest = notificationCtx.exceptionCollector.getSeverest();
-      const severity = severest[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+      const severest = notificationCtx.getSeverestException();
       // eslint-disable-next-line no-console
       console.log('severest in handleExceptionThrown', severest);
 
+      if (!severest || severest.length < 1) return;
+      const severity = severest[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+
       // TODO: i18n (20231109 - Shirley)
-      /*
-      
-      */
       dataAlertHandler({
         type: severity,
         message: `Exception: ${t(severest[0].item.message)} ${severest[0].item.code} ${

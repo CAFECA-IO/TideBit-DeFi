@@ -12,7 +12,8 @@ import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib
 import ExceptionCollectorInstance from '../lib/exception_collector';
 import {CustomError, isCustomError} from '../lib/custom_error';
 import {Code, ICode, Reason} from '../constants/code';
-import {IErrorSearchProps} from '../constants/exception';
+import {IErrorSearchProps, IException} from '../constants/exception';
+import {SEVEREST_EXCEPTION_LEVEL} from '../constants/display';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -35,6 +36,7 @@ export interface INotificationContext {
   ) => void;
   clearException: () => void;
   removeException: (props: IErrorSearchProps, searchBy: string) => void;
+  getSeverestException: () => IException[];
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -49,6 +51,7 @@ export const NotificationContext = createContext<INotificationContext>({
   addException: () => null,
   clearException: () => null,
   removeException: () => null,
+  getSeverestException: () => [],
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
@@ -63,6 +66,10 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
 
+  const getSeverestException = (): IException[] => {
+    return exceptionCollector.getSeverest();
+  };
+
   const addException = (
     from: string,
     error: Error | CustomError,
@@ -76,7 +83,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     const level =
       severity ||
       (!isCustomError(error) || (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
-        ? '0'
+        ? SEVEREST_EXCEPTION_LEVEL
         : undefined);
 
     const rs = exceptionCollector.add(
@@ -214,6 +221,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     addException,
     clearException,
     removeException,
+    getSeverestException,
   };
 
   return (

@@ -23,6 +23,7 @@ import {
   DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
   TARGET_MIN_DIGITS,
+  DEFAULT_GUARANTEED_STOP_FEE,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -76,7 +77,7 @@ const TradeTab = () => {
   const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
-  const gsl = marketCtx.guaranteedStopFeePercentage;
+  const gsl = marketCtx?.guaranteedStopFeePercentage ?? DEFAULT_GUARANTEED_STOP_FEE;
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [longPrice, setLongPrice, longPriceRef] = useStateRef(DEFAULT_BUY_PRICE); // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -194,11 +195,11 @@ const TradeTab = () => {
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guaranteedStopFeeLong, setGuaranteedStopFeeLong, guaranteedStopFeeLongRef] = useStateRef(
-    +SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current)
+    +SafeMath.mult(gsl, valueOfPositionLongRef.current)
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guaranteedStopFeeShort, setGuaranteedStopFeeShort, guaranteedStopFeeShortRef] =
-    useStateRef(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current));
+    useStateRef(+SafeMath.mult(gsl, valueOfPositionShortRef.current));
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [longSlLowerLimit, setLongSlLowerLimit, longSlLowerLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [longSlUpperLimit, setLongSlUpperLimit, longSlUpperLimitRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -411,6 +412,7 @@ const TradeTab = () => {
         shortQuotation = {...defaultResultFailed, data: sellQuotation};
       }
     } catch (err) {
+      notificationCtx.addException('getQuotation trade_tab', err as Error, Code.UNKNOWN_ERROR);
       const buyQuotation: IQuotation = {
         instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
@@ -733,7 +735,7 @@ const TradeTab = () => {
     calculateLongLoss();
 
     setGuaranteedStopFeeLong(
-      roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current), 2)
+      roundToDecimalPlaces(+SafeMath.mult(gsl, valueOfPositionLongRef.current), 2)
     );
 
     const inadequateBalanceForLongGSL = SafeMath.lt(
@@ -779,7 +781,7 @@ const TradeTab = () => {
     calculateShortLoss();
 
     setGuaranteedStopFeeShort(
-      roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current), 2)
+      roundToDecimalPlaces(+SafeMath.mult(gsl, valueOfPositionShortRef.current), 2)
     );
 
     const inadequateBalanceForShortGSL = SafeMath.lt(

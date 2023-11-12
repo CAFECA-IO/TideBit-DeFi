@@ -9,6 +9,8 @@ import {
   WalletExtensionData,
   WalletExtension,
 } from '../../constants/wallet_extension';
+import {Code} from '../../constants/code';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -19,14 +21,10 @@ interface IWalletPanelProps {
   panelClickHandler: () => void;
 }
 
-export default function WalletPanel({
-  //className,
-  //getUserLoginState,
-  panelVisible,
-  panelClickHandler,
-}: IWalletPanelProps) {
+export default function WalletPanel({panelVisible, panelClickHandler}: IWalletPanelProps) {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -48,6 +46,11 @@ export default function WalletPanel({
 
         globalCtx.visibleSignatureProcessModalHandler();
       } catch (error) {
+        notificationCtx.addException(
+          'metamaskConnect wallet_panel',
+          error as Error,
+          Code.UNKNOWN_ERROR
+        );
         globalCtx.visibleWalletPanelHandler();
       }
     } else {

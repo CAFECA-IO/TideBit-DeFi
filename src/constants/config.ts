@@ -312,3 +312,4 @@ export const BAIFA_LINK = 'https://baifa.io';
 export const I_SUN_ONE_LINK = 'https://www.isun1.com';
 export const COOKIE_PERIOD_FAVORITES = 365; // Info: days (20231013 - Shirley)
 export const COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT = 7; // Info: days (20231101 - Shirley)
+export const DEFAULT_GUARANTEED_STOP_FEE = 0.002; // Info: 0.2% (20231110 - Shirley)

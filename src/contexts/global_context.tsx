@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext, useMemo, useCallback} from 'react';
+import React, {createContext, useState, useContext, useMemo, useCallback, useEffect} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT, TOAST_DURATION_SECONDS} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
@@ -56,6 +56,12 @@ import {MessageType, IMessageType} from '../constants/message_type';
 import {ILayoutAssertion, LayoutAssertion} from '../constants/layout_assertion';
 import Alert from '../components/alert/alert';
 import {AlertState, IAlertData} from '../interfaces/alert';
+import {NotificationContext} from './notification_context';
+import {TideBitEvent} from '../constants/tidebit_event';
+import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
+import {useTranslation} from 'next-i18next';
+import {IException} from '../constants/exception';
+
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -476,6 +482,9 @@ export const GlobalContext = createContext<IGlobalContext>({
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const notificationCtx = useContext(NotificationContext);
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
@@ -971,6 +980,39 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const dataAlertHandler = useCallback((data: IAlertData) => {
     setDataAlert(data);
+  }, []);
+
+  useEffect(() => {
+    const handleExceptionThrown = () => {
+      const severest = notificationCtx.getSeverestException();
+
+      if (!severest || severest.length < 1) return;
+      const severity = severest[0].level <= 1 ? AlertState.ERROR : AlertState.WARNING;
+      const start =
+        severity === AlertState.ERROR
+          ? 'ERROR_MESSAGE.ERROR_ALERT_TITLE'
+          : 'ERROR_MESSAGE.WARNING_ALERT_TITLE';
+
+      dataAlertHandler({
+        type: severity,
+        message: `${t(start)}: ${t(severest[0].item.reason)} （${severest[0].item.code}） (${
+          severest[0].level
+        })`,
+      });
+      setVisibleAlert(true);
+    };
+
+    const handleExceptionCleared = () => {
+      setVisibleAlert(false);
+    };
+
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_UPDATE, handleExceptionThrown);
+    notificationCtx.emitter.on(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
+
+    return () => {
+      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_UPDATE, handleExceptionThrown);
+      notificationCtx.emitter.off(TideBitEvent.EXCEPTION_CLEARED, handleExceptionCleared);
+    };
   }, []);
 
   const defaultValue = {

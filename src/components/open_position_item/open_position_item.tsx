@@ -23,6 +23,7 @@ import {ToastId} from '../../constants/toast_id';
 import {Code} from '../../constants/code';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -33,6 +34,7 @@ interface IOpenPositionItemProps {
 const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const notificationCtx = useContext(NotificationContext);
   const marketCtx = useContext(MarketContext);
   const {
     visibleUpdateFormModalHandler,
@@ -164,6 +166,11 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
         });
       }
     } catch (err) {
+      notificationCtx.addException(
+        'getQuotation open_position_item',
+        err as Error,
+        Code.UNKNOWN_ERROR
+      );
       // TODO: Report error to backend (20230613 - Shirley)
       toast({
         type: ToastTypeAndText.ERROR.type,

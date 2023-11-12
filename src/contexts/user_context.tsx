@@ -51,7 +51,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
-import {CustomError, isCustomError} from '../lib/custom_error';
+import {CustomError, MetaMaskError, isCustomError, isRejectedError} from '../lib/custom_error';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
@@ -347,6 +347,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       // Deprecate: [debug] (20230717 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`privateRequestHandler error`, error);
+
+      notificationCtx.addException(
+        'privateRequestHandler',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
+
       throw error;
     }
   }, []);
@@ -367,6 +374,12 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listFavoriteTickers error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException(
+          'listFavoriteTickers',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
+        );
       }
     }
     return result;
@@ -412,6 +425,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listCFDs error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException('listCFDs', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     setIsLoadingCFDs(false);
@@ -439,6 +454,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listDeposits error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException('listDeposits', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -468,6 +485,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listWithdraws error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException('listWithdraws', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -501,6 +520,8 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        notificationCtx.addException('getUserAssets', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -530,6 +551,8 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        notificationCtx.addException('getBadge', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -555,6 +578,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`listBalances error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException('listBalances', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -651,6 +676,12 @@ export const UserProvider = ({children}: IUserProvider) => {
         // Deprecate: after implementing error handle (20230508 - tzuhan)
         // eslint-disable-next-line no-console
         console.error(`deWTLogin error`, error);
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException('deWTLogin', error as Error, Code.INTERNAL_SERVER_ERROR);
+        }
       }
     }
     return result;
@@ -700,6 +731,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     } catch (error) {
       result.code = resultCode;
       result.reason = Reason[resultCode];
+
       return result;
     }
   }, []);
@@ -753,6 +785,12 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.ADD_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException('addFavorites', error as Error, Code.INTERNAL_SERVER_ERROR);
+        }
       }
     }
 
@@ -787,6 +825,16 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.REMOVE_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+        if (
+          !isCustomError(error) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException(
+            'removeFavorites',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
+        }
       }
     }
 
@@ -837,6 +885,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.error(`20230526 error`, error);
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
+
+      notificationCtx.addException(
+        'getPersonalAchievements',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
     }
     return result;
   }, []);
@@ -856,6 +910,8 @@ export const UserProvider = ({children}: IUserProvider) => {
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
+        notificationCtx.addException('updateBalance', error as Error, Code.INTERNAL_SERVER_ERROR);
+
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
     }
@@ -943,9 +999,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.log('_createCFDOrder result', result);
         if (!result.success)
-          throw new CustomError(
-            isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
-          );
+          throw new CustomError(isCustomError(result.code) ? result.code : Code.REJECTED_SIGNATURE);
         const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
           txhash: string;
           orderSnapshot: ICFDOrder;
@@ -969,6 +1023,17 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        if (
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException(
+            '_createCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
+        }
       }
       return result;
     },
@@ -1096,6 +1161,16 @@ export const UserProvider = ({children}: IUserProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+        if (
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException(
+            '_closeCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
+        }
       }
       return result;
     },
@@ -1213,6 +1288,16 @@ export const UserProvider = ({children}: IUserProvider) => {
           code: Code.INTERNAL_SERVER_ERROR,
           reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+        if (
+          (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
+          (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+        ) {
+          notificationCtx.addException(
+            'updateCFDOrder',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
+        }
       }
 
       return result;
@@ -1254,6 +1339,12 @@ export const UserProvider = ({children}: IUserProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+      if (
+        (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
+        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      ) {
+        notificationCtx.addException('deposit', error as Error, Code.INTERNAL_SERVER_ERROR);
+      }
     }
     return result;
   }, []);
@@ -1313,6 +1404,16 @@ export const UserProvider = ({children}: IUserProvider) => {
                 code: Code.INTERNAL_SERVER_ERROR,
                 reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
               };
+              if (
+                (!isCustomError(error) && !isRejectedError(error as MetaMaskError)) ||
+                (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+              ) {
+                notificationCtx.addException(
+                  'withdraw',
+                  error as Error,
+                  Code.INTERNAL_SERVER_ERROR
+                );
+              }
             }
           }
         }
@@ -1366,6 +1467,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.error(`${APIName.LIST_HISTORIES} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
+
+        notificationCtx.addException('listHistories', error as Error, Code.INTERNAL_SERVER_ERROR);
       }
     }
     return result;
@@ -1384,6 +1487,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as IResult;
     } catch (error) {
       result = {...defaultResultFailed};
+      if (
+        !isCustomError(error) ||
+        (isCustomError(error) && error.code === Code.INTERNAL_SERVER_ERROR)
+      ) {
+        notificationCtx.addException('enableShare', error as Error, Code.INTERNAL_SERVER_ERROR);
+      }
     }
     return result;
   }, []);
@@ -1399,6 +1508,8 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as IResult;
     } catch (error) {
       result = {...defaultResultFailed};
+
+      notificationCtx.addException('shareTradeRecord', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -1465,6 +1576,12 @@ export const UserProvider = ({children}: IUserProvider) => {
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
         result = {...defaultResultFailed};
+
+        notificationCtx.addException(
+          'readNotifications',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
+        );
       }
     }
 
@@ -1585,11 +1702,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
 
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('in UserContext useEffect');
     const handleConnected = async () => {
-      // eslint-disable-next-line no-console
-      console.log('handleConnected');
       setIsConnected(true);
 
       if (!userRef.current) {
@@ -1599,9 +1712,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     };
 
     const handleDisconnected = () => {
-      // eslint-disable-next-line no-console
-      console.log('handleDisconnected');
-
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`lunar.on('disconnected') => clearPrivateData`);
@@ -1610,9 +1720,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     };
 
     const handleAccountsChanged = async (address: string) => {
-      // eslint-disable-next-line no-console
-      console.log('handleAccountsChanged');
-
       const checksumAddress = toChecksumAddress(address);
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
@@ -1638,61 +1745,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     lunar.on('accountsChanged', handleAccountsChanged);
 
     return () => {
-      // eslint-disable-next-line no-console
-      console.log('cleanup function in useEffect in UserContext');
       lunar.resetEvents();
     };
   }, [lunar]);
-
-  // React.useMemo(
-  //   () =>
-  //     lunar.on('connected', async () => {
-  //       setIsConnected(true);
-
-  //       if (!userRef.current) {
-  //         const {isDeWTLegit, signer, deWT} = checkDeWT();
-  //         if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-  //       }
-  //     }),
-  //   [lunar]
-  // );
-
-  // React.useMemo(
-  //   () =>
-  //     lunar.on('disconnected', () => {
-  //       // Deprecate: [debug] (20230524 - tzuhan)
-  //       // eslint-disable-next-line no-console
-  //       console.log(`lunar.on('disconnected') => clearPrivateData`);
-  //       setIsConnected(false);
-  //       clearPrivateData();
-  //     }),
-  //   [lunar]
-  // );
-
-  // React.useMemo(() => {
-  //   // eslint-disable-next-line no-console
-  //   console.log(`add lunar.on('accountsChanged')`);
-  //   lunar.on('accountsChanged', async (address: string) => {
-  //     const checksumAddress = toChecksumAddress(address);
-  //     // Deprecate: [debug] (20230524 - tzuhan)
-  //     // eslint-disable-next-line no-console
-  //     console.log(
-  //       `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
-  //     );
-  //     if (!!userRef.current && checksumAddress !== userRef.current.address) {
-  //       // Deprecate: [debug] (20230524 - tzuhan)
-  //       // eslint-disable-next-line no-console
-  //       console.log(
-  //         `userRef.current: ${JSON.stringify(
-  //           userRef.current
-  //         )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
-  //           !!userRef.current && checksumAddress !== userRef.current?.address
-  //         }? clearPrivateData`
-  //       );
-  //       clearPrivateData();
-  //     }
-  //   });
-  // }, [lunar]);
 
   const defaultValue = {
     isInit: isInitRef.current,

@@ -20,6 +20,7 @@ import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {isCustomError} from '../../lib/custom_error';
 import {useRouter} from 'next/router';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -34,6 +35,7 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const {locale} = useRouter();
 
   const [showCryptoMenu, setShowCryptoMenu] = useStateRef(false);
@@ -168,6 +170,12 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler deposit_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
+
       globalCtx.eliminateAllModals();
 
       // ToDo: Report error to backend (20230413 - Shirley)

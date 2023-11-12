@@ -18,6 +18,7 @@ import {useTranslation} from 'next-i18next';
 import {Code} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError} from '../../lib/custom_error';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -30,6 +31,7 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -148,6 +150,11 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler withdrawal_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
       // ToDo: Report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

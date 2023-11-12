@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import useStateRef from 'react-usestateref';
 import {I_SUN_ONE_LINK} from '../../constants/config';
 

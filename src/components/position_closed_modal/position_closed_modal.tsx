@@ -54,6 +54,7 @@ import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -70,6 +71,7 @@ const PositionClosedModal = ({
 }: IPositionClosedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const notificationCtx = useContext(NotificationContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
@@ -292,6 +294,11 @@ const PositionClosedModal = ({
         setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
     } catch (err) {
+      notificationCtx.addException(
+        'getQuotation position_closed_modal',
+        err as Error,
+        Code.UNKNOWN_ERROR
+      );
       setQuotationError(true);
       /* Info: (20230508 - Julian) get quotation error message */
       setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
@@ -384,6 +391,7 @@ const PositionClosedModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
+      notificationCtx.addException('submitClickHandler', error as Error, Code.UNKNOWN_ERROR);
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

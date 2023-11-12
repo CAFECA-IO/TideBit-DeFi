@@ -336,6 +336,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException('getTickerStatic', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -352,7 +354,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerLiveStatistics error`, error);
-      setIsCFDTradable(false);
+      // setIsCFDTradable(false);
       result = {
         success: false,
         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
@@ -360,6 +362,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException(
+        'getTickerLiveStatistics',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
     }
     return result;
   }, []);
@@ -411,6 +419,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException('getCFDQuotation', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -439,33 +449,33 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        notificationCtx.addException(
+          'getCFDSuggestion',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
+        );
       }
       return result;
     },
     []
   );
 
-  const listTickerPositions = useCallback(
-    (
-      instId: string
-      // Deprecated: defined but never used ub TickerBook (20231120 - Shirley)
-      // options: {
-      //   timespan?: ITimeSpanUnion;
-      //   begin?: number;
-      //   end?: number;
-      //   limit?: number;
-      // }
-    ) => {
-      let positions: number[] = [];
-      try {
-        positions = tickerBook.listTickerPositions(instId);
-      } catch (error) {
-        // TODO: error handle (20230331 - tzuhan)
-      }
-      return positions;
-    },
-    []
-  );
+  const listTickerPositions = useCallback((instId: string) => {
+    let positions: number[] = [];
+    try {
+      positions = tickerBook.listTickerPositions(instId);
+    } catch (error) {
+      // TODO: error handle (20230331 - tzuhan)
+
+      notificationCtx.addException(
+        'listTickerPositions',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
+    }
+    return positions;
+  }, []);
 
   const getGuaranteedStopFeePercentage = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
@@ -489,6 +499,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException(
+        'getGuaranteedStopFeePercentage',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR,
+        '0'
+      );
     }
     return result;
   }, []);
@@ -519,6 +536,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException('getLeaderboard', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -547,6 +566,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException('listTickers', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -580,6 +601,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+      notificationCtx.addException('listCurrencies', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     return result;
   }, []);
@@ -636,6 +658,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             ? Reason[error.code]
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
+
+        notificationCtx.addException(
+          'listMarketTrades',
+          error as Error,
+          Code.INTERNAL_SERVER_ERROR
+        );
       }
       return result;
     },
@@ -861,6 +889,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException('getWebsiteReserve', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     if (result.success) {
       // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
@@ -899,6 +929,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           ? Reason[error.code]
           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
       };
+
+      notificationCtx.addException(
+        'getTideBitPromotion',
+        error as Error,
+        Code.INTERNAL_SERVER_ERROR
+      );
     }
     if (result.success) {
       setTidebitPromotion(result.data as ITideBitPromotion);
@@ -949,6 +985,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       setTimeSpan(TimeSpanUnion._1s);
     }
     setIsInit(true);
+
     return await Promise.resolve();
   }, []);
 

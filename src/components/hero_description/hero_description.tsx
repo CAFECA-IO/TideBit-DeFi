@@ -12,6 +12,8 @@ import ReserveRatio from '../reserve_ratio/reserve_ratio';
 import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import AuditReport from '../audit_report/audit_report';
+import {Code} from '../../constants/code';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -19,6 +21,7 @@ export default function HeroDescription() {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const [isInit, setIsInit] = React.useState(false);
   const marketCtx = React.useContext(MarketContext);
+  const notificationCtx = React.useContext(NotificationContext);
 
   const getMarketInfo = async () => {
     try {
@@ -26,6 +29,11 @@ export default function HeroDescription() {
       await marketCtx.getWebsiteReserve();
       setIsInit(true);
     } catch (err) {
+      notificationCtx.addException(
+        'getMarketInfo hero_description',
+        err as Error,
+        Code.UNKNOWN_ERROR
+      );
       // Deprecated: [debug] (20230608 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`HeroDescription getMarketInfo error: `, err);

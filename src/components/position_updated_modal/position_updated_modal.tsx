@@ -27,6 +27,7 @@ import {Code} from '../../constants/code';
 import {isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
 import Tooltip from '../tooltip/tooltip';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -44,6 +45,7 @@ const PositionUpdatedModal = ({
 }: IPositionUpdatedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const notificationCtx = useContext(NotificationContext);
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -175,6 +177,11 @@ const PositionUpdatedModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler position_updated_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 

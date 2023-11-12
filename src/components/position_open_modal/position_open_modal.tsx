@@ -45,6 +45,7 @@ import {ToastId} from '../../constants/toast_id';
 import {isCustomError} from '../../lib/custom_error';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import SafeMath from '../../lib/safe_math';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -60,6 +61,7 @@ const PositionOpenModal = ({
 }: IPositionOpenModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
@@ -173,6 +175,11 @@ const PositionOpenModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler position_open_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
@@ -256,23 +263,18 @@ const PositionOpenModal = ({
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
             reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
           });
-
-          // Deprecated: for debug (20230609 - Shirley)
-          globalCtx.toast({
-            type: ToastTypeAndText.ERROR.type,
-            toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
-            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
-            typeText: t(ToastTypeAndText.ERROR.text),
-            isLoading: false,
-            autoClose: false,
-          });
-
           return;
         }
         /* Info: (20230508 - Julian) get quotation error message */
         setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
     } catch (err) {
+      notificationCtx.addException(
+        'getQuotation position_open_modal',
+        err as Error,
+        Code.UNKNOWN_ERROR
+      );
+
       setQuotationError(true);
       /* Info: (20230508 - Julian) get quotation error message */
       setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});

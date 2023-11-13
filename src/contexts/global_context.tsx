@@ -58,7 +58,7 @@ import Alert from '../components/alert/alert';
 import {AlertState, IAlertData} from '../interfaces/alert';
 import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {Locale, TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
+import {Locale, TranslateFunction, isLocale} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
 import {useRouter} from 'next/router';
 import {mapBrowserLangToLocale} from '../lib/common';
@@ -990,23 +990,33 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   }, []);
 
   useEffect(() => {
-    // Info: Function to update the language (20231113 - Shirley)
     const updateLanguage = (newLocale: string) => {
-      const currentPath = router.asPath;
-      const newPath = currentPath.replace(/^\/[a-z]{2}/, `/${newLocale}`);
-      // eslint-disable-next-line no-console
-      console.log('original path:', currentPath, 'new path:', newPath);
-      router.push(newPath, newPath, {locale: newLocale});
+      try {
+        const currentPath = router.asPath;
+        const newPath = currentPath
+          .split('/')
+          .map((part, index) => {
+            // Only replace the first path segment if it matches a locale code
+            // eslint-disable-next-line no-console
+            console.log('isLocale(part)', isLocale(part), 'part', part);
+            return index === 1 && part.match(/^[a-z]{2}$/) ? newLocale : part;
+          })
+          .join('/');
+        // eslint-disable-next-line no-console
+        console.log('original path:', currentPath, 'new path:', newPath);
+
+        router.push(newPath, newPath, {locale: newLocale});
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error updating the language:', error);
+        // Implement fallback logic
+      }
     };
 
-    // Info: Detect browser language on the client-side (20231113 - Shirley)
     const browserLang = navigator.language;
-
-    // Info: Assuming you have a function to map browserLang to your supported locales (20231113 - Shirley)
     const matchedLocale = mapBrowserLangToLocale(browserLang) ?? '';
     setLang(matchedLocale);
 
-    // Info: Update the language if it's different from the current locale (20231113 - Shirley)
     if (matchedLocale && matchedLocale !== router.locale) {
       updateLanguage(matchedLocale);
     }

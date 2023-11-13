@@ -15,3 +15,7 @@ export const Locale: ILocaleConstant = {
   EN: 'en',
   CN: 'cn',
 };
+
+export const isLocale = (locale: string): locale is ILocaleType => {
+  return locales.includes(locale);
+};

@@ -131,6 +131,7 @@ export interface IMarketContext {
     }
   ) => Promise<IResult>;
   candlestickIsLoading: boolean;
+  getCFDRelatedInfo: (instId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult[]>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -185,6 +186,9 @@ export const MarketContext = createContext<IMarketContext>({
     throw new Error('Function not implemented.');
   },
   candlestickIsLoading: true,
+  getCFDRelatedInfo: function (): Promise<IResult[]> {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -507,6 +511,38 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         '0'
       );
     }
+    return result;
+  }, []);
+
+  // Info: CFD quotation and guaranteed stop fee percentage (20231113 - Shirley)
+  const getCFDRelatedInfo = useCallback(async (instId: string, typeOfPosition: ITypeOfPosition) => {
+    let result: IResult[] = [{...defaultResultFailed}, {...defaultResultFailed}];
+    // eslint-disable-next-line no-console
+    console.log('getCFDRelatedInfo called');
+    try {
+      result = await Promise.all([
+        getCFDQuotation(instId, typeOfPosition),
+        getGuaranteedStopFeePercentage(),
+      ]);
+      // eslint-disable-next-line no-console
+      console.log('result of promise all', result);
+
+      // if (result[0].success && result[1].success) {
+      //   const quotation = result[0].data as IQuotation;
+      //   const guaranteedStopFeePercentage = result[1].data as number;
+      //   const positionUpdatedInfo = {
+      //     quotation,
+      //     guaranteedStopFeePercentage,
+      //   };
+      //   return positionUpdatedInfo;
+      // }
+    } catch (error) {
+      // 處理錯誤，例如顯示錯誤信息或進行錯誤處理
+      // eslint-disable-next-line no-console
+      console.error('Error in API calls', error);
+      return result; // 或者根據需要返回適當的值
+    }
+
     return result;
   }, []);
 
@@ -1078,6 +1114,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     predictCFDClosePrice,
     listCandlesticks,
     candlestickIsLoading: candlestickIsLoadingRef.current,
+    getCFDRelatedInfo,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

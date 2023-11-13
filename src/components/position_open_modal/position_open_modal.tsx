@@ -74,6 +74,7 @@ const PositionOpenModal = ({
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false);
+  const [gslFeePercentage, setGslFeePercentage, gslFeePercentageRef] = useStateRef(0);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
     const order: IApplyCreateCFDOrder = {
@@ -233,6 +234,17 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'flex justify-between w-full';
 
+  const getGslFeePercentage = async () => {
+    // eslint-disable-next-line no-console
+    console.log('getGslFeePercentage');
+    const result = await marketCtx.getGuaranteedStopFeePercentage();
+    if (result.success) {
+      const data = result.data as number;
+      setGslFeePercentage(data as number);
+      return data;
+    }
+  };
+
   const getQuotation = async () => {
     let quotation = {...defaultResultSuccess};
     try {
@@ -281,9 +293,64 @@ const PositionOpenModal = ({
     }
   };
 
+  const waitForRequest = async () => {
+    try {
+      const [quotationResult, gslFeePercentageResult] = await Promise.all([
+        getQuotation(),
+        getGslFeePercentage(),
+      ]);
+      // eslint-disable-next-line no-console
+      console.log(
+        'quotationResult',
+        quotationResult,
+        'gslFeePercentageResult',
+        gslFeePercentageResult
+      );
+
+      return {
+        quotation: quotationResult as IQuotation,
+        gslFeePercentage: gslFeePercentageResult as number,
+      };
+    } catch (error) {
+      // 處理錯誤，例如顯示錯誤信息或進行錯誤處理
+      // eslint-disable-next-line no-console
+      console.error('Error in API calls', error);
+      return null; // 或者根據需要返回適當的值
+    }
+  };
+
   const renewDataHandler = async () => {
+    // eslint-disable-next-line no-console
+    console.log('renewDataHandler called');
+    // let newQuotation: IQuotation | null = null;
+    // let gsl: number | null = null;
+    // const rs = await waitForRequest();
+    // console.log('rs', rs, !!rs);
+    // if (rs) {
+    //   newQuotation = rs.quotation;
+    //   gsl = rs.gslFeePercentage;
+    // }
+
+    const rs = await marketCtx.getCFDRelatedInfo(
+      openCfdRequest.instId,
+      openCfdRequest.typeOfPosition
+    );
+    // eslint-disable-next-line no-console
+    console.log('rs', rs);
+
+    if (!rs) return;
+    // const rs0 = rs[0] as IResult;
+
+    // const newQuotation = rs0.data as IQuotation;
+    // const gsl = rs.gslFeePercentage;
+
     const newQuotation = await getQuotation();
-    const gsl = marketCtx.guaranteedStopFeePercentage;
+    // // const gsl = marketCtx.guaranteedStopFeePercentage;
+    const gsl = !!openCfdRequest.guaranteedStop
+      ? await getGslFeePercentage()
+      : marketCtx.guaranteedStopFeePercentage;
+
+    // console.log('newQuotation', newQuotation, 'gsl', gsl);
 
     /* Info: (20230508 - Julian) exception handling: error toast */
     if (!newQuotation || quotationErrorRef.current) {
@@ -298,14 +365,26 @@ const PositionOpenModal = ({
         autoClose: false,
       });
       return;
+    } else if (!gsl) {
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_GSL_ERROR,
+        message: `${t('ERROR_MESSAGE.UNKNOWN_ERROR')} (${Code.UNKNOWN_ERROR})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+      return;
     }
 
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    // Info: if it's comments, it couldn't renew the quotation
+    // Info: if it's commented, it couldn't renew the quotation
     const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
     const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+    // eslint-disable-next-line no-console
+    console.log('base in renewDataHandler', base, 'tickingSec in renewDataHandler', tickingSec);
     setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
@@ -414,24 +493,59 @@ const PositionOpenModal = ({
   }, [globalCtx.visiblePositionOpenModal]);
 
   // Info: countdown (20230609 - Shirley)
-  useEffect(() => {
-    if (!userCtx.enableServiceTerm) return;
-    if (invalidDataRef.current) return;
 
-    const intervalId = setInterval(() => {
+  useEffect(() => {
+    if (!userCtx.enableServiceTerm || invalidDataRef.current) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const scheduleRenewDataHandler = async () => {
+      // setSecondsLeft();
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
+      // eslint-disable-next-line no-console
+      console.log('tickingSec', tickingSec, 'secondsLeft', secondsLeft);
 
       if (modalVisible && secondsLeft === 0) {
-        renewDataHandler();
+        // eslint-disable-next-line no-console
+        const rs = await marketCtx.getCFDRelatedInfo(
+          openCfdRequest.instId,
+          openCfdRequest.typeOfPosition
+        );
+        // eslint-disable-next-line no-console
+        console.log('renewDataHandler condition met', 'rs', rs);
+        await renewDataHandler();
       }
-    }, 1000);
+
+      timeoutId = setTimeout(scheduleRenewDataHandler, 1000);
+    };
+
+    scheduleRenewDataHandler();
 
     return () => {
-      clearInterval(intervalId);
+      clearTimeout(timeoutId);
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
+
+  // useEffect(() => {
+  //   if (!userCtx.enableServiceTerm) return;
+  //   if (invalidDataRef.current) return;
+
+  //   const intervalId = setInterval(() => {
+  //     const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+  //     const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+  //     setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
+
+  //     if (modalVisible && secondsLeft === 0) {
+  //       renewDataHandler();
+  //     }
+  //   }, 1000);
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 
   const spreadSymbol = openCfdRequest.quotation.spreadFee >= 0 ? '+' : '-';
 
@@ -470,11 +584,11 @@ const PositionOpenModal = ({
         {/* Info: (20231019 - Julian) Open Price */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-          <div className="flex items-baseline space-x-1">
+          <div className={`${dataRenewedStyle} flex items-baseline space-x-1`}>
             {/* Info: (20231019 - Julian) Spot Price */}
             {numberFormatted(openCfdRequest.quotation.spotPrice)}
             {/* Info: (20231019 - Julian) Spread */}
-            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
+            <span className={`${dataRenewedStyle} ml-1 whitespace-nowrap text-xs text-lightGray`}>
               {spreadSymbol}
               {numberFormatted(openCfdRequest.quotation.spreadFee)}
             </span>
@@ -528,7 +642,7 @@ const PositionOpenModal = ({
             {openCfdRequest.guaranteedStop ? (
               <span className="flex items-baseline">
                 <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
-                <span className="">{`${numberFormatted(
+                <span className={`${dataRenewedStyle}`}>{`${numberFormatted(
                   openCfdRequest.guaranteedStopFee ?? 0
                 )}`}</span>
                 <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>

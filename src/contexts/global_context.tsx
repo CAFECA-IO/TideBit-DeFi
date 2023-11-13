@@ -996,21 +996,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         const newPath = currentPath
           .split('/')
           .map((part, index) => {
-            // Only replace the first path segment if it matches a locale code
-            // eslint-disable-next-line no-console
-            console.log('isLocale(part)', isLocale(part), 'part', part);
             return index === 1 && part.match(/^[a-z]{2}$/) ? newLocale : part;
           })
           .join('/');
-        // eslint-disable-next-line no-console
-        console.log('original path:', currentPath, 'new path:', newPath);
 
         router.push(newPath, newPath, {locale: newLocale});
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error updating the language:', error);
-        // Implement fallback logic
-      }
+      } catch (error) {}
     };
 
     const browserLang = navigator.language;

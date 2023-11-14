@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import useWindowSize from '../../lib/hooks/use_window_size';
@@ -51,8 +51,7 @@ const getChartSize = () => {
     const chartSize = {
       width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
-    }; // eslint-disable-next-line no-console
-    console.log('chartSize getMobileChartSize', chartSize);
+    };
 
     return chartSize;
   };
@@ -69,12 +68,10 @@ const getSwitchWidth = () => {
   const getDesktopSwitchSize = () => {
     const switchWidth =
       windowSize.width > MAX_SCREEN_WIDTH
-        ? 1450 // 固定寬度
+        ? 1450
         : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
         ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
         : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
-    // eslint-disable-next-line no-console
-    console.log('getDesktopSwitchSize', switchWidth);
 
     return {
       width: switchWidth.toString(),
@@ -83,7 +80,6 @@ const getSwitchWidth = () => {
   };
 
   const getMobileSwitchSize = () => {
-    // 留下原本的行動裝置尺寸計算
     const switchWidth = windowSize.width - 40;
     return {
       width: switchWidth.toString(),
@@ -115,14 +111,6 @@ const TradingView = () => {
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
-  // const [chartSize, setChartSize] = useState({
-  //   width: DEFAULT_CHART_WIDTH.toString(),
-  //   height: DEFAULT_CHART_HEIGHT.toString(),
-  // });
-  // const [switchSize, setSwitchSize] = useState({
-  //   width: DEFAULT_CHART_WIDTH.toString(),
-  //   height: SWITCH_HEIGHT.toString(),
-  // });
 
   const getDisplayedPositionLabelState = (bool: boolean) => {
     setShowPositionLabel(bool);

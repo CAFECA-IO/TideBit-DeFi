@@ -128,13 +128,6 @@ const TradingView = () => {
     setShowPositionLabel(bool);
   };
 
-  // useEffect(() => {
-  //   const chartSize = getChartSize();
-  //   const switchSize = getSwitchWidth();
-
-  //   setChartSize(chartSize);
-  //   setSwitchSize(switchSize);
-  // }, [globalCtx.width])
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
@@ -219,7 +212,7 @@ const TradingView = () => {
 
   const mobileLayout = (
     <div className="relative">
-      <div className="absolute top-10 text-sm text-lightWhite/60">
+      <div className="absolute top-0 text-sm text-lightWhite/60">
         {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
         {unitAsset}
       </div>

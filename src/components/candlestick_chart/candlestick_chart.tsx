@@ -28,8 +28,6 @@ import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import {GlobalContext} from '../../contexts/global_context';
-import {LayoutAssertion} from '../../constants/layout_assertion';
 import {getTime} from '../../constants/time_span_union';
 
 interface ITradingChartGraphProps {
@@ -184,10 +182,8 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
 export default function CandlestickChart({
   candleSize,
   candlestickChartWidth,
-  candlestickChartHeight,
 }: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
-  const globalCtx = useContext(GlobalContext);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
     open: 0,
@@ -228,10 +224,6 @@ export default function CandlestickChart({
     chartWidth: candlestickChartWidth, // ToDo: candlestickChartWidth
     chartHeight: 300, // ToDo: candlestickChartHeight
   });
-
-  // const handleResize = () => {
-  //   chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
-  // };
 
   const crosshairMoveHandler = (param: MouseEventParams) => {
     if (param.point === undefined || param.time === undefined) {
@@ -384,11 +376,8 @@ export default function CandlestickChart({
       // Info: OHLC hovered information (20230411 - Shirleey)
       chart.subscribeCrosshairMove(crosshairMoveHandler);
 
-      // window.addEventListener('resize', handleResize);
-
       return () => {
         try {
-          // window.removeEventListener('resize', handleResize);
           chart.unsubscribeCrosshairMove(crosshairMoveHandler);
           chart
             .timeScale()

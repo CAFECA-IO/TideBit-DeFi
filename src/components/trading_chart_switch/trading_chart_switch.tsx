@@ -5,7 +5,6 @@ import {
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../contexts/market_context';
-import useWindowSize from '../../lib/hooks/use_window_size';
 import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {LayoutAssertion} from '../../constants/layout_assertion';
@@ -20,10 +19,6 @@ interface ITradingChartSwitchProps {
   getDisplayedPositionLabel: (bool: boolean) => void;
   switchWidth: string;
 }
-
-const MIN_SCREEN_WIDTH = 1024;
-const TRADE_TAB_WIDTH = 350;
-const SWITCH_HEIGHT = 40;
 
 const TradingChartSwitch = ({
   getTradingViewType,

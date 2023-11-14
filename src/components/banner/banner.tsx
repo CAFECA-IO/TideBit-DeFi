@@ -22,7 +22,7 @@ const Banner = () => {
       <div className="">
         <section className="w-full">
           <div
-            className="hidden w-screen lg:flex flex-col items-start pt-5 xl:pt-20 lg:pt-10 pl-1/4 md:pl-2/5 xl:pl-1/2 bg-iSunOneBg bg-center bg-no-repeat bg-cover"
+            className="hidden lg:flex flex-col items-start pt-5 xl:pt-20 lg:pt-10 pl-1/4 md:pl-2/5 xl:pl-1/2 bg-iSunOneBg bg-center bg-no-repeat bg-cover"
             style={{
               height: `${layoutAssertion === LayoutAssertion.MOBILE ? '200px' : '356px'}`,
             }}

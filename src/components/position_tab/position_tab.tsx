@@ -15,6 +15,7 @@ interface PositionTabProps {
   openTabClickHandler: () => void;
   historyTabClickHandler: () => void;
   hideOpenLineGraph?: boolean;
+  rightPosition: string;
 }
 
 type TranslateFunction = (s: string) => string;
@@ -26,6 +27,7 @@ const PositionTab = ({
   openTabClickHandler,
   historyTabClickHandler,
   hideOpenLineGraph,
+  rightPosition,
 }: PositionTabProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
@@ -88,6 +90,7 @@ const PositionTab = ({
   const desktopLayout = (
     <div
       className={`pointer-events-none fixed right-0 top-82px z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      style={{right: rightPosition}}
     >
       <div className="relative mx-auto my-6 w-auto max-w-xl">
         {' '}

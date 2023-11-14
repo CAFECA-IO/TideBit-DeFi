@@ -58,7 +58,7 @@ import Alert from '../components/alert/alert';
 import {AlertState, IAlertData} from '../interfaces/alert';
 import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {Locale, TranslateFunction, isLocale} from '../interfaces/tidebit_defi_background/locale';
+import {Locale, TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
 import {useRouter} from 'next/router';
 import {mapBrowserLangToLocale} from '../lib/common';

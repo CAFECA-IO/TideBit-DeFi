@@ -21,17 +21,21 @@ const DEFAULT_CHART_WIDTH_MOBILE = 300;
 const DEFAULT_CHART_HEIGHT_MOBILE = 250;
 const SWITCH_HEIGHT_MOBILE = 30;
 
+const MAX_SCREEN_WIDTH = 1920;
+
 const getChartSize = () => {
   const windowSize = useWindowSize();
 
   const getDesktopChartSize = () => {
     const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
     const chartWidth =
-      windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width - TRADE_TAB_WIDTH
+      windowSize.width > MAX_SCREEN_WIDTH
+        ? MAX_SCREEN_WIDTH / 1.3
+        : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+        ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
         : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
     const chartSize = {
-      width: chartWidth.toString(),
+      width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
     };
 
@@ -43,9 +47,9 @@ const getChartSize = () => {
       width: DEFAULT_CHART_WIDTH_MOBILE,
       height: DEFAULT_CHART_HEIGHT_MOBILE,
     };
-    const chartWidth = windowSize.width;
+    const chartWidth = windowSize.width / 1.02;
     const chartSize = {
-      width: chartWidth.toString(),
+      width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
     };
 
@@ -63,9 +67,12 @@ const getSwitchWidth = () => {
 
   const getDesktopSwitchSize = () => {
     const switchWidth =
-      windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width - TRADE_TAB_WIDTH
+      windowSize.width > MAX_SCREEN_WIDTH
+        ? 1450
+        : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+        ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
         : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+
     return {
       width: switchWidth.toString(),
       height: SWITCH_HEIGHT.toString(),
@@ -108,6 +115,7 @@ const TradingView = () => {
   const getDisplayedPositionLabelState = (bool: boolean) => {
     setShowPositionLabel(bool);
   };
+
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
@@ -163,8 +171,8 @@ const TradingView = () => {
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}
-        candlestickChartWidth={chartSize.desktop.width}
-        candlestickChartHeight={chartSize.desktop.height}
+        candlestickChartWidth={chartSize.mobile.width}
+        candlestickChartHeight={chartSize.mobile.height}
       />
     </>
   );
@@ -172,7 +180,7 @@ const TradingView = () => {
   const desktopLayout = (
     <div>
       <div className="">
-        <div className="pt-10">{displayedTradingView}</div>
+        <div className="pt-20">{displayedTradingView}</div>
         <div
           className="ml-5 py-10"
           style={{width: `${switchSize.desktop.width}px`, height: `${switchSize.desktop.height}px`}}
@@ -183,6 +191,7 @@ const TradingView = () => {
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}
             getDisplayedPositionLabel={getDisplayedPositionLabelState}
+            switchWidth={switchSize.desktop.width}
           />
         </div>
       </div>
@@ -191,11 +200,11 @@ const TradingView = () => {
 
   const mobileLayout = (
     <div className="relative">
-      <div className="absolute top-10 text-sm text-lightWhite/60">
+      <div className="absolute top-0 text-sm text-lightWhite/60">
         {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
         {unitAsset}
       </div>
-      <div className="">{displayedTradingViewMobile}</div>
+      <div className="pt-20">{displayedTradingViewMobile}</div>
       <div
         className="pb-16"
         style={{width: `${switchSize.mobile.width}px`, height: `${switchSize.mobile.height}px`}}
@@ -206,6 +215,7 @@ const TradingView = () => {
           getTradingViewType={getTradingViewSelected}
           getTradingViewInterval={getTradingViewIntervaleSelected}
           getDisplayedPositionLabel={getDisplayedPositionLabelState}
+          switchWidth={switchSize.mobile.width}
         />
       </div>
     </div>

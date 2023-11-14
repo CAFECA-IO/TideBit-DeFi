@@ -65,7 +65,7 @@ const Trading = (props: IPageProps) => {
 
       {displayedNavBar}
 
-      <main>
+      <main className="mx-auto max-w-1920px">
         <TradePageBody
           briefs={props.briefs}
           hideTradingView={hideTradingView}

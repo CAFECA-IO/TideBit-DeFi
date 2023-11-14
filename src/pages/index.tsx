@@ -27,7 +27,7 @@ const Home = () => {
       </Head>
 
       {displayedNavBar}
-      <main>
+      <main className="mx-auto max-w-1920px">
         <HeroDescription />
       </main>
 

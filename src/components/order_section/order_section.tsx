@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import TradeTab from '../trade_tab/trade_tab';
 import PositionTab from '../position_tab/position_tab';
 import TradeSuspendedTab from '../trade_suspended_tab/trade_suspended_tab';
@@ -27,12 +27,28 @@ interface IOrderSection {
   hideOpenLineGraph?: boolean;
 }
 
+const BREAK_POINT = 2000;
+
 const OrderSection = (props: IOrderSection) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
   const {isCFDTradable} = useContext(MarketContext);
+
+  const [rightPosition, setRightPosition] = useState('0px');
+
+  useEffect(() => {
+    if (globalCtx.layoutAssertion === LayoutAssertion.MOBILE) return;
+
+    const handleResize = () => {
+      const windowWidth = globalCtx.width;
+      const extraSpace = windowWidth > BREAK_POINT ? (windowWidth - BREAK_POINT) / 1.9 : 0;
+      setRightPosition(`${extraSpace}px`);
+    };
+
+    handleResize();
+  }, [globalCtx.width, globalCtx.layoutAssertion]);
 
   const [activeTab, setActiveTab] = useState(ORDER_SECTION_TAB.TRADE);
 
@@ -69,16 +85,17 @@ const OrderSection = (props: IOrderSection) => {
           openTabClickHandler={openTabClickHandler}
           historyTabClickHandler={historyTabClickHandler}
           hideOpenLineGraph={props?.hideOpenLineGraph}
+          rightPosition={rightPosition}
         />
       ) : (
-        <PositionVisitorTab />
+        <PositionVisitorTab rightPosition={rightPosition} />
       )
     ) : !isCFDTradable ? (
-      <TradeSuspendedTab />
+      <TradeSuspendedTab rightPosition={rightPosition} />
     ) : !userCtx.enableServiceTerm ? (
-      <TradeVisitorTab />
+      <TradeVisitorTab rightPosition={rightPosition} />
     ) : (
-      <TradeTab />
+      <TradeTab rightPosition={rightPosition} />
     );
 
   const tradeTabStyle =
@@ -148,7 +165,7 @@ const OrderSection = (props: IOrderSection) => {
       </ul>
     </div>
   ) : (
-    <TradeTab />
+    <TradeTab rightPosition={rightPosition} />
   );
 
   const displayedMobileTab = userCtx.enableServiceTerm ? (
@@ -162,6 +179,7 @@ const OrderSection = (props: IOrderSection) => {
           openTabClickHandler={openTabClickHandler}
           historyTabClickHandler={historyTabClickHandler}
           hideOpenLineGraph={props?.hideOpenLineGraph}
+          rightPosition={rightPosition}
         />
       </div>
     </div>
@@ -176,10 +194,12 @@ const OrderSection = (props: IOrderSection) => {
   );
 
   const desktopLayout = (
-    <>
-      <div className="fixed top-70px right-0">{tabPart}</div>
+    <div className="">
+      <div className="fixed top-70px right-0" style={{right: rightPosition}}>
+        {tabPart}
+      </div>
       {currentTab}
-    </>
+    </div>
   );
 
   const mobileLayout = (

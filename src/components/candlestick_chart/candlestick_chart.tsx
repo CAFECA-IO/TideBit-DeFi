@@ -28,8 +28,6 @@ import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import {GlobalContext} from '../../contexts/global_context';
-import {LayoutAssertion} from '../../constants/layout_assertion';
 import {getTime} from '../../constants/time_span_union';
 
 interface ITradingChartGraphProps {
@@ -38,7 +36,7 @@ interface ITradingChartGraphProps {
   candlestickOn: boolean;
   lineGraphOn: boolean;
   showPositionLabel: boolean;
-  candlestickChartWidth: string;
+  candlestickChartWidth: number;
   candlestickChartHeight: string;
 }
 
@@ -181,9 +179,11 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
 };
 
 // Info: 從外面傳進來的參數: 1.timespan 2.style of chart (20231106 - Shirley)
-export default function CandlestickChart({candleSize}: ITradingChartGraphProps) {
+export default function CandlestickChart({
+  candleSize,
+  candlestickChartWidth,
+}: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
-  const globalCtx = useContext(GlobalContext);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
     open: 0,
@@ -203,10 +203,12 @@ export default function CandlestickChart({candleSize}: ITradingChartGraphProps) 
   let customPriceLine: IPriceLine;
   let tuned: CandlestickData[];
 
-  const width =
-    globalCtx.layoutAssertion === LayoutAssertion.DESKTOP
-      ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
-      : globalCtx.width * 0.9;
+  // const width =
+  //   globalCtx.layoutAssertion === LayoutAssertion.DESKTOP
+  //     ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
+  //     : globalCtx.width * 0.9;
+
+  // const width =
 
   const displayedOHLC =
     ohlcInfo.close !== 0 ? (
@@ -219,13 +221,9 @@ export default function CandlestickChart({candleSize}: ITradingChartGraphProps) 
   const {firstTime, chartOptions} = createSpec({
     dataSize: candleSize,
     timespan: getTime(marketCtx.timeSpan),
-    chartWidth: width, // ToDo: candlestickChartWidth
+    chartWidth: candlestickChartWidth, // ToDo: candlestickChartWidth
     chartHeight: 300, // ToDo: candlestickChartHeight
   });
-
-  const handleResize = () => {
-    chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
-  };
 
   const crosshairMoveHandler = (param: MouseEventParams) => {
     if (param.point === undefined || param.time === undefined) {
@@ -336,6 +334,7 @@ export default function CandlestickChart({candleSize}: ITradingChartGraphProps) 
       // Info: Get data and draw the chart
       tuned = fetchCandlestickData();
       chart = createChart(chartContainerRef.current, chartOptions);
+
       candlestickSeries = chart.addCandlestickSeries({
         // ToDo: `createSpec` 可以讀外面的參數，但這邊直接拿createSpec
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -377,11 +376,8 @@ export default function CandlestickChart({candleSize}: ITradingChartGraphProps) 
       // Info: OHLC hovered information (20230411 - Shirleey)
       chart.subscribeCrosshairMove(crosshairMoveHandler);
 
-      window.addEventListener('resize', handleResize);
-
       return () => {
         try {
-          window.removeEventListener('resize', handleResize);
           chart.unsubscribeCrosshairMove(crosshairMoveHandler);
           chart
             .timeScale()
@@ -403,7 +399,7 @@ export default function CandlestickChart({candleSize}: ITradingChartGraphProps) 
   return (
     <>
       <div className="-mb-8 mt-5 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
-      <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
+      <div className="">
         <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
       </div>
     </>

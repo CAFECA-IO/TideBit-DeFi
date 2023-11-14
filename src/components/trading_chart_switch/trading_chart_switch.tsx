@@ -5,7 +5,6 @@ import {
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../contexts/market_context';
-import useWindowSize from '../../lib/hooks/use_window_size';
 import {useGlobal} from '../../contexts/global_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {LayoutAssertion} from '../../constants/layout_assertion';
@@ -18,23 +17,8 @@ interface ITradingChartSwitchProps {
 
   getTradingViewInterval: (tradingViewInterval: string) => void;
   getDisplayedPositionLabel: (bool: boolean) => void;
+  switchWidth: string;
 }
-
-const MIN_SCREEN_WIDTH = 1024;
-const TRADE_TAB_WIDTH = 350;
-const SWITCH_HEIGHT = 40;
-
-const getSwitchWidth = () => {
-  const windowSize = useWindowSize();
-  const switchWidth =
-    windowSize.width > MIN_SCREEN_WIDTH ? windowSize.width - TRADE_TAB_WIDTH : windowSize.width;
-
-  const switchSize = {
-    width: switchWidth.toString(),
-    height: SWITCH_HEIGHT.toString(),
-  };
-  return switchSize;
-};
 
 const TradingChartSwitch = ({
   getTradingViewType,
@@ -43,6 +27,7 @@ const TradingChartSwitch = ({
 
   getTradingViewInterval,
   getDisplayedPositionLabel,
+  switchWidth,
 }: ITradingChartSwitchProps) => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -66,14 +51,12 @@ const TradingChartSwitch = ({
     handleTickerChange();
   }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]);
 
-  const switchSize = getSwitchWidth();
-
   const getDisplayedPositionsState = (bool: boolean) => {
     getDisplayedPositionLabel(bool);
   };
 
   const timeIntervalButtonStyle =
-    'mr-1 rounded-sm px-2 md:px-6 transition-all duration-300 text-white disabled:text-lightGray disabled:opacity-50';
+    'mr-1 rounded-sm px-2 sm:px-6 lg:px-2 xl:px-6 transition-all duration-300 text-white disabled:text-lightGray disabled:opacity-50';
 
   const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
@@ -377,8 +360,8 @@ const TradingChartSwitch = ({
 
   const desktopLayout = (
     <div
-      style={{width: `${Number(switchSize.width) - 100}px`}}
-      className="flex items-center space-x-1 md:space-x-5 xl:w-full"
+      style={{width: switchWidth}}
+      className="flex items-center space-x-1 md:space-x-5 lg:space-x-2 xl:w-full"
     >
       {/* Info: (20230809 - Shirley) Switch chart types */}
       <div className="flex space-x-2">
@@ -400,7 +383,7 @@ const TradingChartSwitch = ({
 
       {/* Info: (20230809 - Shirley) Switch time interval */}
       <div
-        className="hidden rounded-sm bg-darkGray6 py-2 px-2 lg:flex"
+        className="hidden rounded-sm bg-darkGray6 py-2 px-0 lg:flex"
         style={{
           width: '95%',
           justifyContent: 'space-between',

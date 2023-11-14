@@ -2,7 +2,45 @@
 module.exports = {
   content: ['./src/**/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    container: {},
+    container: {
+      center: true,
+      margin: {
+        DEFAULT: '0',
+      },
+
+      padding: {
+        // DEFAULT: '7rem',
+        // sm: '156px',
+        // md: '156px',
+        // lg: '156px',
+        // xl: '156px',
+        // '2xl': '156px',
+      },
+      screens: {
+        DEFAULT: '100%',
+        // 'sm': '100%',
+        // 'md': '100%',
+        // 'lg': '1024px',
+        // 'xl': '1280px',
+        // '2xl': '1600px',
+      },
+      minWidth: {
+        DEFAULT: '100%',
+        // sm: '640px',
+        // md: '768px',
+        // lg: '1024px',
+        // xl: '1280px',
+        // '2xl': '1536px',
+      },
+      maxWidth: {
+        DEFAULT: '2200px',
+        // sm: '640px',
+        // md: '768px',
+        // lg: '1024px',
+        // xl: '1280px',
+        // '2xl': '1536px',
+      },
+    },
     content: {
       "''": '',
     },
@@ -38,6 +76,7 @@ module.exports = {
       '2xl': '1536px',
       // => @media (min-width: 1536px) { ... }
       '3xl': '1600px',
+      '4xl': '1920px',
     },
     extend: {
       textDecorationThickness: {
@@ -70,22 +109,28 @@ module.exports = {
         '20px': '20px',
       },
       minWidth: {
+        '50px': '50px',
         '120px': '120px',
+        '220px': '220px',
+        '300px': '300px',
       },
       maxWidth: {
         '100px': '100px',
         '160px': '160px',
         '200px': '200px',
         '250px': '250px',
+        '300px': '300px',
         '350px': '350px',
         '3xs': '200px',
         '1200px': '1200px',
+        '1920px': '1920px',
       },
       minHeight: {
         '50px': '50px',
         '140px': '140px',
         '420px': '420px',
         '600px': '600px',
+        '1200px': '1200px',
       },
       maxHeight: {
         '600px': '600px',

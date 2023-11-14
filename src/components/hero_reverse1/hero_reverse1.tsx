@@ -42,12 +42,12 @@ chambray.`;
     <>
       {/* Info: Desktop (20230922 - Shirley) */}
       <section
-        className={`${desktopVersionBreakpoint} container mx-auto w-screen justify-center bg-black text-gray-400`}
+        className={`${desktopVersionBreakpoint} container mx-auto justify-center bg-black text-gray-400`}
       >
         <div className="flex flex-col items-center lg:flex-row">
           <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
 
-          <div className="mt-1 flex max-w-md flex-col items-center text-center md:mt-10 md:w-1/2 lg:mt-0 lg:items-start lg:pl-8 lg:text-left xl:mt-5 xl:ml-20">
+          <div className="mt-1 flex max-w-xl flex-col items-center text-center md:mt-10 md:w-1/2 lg:mt-0 lg:items-start lg:pl-8 lg:text-left xl:mt-5 xl:ml-20">
             <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
               {displayedHeading}
             </h1>

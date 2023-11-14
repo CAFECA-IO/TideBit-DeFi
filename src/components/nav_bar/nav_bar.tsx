@@ -134,8 +134,8 @@ const NavBar = () => {
 
   const desktopLayout = (
     <>
-      <div className="w-full text-center lg:text-start">
-        <nav className="container fixed inset-x-0 z-70 mx-auto max-w-full bg-black/100 pb-1 text-white">
+      <div className="w-full text-center lg:text-start mx-auto">
+        <nav className="container fixed inset-x-0 z-70 mx-auto bg-black/100 pb-1 text-white max-w-1920px">
           <div className="mx-auto max-w-full px-5">
             <div className="flex h-16 items-center justify-between bg-black">
               <div className="flex items-center">

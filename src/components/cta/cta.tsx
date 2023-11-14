@@ -10,17 +10,25 @@ import version from '../../lib/version';
 
 type TranslateFunction = (s: string) => string;
 
+/**
+ * 
+justify-center mx-auto container left-0 top-0 absolute
+4xl:justify-center 4xl:mx-auto container 4xl:left-0 4xl:top-0 4xl:static
+absolute left-2rem top-3rem flex flex-col justify-start xxs:left-4rem xxs:top-4rem xs:left-5rem xs:top-5rem sm:left-6rem sm:top-7rem md:left-5rem md:top-9rem lg:top-11rem xl:top-13rem 2xl:top-15rem 3xl:left-8rem 3xl:top-20rem
+
+ */
+
 const Cta = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   return (
     <>
       {/* Info: Desktop version (width >= 1024 px) (20230628 - Shirley) */}
-      <section className="relative hidden w-screen pl-50px lg:flex">
+      <section className="relative hidden w-screen mx-auto max-w-1920px lg:flex">
         <Image
           width={2409}
           height={1500}
-          className="h-auto max-w-full"
+          className="h-auto max-w-full 4xl:mx-auto"
           src="/elements/group_15198@2x.png"
           alt="image description"
         />

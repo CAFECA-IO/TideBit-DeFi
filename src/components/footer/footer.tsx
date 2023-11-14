@@ -103,55 +103,55 @@ const Footer = () => {
     <>
       {/* Info: (20230328 - Julian) Desktop */}
       <div className={`${desktopVersionBreakpoint}`}>
-        <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
-          <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-24 md:flex-row md:flex-nowrap md:items-center lg:items-start">
-            <div className="mx-auto w-full shrink-0 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
-              <Link
-                href="/#"
-                className="flex flex-col items-center justify-center font-medium text-white md:justify-start"
-              >
-                <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
-              </Link>
-              <span className="mt-3 flex h-px w-full justify-center rounded bg-white xl:w-full"></span>
+        <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center container">
+          <div className="mx-auto max-w-1920px flex flex-col justify-between flex-wrap pb-10 pt-24 md:flex-row md:flex-nowrap md:items-center lg:items-start">
+            <div className="flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left justify-around">
+              <div className="mx-auto shrink-0 text-center md:mx-0">
+                <Link
+                  href="/#"
+                  className="flex flex-col items-center justify-center font-medium text-white md:justify-start"
+                >
+                  <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
+                </Link>
+                <span className="mt-3 flex h-px w-full justify-center rounded bg-white xl:w-full"></span>
 
-              <div className="container mx-auto inline-flex justify-center pt-3 sm:mt-0">
-                {socialMediaLinksList}
+                <div className="container mx-auto inline-flex justify-center pt-3 sm:mt-0">
+                  {socialMediaLinksList}
+                </div>
               </div>
-            </div>
 
-            <div className="flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
-              <div className="w-full px-4 md:w-1/2 lg:w-1/6">
+              <div className="">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
                   {t('FOOTER.SERVICES')}
                 </h2>
                 <nav className="mb-5 list-none">{servicesLinksList}</nav>
               </div>
-              <div className="w-full px-4 md:w-1/2 lg:w-1/6">
+              <div className="">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
                   {t('FOOTER.TIDEBIT')}
                 </h2>
                 <nav className="mb-5 list-none">{tideBitLinksList}</nav>
               </div>
-              <div className="w-full px-4 md:w-1/2 lg:w-1/6">
+              <div className="">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
                   {t('FOOTER.POLICY_CONDITIONS')}
                 </h2>
                 <nav className="mb-5 list-none">{policyLinksList}</nav>
               </div>
 
-              <div className="w-full px-4 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-50px">
+              <div className="">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
                   {t('FOOTER.NEWSLETTER')}
                 </h2>
 
-                <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start">
-                  <div className="relative mr-2 w-2/3 sm:mr-4 sm:w-auto lg:mr-0 xl:mr-4">
+                <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start max-w-300px">
+                  <div className="relative mr-2 sm:mr-4 sm:w-auto lg:mr-4">
                     <input
                       placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
                       type="text"
                       id="email_desktop"
                       name="email"
-                      className="block w-full rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
+                      className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
                     />
                   </div>
                   <RippleButton
@@ -165,8 +165,8 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="mt-0 pb-0">
-            <div className="flex flex-col flex-wrap px-5 pb-4 pt-1 sm:flex-row sm:justify-center md:justify-end">
+          <div className="mx-auto max-w-1920px">
+            <div className="flex flex-col flex-wrap pb-4 pt-1 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
                 {COPYRIGHT}
               </p>

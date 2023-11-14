@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import useWindowSize from '../../lib/hooks/use_window_size';
@@ -21,17 +21,21 @@ const DEFAULT_CHART_WIDTH_MOBILE = 300;
 const DEFAULT_CHART_HEIGHT_MOBILE = 250;
 const SWITCH_HEIGHT_MOBILE = 30;
 
+const MAX_SCREEN_WIDTH = 1920;
+
 const getChartSize = () => {
   const windowSize = useWindowSize();
 
   const getDesktopChartSize = () => {
     const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
     const chartWidth =
-      windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width - TRADE_TAB_WIDTH
+      windowSize.width > MAX_SCREEN_WIDTH
+        ? MAX_SCREEN_WIDTH / 1.3
+        : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+        ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
         : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
     const chartSize = {
-      width: chartWidth.toString(),
+      width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
     };
 
@@ -43,11 +47,12 @@ const getChartSize = () => {
       width: DEFAULT_CHART_WIDTH_MOBILE,
       height: DEFAULT_CHART_HEIGHT_MOBILE,
     };
-    const chartWidth = windowSize.width;
+    const chartWidth = windowSize.width / 1.02;
     const chartSize = {
-      width: chartWidth.toString(),
+      width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
-    };
+    }; // eslint-disable-next-line no-console
+    console.log('chartSize getMobileChartSize', chartSize);
 
     return chartSize;
   };
@@ -63,9 +68,14 @@ const getSwitchWidth = () => {
 
   const getDesktopSwitchSize = () => {
     const switchWidth =
-      windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width - TRADE_TAB_WIDTH
+      windowSize.width > MAX_SCREEN_WIDTH
+        ? 1450 // 固定寬度
+        : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+        ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
         : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+    // eslint-disable-next-line no-console
+    console.log('getDesktopSwitchSize', switchWidth);
+
     return {
       width: switchWidth.toString(),
       height: SWITCH_HEIGHT.toString(),
@@ -73,6 +83,7 @@ const getSwitchWidth = () => {
   };
 
   const getMobileSwitchSize = () => {
+    // 留下原本的行動裝置尺寸計算
     const switchWidth = windowSize.width - 40;
     return {
       width: switchWidth.toString(),
@@ -104,10 +115,26 @@ const TradingView = () => {
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
+  // const [chartSize, setChartSize] = useState({
+  //   width: DEFAULT_CHART_WIDTH.toString(),
+  //   height: DEFAULT_CHART_HEIGHT.toString(),
+  // });
+  // const [switchSize, setSwitchSize] = useState({
+  //   width: DEFAULT_CHART_WIDTH.toString(),
+  //   height: SWITCH_HEIGHT.toString(),
+  // });
 
   const getDisplayedPositionLabelState = (bool: boolean) => {
     setShowPositionLabel(bool);
   };
+
+  // useEffect(() => {
+  //   const chartSize = getChartSize();
+  //   const switchSize = getSwitchWidth();
+
+  //   setChartSize(chartSize);
+  //   setSwitchSize(switchSize);
+  // }, [globalCtx.width])
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
@@ -163,8 +190,8 @@ const TradingView = () => {
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}
-        candlestickChartWidth={chartSize.desktop.width}
-        candlestickChartHeight={chartSize.desktop.height}
+        candlestickChartWidth={chartSize.mobile.width}
+        candlestickChartHeight={chartSize.mobile.height}
       />
     </>
   );
@@ -172,7 +199,7 @@ const TradingView = () => {
   const desktopLayout = (
     <div>
       <div className="">
-        <div className="pt-10">{displayedTradingView}</div>
+        <div className="pt-20">{displayedTradingView}</div>
         <div
           className="ml-5 py-10"
           style={{width: `${switchSize.desktop.width}px`, height: `${switchSize.desktop.height}px`}}
@@ -183,6 +210,7 @@ const TradingView = () => {
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}
             getDisplayedPositionLabel={getDisplayedPositionLabelState}
+            switchWidth={switchSize.desktop.width}
           />
         </div>
       </div>
@@ -195,7 +223,7 @@ const TradingView = () => {
         {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
         {unitAsset}
       </div>
-      <div className="">{displayedTradingViewMobile}</div>
+      <div className="pt-20">{displayedTradingViewMobile}</div>
       <div
         className="pb-16"
         style={{width: `${switchSize.mobile.width}px`, height: `${switchSize.mobile.height}px`}}
@@ -206,6 +234,7 @@ const TradingView = () => {
           getTradingViewType={getTradingViewSelected}
           getTradingViewInterval={getTradingViewIntervaleSelected}
           getDisplayedPositionLabel={getDisplayedPositionLabelState}
+          switchWidth={switchSize.mobile.width}
         />
       </div>
     </div>

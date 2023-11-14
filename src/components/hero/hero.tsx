@@ -28,10 +28,10 @@ neutra sustainable fingerstache kickstarter.`;
     <>
       {/* Info: Desktop (20230922 - Shirley) */}
       <section
-        className={`${desktopVersionBreakpoint} container mx-auto flex w-screen justify-center bg-black text-gray-400`}
+        className={`${desktopVersionBreakpoint} container mx-auto flex justify-center bg-black text-gray-400`}
       >
         <div className="flex flex-col items-center pl-1/20 md:flex-row xl:pl-1/50">
-          <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mr-28 md:mt-10 md:w-2/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
+          <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mr-10 md:mt-10 md:w-2/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
             <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
               {displayedHeading}
             </h1>

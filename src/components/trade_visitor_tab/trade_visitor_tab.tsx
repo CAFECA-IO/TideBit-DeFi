@@ -4,7 +4,7 @@ import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_butto
 
 type TranslateFunction = (s: string) => string;
 
-const TradeVisitorTab = () => {
+const TradeVisitorTab = ({rightPosition}: {rightPosition: string}) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const tabBodyWidth = 'w-320px';
@@ -15,6 +15,7 @@ const TradeVisitorTab = () => {
       {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
       <div
         className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+        style={{right: rightPosition}}
       >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}

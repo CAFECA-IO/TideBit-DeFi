@@ -44,7 +44,7 @@ const MarketSection = (props: IMarketSectionProps) => {
     <div className="ml-5 py-100px">
       <div className="ml-5">{displayedTickerHeader}</div>
 
-      <div>{displayedTradingView}</div>
+      <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
 
       <div className={tradeStatisticsStyle}>
         <TradeStatistics

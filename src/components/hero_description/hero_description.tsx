@@ -73,7 +73,7 @@ export default function HeroDescription() {
           <Banner />
         </div>
 
-        {/* Web3.0 */}
+        {/* Info: Web3.0 (20231114 - Shirley) */}
         <HeroReverse
           heading={t('HOME_PAGE.WEB_3_TITLE')}
           highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
@@ -82,7 +82,7 @@ export default function HeroDescription() {
         />
         <div className="py-20 lg:py-40"></div>
 
-        {/* Easy Trade */}
+        {/* Info: Easy Trade (20231114 - Shirley) */}
         <Hero
           heading={
             <div className="font-bold">
@@ -95,7 +95,7 @@ export default function HeroDescription() {
         />
         <div className="py-20 lg:py-40"></div>
 
-        {/* Secure System */}
+        {/* Info: Secure System (20231114 - Shirley) */}
         <HeroReverse1
           heading={
             <div className="font-bold">
@@ -110,7 +110,7 @@ export default function HeroDescription() {
         />
         <div className="py-20 lg:py-40"></div>
 
-        {/* Free Online Courses */}
+        {/* Info: Free Online Courses (20231114 - Shirley) */}
         <Hero1
           heading={
             <div className="font-bold">
@@ -125,7 +125,7 @@ export default function HeroDescription() {
         />
         <div className="py-20 lg:py-40"></div>
 
-        {/* App download */}
+        {/* Info: App download (20231114 - Shirley) */}
         <div className="flex w-full justify-center">
           <AppDowloadContainer />
         </div>

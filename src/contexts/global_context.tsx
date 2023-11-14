@@ -58,9 +58,10 @@ import Alert from '../components/alert/alert';
 import {AlertState, IAlertData} from '../interfaces/alert';
 import {NotificationContext} from './notification_context';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {TranslateFunction} from '../interfaces/tidebit_defi_background/locale';
+import {Locale, TranslateFunction, isLocale} from '../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
-import {IException} from '../constants/exception';
+import {useRouter} from 'next/router';
+import {mapBrowserLangToLocale} from '../lib/common';
 
 export interface IToastify {
   type: IToastType;
@@ -345,6 +346,8 @@ export interface IGlobalContext {
   visibleAlertHandler: () => void;
   dataAlert: IAlertData | null;
   dataAlertHandler: (data: IAlertData) => void;
+
+  lang: string;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -477,15 +480,19 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleAlertHandler: () => null,
   dataAlert: null,
   dataAlertHandler: () => null,
+
+  lang: Locale.EN,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const router = useRouter();
 
   const notificationCtx = useContext(NotificationContext);
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
+  const [lang, setLang] = useState<string>(Locale.EN);
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
   // TODO: (20230316 - Shirley) replace dummy data with standard example data
@@ -983,6 +990,30 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   }, []);
 
   useEffect(() => {
+    const updateLanguage = (newLocale: string) => {
+      try {
+        const currentPath = router.asPath;
+        const newPath = currentPath
+          .split('/')
+          .map((part, index) => {
+            return index === 1 && part.match(/^[a-z]{2}$/) ? newLocale : part;
+          })
+          .join('/');
+
+        router.push(newPath, newPath, {locale: newLocale});
+      } catch (error) {}
+    };
+
+    const browserLang = navigator.language;
+    const matchedLocale = mapBrowserLangToLocale(browserLang) ?? '';
+    setLang(matchedLocale);
+
+    if (matchedLocale && matchedLocale !== router.locale) {
+      updateLanguage(matchedLocale);
+    }
+  }, []);
+
+  useEffect(() => {
     const handleExceptionThrown = () => {
       const severest = notificationCtx.getSeverestException();
 
@@ -1149,6 +1180,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleAlertHandler,
     dataAlert,
     dataAlertHandler,
+
+    lang,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>

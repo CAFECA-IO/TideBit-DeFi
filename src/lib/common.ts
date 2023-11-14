@@ -34,6 +34,7 @@ import {
   IRoundConditionConstant,
   RoundCondition,
 } from '../interfaces/tidebit_defi_background/round_condition';
+import {Locale} from '../interfaces/tidebit_defi_background/locale';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Keccak = require('@cafeca/keccak');
@@ -947,3 +948,13 @@ export const arrayDifferences = (arr1: Array<string>, arr2: Array<string>) => {
     inArr2NotInArr1,
   };
 };
+
+export function mapBrowserLangToLocale(browserLang: string) {
+  const lang = browserLang.toLowerCase();
+  if (lang.startsWith('zh')) {
+    return lang.includes(Locale.CN) ? Locale.CN : Locale.TW;
+  } else if (lang.startsWith(Locale.EN)) {
+    return Locale.EN;
+  }
+  return null;
+}

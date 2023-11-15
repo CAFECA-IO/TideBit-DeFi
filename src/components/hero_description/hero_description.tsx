@@ -1,6 +1,5 @@
 import React from 'react';
 import AppDowloadContainer from '../app_download_container/app_download_container';
-import Banner from '../banner/banner';
 import CryptoCategory from '../crypto_category/crypto_category';
 import Cta from '../cta/cta';
 import Hero from '../hero/hero';
@@ -53,7 +52,7 @@ export default function HeroDescription() {
           <Cta />
         </div>
 
-        <div className="py-10">
+        <div className="pt-10 xl:pt-20 pb-10">
           <StatisticBlock />
         </div>
 
@@ -65,12 +64,8 @@ export default function HeroDescription() {
           <AuditReport />
         </div>
 
-        <div id="crypto-category" className="py-20">
+        <div id="crypto-category" className="pt-20 pb-40">
           <CryptoCategory />
-        </div>
-
-        <div className="py-20">
-          <Banner />
         </div>
 
         {/* Info: Web3.0 (20231114 - Shirley) */}

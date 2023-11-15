@@ -16,7 +16,7 @@ const AppDowloadContainer = () => {
       {/* Info: Desktop (20230922 - Shirley) */}
       <div className={`${desktopVersionBreakpoint}`}>
         <section className={`bg-black`}>
-          <h1 className="flex shrink-0 items-center justify-center pb-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
+          <h1 className="flex shrink-0 items-center justify-center pb-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-5xl">
             {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
             <span className="text-cyan-400">
               {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}

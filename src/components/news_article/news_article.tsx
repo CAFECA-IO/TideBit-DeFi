@@ -100,41 +100,44 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
           </div>
         </div>
       </div>
+      {/*           <div className="mx-auto max-w-1920px flex justify-around">
+       */}
       {recommendations && recommendations?.length > 0 ? (
         <>
           <div className="lg:mx-10 border-b border-dashed border-white/50"></div>
-
-          <div className="md:mx-20">
-            <div className="mx-5 my-10 text-base text-lightGray md:mx-0">
-              You might also like ...
-            </div>
-            <div className="mx-0 flex-col space-y-16 lg:grid lg:grid-cols-3 lg:gap-2 xl:mx-12">
-              {recommendations.map((item, index) => (
-                <div
-                  key={item.newsId}
-                  className={`${
-                    index === 0 ? `mt-16` : ``
-                  } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px xl:w-300px 2xl:w-400px`}
-                >
-                  <Link href={`/news/${item.newsId}`}>
-                    <Image
-                      className=""
-                      src={`${item.img}`}
-                      style={{objectFit: 'cover'}}
-                      width={400}
-                      height={100}
-                      alt={`news img`}
-                    />
-                    <div className="my-5 text-xl text-lightWhite">{item.title}</div>
-                    <div className="text-sm text-lightWhite">
-                      {truncateText(item.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH)}
-                    </div>
-                    <div className="my-5 text-sm text-lightGray">
-                      {timestampToString(item.timestamp).date}
-                    </div>
-                  </Link>
-                </div>
-              ))}
+          <div className="w-full flex justify-center">
+            <div className="md:mx-0 max-w-1920px mx-auto">
+              <div className="mx-5 my-10 text-base text-lightGray md:mx-0">
+                You might also like ...
+              </div>
+              <div className="mx-0 flex-col space-y-16 lg:grid lg:grid-cols-3 lg:gap-2 xl:mx-12 space-x-20">
+                {recommendations.map((item, index) => (
+                  <div
+                    key={item.newsId}
+                    className={`${
+                      index === 0 ? `mt-16` : ``
+                    } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px xl:w-300px 2xl:w-400px`}
+                  >
+                    <Link href={`/news/${item.newsId}`}>
+                      <Image
+                        className=""
+                        src={`${item.img}`}
+                        style={{objectFit: 'cover'}}
+                        width={400}
+                        height={100}
+                        alt={`news img`}
+                      />
+                      <div className="my-5 text-xl text-lightWhite">{item.title}</div>
+                      <div className="text-sm text-lightWhite">
+                        {truncateText(item.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH)}
+                      </div>
+                      <div className="my-5 text-sm text-lightGray">
+                        {timestampToString(item.timestamp).date}
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </>

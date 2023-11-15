@@ -108,17 +108,19 @@ const BoardPageBody = () => {
 
   return (
     <div className="overflow-x-clip overflow-y-visible pt-12 md:pt-20">
-      <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
-        <div className="min-h-screen">
-          <div className="mx-auto my-10 flex flex-col items-center space-y-4">
-            {displayedTitle}
-            {displayedSubtitle}
-            <div className="pt-150px md:pt-250px">
-              <LeaderboardTab timeSpan={timeSpan} setTimeSpan={setTimeSpan} rankings={rankings} />
+      <div className="mx-auto max-w-1920px">
+        <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
+          <div className="min-h-screen">
+            <div className="mx-auto my-10 flex flex-col items-center space-y-4">
+              {displayedTitle}
+              {displayedSubtitle}
+              <div className="pt-150px md:pt-250px">
+                <LeaderboardTab timeSpan={timeSpan} setTimeSpan={setTimeSpan} rankings={rankings} />
+              </div>
             </div>
           </div>
-        </div>
-      </SkeletonTheme>
+        </SkeletonTheme>
+      </div>
       <div className="">
         <Footer />
       </div>

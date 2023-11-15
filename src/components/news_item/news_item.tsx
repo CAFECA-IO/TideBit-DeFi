@@ -43,7 +43,7 @@ const NewsItem = ({newsId, timestamp, title, description, img}: IRecommendedNews
                 {displayedTime.date}
               </p>
             </div>
-            <p className="absolute right-85px mb-10 hidden text-xs text-lightGray lg:flex xl:text-sm">
+            <p className="min-w-80px lg:justify-end mb-10 hidden text-xs text-lightGray lg:flex xl:text-sm">
               {' '}
               {displayedTime.date}
             </p>

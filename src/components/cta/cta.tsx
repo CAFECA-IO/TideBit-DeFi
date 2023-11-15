@@ -33,8 +33,8 @@ const Cta = () => {
           alt="image description"
         />
 
-        <div className="absolute left-2rem top-3rem flex flex-col justify-start xxs:left-4rem xxs:top-4rem xs:left-5rem xs:top-5rem sm:left-6rem sm:top-7rem md:left-5rem md:top-9rem lg:top-11rem xl:top-13rem 2xl:top-15rem 3xl:left-8rem 3xl:top-20rem">
-          <div className="max-w-200px text-lg font-bold tracking-wide text-white xs:text-2xl sm:max-w-350px sm:text-3xl md:max-w-sm md:text-4xl lg:max-w-lg lg:text-5xl xl:max-w-xl xl:text-6xl 2xl:max-w-2xl 2xl:text-7xl">
+        <div className="absolute left-2rem top-3rem flex flex-col justify-start xxs:left-4rem xxs:top-4rem xs:left-5rem xs:top-5rem sm:left-6rem sm:top-7rem md:left-5rem md:top-9rem lg:top-11rem xl:top-11rem 2xl:top-15rem 3xl:left-8rem 3xl:top-20rem">
+          <div className="max-w-200px text-lg font-bold tracking-wide text-white xs:text-2xl sm:max-w-350px sm:text-3xl md:max-w-sm md:text-4xl lg:max-w-md lg:text-5xl xl:max-w-xl xl:text-6xl 2xl:max-w-2xl 2xl:text-7xl">
             <span className="leading-normal text-tidebitTheme">
               {t('HOME_PAGE.CTA_HIGHLIGHT_TITLE')}
             </span>
@@ -95,7 +95,7 @@ const Cta = () => {
             </span>
             {t('HOME_PAGE.CTA_REST_TITLE')}
           </div>
-          <div className="mx-5 mt-4 w-278px text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
+          <div className="mx-5 mt-8 w-278px text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
             {t('HOME_PAGE.CTA_DESCRIPTION')}
           </div>
           <div className="flex flex-col items-center space-y-4 pt-10">

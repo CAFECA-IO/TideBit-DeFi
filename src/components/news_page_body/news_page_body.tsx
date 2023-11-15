@@ -39,17 +39,23 @@ const NewsPageBody = (props: IPageProps) => {
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pt-40 pb-20">
-      <div className="mb-20">
-        {' '}
-        <NewsHeader searchChangeHandler={searchChangeHandler} />
-      </div>
-      <div className="">
-        {' '}
-        <NewsSection activePage={activePage} briefNews={filteredNews} />
-      </div>
+      <div className="mx-auto max-w-1920px">
+        <div className="mb-20">
+          {' '}
+          <NewsHeader searchChangeHandler={searchChangeHandler} />
+        </div>
+        <div className="">
+          {' '}
+          <NewsSection activePage={activePage} briefNews={filteredNews} />
+        </div>
 
-      <div className="mt-10">
-        <Pagination activePage={activePage} setActivePage={setActivePage} totalPages={totalPages} />
+        <div className="mt-10">
+          <Pagination
+            activePage={activePage}
+            setActivePage={setActivePage}
+            totalPages={totalPages}
+          />
+        </div>
       </div>
     </div>
   );

@@ -134,8 +134,10 @@ const NavBar = () => {
 
   const desktopLayout = (
     <>
-      <div className="w-full text-center lg:text-start mx-auto">
-        <nav className="container fixed inset-x-0 z-70 mx-auto bg-black/100 pb-1 text-white max-w-1920px">
+      {/* Info: 背景色條橫跨整個螢幕寬度 (20231115 -  Shirley) */}
+      <div className="fixed inset-x-0 top-0 z-40 bg-black">
+        <nav className="container mx-auto px-5 text-white max-w-1920px">
+          {/* Info: 將 NavBar 內容限制在 1920px 的寬度範圍內 (20231115 -  Shirley) */}
           <div className="mx-auto max-w-full px-5">
             <div className="flex h-16 items-center justify-between bg-black">
               <div className="flex items-center">

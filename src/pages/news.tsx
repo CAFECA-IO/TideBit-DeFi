@@ -37,7 +37,6 @@ const News = (props: IPageProps) => {
           </Head>
 
           <nav className="">{displayedNavBar}</nav>
-
           <main className="">
             <div>
               <NewsPageBody briefs={props.briefs} />

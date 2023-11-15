@@ -110,6 +110,9 @@ module.exports = {
       },
       minWidth: {
         '50px': '50px',
+        '80px': '80px',
+        '90px': '90px',
+        '100px': '100px',
         '120px': '120px',
         '220px': '220px',
         '300px': '300px',

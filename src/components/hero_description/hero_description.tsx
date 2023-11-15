@@ -68,6 +68,11 @@ export default function HeroDescription() {
           <CryptoCategory />
         </div>
 
+        {/* Info: removed for supervision reason (20231115 - Shirley) */}
+        {/* <div className="py-20">
+          <Banner />
+        </div> */}
+
         {/* Info: Web3.0 (20231114 - Shirley) */}
         <HeroReverse
           heading={t('HOME_PAGE.WEB_3_TITLE')}

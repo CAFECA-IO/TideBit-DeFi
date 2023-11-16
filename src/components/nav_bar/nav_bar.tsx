@@ -142,7 +142,7 @@ const NavBar = () => {
             <div className="flex h-16 items-center justify-between bg-black">
               <div className="flex items-center">
                 {/* Info: (20230327 - Julian) logo */}
-                <Link className="shrink-0  pt-5" href="/">
+                <Link className="shrink-0 pt-5" href="/">
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -200,7 +200,10 @@ const NavBar = () => {
                   </div>
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
-                  <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                  <button
+                    onClick={sidebarOpenHandler}
+                    className="w-10 relative hover:cursor-pointer"
+                  >
                     {isDisplayedUnreadNumber}
 
                     <Image

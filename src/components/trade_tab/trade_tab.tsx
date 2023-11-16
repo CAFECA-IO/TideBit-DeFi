@@ -745,17 +745,18 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
     setLongGuaranteedStopChecked(prev => {
       if (prev === true && inadequateBalanceForLongGSL) {
-        globalCtx.toast({
-          type: ToastTypeAndText.WARNING.type,
-          toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
-          message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
-            Code.INADEQUATE_AVAILABLE_BALANCE
-          })`,
-          typeText: t(ToastTypeAndText.WARNING.text),
-          isLoading: false,
-          autoClose: TOAST_DURATION_SECONDS,
-        });
-
+        if (!globalCtx.visiblePositionOpenModal) {
+          globalCtx.toast({
+            type: ToastTypeAndText.WARNING.type,
+            toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+            message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+              Code.INADEQUATE_AVAILABLE_BALANCE
+            })`,
+            typeText: t(ToastTypeAndText.WARNING.text),
+            isLoading: false,
+            autoClose: TOAST_DURATION_SECONDS,
+          });
+        }
         return false;
       } else {
         return prev;
@@ -791,16 +792,18 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
     setShortGuaranteedStopChecked(prev => {
       if (prev === true && inadequateBalanceForShortGSL) {
-        globalCtx.toast({
-          type: ToastTypeAndText.WARNING.type,
-          toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
-          message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
-            Code.INADEQUATE_AVAILABLE_BALANCE
-          })`,
-          typeText: t(ToastTypeAndText.WARNING.text),
-          isLoading: false,
-          autoClose: TOAST_DURATION_SECONDS,
-        });
+        if (!globalCtx.visiblePositionOpenModal) {
+          globalCtx.toast({
+            type: ToastTypeAndText.WARNING.type,
+            toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+            message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+              Code.INADEQUATE_AVAILABLE_BALANCE
+            })`,
+            typeText: t(ToastTypeAndText.WARNING.text),
+            isLoading: false,
+            autoClose: TOAST_DURATION_SECONDS,
+          });
+        }
 
         return false;
       } else {
@@ -905,7 +908,6 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
   const longOrderSubmitHandler = async () => {
     const {longOrder} = await toApplyCreateOrder();
-
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: longOrder,
     });
@@ -916,7 +918,6 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
   const shortOrderSubmitHandler = async () => {
     const {shortOrder} = await toApplyCreateOrder();
-
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: shortOrder,
     });
@@ -1430,7 +1431,8 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     >
       <RippleButton
         disabled={
-          (openSubMenu && marginWarningShortRef.current) ||
+          (openSubMenu &&
+            (isActiveTabLong ? marginWarningLongRef.current : marginWarningShortRef.current)) ||
           longBtnDisabledRef.current ||
           shortBtnDisabledRef.current ||
           +targetInputValueRef.current < TARGET_MIN_DIGITS

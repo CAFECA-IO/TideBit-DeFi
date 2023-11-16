@@ -1,5 +1,9 @@
 import {ImCross} from 'react-icons/im';
-import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor} from '../../constants/display';
+import {
+  DELAYED_HIDDEN_SECONDS,
+  TOAST_DURATION_SECONDS,
+  TypeOfBorderColor,
+} from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Tooltip from '../tooltip/tooltip';
 import Image from 'next/image';
@@ -54,6 +58,17 @@ interface IPositionOpenModal {
   openCfdRequest: IApplyCreateCFDOrder;
 }
 
+const PROPERTIES_TO_CHECK = [
+  'amount',
+  'fee',
+  'guaranteedStopFee',
+  'liquidationPrice',
+  'margin.amount',
+  'price',
+  'stopLoss',
+  'takeProfit',
+];
+
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
@@ -70,10 +85,13 @@ const PositionOpenModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
+  const [dataFetchError, setDataFetchError, dataFetchErrorRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [dataFetchErrorMessage, setDataFetchErrorMessage, dataFetchErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false);
+  const [gslFeePercentage, setGslFeePercentage, gslFeePercentageRef] = useStateRef(0);
+  const [inadequateAvailableBalance, setInadequateAvailableBalance, inadequateAvailableBalanceRef] =
+    useStateRef(false);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
     const order: IApplyCreateCFDOrder = {
@@ -234,31 +252,31 @@ const PositionOpenModal = ({
   const layoutInsideBorder = 'flex justify-between w-full';
 
   const getQuotation = async () => {
-    let quotation = {...defaultResultSuccess};
+    let result = {...defaultResultSuccess};
     try {
-      quotation = await marketCtx.getCFDQuotation(
+      result = await marketCtx.getCFDQuotation(
         openCfdRequest.instId,
         openCfdRequest.typeOfPosition
       );
 
-      const data = quotation.data as IQuotation;
+      const data = result.data as IQuotation;
 
       // Info: if there's error fetching quotation, disable the submit btn (20230327 - Shirley)
       if (
-        quotation.success &&
+        result.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
         data.instId === openCfdRequest.instId &&
-        quotation.data !== null
+        result.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
-        setQuotationError(false);
+        setDataFetchError(false);
         return data;
       } else {
-        setQuotationError(true);
+        setDataFetchError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
         if (data.instId !== openCfdRequest.instId) {
-          setQuotationErrorMessage({
+          setDataFetchErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
             reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
@@ -266,7 +284,7 @@ const PositionOpenModal = ({
           return;
         }
         /* Info: (20230508 - Julian) get quotation error message */
-        setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
+        setDataFetchErrorMessage({success: false, code: result.code, reason: result.reason});
       }
     } catch (err) {
       notificationCtx.addException(
@@ -275,23 +293,72 @@ const PositionOpenModal = ({
         Code.UNKNOWN_ERROR
       );
 
-      setQuotationError(true);
+      setDataFetchError(true);
       /* Info: (20230508 - Julian) get quotation error message */
-      setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
+      setDataFetchErrorMessage({success: false, code: result.code, reason: result.reason});
+    }
+  };
+
+  const getGslFeePercentage = async () => {
+    let result = {...defaultResultSuccess};
+
+    try {
+      result = await marketCtx.getGuaranteedStopFeePercentage();
+
+      if (result.success) {
+        const data = result.data as number;
+        setGslFeePercentage(data as number);
+        return data;
+      } else {
+        setDataFetchError(true);
+        setDataFetchErrorMessage({
+          success: false,
+          code: result.code,
+          reason: result.reason,
+        });
+      }
+    } catch (error) {
+      setDataFetchError(true);
+      setDataFetchErrorMessage({
+        success: false,
+        code: result.code,
+        reason: result.reason,
+      });
+
+      notificationCtx.addException(
+        'getGslFeePercentage position_open_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
     }
   };
 
   const renewDataHandler = async () => {
     const newQuotation = await getQuotation();
-    const gsl = marketCtx.guaranteedStopFeePercentage;
+    const gsl = !!gslFeePercentageRef.current
+      ? gslFeePercentageRef.current
+      : marketCtx.guaranteedStopFeePercentage ?? 0;
 
-    /* Info: (20230508 - Julian) exception handling: error toast */
-    if (!newQuotation || quotationErrorRef.current) {
+    if (!gsl) {
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
         toastId: ToastId.GET_QUOTATION_ERROR,
-        message: `${t(quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR')} (${
-          quotationErrorMessageRef.current.code
+        message: `${t(dataFetchErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR')} (${
+          dataFetchErrorMessageRef.current.code
+        })`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+    }
+
+    /* Info: (20230508 - Julian) exception handling: error toast */
+    if (!newQuotation || dataFetchErrorRef.current) {
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_QUOTATION_ERROR,
+        message: `${t(dataFetchErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR')} (${
+          dataFetchErrorMessageRef.current.code
         })`,
         typeText: t(ToastTypeAndText.ERROR.text),
         isLoading: false,
@@ -317,9 +384,37 @@ const PositionOpenModal = ({
 
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE))
-        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE));
-    const gslFee = +SafeMath.mult(gsl ?? 0, SafeMath.mult(openCfdRequest.amount, newPrice));
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_PERCENTAGE)),
+            2
+          )
+        : roundToDecimalPlaces(
+            +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_PERCENTAGE)),
+            2
+          );
+
+    const gslFee = openCfdRequest.guaranteedStop
+      ? roundToDecimalPlaces(+SafeMath.mult(gsl, SafeMath.mult(openCfdRequest.amount, newPrice)), 2)
+      : 0;
+
+    if (
+      SafeMath.lt(userCtx.userAssets?.balance?.available ?? 0, SafeMath.plus(gslFee, newMargin))
+    ) {
+      setInadequateAvailableBalance(true);
+
+      globalCtx.toast({
+        type: ToastTypeAndText.WARNING.type,
+        toastId: ToastId.INADEQUATE_AVAILABLE_BALANCE,
+        message: `${t('ERROR_MESSAGE.INADEQUATE_AVAILABLE_BALANCE')} (${
+          Code.INADEQUATE_AVAILABLE_BALANCE
+        })`,
+        typeText: t(ToastTypeAndText.WARNING.text),
+        isLoading: false,
+        autoClose: TOAST_DURATION_SECONDS,
+      });
+    } else {
+      setInadequateAvailableBalance(false);
+    }
 
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -330,7 +425,7 @@ const PositionOpenModal = ({
           ...openCfdRequest.margin,
           amount: newMargin,
         },
-        guaranteedStopFee: openCfdRequest.guaranteedStop ? gslFee : 0,
+        guaranteedStopFee: gslFee,
         liquidationPrice: newLiquidationPrice,
       },
     });
@@ -345,13 +440,22 @@ const PositionOpenModal = ({
     if (!globalCtx.visiblePositionOpenModal) {
       setDataRenewedStyle('text-lightWhite');
       setInvalidData(false);
+      setInadequateAvailableBalance(false);
       return;
     }
 
+    if (
+      SafeMath.lt(
+        userCtx.userAssets?.balance?.available ?? 0,
+        SafeMath.plus(openCfdRequest.margin.amount, openCfdRequest.guaranteedStopFee ?? 0)
+      )
+    ) {
+      setInadequateAvailableBalance(true);
+    }
     // TODO: check the unit asset (20230612 - Shirley)
     if (openCfdRequest.quotation.instId !== openCfdRequest.instId) {
-      setQuotationError(true);
-      setQuotationErrorMessage({
+      setDataFetchError(true);
+      setDataFetchErrorMessage({
         success: false,
         code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
         reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
@@ -361,27 +465,16 @@ const PositionOpenModal = ({
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
         toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
-        message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+        message: `${dataFetchErrorMessageRef.current.reason} (${dataFetchErrorMessageRef.current.code})`,
         typeText: t(ToastTypeAndText.ERROR.text),
         isLoading: false,
         autoClose: false,
       });
     } else {
-      setQuotationError(false);
+      setDataFetchError(false);
     }
 
-    const propertiesToCheck = [
-      'amount',
-      'fee',
-      'guaranteedStopFee',
-      'liquidationPrice',
-      'margin.amount',
-      'price',
-      'stopLoss',
-      'takeProfit',
-    ];
-
-    const isValidFormat = propertiesToCheck.every(prop => {
+    const isValidFormat = PROPERTIES_TO_CHECK.every(prop => {
       const value = getValueByProp(openCfdRequest, prop);
 
       if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
@@ -433,6 +526,14 @@ const PositionOpenModal = ({
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 
+  // Info: when the quotation is due, renew the guaranteed stop fee percentage (20231116 - Shirley)
+  useEffect(() => {
+    if (!userCtx.enableServiceTerm) return;
+    if (invalidDataRef.current) return;
+    if (secondsLeft >= 1) return;
+    getGslFeePercentage();
+  }, [secondsLeft]);
+
   const spreadSymbol = openCfdRequest.quotation.spreadFee >= 0 ? '+' : '-';
 
   const formContent = (
@@ -470,16 +571,16 @@ const PositionOpenModal = ({
         {/* Info: (20231019 - Julian) Open Price */}
         <div className={`${layoutInsideBorder}`}>
           <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-          <div className="flex items-baseline space-x-1">
+          <div className={`${dataRenewedStyle} flex items-baseline space-x-1`}>
             {/* Info: (20231019 - Julian) Spot Price */}
             {numberFormatted(openCfdRequest.quotation.spotPrice)}
             {/* Info: (20231019 - Julian) Spread */}
-            <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
+            <span className={`${dataRenewedStyle} ml-1 whitespace-nowrap text-xs text-lightGray`}>
               {spreadSymbol}
               {numberFormatted(openCfdRequest.quotation.spreadFee)}
             </span>
             {/* Info: (20231019 - Julian) Price */}
-            {<p>→ {numberFormatted(openCfdRequest.price)}</p>}
+            {<p className={`${dataRenewedStyle}`}>→ {numberFormatted(openCfdRequest.price)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
             <Tooltip className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
@@ -528,7 +629,7 @@ const PositionOpenModal = ({
             {openCfdRequest.guaranteedStop ? (
               <span className="flex items-baseline">
                 <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
-                <span className="">{`${numberFormatted(
+                <span className={`${dataRenewedStyle}`}>{`${numberFormatted(
                   openCfdRequest.guaranteedStopFee ?? 0
                 )}`}</span>
                 <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
@@ -562,7 +663,12 @@ const PositionOpenModal = ({
       <div className="my-3 text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
       {/* Info: (20231019 - Julian) Submit Button */}
       <RippleButton
-        disabled={secondsLeft < 1 || quotationErrorRef.current || invalidDataRef.current}
+        disabled={
+          secondsLeft < 1 ||
+          dataFetchErrorRef.current ||
+          invalidDataRef.current ||
+          inadequateAvailableBalanceRef.current
+        }
         onClick={submitClickHandler}
         buttonType="button"
         className={`w-full whitespace-nowrap rounded bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

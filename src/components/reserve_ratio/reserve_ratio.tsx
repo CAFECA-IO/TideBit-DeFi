@@ -18,7 +18,6 @@ const ReserveRatio = () => {
   const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
   const baifaProjectId = process.env.BAIFA_PROJECT_ID;
 
-  // TODO: 用 isNumber 檢驗，資料傳給卡片之前都整理成 string (20230914 - Shirley)
   const usdtReserveRatio = SafeMath.isNumber(USDT.reserveRatio)
     ? numberFormatted(USDT.reserveRatio)
     : USDT.reserveRatio.toString();

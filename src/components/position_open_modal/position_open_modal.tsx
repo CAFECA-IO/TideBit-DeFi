@@ -88,8 +88,8 @@ const PositionOpenModal = ({
   const [dataFetchError, setDataFetchError, dataFetchErrorRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dataFetchErrorMessage, setDataFetchErrorMessage, dataFetchErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed); // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false);
-  const [gslFeePercentage, setGslFeePercentage, gslFeePercentageRef] = useStateRef(0);
+  const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [gslFeePercentage, setGslFeePercentage, gslFeePercentageRef] = useStateRef(0); // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [inadequateAvailableBalance, setInadequateAvailableBalance, inadequateAvailableBalanceRef] =
     useStateRef(false);
 
@@ -328,7 +328,8 @@ const PositionOpenModal = ({
       notificationCtx.addException(
         'getGslFeePercentage position_open_modal',
         error as Error,
-        Code.UNKNOWN_ERROR
+        Code.UNKNOWN_ERROR,
+        '0'
       );
     }
   };

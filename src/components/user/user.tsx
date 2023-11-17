@@ -50,8 +50,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
       id="userDropdown"
-      ref={userRef}
-      className={`avatarMenuShadow absolute right-8 top-16 z-10 flex w-285px flex-col ${
+      className={`avatarMenuShadow absolute -right-2 top-16 z-10 flex w-285px flex-col ${
         userVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
     >
@@ -279,7 +278,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   ) : null;
 
   const desktopLayout = (
-    <div>
+    <div className="relative mx-auto max-w-1920px" ref={userRef}>
       {isDisplayedUserAvatar}
       {isDisplayedAvatarMenu}
     </div>

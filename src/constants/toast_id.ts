@@ -7,6 +7,7 @@ export type IToastId = {
   UNKNOWN_ERROR_IN_COMPONENT: string;
   COPY_SUCCESS: string;
   INADEQUATE_AVAILABLE_BALANCE: string;
+  GET_GSL_PERCENT_ERROR: string;
 };
 
 export const ToastId: IToastId = {
@@ -18,4 +19,5 @@ export const ToastId: IToastId = {
   UNKNOWN_ERROR_IN_COMPONENT: 'UnknownErrorInComponent',
   COPY_SUCCESS: 'CopySuccess',
   INADEQUATE_AVAILABLE_BALANCE: 'InadequateAvailableBalance',
+  GET_GSL_PERCENT_ERROR: 'GetGslPerncetError',
 };

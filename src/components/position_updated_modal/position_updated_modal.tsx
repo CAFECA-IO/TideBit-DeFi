@@ -300,7 +300,7 @@ const PositionUpdatedModal = ({
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const formContent = (
-    <div className="mt-4 flex flex-col px-6 pb-2">
+    <div className="mt-4 flex flex-col px-2 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center lg:text-sm">
         <Image
           src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}

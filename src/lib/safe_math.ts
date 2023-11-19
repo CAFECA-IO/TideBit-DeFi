@@ -8,7 +8,7 @@ class SafeMath {
         return false;
       }
 
-      const numReg = /^(([1-9]\d*)|([0]{1}))(\.\d+)?$/;
+      const numReg = /^-?(([1-9]\d*)|0)(\.\d+)?$/;
       return numReg.test(str.toString());
     } catch (error) {
       // Deprecated: [debug]  (20230925 - tzuhan)

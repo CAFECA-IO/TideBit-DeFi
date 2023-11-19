@@ -34,9 +34,9 @@ import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/app
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {TypeOfValidation} from '../../constants/validation';
-import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
+import {IResult, defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
-import {Code} from '../../constants/code';
+import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
@@ -322,7 +322,33 @@ const UpdateFormModal = ({
     ? openCfdDetails?.guaranteedStopFee
     : guaranteedStopFeeRef.current;
 
-  const toApplyUpdateOrder = () => {
+  const getGslFeePercentage = async (): Promise<IResult> => {
+    let result = {...defaultResultFailed};
+
+    try {
+      result = await marketCtx.getGuaranteedStopFeePercentage();
+    } catch (error) {
+      notificationCtx.addException(
+        'getGslFeePercentage update_form_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR,
+        '0'
+      );
+
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_QUOTATION_ERROR,
+        message: `${t(result.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR')} (${result.code})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+    }
+
+    return result;
+  };
+
+  const toApplyUpdateOrder = async () => {
     let changedProperties: IApplyUpdateCFDOrder = {
       referenceId: openCfdDetails?.id,
       operation: CFDOperation.UPDATE,
@@ -362,13 +388,24 @@ const UpdateFormModal = ({
 
     // Info: (20230329 - Shirley) if guaranteedStop has changed
     if (!openCfdDetails.guaranteedStop && guaranteedChecked) {
-      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : openCfdDetails?.stopLoss;
-      const guaranteedStopFee = guaranteedStopFeeRef.current;
+      let newGslPercent = marketCtx.guaranteedStopFeePercentage;
 
+      const latestGslPercentData = await getGslFeePercentage();
+      if (latestGslPercentData.success && !!latestGslPercentData.data) {
+        newGslPercent = Number(latestGslPercentData.data);
+      }
+      const latestGuaranteedStopFee = roundToDecimalPlaces(
+        +SafeMath.mult(
+          Number(newGslPercent),
+          SafeMath.mult(openCfdDetails.openPrice, openCfdDetails.amount)
+        ),
+        2
+      );
+      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : openCfdDetails?.stopLoss;
       changedProperties = {
         ...changedProperties,
         guaranteedStop: guaranteedChecked,
-        guaranteedStopFee: guaranteedStopFee,
+        guaranteedStopFee: latestGuaranteedStopFee,
         stopLoss: stopLoss,
       };
     }
@@ -380,8 +417,8 @@ const UpdateFormModal = ({
     return changedProperties;
   };
 
-  const buttonClickHandler = () => {
-    const changedProperties: IApplyUpdateCFDOrder = toApplyUpdateOrder();
+  const buttonClickHandler = async () => {
+    const changedProperties = await toApplyUpdateOrder();
 
     if (Object.keys(changedProperties).filter(key => key !== 'referenceId').length === 0) return;
 
@@ -810,13 +847,17 @@ const UpdateFormModal = ({
 
   // Info: 用戶在輸入時不要檢查 tp/sl 是否在範圍內 (20231026 - Shirley)
   useEffect(() => {
+    if (!globalCtx.visibleUpdateFormModal) return;
+
     if (!isTypingRef.current.tp && !isTypingRef.current.sl) {
       checkTpSlWithinBounds();
     }
-  }, [isTypingRef.current]);
+  }, [isTypingRef.current, globalCtx.visibleUpdateFormModal]);
 
   // Info: 計算 GSL fee (20231026 - Shirley)
   useEffect(() => {
+    if (!globalCtx.visibleUpdateFormModal) return;
+
     if (!gslPercent) {
       setSubmitDisabled(true);
       return;
@@ -831,10 +872,17 @@ const UpdateFormModal = ({
         2
       )
     );
-  }, [gslPercent, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+  }, [
+    gslPercent,
+    openCfdDetails?.openPrice,
+    openCfdDetails?.amount,
+    globalCtx.visibleUpdateFormModal,
+  ]);
 
   // Info: 確認 tp/sl/gsl 格式是否正確 (20231026 - Shirley)
   useEffect(() => {
+    if (!globalCtx.visibleUpdateFormModal) return;
+
     setSubmitDisabled(true);
 
     const isValidInput = validateInput();
@@ -848,10 +896,12 @@ const UpdateFormModal = ({
     tpToggleRef.current,
     slToggleRef.current,
     guaranteedCheckedRef.current,
+    globalCtx.visibleUpdateFormModal,
   ]);
 
   // Info: 顯示視窗之前確保拿到該筆 CFD 的資料 (20231026 - Shirley)
   useEffect(() => {
+    if (!globalCtx.visibleUpdateFormModal) return;
     setSubmitDisabled(true);
 
     initPosition();

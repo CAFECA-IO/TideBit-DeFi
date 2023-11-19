@@ -31,7 +31,7 @@ const Leaderboard = () => {
             {displayedNavBar}
 
             <main>
-              <div className="mx-auto max-w-1920px">
+              <div>
                 <BoardPageBody />
               </div>
             </main>

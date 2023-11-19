@@ -57,7 +57,9 @@ const NavBar = () => {
     setNotifyOpen(false);
     setLangIsOpen(false);
   };
-  const sidebarOpenHandler = () => setSidebarVisible(!sidebarVisible);
+  const sidebarOpenHandler = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
   const sidebarOpenHandlerMobile = () => setNotifyOpen(!notifyOpen);
 
   const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
@@ -195,14 +197,18 @@ const NavBar = () => {
               </div>
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
-                  <div>
+                  <div
+                    className={`${sidebarVisible ? `pointer-events-none` : `pointer-events-auto`}`}
+                  >
                     <I18n />
                   </div>
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button
                     onClick={sidebarOpenHandler}
-                    className="w-10 relative hover:cursor-pointer"
+                    className={`w-10 relative hover:cursor-pointer ${
+                      sidebarVisible ? `pointer-events-none` : `pointer-events-auto`
+                    }`}
                   >
                     {isDisplayedUnreadNumber}
 
@@ -211,7 +217,7 @@ const NavBar = () => {
                       width={25}
                       height={25}
                       className="hover:cursor-pointer hover:text-cyan-300"
-                      alt="notification icon"
+                      alt="notification bell icon"
                     />
                   </button>
                 </div>
@@ -279,7 +285,6 @@ const NavBar = () => {
                     </div>
                   </div>
                 </Link>
-
                 <button
                   onClick={sidebarOpenHandlerMobile}
                   className="relative hover:cursor-pointer"
@@ -291,7 +296,7 @@ const NavBar = () => {
                     width={25}
                     height={25}
                     className="hover:cursor-pointer hover:text-cyan-300"
-                    alt="notification icon"
+                    alt="notification bell icon"
                   />
                 </button>
               </div>

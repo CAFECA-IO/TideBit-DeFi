@@ -38,10 +38,10 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   ];
 
   const displayedDesktopMenu = (
-    <div className="hidden lg:flex">
+    <div className="hidden lg:flex relative mx-auto max-w-1920px">
       <div
         id="i18nDropdown"
-        className={`absolute right-32 top-16 z-20 w-150px ${
+        className={`absolute -right-5 top-5 z-20 w-150px ${
           globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
@@ -123,7 +123,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   );
 
   return (
-    <div ref={globalRef}>
+    <div ref={globalRef} className="">
       {displayedI18n}
       {displayedDesktopMenu}
       {displayedMobileMenu}

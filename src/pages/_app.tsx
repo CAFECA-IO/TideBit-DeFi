@@ -11,9 +11,11 @@ import {GlobalProvider} from '../contexts/global_context';
 import {NotificationProvider} from '../contexts/notification_context';
 import {AppProvider} from '../contexts/app_context';
 import {WorkerProvider} from '../contexts/worker_context';
-import React from 'react';
+import React, {useRef} from 'react';
+import {MarketStoreContext, createMarketStore} from '../contexts/market_store_context';
 
 function MyApp({Component, pageProps}: AppProps) {
+  const marketStore = useRef(createMarketStore()).current;
   return (
     <>
       <div className="selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
@@ -23,7 +25,9 @@ function MyApp({Component, pageProps}: AppProps) {
               <MarketProvider>
                 <GlobalProvider>
                   <AppProvider>
-                    <Component {...pageProps} />
+                    <MarketStoreContext.Provider value={marketStore}>
+                      <Component {...pageProps} />
+                    </MarketStoreContext.Provider>
                   </AppProvider>
                 </GlobalProvider>
               </MarketProvider>

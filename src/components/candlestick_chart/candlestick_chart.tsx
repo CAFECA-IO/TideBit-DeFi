@@ -29,6 +29,8 @@ import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
+import {useMarketStore} from '../../contexts/market_store_context';
+import {useStore} from 'zustand';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -183,6 +185,11 @@ export default function CandlestickChart({
   candleSize,
   candlestickChartWidth,
 }: ITradingChartGraphProps) {
+  const marketStore = useMarketStore();
+  // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
+  if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
+  const timeSpan = useStore(marketStore, s => s.timeSpan);
+
   const marketCtx = useContext(MarketContext);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({

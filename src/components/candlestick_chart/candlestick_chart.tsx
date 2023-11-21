@@ -29,8 +29,11 @@ import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
-import {useMarketStore} from '../../contexts/market_store_context';
+import {useMarketStoreContext} from '../../contexts/market_store_context';
 import {useStore} from 'zustand';
+import {createWorkerStore, useWorkerStoreContext} from '../../contexts/worker_store';
+import {APIName, Method} from '../../constants/api_request';
+import {IResult} from '../../interfaces/tidebit_defi_background/result';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -180,42 +183,89 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   };
 };
 
+// const marketStore = useMarketStore();
+// TODO: if marketStore is null, throw Alert (20231120 - Shirley)
+// if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
+
+// const [timeSpan, selectTimeSpanHandler] = useStore(marketStore, s => [
+//   s.timeSpan,
+//   s.selectTimeSpanHandler,
+// ]);
+
+// const subTimeSpan = marketStore.subscribe(
+//   (state, prev) => {
+//     // eslint-disable-next-line no-console
+//     console.log('subTimeSpan state', state, 'prev', prev);
+//   }
+//   // s => s.timeSpan,
+//   // timeSpan => {
+//   //   console.log('timeSpan', timeSpan);
+//   // }
+// );
+
+// subTimeSpan();
+
 // Info: 從外面傳進來的參數: 1.timespan 2.style of chart (20231106 - Shirley)
 export default function CandlestickChart({
   candleSize,
   candlestickChartWidth,
 }: ITradingChartGraphProps) {
-  const marketStore = useMarketStore();
-  // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
-  if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
-  const [timeSpan, selectTimeSpanHandler] = useStore(marketStore, s => [
-    s.timeSpan,
-    s.selectTimeSpanHandler,
-  ]);
+  const marketCtx = useContext(MarketContext);
+  const [init, requestHandler] = useWorkerStoreContext(s => [s.init, s.requestHandler]);
 
-  const subTimeSpan = marketStore.subscribe(
-    (state, prev) => {
-      // eslint-disable-next-line no-console
-      console.log('subTimeSpan state', state, 'prev', prev);
-    }
-    // s => s.timeSpan,
-    // timeSpan => {
-    //   console.log('timeSpan', timeSpan);
-    // }
+  const [timeSpan, selectTimeSpanHandler, listCandlesticks, testFetch] = useMarketStoreContext(
+    s => [s.timeSpan, s.selectTimeSpanHandler, s.listCandlesticks, s.testFetch]
   );
 
-  subTimeSpan();
+  // useEffect(() => {
+  //   (async () => {
+  //     const rsT = await testFetch();
+  //     const rs = await listCandlesticks('ETH-USDT', {
+  //       timeSpan: TimeSpanUnion._12h,
+  //     });
+  //     const rsMarket = await marketCtx.listCandlesticks('ETH-USDT', {
+  //       timeSpan: TimeSpanUnion._1d,
+  //     });
+  //     // const fetchPure = await fetch();
+  //     // eslint-disable-next-line no-console
+  //     console.log('in candlestick chart component, listCandlesticks (marketStore) testFetch', rsT);
 
-  // eslint-disable-next-line no-console
-  console.log('timeSpan in CandlestickChart', timeSpan);
+  //     // eslint-disable-next-line no-console
+  //     console.log('in candlestick chart component, listCandlesticks (marketStore) IIFE', rs);
 
-  setTimeout(() => {
-    selectTimeSpanHandler(TimeSpanUnion._30m);
+  //     // eslint-disable-next-line no-console
+  //     console.log('in candlestick chart component, listCandlesticks rsMarket', rsMarket);
+  //   })();
+  // }, []);
+
+  useEffect(() => {
+    init();
+    let result;
+    (async () => {
+      try {
+        result = (await requestHandler({
+          name: APIName.GET_TICKER_STATIC,
+          method: Method.GET,
+          params: 'ETH-USDT',
+        })) as IResult;
+      } catch (error) {
+        // Deprecate: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`getTickerStatic error`, error);
+      }
+    })();
     // eslint-disable-next-line no-console
-    console.log('timespan after call handler in CandlestickChart', timeSpan);
-  }, 5000);
+    console.log('call init() in candlestick chart');
+  }, []);
 
-  const marketCtx = useContext(MarketContext);
+  // // eslint-disable-next-line no-console
+  // console.log('timeSpan in CandlestickChart (useMarketStoreContext)', timeSpan);
+
+  // setTimeout(() => {
+  //   selectTimeSpanHandler(TimeSpanUnion._30m);
+  //   // eslint-disable-next-line no-console
+  //   console.log('timespan after call handler in CandlestickChart', timeSpan);
+  // }, 5000);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
     open: 0,

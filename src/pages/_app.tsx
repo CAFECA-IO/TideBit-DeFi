@@ -11,11 +11,26 @@ import {GlobalProvider} from '../contexts/global_context';
 import {NotificationProvider} from '../contexts/notification_context';
 import {AppProvider} from '../contexts/app_context';
 import {WorkerProvider} from '../contexts/worker_context';
-import React, {useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {MarketStoreContext, createMarketStore} from '../contexts/market_store_context';
+import {useStore} from 'zustand';
+import {WorkerStoreContext, createWorkerStore} from '../contexts/worker_store';
 
 function MyApp({Component, pageProps}: AppProps) {
   const marketStore = useRef(createMarketStore()).current;
+  const workerStore = useRef(createWorkerStore()).current;
+
+  // const marketStore1 = useMarketStore();
+  // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
+  // if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
+  // const [timeSpan, selectTimeSpanHandler, init] = useStore(marketStore, s => [
+  //   s.timeSpan,
+  //   s.selectTimeSpanHandler,
+  //   s.init,
+  // ]);
+
+  // init();
+
   return (
     <>
       <div className="selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
@@ -25,9 +40,11 @@ function MyApp({Component, pageProps}: AppProps) {
               <MarketProvider>
                 <GlobalProvider>
                   <AppProvider>
-                    <MarketStoreContext.Provider value={marketStore}>
-                      <Component {...pageProps} />
-                    </MarketStoreContext.Provider>
+                    <WorkerStoreContext.Provider value={workerStore}>
+                      <MarketStoreContext.Provider value={marketStore}>
+                        <Component {...pageProps} />
+                      </MarketStoreContext.Provider>
+                    </WorkerStoreContext.Provider>
                   </AppProvider>
                 </GlobalProvider>
               </MarketProvider>

@@ -1,8 +1,11 @@
 import React, {useEffect} from 'react';
 import {TimeSpanUnion} from '../constants/time_span_union';
 import {useStore} from 'zustand';
-import {useMarketStore} from '../contexts/market_store_context';
+import {useMarketStoreContext} from '../contexts/market_store_context';
 import {setInterval} from 'timers';
+import {useWorkerStoreContext} from '../contexts/worker_store';
+import {APIName, Method} from '../constants/api_request';
+import {IResult} from '../interfaces/tidebit_defi_background/result';
 
 const pickRandomTimeSpan = () => {
   const timeSpans = Object.values(TimeSpanUnion);
@@ -10,38 +13,57 @@ const pickRandomTimeSpan = () => {
   return timeSpans[randomIndex];
 };
 
+// const marketStore = useMarketStore();
+// // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
+// if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
+// const [timeSpan, selectTimeSpanHandler] = useStore(marketStore, s => [
+//   s.timeSpan,
+//   s.selectTimeSpanHandler,
+// ]);
+
+// const subTimeSpan = marketStore.subscribe(
+//   (state, prev) => {
+//     // eslint-disable-next-line no-console
+//     console.log('subTimeSpan state', state, 'prev', prev);
+//   }
+//   // s => s.timeSpan,
+//   // timeSpan => {
+//   //   console.log('timeSpan', timeSpan);
+//   // }
+// );
+
+// subTimeSpan();
+
 const Trial = () => {
-  const marketStore = useMarketStore();
-  // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
-  if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
-  const [timeSpan, selectTimeSpanHandler] = useStore(marketStore, s => [
+  const [timeSpan, selectTimeSpanHandler] = useMarketStoreContext(s => [
     s.timeSpan,
     s.selectTimeSpanHandler,
   ]);
 
-  const subTimeSpan = marketStore.subscribe(
-    (state, prev) => {
-      // eslint-disable-next-line no-console
-      console.log('subTimeSpan state', state, 'prev', prev);
-    }
-    // s => s.timeSpan,
-    // timeSpan => {
-    //   console.log('timeSpan', timeSpan);
-    // }
-  );
-
-  subTimeSpan();
-
-  // eslint-disable-next-line no-console
-  console.log('timeSpan in Trial', timeSpan);
+  const [init, requestHandler] = useWorkerStoreContext(s => [s.init, s.requestHandler]);
 
   useEffect(() => {
     const timeOut = setInterval(() => {
       const ran = pickRandomTimeSpan();
       selectTimeSpanHandler(ran);
-      // eslint-disable-next-line no-console
-      console.log('timespan after call handler in CandlestickChart', timeSpan);
     }, 2000);
+
+    (async () => {
+      await init();
+      let result;
+      try {
+        result = (await requestHandler({
+          name: APIName.GET_TICKER_STATIC,
+          method: Method.GET,
+          params: 'ETH-USDT',
+        })) as IResult;
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`getTickerStatic error in trial`, error);
+      }
+      // eslint-disable-next-line no-console
+      console.log('result', result);
+    })();
 
     return () => {
       clearInterval(timeOut);

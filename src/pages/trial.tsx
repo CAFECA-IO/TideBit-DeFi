@@ -3,7 +3,7 @@ import {TimeSpanUnion} from '../constants/time_span_union';
 import {useStore} from 'zustand';
 import {useMarketStoreContext} from '../contexts/market_store_context';
 import {setInterval} from 'timers';
-import {useWorkerStoreContext} from '../contexts/worker_store';
+import {useWorkerStoreContext} from '../contexts/worker_store_context';
 import {APIName, Method} from '../constants/api_request';
 import {IResult} from '../interfaces/tidebit_defi_background/result';
 

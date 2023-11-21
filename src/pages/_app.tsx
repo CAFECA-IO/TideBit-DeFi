@@ -14,7 +14,7 @@ import {WorkerProvider} from '../contexts/worker_context';
 import React, {useContext, useEffect, useRef} from 'react';
 import {MarketStoreContext, createMarketStore} from '../contexts/market_store_context';
 import {useStore} from 'zustand';
-import {WorkerStoreContext, createWorkerStore} from '../contexts/worker_store';
+import {WorkerStoreContext, createWorkerStore} from '../contexts/worker_store_context';
 
 function MyApp({Component, pageProps}: AppProps) {
   const marketStore = useRef(createMarketStore()).current;

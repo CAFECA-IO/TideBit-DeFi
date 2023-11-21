@@ -31,7 +31,7 @@ import useStateRef from 'react-usestateref';
 import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {useMarketStoreContext} from '../../contexts/market_store_context';
 import {useStore} from 'zustand';
-import {createWorkerStore, useWorkerStoreContext} from '../../contexts/worker_store';
+import {createWorkerStore, useWorkerStoreContext} from '../../contexts/worker_store_context';
 import {APIName, Method} from '../../constants/api_request';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 

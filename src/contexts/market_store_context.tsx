@@ -33,7 +33,7 @@ import EventEmitter from 'events';
 import {isCustomError} from '../lib/custom_error';
 import {APIName, Method} from '../constants/api_request';
 import {Code, Reason} from '../constants/code';
-import {createWorkerStore, useWorkerStoreContext} from './worker_store';
+import {createWorkerStore, useWorkerStoreContext} from './worker_store_context';
 
 // FIXME: use store instead
 // const userCtx = useContext(UserContext);
@@ -149,6 +149,7 @@ type MarketStore = ReturnType<typeof createMarketStore>;
 export const createMarketStore = (initProps?: Partial<MarketProps>) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const tradeBook = React.useMemo(() => TradeBookInstance, []);
+
   // const [init] = createWorkerStore(s => [s.init]);
 
   // const [init, requestHandler] = useWorkerStoreContext(s => [s.init, s.requestHandler]);

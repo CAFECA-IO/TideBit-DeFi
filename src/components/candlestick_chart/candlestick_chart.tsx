@@ -28,7 +28,7 @@ import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import {getTime} from '../../constants/time_span_union';
+import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {useMarketStore} from '../../contexts/market_store_context';
 import {useStore} from 'zustand';
 
@@ -188,7 +188,32 @@ export default function CandlestickChart({
   const marketStore = useMarketStore();
   // TODO: if marketStore is null, throw Alert (20231120 - Shirley)
   if (!marketStore) throw new Error('Missing BearContext.Provider in the tree');
-  const timeSpan = useStore(marketStore, s => s.timeSpan);
+  const [timeSpan, selectTimeSpanHandler] = useStore(marketStore, s => [
+    s.timeSpan,
+    s.selectTimeSpanHandler,
+  ]);
+
+  const subTimeSpan = marketStore.subscribe(
+    (state, prev) => {
+      // eslint-disable-next-line no-console
+      console.log('subTimeSpan state', state, 'prev', prev);
+    }
+    // s => s.timeSpan,
+    // timeSpan => {
+    //   console.log('timeSpan', timeSpan);
+    // }
+  );
+
+  subTimeSpan();
+
+  // eslint-disable-next-line no-console
+  console.log('timeSpan in CandlestickChart', timeSpan);
+
+  setTimeout(() => {
+    selectTimeSpanHandler(TimeSpanUnion._30m);
+    // eslint-disable-next-line no-console
+    console.log('timespan after call handler in CandlestickChart', timeSpan);
+  }, 5000);
 
   const marketCtx = useContext(MarketContext);
 

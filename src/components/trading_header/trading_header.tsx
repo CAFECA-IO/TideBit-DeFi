@@ -141,11 +141,11 @@ const TradingHeader = () => {
   return (
     <div>
       {displayedLayout}
-      <TickerSelectorBox
+      {/* <TickerSelectorBox
         tickerSelectorBoxRef={tickerBoxRef}
         tickerSelectorBoxVisible={tickerBoxVisible}
         tickerSelectorBoxClickHandler={tickerBoxClickHandler}
-      />
+      /> */}
     </div>
   );
 };

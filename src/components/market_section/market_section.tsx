@@ -42,7 +42,7 @@ const MarketSection = (props: IMarketSectionProps) => {
 
   return (
     <div className="ml-5 py-100px">
-      <div className="ml-5">{displayedTickerHeader}</div>
+      {/* <div className="ml-5">{displayedTickerHeader}</div> */}
 
       <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
 

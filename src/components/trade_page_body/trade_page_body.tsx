@@ -15,7 +15,7 @@ const TradePageBody = (props: ITradePageBodyProps) => {
       <div className="flex min-h-screen flex-col overflow-hidden">
         <MarketSection briefs={props.briefs} hideTradingView={props?.hideTradingView} />
 
-        <OrderSection hideOpenLineGraph={props?.hideOpenLineGraph} />
+        {/* <OrderSection hideOpenLineGraph={props?.hideOpenLineGraph} /> */}
       </div>
     </>
   );

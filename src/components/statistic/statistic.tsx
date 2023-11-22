@@ -3,13 +3,17 @@ import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {numberFormatted} from '../../lib/common';
+import useMarketStore from '../../stores/market';
 
 type TranslateFunction = (s: string) => string;
 
 const StatisticBlock = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {tidebitPromotion} = useContext(MarketContext);
+  // const {tidebitPromotion} = useContext(MarketContext);
+
+  const [tidebitPromotion] = useMarketStore(s => [s.tidebitPromotion]); // eslint-disable-next-line no-console
+  console.log('tidbitPromotion: ', tidebitPromotion);
 
   const displayedVolume = SafeMath.isNumber(tidebitPromotion.volume)
     ? numberFormatted(tidebitPromotion.volume)

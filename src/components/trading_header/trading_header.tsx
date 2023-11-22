@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';

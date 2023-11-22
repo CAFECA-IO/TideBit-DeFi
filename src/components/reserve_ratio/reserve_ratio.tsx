@@ -8,11 +8,13 @@ import {FiDownload} from 'react-icons/fi';
 import {numberFormatted} from '../../lib/common';
 import useCheckLink from '../../lib/hooks/use_check_link';
 import SafeMath from '../../lib/safe_math';
+import useMarketStore from '../../stores/market';
 
 const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {websiteReserve} = useContext(MarketContext);
+  // const {websiteReserve} = useContext(MarketContext);
+  const [websiteReserve] = useMarketStore(s => [s.websiteReserve]);
   const {BTC, ETH, USDT} = websiteReserve;
 
   const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);

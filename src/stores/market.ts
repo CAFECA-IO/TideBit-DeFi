@@ -44,7 +44,6 @@ import useWorkerStore from './worker';
 
 type MarketStore = {
   selectedTicker: ITickerData | null;
-  // selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
   availableTickers: {[instId: string]: ITickerData};
@@ -66,87 +65,34 @@ type MarketStore = {
   setCandlestickIsLoading: (isLoading: boolean) => void;
   setTimeSpan: (timeSpan: ITimeSpanUnion) => void;
 
-  // listCandlesticks: (
-  //   instId: string,
-  //   options: {
-  //     timeSpan: ITimeSpanUnion;
-  //     begin?: number;
-  //     end?: number;
-  //     limit?: number;
-  //   }
-  // ) => Promise<IResult>;
-
   // FIXME: IResult
   fetchData: (url: string) => Promise<IResult>;
+  trades: ITrade[];
+  setTrades: (trades: ITrade[]) => void;
+
   init: () => Promise<void>;
 };
 
 const useMarketStore = create<MarketStore>((set, get) => {
   const tickerBook = TickerBookInstance;
   const tradeBook = TradeBookInstance;
-  // let trades: ITrade[] = [];
 
-  // const workerInit = useWorkerStore.getState().init;
+  const workerInit = useWorkerStore.getState().init;
 
   // const sub1 = useWorkerStore.subscribe(s => {
   //   trades = s.trades;
 
   //   // eslint-disable-next-line no-console
   //   console.log('s in marketStore', s, s.trades, trades);
-  // }); // eslint-disable-next-line no-console
-  // console.log('sub1 in marketStore', sub1);
-
-  // useEffect(() => {
-  // const initWorker = () => {
-  //   let active = true;
-
-  //   if (active) {
-  //     console.log('before workerInit, sub1 in marketStore');
-
-  //     workerInit();
-  //     sub1();
-
-  //     console.log('after workerInit, sub1 in marketStore');
-  //   }
-
-  //   return () => {
-  //     active = false;
-  //   };
-  // };
-
-  // initWorker();
-
-  // }, []);
-
-  // const trades = useWorkerStore.getState().trades;
-  // const unsub1 = useWorkerStore.subscribe(s => {
-  //   console.log(s);
   // });
 
-  //   (state, prev) => {
-  //     // eslint-disable-next-line no-console
-  //     console.log('subTimeSpan state', state, 'prev', prev);
-  //   }
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] = useState<
-  //   number | null
-  // >(null);
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
-  //   useState<boolean>(true);
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
-
   const listWebsiteReserve = async () => {
-    const result = await get().fetchData('https://api.tidebit-defi.com/api/v1/website_reserve');
+    const result = await get().fetchData('https://api.tidebit-defi.com/api/v1/public/reserve');
     return result;
   };
 
   const listPromotion = async () => {
-    const result = await get().fetchData('https://api.tidebit-defi.com/api/v1/tidebit_promotion');
+    const result = await get().fetchData('https://api.tidebit-defi.com/api/v1/public/promotion');
     return result;
   };
 
@@ -228,6 +174,8 @@ const useMarketStore = create<MarketStore>((set, get) => {
   };
 
   const initBasicInfo = async () => {
+    await initPromotion();
+    await initWebsiteReserve();
     await initCurrencies();
     await initTickers();
     await initGuaranteedStopLossFeePercentage();
@@ -238,6 +186,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
     console.log('init called');
     await initBasicInfo();
     await initCandlestickData('ETH-USDT', TimeSpanUnion._1h);
+    await workerInit();
   };
 
   const initCandlestickData = async (instId: string, timeSpan?: ITimeSpanUnion) => {
@@ -402,81 +351,14 @@ const useMarketStore = create<MarketStore>((set, get) => {
           tradeBook.trimCandlestickData(CANDLESTICK_SIZE);
         }
 
-        // setCandlestickChartData(newData);
         set({candlestickChartData: newData});
       }
     }, 100);
 
-    // setCandlestickInterval(candlestickInterval);
-    // setCandlestickIsLoading(false);
     set({candlestickInterval: candlestickInterval});
 
     set({candlestickIsLoading: false});
   };
-
-  // const listMarketTrades = useCallback(
-  //   async (
-  //     instId: string,
-  //     options?: {
-  //       begin?: number; // Info: in milliseconds (20230530 - tzuhan)
-  //       end?: number; // Info: in milliseconds (20230530 - tzuhan)
-  //       asc?: boolean;
-  //       limit?: number;
-  //     }
-  //   ) => {
-  //     let result: IResult = {...defaultResultFailed};
-  //     if (!options) {
-  //       const dateTime = new Date().getTime();
-  //       options = {
-  //         begin: dateTime - INITIAL_TRADES_INTERVAL,
-  //         end: dateTime + INITIAL_TRADES_BUFFER,
-  //         asc: false,
-  //       };
-  //     }
-  //     try {
-  //       result = (await get().fetchData({
-  //         name: APIName.LIST_MARKET_TRADES,
-  //         method: Method.GET,
-  //         params: instId,
-  //         query: {...(options || {})},
-  //       })) as IResult;
-  //       if (result.success) {
-  //         const trades = (result.data as ITrade[]).map(trade => ({
-  //           ...trade,
-  //           tradeId: trade.tradeId,
-  //           targetAsset: trade.baseUnit,
-  //           unitAsset: trade.quoteUnit,
-  //           direct: TradeSideText[trade.side],
-  //           price: trade.price,
-  //           timestampMs: trade.timestamp,
-  //           quantity: trade.amount,
-  //         }));
-  //         const target = trades[0]?.instId;
-  //         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
-  //         tradeBook.addTrades(target, trades);
-  //       }
-  //     } catch (error) {
-  //       // Deprecate: error handle (Tzuhan - 20230321)
-  //       // eslint-disable-next-line no-console
-  //       console.error(`listMarketTrades error`, error);
-  //       result = {
-  //         success: false,
-  //         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-  //         reason: isCustomError(error)
-  //           ? Reason[error.code]
-  //           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-  //       };
-
-  //       // notificationCtx.addException(
-  //       //   'listMarketTrades',
-  //       //   error as Error,
-  //       //   Code.INTERNAL_SERVER_ERROR
-  //       // );
-  //     }
-  //     return result;
-  //   },
-  //   [tradeBook]
-  // );
 
   return {
     selectedTicker: dummyTicker,
@@ -516,6 +398,13 @@ const useMarketStore = create<MarketStore>((set, get) => {
       return result;
     },
     init,
+
+    trades: [],
+    setTrades: (trades: ITrade[]) => {
+      // eslint-disable-next-line no-console
+      console.log('trades got in marketStore', trades);
+      set({trades});
+    },
   };
 });
 

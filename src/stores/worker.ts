@@ -40,6 +40,8 @@ type WorkerStore = {
   tickers: ITickerData[] | null;
   userData: any;
 
+  testNum: number;
+
   init: () => Promise<void>;
   // apiInit: () => void;
   // pusherInit: () => void;
@@ -61,6 +63,14 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
 
   let jobQueueOfWS: ((...args: []) => Promise<void>)[] = [];
   let jobQueueOfAPI: ((...args: []) => Promise<void>)[] = [];
+
+  let testNum = 0;
+
+  const increase = () => {
+    setInterval(() => {
+      set({testNum: testNum++});
+    }, 5000);
+  };
 
   const apiInit = () => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
@@ -126,6 +136,7 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     console.log('worker init called');
     // apiInit();
     pusherInit();
+    increase();
     // await _apiWorker();
   };
 
@@ -181,7 +192,7 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
       const channel = pusher.subscribe(PusherChannel.GLOBAL_CHANNEL);
       channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
         const tickerData = pusherData as ITickerData;
-        get().notificationEmitter.emit(TideBitEvent.TICKER, tickerData);
+        // get().notificationEmitter.emit(TideBitEvent.TICKER, tickerData);
         set(prev => {
           // eslint-disable-next-line no-console
           console.log(
@@ -203,8 +214,20 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     if (publicChannel) {
       publicChannel.bind(Events.TRADES, (pusherData: IPusherData) => {
         const trade = pusherData as ITrade;
-        get().notificationEmitter.emit(TideBitEvent.TRADES, trade);
-        set({trades: [...get().trades, trade]});
+        if (trade.instId === 'ETH-USDT') {
+          // get().notificationEmitter.emit(TideBitEvent.TRADES, trade);
+          set(prev => {
+            // eslint-disable-next-line no-console
+            console.log(
+              'prev.trades in subscribeTrades',
+              prev.trades,
+              'new trade in subscribeTrades',
+              trade
+            );
+
+            return {trades: [trade]};
+          });
+        }
       });
     }
   };
@@ -217,28 +240,30 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
         .slice(0, 8)}`;
       const channel = pusher.subscribe(channelName);
       channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
-        get().notificationEmitter.emit(Events.BALANCE, data);
+        // get().notificationEmitter.emit(Events.BALANCE, data);
         set({userData: data});
       });
       channel.bind(Events.CFD, (data: IPusherPrivateData) => {
-        get().notificationEmitter.emit(Events.CFD, data);
+        // get().notificationEmitter.emit(Events.CFD, data);
         const rest = get().userData;
         set({userData: data});
       });
       channel.bind(Events.BOLT_TRANSACTION, (data: IPusherPrivateData) => {
-        get().notificationEmitter.emit(Events.BOLT_TRANSACTION, data);
+        // get().notificationEmitter.emit(Events.BOLT_TRANSACTION, data);
         set({userData: data});
       });
       channel.bind(Events.ASSETS, (data: IPusherPrivateData) => {
-        get().notificationEmitter.emit(Events.ASSETS, data);
+        // get().notificationEmitter.emit(Events.ASSETS, data);
         set(prev => {
-          // eslint-disable-next-line no-console
-          console.log('prev in assets', prev, 'data in assets', data);
+          // // eslint-disable-next-line no-console
+          // console.log('prev in assets', prev, 'data in assets', data);
           return {userData: {...prev.userData, assets: data}};
         });
       });
     }
   };
+
+  // const syncCandlestickData = (data: ITrade) => {
 
   return {
     apiWorker: null,
@@ -251,6 +276,8 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     tickers: null,
     userData: null,
 
+    testNum,
+
     jobQueueOfWS,
     jobQueueOfAPI,
 
@@ -262,49 +289,3 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
 });
 
 export default useWorkerStore;
-
-// init: async () => {
-//   get().apiInit();
-//   get().pusherInit();
-//   await get()._apiWorker();
-// },
-
-// apiInit: () => {
-//   const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
-//   set({apiWorker});
-// },
-
-// pusherInit: () => {
-//   const pusherKey = process.env.PUSHER_APP_KEY ?? '';
-//   const pusherHost = process.env.PUSHER_HOST ?? '';
-//   const pusherPort = +(process.env.PUSHER_PORT ?? '0');
-
-//   const pusher = new Pusher(pusherKey, {
-//     cluster: '',
-//     wsHost: pusherHost,
-//     wsPort: pusherPort,
-//     channelAuthorization: {
-//       transport: 'jsonp',
-//       endpoint: `${pusherHost}/api/pusher/auth`,
-//       headers: {
-//         deWT: getCookieByName('DeWT'),
-//       },
-//       params: {
-//         deWT: getCookieByName('DeWT'),
-//       },
-//     },
-//   });
-
-//   set({pusher});
-
-//   pusher.connection.bind('connected', function () {
-//     const socketId = pusher.connection.socket_id;
-//     set({socketId});
-//     const channel = pusher.subscribe(PusherChannel.GLOBAL_CHANNEL);
-//     if (channel) {
-//       set({publicChannel: channel});
-//       get().subscribeTickers();
-//       get().subscribeTrades();
-//     }
-//   });
-// },

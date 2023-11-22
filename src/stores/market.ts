@@ -1,4 +1,3 @@
-import {init} from 'i18next';
 import {defaultResultFailed, IResult} from './../interfaces/tidebit_defi_background/result';
 import {create} from 'zustand';
 import {ITickerData, dummyTicker} from '../interfaces/tidebit_defi_background/ticker_data';
@@ -36,11 +35,12 @@ import {
 import {isCustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import TradeBookInstance from '../lib/books/trade_book';
-import {useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo} from 'react';
 import {CANDLESTICK_SIZE, SAMPLE_NUMBER} from '../constants/display';
 import {millisecondsToSeconds} from '../lib/common';
 import useState from 'react-usestateref';
 import TickerBookInstance from '../lib/books/ticker_book';
+import useWorkerStore from './worker';
 
 type MarketStore = {
   selectedTicker: ITickerData | null;
@@ -55,9 +55,6 @@ type MarketStore = {
   tidebitPromotion: ITideBitPromotion;
   websiteReserve: IWebsiteReserve;
   guaranteedStopFeePercentage: number | null;
-  // setHistory: (history: Array<string>) => void;
-
-  // listAvailableTickers: () => ITickerData[];
 
   candlestickChartData: ICandlestickData[] | null;
 
@@ -87,6 +84,49 @@ type MarketStore = {
 const useMarketStore = create<MarketStore>((set, get) => {
   const tickerBook = TickerBookInstance;
   const tradeBook = TradeBookInstance;
+  // let trades: ITrade[] = [];
+
+  // const workerInit = useWorkerStore.getState().init;
+
+  // const sub1 = useWorkerStore.subscribe(s => {
+  //   trades = s.trades;
+
+  //   // eslint-disable-next-line no-console
+  //   console.log('s in marketStore', s, s.trades, trades);
+  // }); // eslint-disable-next-line no-console
+  // console.log('sub1 in marketStore', sub1);
+
+  // useEffect(() => {
+  // const initWorker = () => {
+  //   let active = true;
+
+  //   if (active) {
+  //     console.log('before workerInit, sub1 in marketStore');
+
+  //     workerInit();
+  //     sub1();
+
+  //     console.log('after workerInit, sub1 in marketStore');
+  //   }
+
+  //   return () => {
+  //     active = false;
+  //   };
+  // };
+
+  // initWorker();
+
+  // }, []);
+
+  // const trades = useWorkerStore.getState().trades;
+  // const unsub1 = useWorkerStore.subscribe(s => {
+  //   console.log(s);
+  // });
+
+  //   (state, prev) => {
+  //     // eslint-disable-next-line no-console
+  //     console.log('subTimeSpan state', state, 'prev', prev);
+  //   }
 
   // // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] = useState<
@@ -464,10 +504,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
       // eslint-disable-next-line no-console
       console.log('fetchData called');
       try {
-        const response = await fetch(
-          // 'https://api.tidebit-defi.com/api/v1/candlesticks/ETH-USDT?timeSpan=1h&limit=50'
-          url
-        );
+        const response = await fetch(url);
         result = (await response.json()) as IResult;
         // eslint-disable-next-line no-console
         console.log('data in fetchData', result);
@@ -479,25 +516,6 @@ const useMarketStore = create<MarketStore>((set, get) => {
       return result;
     },
     init,
-
-    // listAvailableTickers: () => {
-    //   const availableTickers = Object.values(get().availableTickers);
-    //   return availableTickers;
-    // },
-
-    // setHistory: (history: Array<string>) => set({history}),
-    // setHistory: (history: Array<string>) =>
-    // 	set(state => {
-    // 		const newHistory = [...state.history, ...history];
-    // 		return {history: newHistory};
-    // 	}),
-    // setHistories: (histories: IHistories) => set({histories}),
-    // setHistories: (histories: IHistories) =>
-    // 	set(state => {
-    // 		const newHistories = [...state.histories, ...histories];
-    // 		newHistories.sort((a, b) => b.searchAt - a.searchAt);
-    // 		return {histories: newHistories};
-    // 	}),
   };
 });
 

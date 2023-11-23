@@ -42,7 +42,7 @@ export const WorkerContext = createContext<IWorkerContext>({
   subscribeUser: () => null,
 });
 
-const jobTimer: NodeJS.Timeout | null = null;
+let jobTimer: NodeJS.Timeout | null = null;
 /** Deprecated: replaced by pusher (20230502 - tzuhan) 
 let wsWorker: WebSocket | null;
 */
@@ -150,7 +150,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const init = async () => {
     apiInit();
-    // pusherInit();
+    pusherInit();
     await _apiWorker();
   };
 
@@ -161,7 +161,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       await _apiWorker();
     } else {
       if (jobTimer) clearTimeout(jobTimer);
-      // jobTimer = setTimeout(() => _apiWorker(), 1000);
+      jobTimer = setTimeout(() => _apiWorker(), 1000);
     }
   };
 

@@ -989,56 +989,56 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return await Promise.resolve();
   }, []);
 
-  // React.useMemo(
-  //   () =>
-  //     notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
-  //       tickerBook.updateTicker(tickerData);
-  //       const updateTickers = {...tickerBook.listTickers()};
-  //       setAvailableTickers({...updateTickers});
-  //       if (tickerData.instId === selectedTickerRef.current?.instId)
-  //         setSelectedTicker(updateTickers[tickerData.instId]);
-  //     }),
-  //   []
-  // );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
+        tickerBook.updateTicker(tickerData);
+        const updateTickers = {...tickerBook.listTickers()};
+        setAvailableTickers({...updateTickers});
+        if (tickerData.instId === selectedTickerRef.current?.instId)
+          setSelectedTicker(updateTickers[tickerData.instId]);
+      }),
+    []
+  );
 
-  // React.useMemo(
-  //   () =>
-  //     notificationCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, (tickerStatic: ITickerStatic) => {
-  //       setTickerStatic(tickerStatic);
-  //     }),
-  //   []
-  // );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, (tickerStatic: ITickerStatic) => {
+        setTickerStatic(tickerStatic);
+      }),
+    []
+  );
 
-  // React.useMemo(
-  //   () =>
-  //     notificationCtx.emitter.on(
-  //       TideBitEvent.TICKER_LIVE_STATISTIC,
-  //       (tickerLiveStatistics: ITickerLiveStatistics) => {
-  //         setTickerLiveStatistics(tickerLiveStatistics);
-  //       }
-  //     ),
-  //   []
-  // );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.TICKER_LIVE_STATISTIC,
+        (tickerLiveStatistics: ITickerLiveStatistics) => {
+          setTickerLiveStatistics(tickerLiveStatistics);
+        }
+      ),
+    []
+  );
 
-  // React.useMemo(
-  //   () =>
-  //     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
-  //       for (const trade of trades) {
-  //         if (trade.instId === selectedTickerRef.current?.instId) {
-  //           tradeBook.add(trade.instId, {
-  //             tradeId: trade.tradeId,
-  //             targetAsset: trade.baseUnit,
-  //             unitAsset: trade.quoteUnit,
-  //             direct: TradeSideText[trade.side],
-  //             price: trade.price,
-  //             timestampMs: trade.timestamp,
-  //             quantity: trade.amount,
-  //           });
-  //         }
-  //       }
-  //     }),
-  //   []
-  // );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+        for (const trade of trades) {
+          if (trade.instId === selectedTickerRef.current?.instId) {
+            tradeBook.add(trade.instId, {
+              tradeId: trade.tradeId,
+              targetAsset: trade.baseUnit,
+              unitAsset: trade.quoteUnit,
+              direct: TradeSideText[trade.side],
+              price: trade.price,
+              timestampMs: trade.timestamp,
+              quantity: trade.amount,
+            });
+          }
+        }
+      }),
+    []
+  );
 
   const defaultValue = {
     isInit: isInitRef.current,

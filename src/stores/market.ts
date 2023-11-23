@@ -70,7 +70,7 @@ type MarketStore = {
 
   // FIXME: IResult
   fetchData: (url: string) => Promise<IResult>;
-  trades: ITrade[];
+  initTrades: ITrade[];
   setTrades: (trades: ITrade[]) => void;
 
   init: () => Promise<void>;
@@ -79,6 +79,8 @@ type MarketStore = {
 const useMarketStore = create<MarketStore>((set, get) => {
   const tickerBook = TickerBookInstance;
   const tradeBook = TradeBookInstance;
+  // eslint-disable-next-line no-console
+  console.log('run useMarketStore');
 
   // const workerInit = useWorkerStore.getState().init;
 
@@ -216,7 +218,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
       }));
       trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
       tradeBook.addTrades(instId, trades);
-      set({trades});
+      set({initTrades: trades});
     }
   };
 
@@ -318,6 +320,20 @@ const useMarketStore = create<MarketStore>((set, get) => {
       : uniqueData;
 
     return organizedData;
+  };
+
+  const addTradesToTradeBook = (trades: ITrade[]) => {
+    for (const trade of trades) {
+      tradeBook.add('ETH-USDT', {
+        tradeId: trade.tradeId,
+        targetAsset: trade.baseUnit,
+        unitAsset: trade.quoteUnit,
+        direct: TradeSideText[trade.side],
+        price: trade.price,
+        timestampMs: trade.timestamp,
+        quantity: trade.amount,
+      });
+    }
   };
 
   const syncCandlestickData = async (instId: string, timeSpan?: ITimeSpanUnion) => {
@@ -461,7 +477,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
     },
     init,
 
-    trades: [],
+    initTrades: [],
     setTrades: (newTrades: ITrade[]) => {
       if (!newTrades || newTrades.length === 0) return;
       for (const trade of newTrades) {
@@ -478,10 +494,10 @@ const useMarketStore = create<MarketStore>((set, get) => {
       // eslint-disable-next-line no-console
       console.log('new trades got in marketStore', newTrades);
       set(prev => {
-        return {trades: prev.trades, newTrades};
+        return {initTrades: prev.initTrades, newTrades};
       });
       // eslint-disable-next-line no-console
-      console.log('whole trades in marketStore', get().trades);
+      console.log('whole trades in marketStore', get().initTrades);
     },
   };
 });

@@ -11,7 +11,7 @@
  * 2.3 draw candlestick chart with data
  */
 
-import React, {useState, useContext, useEffect, useRef, useMemo} from 'react';
+import React, {useState, useContext, useEffect, useRef, useMemo, use} from 'react';
 import {
   createChart,
   ColorType,
@@ -30,6 +30,7 @@ import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candles
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
 import useMarketStore from '../../stores/market';
+import useWorkerStore from '../../stores/worker';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -185,10 +186,14 @@ export default function CandlestickChart({
   candlestickChartWidth,
 }: ITradingChartGraphProps) {
   // const marketCtx = useContext(MarketContext);
-  const candlestickChartData = useMarketStore(s => s.candlestickChartData);
-
+  // Info: trial #1
+  // const candlestickChartData = useMarketStore(s => s.candlestickChartData);
+  // Info: trial #2
   // const value = useMarketStore(s => s.candlestickChartData);
   // const candlestickChartData = useMemo(() => value, [value]);
+  // Info: trial #3
+  const candlestickChartDataRef = useRef(useMarketStore.getState().candlestickChartData);
+  const [tempValue, setTempValue, tempValueRef] = useStateRef(0);
 
   const timeSpan = useMarketStore(s => s.timeSpanState);
 
@@ -328,7 +333,7 @@ export default function CandlestickChart({
   // };
 
   const fetchCandlestickData = () => {
-    const originRaw = candlestickChartData?.map(toCandlestickData) ?? [];
+    const originRaw = candlestickChartDataRef.current?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
     const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
@@ -399,23 +404,79 @@ export default function CandlestickChart({
     }
   };
 
+  // Fetch initial state
+  // const scratchRef = useRef(useScratchStore.getState().scratches);
+  // Connect to the store on mount, disconnect on unmount, catch state-changes in a reference
+  useEffect(
+    () =>
+      useMarketStore.subscribe(
+        state => (candlestickChartDataRef.current = state.candlestickChartData)
+      ),
+    []
+  );
+
+  /*
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('candlestickChartData in _app', candlestickChartData);
+  }, [candlestickChartData]);
+
+  useEffect(() => {
+    // // eslint-disable-next-line no-console
+    // console.log('marketIsInit in _app', marketIsInit);
+    if (marketIsInit) {
+      syncCandlestickData('ETH-USDT');
+    }
+    return () => {
+      setCandlestickInterval(null);
+    };
+  }, [marketIsInit]);
+*/
+  // eslint-disable-next-line no-console
+  console.log('run candlestick_chart_file', new Date());
+
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.log(
       'time to detect candlestickChartData in candlestick_chart.tsx',
       new Date(),
-      'candlestickChartData in candlestick_chart.tsx',
-      candlestickChartData
+      'candlestickChartDataRef.current in candlestick_chart.tsx',
+      candlestickChartDataRef.current
     );
 
     return drawChart();
-  }, [candlestickChartData]);
+  }, []);
+  // }, [candlestickChartDataRef.current]);
+
+  useEffect(() => {
+    const unsubscribe = useWorkerStore.subscribe(data => {
+      // eslint-disable-next-line no-console
+      console.log('trades-updates in candlestick_chart_file', data.trades);
+      useMarketStore.getState().setTrades(data.trades);
+    });
+
+    const inter = setInterval(() => {
+      // eslint-disable-next-line no-console
+      console.log('setTempValue candlestick_chart_file every 5 seconds', new Date());
+
+      setTempValue(tempValueRef.current + 1);
+    }, 5000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(inter);
+    };
+  }, []);
 
   return (
     <>
       <div className="-mb-8 mt-5 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="">
         <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
+      </div>
+
+      <div>
+        {tempValueRef.current} {Date.now()}
       </div>
     </>
   );

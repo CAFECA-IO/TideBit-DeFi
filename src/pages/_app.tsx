@@ -26,23 +26,23 @@ function MyApp({Component, pageProps}: AppProps) {
 
   const workerInit = useWorkerStore(s => s.init);
 
-  const syncTrades = useSyncTrades();
+  // const syncTrades = useSyncTrades();
 
-  React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('candlestickChartData in _app', candlestickChartData);
-  }, [candlestickChartData]);
+  // React.useEffect(() => {
+  //   // eslint-disable-next-line no-console
+  //   console.log('candlestickChartData in _app', candlestickChartData);
+  // }, [candlestickChartData]);
 
-  React.useEffect(() => {
-    // // eslint-disable-next-line no-console
-    // console.log('marketIsInit in _app', marketIsInit);
-    if (marketIsInit) {
-      syncCandlestickData('ETH-USDT');
-    }
-    return () => {
-      setCandlestickInterval(null);
-    };
-  }, [marketIsInit]);
+  // React.useEffect(() => {
+  //   // // eslint-disable-next-line no-console
+  //   // console.log('marketIsInit in _app', marketIsInit);
+  //   if (marketIsInit) {
+  //     syncCandlestickData('ETH-USDT');
+  //   }
+  //   return () => {
+  //     setCandlestickInterval(null);
+  //   };
+  // }, [marketIsInit]);
 
   React.useEffect(() => {
     let active = true;

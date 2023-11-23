@@ -1,13 +1,22 @@
-import React from 'react';
+import React, {use} from 'react';
 import useMarketStore from '../stores/market';
 import useWorkerStore from '../stores/worker';
 import {APIName, Method} from '../constants/api_request';
 import useSyncTrades from '../lib/hooks/use_sync_trades';
 
 const Trial = () => {
-  // const [init] = useMarketStore(s => [s.init]);
+  // const syncCandlestickData = useMarketStore(s => s.syncCandlestickData);
+  // const setCandlestickInterval = useMarketStore(s => s.setCandlestickInterval);
 
-  const syncTrades = useSyncTrades();
+  // const syncTrades = useSyncTrades();
+
+  // React.useEffect(() => {
+  //   syncCandlestickData('ETH-USDT');
+
+  //   return () => {
+  //     setCandlestickInterval(null);
+  //   };
+  // }, []);
 
   // const [workerInit] = useWorkerStore(s => [s.init]);
 

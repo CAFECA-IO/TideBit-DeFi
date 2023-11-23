@@ -14,19 +14,45 @@ import {WorkerProvider} from '../contexts/worker_context';
 import React from 'react';
 import useMarketStore from '../stores/market';
 import useWorkerStore from '../stores/worker';
+import useSyncTrades from '../lib/hooks/use_sync_trades';
+import {useShallow} from 'zustand/react/shallow';
 
 function MyApp({Component, pageProps}: AppProps) {
   const marketInit = useMarketStore(s => s.init);
-  const [workerInit] = useWorkerStore(s => [s.init]);
+  const marketIsInit = useMarketStore(s => s.isInit);
+  const syncCandlestickData = useMarketStore(s => s.syncCandlestickData);
+  const setCandlestickInterval = useMarketStore(s => s.setCandlestickInterval);
+  const candlestickChartData = useMarketStore(useShallow(s => s.candlestickChartData));
+
+  const workerInit = useWorkerStore(s => s.init);
+
+  const syncTrades = useSyncTrades();
+
+  React.useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('candlestickChartData in _app', candlestickChartData);
+  }, [candlestickChartData]);
+
+  React.useEffect(() => {
+    // // eslint-disable-next-line no-console
+    // console.log('marketIsInit in _app', marketIsInit);
+    if (marketIsInit) {
+      syncCandlestickData('ETH-USDT');
+    }
+    return () => {
+      setCandlestickInterval(null);
+    };
+  }, [marketIsInit]);
 
   React.useEffect(() => {
     let active = true;
     if (active) {
-      // eslint-disable-next-line no-console
-      console.log('before marketInit in _app');
-      marketInit(); // eslint-disable-next-line no-console
-      workerInit(); // eslint-disable-next-line no-console
-      console.log('after marketInit in _app');
+      // // eslint-disable-next-line no-console
+      // console.log('before marketInit in _app');
+      marketInit();
+      workerInit();
+      // // eslint-disable-next-line no-console
+      // console.log('after marketInit in _app');
     }
 
     return () => {

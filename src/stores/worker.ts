@@ -195,12 +195,12 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
         // get().notificationEmitter.emit(TideBitEvent.TICKER, tickerData);
         set(prev => {
           // eslint-disable-next-line no-console
-          console.log(
-            'prev.ticker in subscribeTickers',
-            prev.tickers,
-            'tickerData in subscribeTickers',
-            tickerData
-          );
+          // console.log(
+          //   'prev.ticker in subscribeTickers',
+          //   prev.tickers,
+          //   'tickerData in subscribeTickers',
+          //   tickerData
+          // );
           // 如果 prev.tickers 是 null 或 undefined，則初始化為空陣列
           const updatedTickers = prev.tickers ? [...prev.tickers, tickerData] : [tickerData];
           return {tickers: updatedTickers};
@@ -213,21 +213,44 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     const publicChannel = get().publicChannel;
     if (publicChannel) {
       publicChannel.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const trade = pusherData as ITrade;
-        if (trade.instId === 'ETH-USDT') {
-          // get().notificationEmitter.emit(TideBitEvent.TRADES, trade);
-          set(prev => {
-            // eslint-disable-next-line no-console
-            console.log(
-              'prev.trades in subscribeTrades',
-              prev.trades,
-              'new trade in subscribeTrades',
-              trade
-            );
+        // eslint-disable-next-line no-console
+        console.log('new trades in subscribeTrades', pusherData);
+        const trades = pusherData as ITrade[];
+        const newTrades = trades.filter(trade => trade.instId === 'ETH-USDT');
+        if (!newTrades || newTrades.length === 0) return;
 
-            return {trades: [trade]};
-          });
-        }
+        // eslint-disable-next-line no-console
+        console.log('newTrades in subscribeTrades', newTrades);
+
+        set(prev => {
+          // eslint-disable-next-line no-console
+          console.log('prev trades in subscribeTrades', prev.trades);
+          return {trades: [...prev.trades, ...newTrades]};
+        });
+        // eslint-disable-next-line no-console
+        console.log('all trades in subscribeTrades', get().trades);
+
+        // trades.forEach(trade => {
+        //   // eslint-disable-next-line no-console
+        //   console.log('trade forEach in subscribeTrades', trade);
+
+        //   if (trade.instId === 'ETH-USDT') {
+        //     // get().notificationEmitter.emit(TideBitEvent.TRADES, trade);
+        //     // eslint-disable-next-line no-console
+        //     console.log('trade accord instId in subscribeTrades', trade);
+        //     set(prev => {
+        //       // eslint-disable-next-line no-console
+        //       console.log(
+        //         'prev.trades in subscribeTrades',
+        //         prev.trades,
+        //         'new trade in subscribeTrades',
+        //         trade
+        //       );
+
+        //       return {trades: [trade]};
+        //     });
+        //   }
+        // });
       });
     }
   };

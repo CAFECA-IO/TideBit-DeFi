@@ -41,8 +41,10 @@ import {millisecondsToSeconds} from '../lib/common';
 import useState from 'react-usestateref';
 import TickerBookInstance from '../lib/books/ticker_book';
 import useWorkerStore from './worker';
+import {useShallow} from 'zustand/react/shallow';
 
 type MarketStore = {
+  isInit: boolean;
   selectedTicker: ITickerData | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
@@ -64,6 +66,7 @@ type MarketStore = {
   setCandlestickInterval: (interval: number | null) => void;
   setCandlestickIsLoading: (isLoading: boolean) => void;
   setTimeSpan: (timeSpan: ITimeSpanUnion) => void;
+  syncCandlestickData: (instId: string, timeSpan?: ITimeSpanUnion) => Promise<void>;
 
   // FIXME: IResult
   fetchData: (url: string) => Promise<IResult>;
@@ -77,7 +80,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
   const tickerBook = TickerBookInstance;
   const tradeBook = TradeBookInstance;
 
-  const workerInit = useWorkerStore.getState().init;
+  // const workerInit = useWorkerStore.getState().init;
 
   // const sub1 = useWorkerStore.subscribe(s => {
   //   trades = s.trades;
@@ -173,6 +176,50 @@ const useMarketStore = create<MarketStore>((set, get) => {
     }
   };
 
+  const listMarketTrades = async (
+    instId: string,
+    options?: {
+      begin?: number; // Info: in milliseconds (20230530 - tzuhan)
+      end?: number; // Info: in milliseconds (20230530 - tzuhan)
+      asc?: boolean;
+      limit?: number;
+    }
+  ) => {
+    if (!options) {
+      const dateTime = new Date().getTime();
+      options = {
+        begin: dateTime - INITIAL_TRADES_INTERVAL,
+        end: dateTime + INITIAL_TRADES_BUFFER,
+        asc: false,
+      };
+    }
+
+    const result = await get().fetchData(
+      `https://api.tidebit-defi.com/api/v1/market/trades/${instId}?begin=${options.begin}&end=${options.end}&asc=false
+      `
+    );
+    return result;
+  };
+
+  const initMarketTrades = async (instId: string) => {
+    const result = await listMarketTrades(instId);
+    if (result.success) {
+      const trades = (result.data as ITrade[]).map(trade => ({
+        ...trade,
+        tradeId: trade.tradeId,
+        targetAsset: trade.baseUnit,
+        unitAsset: trade.quoteUnit,
+        direct: TradeSideText[trade.side],
+        price: trade.price,
+        timestampMs: trade.timestamp,
+        quantity: trade.amount,
+      }));
+      trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
+      tradeBook.addTrades(instId, trades);
+      set({trades});
+    }
+  };
+
   const initBasicInfo = async () => {
     await initPromotion();
     await initWebsiteReserve();
@@ -182,11 +229,15 @@ const useMarketStore = create<MarketStore>((set, get) => {
   };
 
   const init = async () => {
-    // eslint-disable-next-line no-console
-    console.log('init called');
-    await initBasicInfo();
-    await initCandlestickData('ETH-USDT', TimeSpanUnion._1h);
-    await workerInit();
+    if (!get().isInit) {
+      // eslint-disable-next-line no-console
+      console.log('init called');
+      await initBasicInfo();
+      await initCandlestickData('ETH-USDT', TimeSpanUnion._1h);
+      await initMarketTrades('ETH-USDT');
+      // await workerInit();
+      set({isInit: true});
+    }
   };
 
   const initCandlestickData = async (instId: string, timeSpan?: ITimeSpanUnion) => {
@@ -270,6 +321,8 @@ const useMarketStore = create<MarketStore>((set, get) => {
   };
 
   const syncCandlestickData = async (instId: string, timeSpan?: ITimeSpanUnion) => {
+    // eslint-disable-next-line no-console
+    console.log('syncCandlestickData called');
     const interval = get().candlestickInterval;
     if (typeof interval === 'number') {
       clearInterval(interval);
@@ -361,6 +414,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
   };
 
   return {
+    isInit: false,
     selectedTicker: dummyTicker,
     // selectedTickerRef: React.createRef<ITickerData>(),
     availableTickers: {},
@@ -376,9 +430,15 @@ const useMarketStore = create<MarketStore>((set, get) => {
     candlestickIsLoading: true,
     timeSpanState: TimeSpanUnion._1s,
 
-    setCandlestickInterval: (interval: number | null) => set({candlestickInterval: interval}),
+    setCandlestickInterval: (interval: number | null) =>
+      set(() => {
+        // eslint-disable-next-line no-console
+        console.log('setCandlestickInterval called', interval);
+        return {candlestickInterval: interval};
+      }),
     setCandlestickIsLoading: (isLoading: boolean) => set({candlestickIsLoading: isLoading}),
     setTimeSpan: (timeSpan: ITimeSpanUnion) => set({timeSpanState: timeSpan}),
+    syncCandlestickData,
 
     fetchData: async (url: string) => {
       // const request: FormatedTypeRequest = formatAPIRequest(data);
@@ -400,12 +460,30 @@ const useMarketStore = create<MarketStore>((set, get) => {
     init,
 
     trades: [],
-    setTrades: (trades: ITrade[]) => {
+    setTrades: (newTrades: ITrade[]) => {
+      if (!newTrades || newTrades.length === 0) return;
+      for (const trade of newTrades) {
+        tradeBook.add('ETH-USDT', {
+          tradeId: trade.tradeId,
+          targetAsset: trade.baseUnit,
+          unitAsset: trade.quoteUnit,
+          direct: TradeSideText[trade.side],
+          price: trade.price,
+          timestampMs: trade.timestamp,
+          quantity: trade.amount,
+        });
+      }
       // eslint-disable-next-line no-console
-      console.log('trades got in marketStore', trades);
-      set({trades});
+      console.log('new trades got in marketStore', newTrades);
+      set(prev => {
+        return {trades: prev.trades, newTrades};
+      });
+      // eslint-disable-next-line no-console
+      console.log('whole trades in marketStore', get().trades);
     },
   };
 });
 
 export default useMarketStore;
+
+// export const useMarketStoreShallow = selector => useMarketStore(selector, useShallow);

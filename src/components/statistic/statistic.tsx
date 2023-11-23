@@ -4,6 +4,7 @@ import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {numberFormatted} from '../../lib/common';
 import useMarketStore from '../../stores/market';
+import {useShallow} from 'zustand/react/shallow';
 
 type TranslateFunction = (s: string) => string;
 
@@ -12,7 +13,7 @@ const StatisticBlock = () => {
 
   // const {tidebitPromotion} = useContext(MarketContext);
 
-  const [tidebitPromotion] = useMarketStore(s => [s.tidebitPromotion]); // eslint-disable-next-line no-console
+  const tidebitPromotion = useMarketStore(useShallow(s => s.tidebitPromotion)); // eslint-disable-next-line no-console
   console.log('tidbitPromotion: ', tidebitPromotion);
 
   const displayedVolume = SafeMath.isNumber(tidebitPromotion.volume)

@@ -22,7 +22,7 @@ const Home = () => {
   return appCtx.isInit ? (
     <>
       <Head>
-        <title>TideBit DeFi</title>
+        <title>[Context test] TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 

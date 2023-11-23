@@ -55,12 +55,6 @@ type WorkerStore = {
 let jobTimer: NodeJS.Timeout | null = null;
 
 const useWorkerStore = create<WorkerStore>((set, get) => {
-  // let jobQueueOfWS = Array<((...args: []) => Promise<void>)[]>([]);
-  // let jobQueueOfAPI = Array<((...args: []) => Promise<void>)[]>([]);
-  // const marketStore = useMarketStore.getState();
-  // // eslint-disable-next-line no-console
-  // console.log('marketStore in useWorkerStore', marketStore);
-
   let jobQueueOfWS: ((...args: []) => Promise<void>)[] = [];
   let jobQueueOfAPI: ((...args: []) => Promise<void>)[] = [];
 
@@ -75,8 +69,6 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
   const apiInit = () => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
     set({apiWorker});
-    // eslint-disable-next-line no-console
-    console.log('jobQueueOfAPI in apiInit', jobQueueOfAPI);
   };
 
   const pusherInit = () => {
@@ -99,8 +91,6 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
         },
       },
     });
-    // eslint-disable-next-line no-console
-    console.log('in pusherInit', pusher, pusherKey, pusherHost, pusherPort);
 
     set({pusher});
 
@@ -113,14 +103,10 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
         get().subscribeTickers();
         get().subscribeTrades();
       }
-      // eslint-disable-next-line no-console
-      console.log('pusher connection bind connected', socketId, channel);
     });
   };
 
   const _apiWorker = async () => {
-    // eslint-disable-next-line no-console
-    console.log('_apiWorker called');
     const job = jobQueueOfAPI.shift();
     if (job) {
       await job();
@@ -132,8 +118,6 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
   };
 
   const init = async () => {
-    // eslint-disable-next-line no-console
-    console.log('worker init called');
     // apiInit();
     pusherInit();
     increase();
@@ -154,8 +138,7 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     switch (type) {
       case JobType.API:
         jobQueueOfAPI = [...jobQueueOfAPI, job];
-        // eslint-disable-next-line no-console
-        console.log('jobQueueOfAPI in createJob', jobQueueOfAPI);
+
         break;
       case JobType.WS:
         jobQueueOfWS = [...jobQueueOfWS, job];
@@ -213,44 +196,21 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     const publicChannel = get().publicChannel;
     if (publicChannel) {
       publicChannel.bind(Events.TRADES, (pusherData: IPusherData) => {
-        // eslint-disable-next-line no-console
-        console.log('new trades in subscribeTrades', pusherData);
         const trades = pusherData as ITrade[];
         const newTrades = trades.filter(trade => trade.instId === 'ETH-USDT');
         if (!newTrades || newTrades.length === 0) return;
 
         // eslint-disable-next-line no-console
-        console.log('newTrades in subscribeTrades', newTrades);
+        // console.log('newTrades in subscribeTrades', newTrades);
 
         set(prev => {
           // eslint-disable-next-line no-console
-          console.log('prev trades in subscribeTrades', prev.trades);
-          return {trades: [...prev.trades, ...newTrades]};
+          // console.log('prev trades in subscribeTrades', prev.trades);
+          // return {trades: [...prev.trades, ...newTrades]};
+          return {trades: [...newTrades]};
         });
         // eslint-disable-next-line no-console
-        console.log('all trades in subscribeTrades', get().trades);
-
-        // trades.forEach(trade => {
-        //   // eslint-disable-next-line no-console
-        //   console.log('trade forEach in subscribeTrades', trade);
-
-        //   if (trade.instId === 'ETH-USDT') {
-        //     // get().notificationEmitter.emit(TideBitEvent.TRADES, trade);
-        //     // eslint-disable-next-line no-console
-        //     console.log('trade accord instId in subscribeTrades', trade);
-        //     set(prev => {
-        //       // eslint-disable-next-line no-console
-        //       console.log(
-        //         'prev.trades in subscribeTrades',
-        //         prev.trades,
-        //         'new trade in subscribeTrades',
-        //         trade
-        //       );
-
-        //       return {trades: [trade]};
-        //     });
-        //   }
-        // });
+        // console.log('all trades in subscribeTrades', get().trades);
       });
     }
   };

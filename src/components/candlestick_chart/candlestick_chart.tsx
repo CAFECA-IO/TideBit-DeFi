@@ -24,9 +24,9 @@ import {
   LogicalRange,
   LogicalRangeChangeEventHandler,
 } from 'lightweight-charts';
-import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
+import {LINE_GRAPH_STROKE_COLOR, UPDATE_CANDLESTICK_CHART_INTERVAL} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
-import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestickData, ITrade} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
 import useMarketStore from '../../stores/market';
@@ -191,10 +191,15 @@ export default function CandlestickChart({
   // Info: trial #2
   // const value = useMarketStore(s => s.candlestickChartData);
   // const candlestickChartData = useMemo(() => value, [value]);
-  // Info: trial #3
-  const candlestickChartDataRef = useRef(useMarketStore.getState().candlestickChartData);
-  const [tempValue, setTempValue, tempValueRef] = useStateRef(0);
+  // Info: trial #3 FIXME: to be removed
+  // const candlestickChartDataRef = useRef(useMarketStore.getState().candlestickChartData);
 
+  const addTradesToTradeBook = useRef(useMarketStore.getState().addTradesToTradeBook);
+  const convertTradesToCandlesticks = useRef(useMarketStore.getState().convertTradesToCandlesticks);
+
+  const [lastTradeId, setLastTradeId, lastTradeIdRef] = useStateRef<string>('');
+  const [candlestickDataByChart, setCandlestickDataByChart, candlestickDataByChartRef] =
+    useStateRef<ICandlestickData[]>([]);
   const timeSpan = useMarketStore(s => s.timeSpanState);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
@@ -333,7 +338,7 @@ export default function CandlestickChart({
   // };
 
   const fetchCandlestickData = () => {
-    const originRaw = candlestickChartDataRef.current?.map(toCandlestickData) ?? [];
+    const originRaw = candlestickDataByChartRef.current?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
     const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
@@ -404,67 +409,26 @@ export default function CandlestickChart({
     }
   };
 
-  // Fetch initial state
-  // const scratchRef = useRef(useScratchStore.getState().scratches);
-  // Connect to the store on mount, disconnect on unmount, catch state-changes in a reference
-  useEffect(
-    () =>
-      useMarketStore.subscribe(
-        state => (candlestickChartDataRef.current = state.candlestickChartData)
-      ),
-    []
-  );
-
-  /*
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('candlestickChartData in _app', candlestickChartData);
-  }, [candlestickChartData]);
-
-  useEffect(() => {
-    // // eslint-disable-next-line no-console
-    // console.log('marketIsInit in _app', marketIsInit);
-    if (marketIsInit) {
-      syncCandlestickData('ETH-USDT');
-    }
-    return () => {
-      setCandlestickInterval(null);
-    };
-  }, [marketIsInit]);
-*/
-  // eslint-disable-next-line no-console
-  console.log('run candlestick_chart_file', new Date());
-
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log(
-      'time to detect candlestickChartData in candlestick_chart.tsx',
-      new Date(),
-      'candlestickChartDataRef.current in candlestick_chart.tsx',
-      candlestickChartDataRef.current
-    );
-
     return drawChart();
-  }, []);
-  // }, [candlestickChartDataRef.current]);
+  }, [candlestickDataByChartRef.current]);
 
   useEffect(() => {
-    const unsubscribe = useWorkerStore.subscribe(data => {
-      // eslint-disable-next-line no-console
-      console.log('trades-updates in candlestick_chart_file', data.trades);
-      useMarketStore.getState().setTrades(data.trades);
+    const unsubscribe = useWorkerStore.subscribe(newData => {
+      if (!newData.trades || newData.trades.length === 0) return;
+      if (lastTradeIdRef.current === newData.trades[newData.trades.length - 1]?.tradeId) return;
+      setLastTradeId(newData.trades[newData.trades.length - 1].tradeId);
+      addTradesToTradeBook.current(newData.trades);
     });
 
-    const inter = setInterval(() => {
-      // eslint-disable-next-line no-console
-      console.log('setTempValue candlestick_chart_file every 5 seconds', new Date());
-
-      setTempValue(tempValueRef.current + 1);
-    }, 5000);
+    const intervalId = setInterval(() => {
+      const candles = convertTradesToCandlesticks.current();
+      setCandlestickDataByChart(candles);
+    }, UPDATE_CANDLESTICK_CHART_INTERVAL);
 
     return () => {
       unsubscribe();
-      clearInterval(inter);
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -473,10 +437,6 @@ export default function CandlestickChart({
       <div className="-mb-8 mt-5 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="">
         <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
-      </div>
-
-      <div>
-        {tempValueRef.current} {Date.now()}
       </div>
     </>
   );

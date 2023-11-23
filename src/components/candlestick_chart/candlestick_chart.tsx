@@ -393,6 +393,13 @@ export default function CandlestickChart({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log(
+      'time to re-drawChart',
+      new Date(),
+      'marketCtx.candlestickChartData',
+      marketCtx.candlestickChartData
+    );
     return drawChart();
   }, [marketCtx.candlestickChartData]);
 

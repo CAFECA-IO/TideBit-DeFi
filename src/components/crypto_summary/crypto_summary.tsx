@@ -44,10 +44,6 @@ const CryptoSummary = ({
   const whitePaperLinkWithI18n = getI18nLink(whitePaperLink, language ?? '') ?? whitePaperLink;
   const websiteLinkWithI18n = getI18nLink(websiteLink, language ?? '') ?? websiteLink;
 
-  // TODO: dev (20231122 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('CryptoSummary render');
-
   return (
     <>
       <div className="flex-col justify-start">

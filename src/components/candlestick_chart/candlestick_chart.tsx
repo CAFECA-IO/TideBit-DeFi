@@ -11,7 +11,7 @@
  * 2.3 draw candlestick chart with data
  */
 
-import React, {useState, useContext, useEffect, useRef} from 'react';
+import React, {useState, useContext, useEffect, useRef, useMemo} from 'react';
 import {
   createChart,
   ColorType,
@@ -186,6 +186,10 @@ export default function CandlestickChart({
 }: ITradingChartGraphProps) {
   // const marketCtx = useContext(MarketContext);
   const candlestickChartData = useMarketStore(s => s.candlestickChartData);
+
+  // const value = useMarketStore(s => s.candlestickChartData);
+  // const candlestickChartData = useMemo(() => value, [value]);
+
   const timeSpan = useMarketStore(s => s.timeSpanState);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
@@ -396,6 +400,14 @@ export default function CandlestickChart({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log(
+      'time to detect candlestickChartData in candlestick_chart.tsx',
+      new Date(),
+      'candlestickChartData in candlestick_chart.tsx',
+      candlestickChartData
+    );
+
     return drawChart();
   }, [candlestickChartData]);
 

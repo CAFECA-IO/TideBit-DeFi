@@ -350,6 +350,8 @@ const useMarketStore = create<MarketStore>((set, get) => {
 
     // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
     const candlestickInterval = window.setInterval(() => {
+      // eslint-disable-next-line no-console
+      console.log('candlestickInterval called');
       const interval = millisecondsToSeconds(getTime(ts));
 
       if (ts === TimeSpanUnion._1s) {

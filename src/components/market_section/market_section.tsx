@@ -15,24 +15,24 @@ interface IMarketSectionProps {
 }
 
 const MarketSection = (props: IMarketSectionProps) => {
-  const marketCtx = useContext(MarketContext);
+  // const marketCtx = useContext(MarketContext);
 
-  const {
-    icon,
-    name: label,
-    introduction,
-    whitePaperLink,
-    websiteLink,
-    price,
-    rank,
-    publishTime,
-    publishAmount,
-    tradingVolume,
-    totalValue,
-    tradingValue,
-  } = marketCtx.tickerStatic?.cryptoSummary ?? {};
+  // const {
+  //   icon,
+  //   name: label,
+  //   introduction,
+  //   whitePaperLink,
+  //   websiteLink,
+  //   price,
+  //   rank,
+  //   publishTime,
+  //   publishAmount,
+  //   tradingVolume,
+  //   totalValue,
+  //   tradingValue,
+  // } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
-  const displayedTickerHeader = <TradingHeader />;
+  // const displayedTickerHeader = <TradingHeader />;
 
   const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
 
@@ -47,7 +47,7 @@ const MarketSection = (props: IMarketSectionProps) => {
       <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
 
       <div className={tradeStatisticsStyle}>
-        <TradeStatistics
+        {/* <TradeStatistics
           fiveMin={{
             low: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.low ?? 0,
             now: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.now ?? '',
@@ -66,11 +66,11 @@ const MarketSection = (props: IMarketSectionProps) => {
           bullAndBearIndex={marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0}
           long={marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0}
           short={100 - (marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0)}
-        />
+        /> */}
       </div>
 
       <div className="mt-5 lg:mt-8 lg:pl-5">
-        <CryptoSummary
+        {/* <CryptoSummary
           icon={icon ?? marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
           label={label ?? DEFAULT_CRYPTO}
           introduction={introduction ?? ''}
@@ -83,7 +83,7 @@ const MarketSection = (props: IMarketSectionProps) => {
           tradingVolume={tradingVolume ?? ''}
           totalValue={totalValue ?? ''}
           tradingValue={tradingValue ?? ''}
-        />
+        /> */}
       </div>
 
       <div className="mb-10 mt-5 lg:mt-8 lg:pl-5">

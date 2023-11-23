@@ -13,6 +13,10 @@ interface ICryptoNewsSectionProps {
 const CryptoNewsSection = (props: ICryptoNewsSectionProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  // TODO: dev (20231122 - Shirley)
+  // eslint-disable-next-line no-console
+  console.log('CryptoNewsSection render');
+
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
 

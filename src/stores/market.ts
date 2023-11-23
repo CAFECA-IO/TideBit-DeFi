@@ -310,7 +310,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
   };
 
   const addTradesToTradeBook = (trades: ITrade[]): boolean | undefined => {
-    if (!trades || trades.length === 0) return;
+    if (trades === undefined || !trades || trades.length === 0) return;
 
     const t = tradeBook.getTrades('ETH-USDT');
     if (t[t.length - 1].tradeId === trades[trades.length - 1]?.tradeId) return;

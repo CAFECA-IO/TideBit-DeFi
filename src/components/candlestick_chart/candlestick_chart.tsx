@@ -415,7 +415,7 @@ export default function CandlestickChart({
 
   useEffect(() => {
     const unsubscribe = useWorkerStore.subscribe(newData => {
-      if (!newData.trades || newData.trades.length === 0) return;
+      if (newData.trades === undefined || !newData.trades || newData.trades.length === 0) return;
       if (lastTradeIdRef.current === newData.trades[newData.trades.length - 1]?.tradeId) return;
       setLastTradeId(newData.trades[newData.trades.length - 1].tradeId);
       addTradesToTradeBook.current(newData.trades);

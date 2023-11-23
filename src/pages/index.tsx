@@ -22,7 +22,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>TideBit DeFi</title>
+        <title>[Zustand test] TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 

@@ -59,7 +59,7 @@ const Trading = (props: IPageProps) => {
   return (
     <>
       <Head>
-        <title>CFD - TideBit DeFi</title>
+        <title>[Zustand test] CFD - TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 

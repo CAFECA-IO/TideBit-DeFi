@@ -1,4 +1,4 @@
-import React, {createContext, useRef, useContext} from 'react';
+import React, {createContext, useRef, useContext, useEffect} from 'react';
 import keccak from '@cafeca/keccak';
 import useState from 'react-usestateref';
 import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
@@ -120,6 +120,8 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const pusherInit = () => {
+    // eslint-disable-next-line no-console
+    console.log('pusherInit called');
     const pusher = new Pusher(pusherKey, {
       cluster: '',
       wsHost: pusherHost,
@@ -208,6 +210,62 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       createJob(JobType.API, () => requestHandler(data));
     }
   };
+
+  useEffect(() => {
+    if (!apiWorkerRef.current) {
+      apiInit(); // eslint-disable-next-line no-console
+      console.log('if (!apiWorkerRef.current) { apiInit(); }');
+    }
+
+    if (!pusherRef.current) {
+      pusherInit(); // eslint-disable-next-line no-console
+      console.log('if (!pusherRef.current) { pusherInit(); }');
+    }
+    // eslint-disable-next-line no-console
+    console.log('in apiWorkerRef & pusherRef useEffect');
+
+    return () => {
+      if (apiWorkerRef.current) {
+        // Info: Ensure the worker is terminated when the component is unmounted (20231124 - Shirley)
+        apiWorkerRef.current.terminate();
+      }
+
+      if (pusherRef.current) {
+        // Info: Ensure the pusher is disconnected when the component is unmounted (20231124 - Shirley)
+        pusherRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   if (!pusherRef.current) {
+  //     pusherInit();
+  //   }
+
+  //   console.log('in pusherRef useEffect');
+
+  //   return () => {
+  //     if (pusherRef.current) {
+  //       // Info: Ensure the pusher is disconnected when the component is unmounted (20231124 - Shirley)
+  //       pusherRef.current.disconnect();
+  //     }
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    if (!pusherRef.current) return;
+
+    subscribeTickers();
+    subscribeTrades(); // eslint-disable-next-line no-console
+    console.log('subscribeTickers & subscribeTrades in useEffect');
+
+    return () => {
+      if (publicChannelRef.current) {
+        publicChannelRef.current.unbind_all(); // eslint-disable-next-line no-console
+        console.log('unbind_all');
+      }
+    };
+  }, [pusherRef.current]);
 
   const defaultValue = {
     init,

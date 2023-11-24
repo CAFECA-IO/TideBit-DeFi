@@ -30,7 +30,7 @@ export const AppProvider = ({children}: IAppProvider) => {
 
   const init = async () => {
     if (!isInitRef.current) {
-      workerCtx.init();
+      // workerCtx.init();
       await notificationCtx.init();
       await userCtx.init();
       await marketCtx.init();

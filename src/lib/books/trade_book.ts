@@ -45,6 +45,7 @@ interface ITradeBookConfig {
   minMsForLinearRegression: number; // Info: 拿幾秒內的資料做預測 (20230522 - Shirley)
   minLengthForLinearRegression: number; // Info: 規定幾秒內至少要有幾筆資料 (20230522 - Shirley)
   holdingTradesMs: number; // Info: 持有多久的資料 (20230601 - Tzuhans)
+  trimThreshold: number; // Info: 設置一個閾值，每增加 n 筆 predicted trades 後進行一次 trim (20231124 - Shirley)
 }
 
 // function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
@@ -82,6 +83,8 @@ class TradeBook {
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
   private model: string;
+  private lastTrimTime: number; // Info: 新增一個變量來跟蹤上次 trim 的時間 (20231124 - Shirley)
+  private addedTradesSinceLastTrim: number; // Info: 追蹤自上次 trim 以來新增的 predicted trades 數量 (20231124 - Shirley)
 
   constructor(config: ITradeBookConfig) {
     this.config = config;
@@ -91,6 +94,9 @@ class TradeBook {
     this.isPredicting = new Map();
     this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
+
+    this.lastTrimTime = Date.now();
+    this.addedTradesSinceLastTrim = 0;
   }
 
   @ensureTickerExistsDecorator
@@ -156,10 +162,18 @@ class TradeBook {
     const trades = this.getTrades(instId);
     const predictedTrades = this.getPredictedTrades(instId);
 
+    this.addedTradesSinceLastTrim++;
+
     // Info: 檢查這筆trade是預測的還是真實的，然後存進不同變數裡 (20230816 - Shirley)
     if (!isPredictedData) {
       trades.push(newTrade);
       predictedTrades.push(newTrade);
+
+      // Info: 到達門檻時執行 trim ，並且重置計數器 (20231124 - Shirley)
+      if (this.addedTradesSinceLastTrim >= this.config.trimThreshold) {
+        this._trim(instId);
+        this.addedTradesSinceLastTrim = 0;
+      }
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
@@ -211,6 +225,12 @@ class TradeBook {
     const predictedTrades = this.getPredictedTrades(instId);
 
     const now = Date.now();
+
+    // Info: 如果距離上次 trim 的時間小於 holdingTradesMs，則不執行 trim (20231124 - Shirley)
+    if (now - this.lastTrimTime < this.config.holdingTradesMs) {
+      return;
+    }
+
     const cutoffTime = now - this.config.holdingTradesMs;
 
     if (trades[0]?.timestampMs < cutoffTime || predictedTrades[0]?.timestampMs < cutoffTime) {
@@ -243,6 +263,8 @@ class TradeBook {
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
+
+      this.lastTrimTime = now;
     }
   }
 
@@ -259,7 +281,7 @@ class TradeBook {
       setTimeout(() => {
         if (this.isPredicting.get(instId)) {
           this.predictNextTrade(instId, predictedTrades, this.config.intervalMs, 1);
-          this._trim(instId);
+          // this._trim(instId);
           this.startPredictionLoop(instId);
         }
       }, this.config.intervalMs)
@@ -848,6 +870,7 @@ const TradeBookInstance = new TradeBook({
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
   holdingTradesMs: 1000 * 60 * 1, // Info: 1 minutes in milliseconds (ms) (20231019 - Shirley)
+  trimThreshold: 600, // Info: 每增加 n 筆 predicted trades 後進行一次 trim (20231124 - Shirley)
 });
 
 export default TradeBookInstance;

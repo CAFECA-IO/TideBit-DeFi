@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Image from 'next/image';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useGlobal} from '../../contexts/global_context';
@@ -18,6 +18,16 @@ export default function NotificationItem(notificationItem: INotificationItem) {
   const globalCtx = useGlobal();
 
   const [itemStyle, setItemStyle] = useState('h-160px translate-x-0 opacity-100');
+  const [displayedTime, setDisplayedTime] = useState<{date: string; time: string}>({
+    date: '',
+    time: '',
+  });
+
+  useEffect(() => {
+    const str = timestampToString(timestamp);
+
+    setDisplayedTime({date: str.date, time: str.time});
+  }, [notificationItem.timestamp]);
 
   const messageType =
     notificationLevel === NotificationLevel.CRITICAL
@@ -81,8 +91,8 @@ export default function NotificationItem(notificationItem: INotificationItem) {
           </div>
           {/* Info: (20231019 - Julian) Date */}
           <div className="whitespace-nowrap text-end text-xs text-lightGray">
-            <p>{displayTime.date}</p>
-            <p>{displayTime.time}</p>
+            <p>{displayedTime.date}</p>
+            <p>{displayedTime.time}</p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
-import useWorkerStore from '../../stores/worker';
-import useMarketStore from '../../stores/market';
+import useWorkerStore from '../../stores/worker_store';
+import useMarketStore from '../../stores/market_store';
 
 function useSyncTrades() {
   useEffect(() => {
@@ -23,3 +23,4 @@ function useSyncTrades() {
 }
 
 export default useSyncTrades;
+// Info: 用這個方法會造成不必要的元件重新渲染

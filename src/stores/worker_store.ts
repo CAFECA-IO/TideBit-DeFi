@@ -14,7 +14,7 @@ import {
 import {getCookieByName} from '../lib/common';
 import EventEmitter from 'events';
 import {useRef} from 'react';
-import useMarketStore from './market';
+import useMarketStore from './market_store';
 
 type IJobType = 'API' | 'WS';
 

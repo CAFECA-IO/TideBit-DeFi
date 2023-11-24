@@ -3,7 +3,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {numberFormatted} from '../../lib/common';
-import useMarketStore from '../../stores/market';
+import useMarketStore from '../../stores/market_store';
 import {useShallow} from 'zustand/react/shallow';
 
 type TranslateFunction = (s: string) => string;

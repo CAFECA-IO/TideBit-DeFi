@@ -12,8 +12,8 @@ import {NotificationProvider} from '../contexts/notification_context';
 import {AppProvider} from '../contexts/app_context';
 import {WorkerProvider} from '../contexts/worker_context';
 import React from 'react';
-import useMarketStore from '../stores/market';
-import useWorkerStore from '../stores/worker';
+import useMarketStore from '../stores/market_store';
+import useWorkerStore from '../stores/worker_store';
 import useSyncTrades from '../lib/hooks/use_sync_trades';
 import {useShallow} from 'zustand/react/shallow';
 

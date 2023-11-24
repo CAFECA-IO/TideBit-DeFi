@@ -1,4 +1,4 @@
-import {defaultResultFailed, IResult} from './../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed, IResult} from '../interfaces/tidebit_defi_background/result';
 import {create} from 'zustand';
 import {ITickerData, dummyTicker} from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
@@ -40,7 +40,7 @@ import {CANDLESTICK_SIZE, SAMPLE_NUMBER} from '../constants/display';
 import {millisecondsToSeconds} from '../lib/common';
 import useState from 'react-usestateref';
 import TickerBookInstance from '../lib/books/ticker_book';
-import useWorkerStore from './worker';
+import useWorkerStore from './worker_store';
 import {useShallow} from 'zustand/react/shallow';
 
 type MarketStore = {

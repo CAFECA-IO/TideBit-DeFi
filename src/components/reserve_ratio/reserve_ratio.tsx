@@ -8,7 +8,7 @@ import {FiDownload} from 'react-icons/fi';
 import {numberFormatted} from '../../lib/common';
 import useCheckLink from '../../lib/hooks/use_check_link';
 import SafeMath from '../../lib/safe_math';
-import useMarketStore from '../../stores/market';
+import useMarketStore from '../../stores/market_store';
 
 const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');

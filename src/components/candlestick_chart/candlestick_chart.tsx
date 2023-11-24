@@ -29,8 +29,8 @@ import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData, ITrade} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
-import useMarketStore from '../../stores/market';
-import useWorkerStore from '../../stores/worker';
+import useMarketStore from '../../stores/market_store';
+import useWorkerStore from '../../stores/worker_store';
 
 interface ITradingChartGraphProps {
   candleSize: number;

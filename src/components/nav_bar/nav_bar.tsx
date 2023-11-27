@@ -94,7 +94,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <WalletConnectButton className="mt-4 px-5 py-2 md:mt-0" />
+    <WalletConnectButton id="desktop-wallet-connect-button" className="mt-4 px-5 py-2 md:mt-0" />
   );
 
   const isDisplayedUnreadNumber =
@@ -126,12 +126,12 @@ const NavBar = () => {
     <User notifyOpen={notifyOpen} setNotifyOpen={setNotifyOpen} />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="mobile-wallet-connect-button" className="px-3 py-2 text-sm" />
   );
 
   const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="mobile-submenu-wallet-connect-button" className="px-3 py-2 text-sm" />
   );
 
   const desktopLayout = (

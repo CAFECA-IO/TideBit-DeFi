@@ -189,7 +189,7 @@ const OrderSection = (props: IOrderSection) => {
         {t('TRADE_PAGE.WALLET_CONNECT_DESCRIPTION_MOBILE')}
       </div>
 
-      <WalletConnectButton className="px-5 py-2" />
+      <WalletConnectButton id="order-section-wallet-connect-button" className="px-5 py-2" />
     </div>
   );
 

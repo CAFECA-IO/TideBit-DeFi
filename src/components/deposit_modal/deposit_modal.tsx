@@ -367,6 +367,7 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
 
           <div className={``}>
             <RippleButton
+              id="deposit-modal-submit-button"
               // Use the logic directly in the `disabled` attribute instead of `setSubmitDisabled`
               disabled={amountInput === 0 || amountInput === undefined}
               onClick={submitClickHandler}

@@ -155,6 +155,7 @@ const Footer = () => {
                     />
                   </div>
                   <RippleButton
+                    id="footer-subscribe-button"
                     buttonType="button"
                     className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   >
@@ -229,6 +230,7 @@ const Footer = () => {
                       />
                     </div>
                     <RippleButton
+                      id="footer-subscribe-button"
                       buttonType="button"
                       className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                     >

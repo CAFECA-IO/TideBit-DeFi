@@ -70,6 +70,7 @@ const FailedModal = ({
         {btnUrl && btnMsg ? (
           <a href={btnUrl} target="_blank" rel="noreferrer">
             <RippleButton
+              id="failed-modal-button"
               className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
               buttonType="button"
               onClick={btnClickHandler}
@@ -79,6 +80,7 @@ const FailedModal = ({
           </a>
         ) : btnMsg ? (
           <RippleButton
+            id="failed-modal-button"
             className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
             buttonType="button"
             onClick={btnClickHandler}

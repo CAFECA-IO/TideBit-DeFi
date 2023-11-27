@@ -113,6 +113,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
             {/* Info:(20230517 - Julian) Button */}
             <div className="flex w-full items-center justify-center">
               <RippleButton
+                id="badge-modal-close-button"
                 buttonType="button"
                 onClick={modalClickHandler}
                 className="w-300px whitespace-nowrap rounded border-0 bg-tidebitTheme px-6 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray"

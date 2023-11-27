@@ -213,38 +213,6 @@ class TradeBook {
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
 
-    // Convert trades.slice(-10) to a object with key is the tradeId and the value if the trade itself (20230703 - Shirley)
-    // const tradesSlice = Object.values(
-    //   trades.slice(-10).reduce(
-    //     (acc, cur) => {
-    //       acc[cur.tradeId] = cur;
-    //       return acc;
-    //     },
-    //     {} as {[key: string]: ITradeInTradeBook}
-    //   )
-    // );
-
-    // const predictedTradesSlice = Object.values(
-    //   predictedTrades.slice(-10).reduce(
-    //     (acc, cur) => {
-    //       acc[cur.tradeId] = cur;
-    //       return acc;
-    //     },
-    //     {} as {[key: string]: ITradeInTradeBook}
-    //   )
-    // );
-
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   'before trim',
-    //   trades?.length,
-    //   predictedTrades?.length,
-    //   'last 10 of trades',
-    //   trades.slice(-10),
-    //   'last 10 of predictedTrades',
-    //   predictedTrades.slice(-10)
-    // );
-
     if (trades[0]?.timestampMs < cutoffTime || predictedTrades[0]?.timestampMs < cutoffTime) {
       const trimmedTrades = Object.values(
         trades

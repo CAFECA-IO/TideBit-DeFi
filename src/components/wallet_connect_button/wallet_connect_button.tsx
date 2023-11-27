@@ -10,7 +10,7 @@ export const WalletConnectButton = ({id, className}: {id?: string; className?: s
 
   return (
     <TideButton
-      id={id ?? 'wallet-connect-button'}
+      id={id ?? 'WalletConnectButton'}
       onClick={scanProcess}
       className={`${className} rounded border-0 bg-tidebitTheme text-base text-white transition-all duration-300 hover:bg-cyan-600`}
     >

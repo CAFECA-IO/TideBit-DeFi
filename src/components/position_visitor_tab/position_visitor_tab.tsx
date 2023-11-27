@@ -28,7 +28,7 @@ const PositionVisitorTab = ({rightPosition}: {rightPosition: string}) => {
                 </div>
                 <div className="mt-10">
                   <WalletConnectButton
-                    id="position-tab-wallet-connect-button"
+                    id="WalletConnectButtonPositionTab"
                     className="mt-4 py-2 px-5 md:mt-0"
                   />
                 </div>

@@ -392,6 +392,7 @@ const PositionUpdatedModal = ({
         <div className="my-5 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
+          id="update-position-submit-button"
           disabled={disabled}
           onClick={submitClickHandler}
           buttonType="button"

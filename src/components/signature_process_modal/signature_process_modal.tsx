@@ -183,6 +183,7 @@ const SignatureProcessModal = ({
     ) : connectingProcessRef.current === ConnectingProcess.EMPTY ||
       connectingProcessRef.current === ConnectingProcess.REJECTED ? (
       <TideButton
+        id="send-request-button"
         onClick={requestSendingHandler}
         className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
       >

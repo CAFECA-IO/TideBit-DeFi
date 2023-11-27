@@ -1430,6 +1430,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       } transition-all duration-500 ease-in-out`}
     >
       <RippleButton
+        id="mobile-open-position-button"
         disabled={
           (openSubMenu &&
             (isActiveTabLong ? marginWarningLongRef.current : marginWarningShortRef.current)) ||
@@ -1542,6 +1543,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
               {/* Info: (20230925 - Shirley) Long Button */}
               <div className={`-mt-14 flex justify-center`}>
                 <RippleButton
+                  id="desktop-long-button"
                   disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
@@ -1612,6 +1614,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
               {/* Info: (20230925 - Shirley) Short Button */}
               <div className={`-mt-14 flex justify-center`}>
                 <RippleButton
+                  id="desktop-short-button"
                   disabled={
                     marginWarningShortRef.current ||
                     shortBtnDisabledRef.current ||
@@ -1642,6 +1645,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         {/* Info: (20230725 - Julian) Long Button */}
         <div className={`w-120px bg-black/100`}>
           <RippleButton
+            id="mobile-long-button"
             disabled={
               (openSubMenu && marginWarningLongRef.current) ||
               longBtnDisabledRef.current ||
@@ -1659,6 +1663,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         {/* Info: (20230725 - Julian) Short Button */}
         <div className={`ml-4 w-120px bg-black/100`}>
           <RippleButton
+            id="mobile-short-button"
             disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}

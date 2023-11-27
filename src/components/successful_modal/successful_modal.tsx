@@ -45,6 +45,7 @@ const SuccessfulModal = ({
             {btnUrl && btnMsg ? (
               <a href={btnUrl} target="_blank" rel="noreferrer">
                 <RippleButton
+                  id="successful-modal-button"
                   className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"
                   onClick={modalClickHandler}
@@ -54,6 +55,7 @@ const SuccessfulModal = ({
               </a>
             ) : btnMsg ? (
               <RippleButton
+                id="successful-modal-button"
                 className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                 buttonType="button"
                 onClick={modalClickHandler}

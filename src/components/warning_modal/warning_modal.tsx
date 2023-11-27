@@ -25,6 +25,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       <div className="flex w-full flex-row items-center justify-between whitespace-nowrap px-7">
         <Link href={btnPath}>
           <RippleButton
+            id="warning-modal-reaction-button"
             buttonType="button"
             onClick={modalClickHandler}
             className={`${MODAL_BUTTON_STYLE.SOLID} w-150px py-2`}
@@ -34,6 +35,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         </Link>
 
         <RippleButton
+          id="warning-modal-ok-button"
           buttonType="button"
           onClick={modalClickHandler}
           className={`${MODAL_BUTTON_STYLE.HOLLOW} w-70px py-2`}
@@ -46,6 +48,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         <div className="flex flex-row items-center justify-center px-7">
           <Link href={btnPath}>
             <RippleButton
+              id="warning-modal-reaction-button"
               buttonType="button"
               onClick={modalClickHandler}
               className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}
@@ -57,6 +60,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       ) : (
         <div className="flex flex-row items-center justify-center px-7">
           <RippleButton
+            id="warning-modal-reaction-button"
             buttonType="button"
             onClick={modalClickHandler}
             className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}

@@ -642,6 +642,7 @@ const PositionClosedModal = ({
 
       {/* Info: (20231003 - Julian) Submit Button */}
       <RippleButton
+        id="close-position-submit-button"
         disabled={secondsLeft < 1 || quotationErrorRef.current}
         onClick={submitClickHandler}
         buttonType="button"

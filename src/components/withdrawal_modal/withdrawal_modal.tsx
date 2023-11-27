@@ -343,6 +343,7 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
 
           <div className={``}>
             <RippleButton
+              id="withdrawal-modal-button"
               disabled={amountInput === 0 || amountInput === undefined}
               onClick={submitClickHandler}
               buttonType="button"

@@ -664,6 +664,7 @@ const PositionOpenModal = ({
       <div className="my-3 text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
       {/* Info: (20231019 - Julian) Submit Button */}
       <RippleButton
+        id="open-position-submit-button"
         disabled={
           secondsLeft < 1 ||
           dataFetchErrorRef.current ||

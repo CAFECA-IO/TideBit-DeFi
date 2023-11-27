@@ -332,7 +332,7 @@ const PersonalAchievementModal = ({
         <div className="fixed inset-0 z-80 flex items-center justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-sm focus:outline-none">
           <div className="relative mx-auto my-6 w-auto max-w-xl">
             <div
-              id="personalInfoModal"
+              id="PersonalInfoModal"
               className="relative flex h-530px w-screen flex-col overflow-hidden rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
             >
               {/* Info:(20230515 - Julian) Header */}

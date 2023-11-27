@@ -1043,7 +1043,7 @@ const UpdateFormModal = ({
         </div>
 
         <RippleButton
-          id="update-form-modal-submit-button"
+          id="UpdateFormModalButton"
           disabled={submitDisabledRef.current}
           onClick={buttonClickHandler}
           buttonType="button"

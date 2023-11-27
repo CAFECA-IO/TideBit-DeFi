@@ -29,7 +29,7 @@ const TradeVisitorTab = ({rightPosition}: {rightPosition: string}) => {
                 </div>
                 <div className="mt-10">
                   <WalletConnectButton
-                    id="trade-tab-wallet-connect-button"
+                    id="WalletConnectButtonTradeTab"
                     className="mt-4 py-2 px-5 md:mt-0"
                   />
                 </div>

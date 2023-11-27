@@ -381,7 +381,7 @@ const TickerSelectorBox = ({
       <div className="fixed inset-0 z-80 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
         <div
           className="relative mx-auto my-6 min-w-fit"
-          id="tickerSelectorModal"
+          id="TickerSelectorModalDesktop"
           ref={tickerSelectorBoxRef}
         >
           {/* Info: tab section (20230620 - Shirley) */}
@@ -437,7 +437,7 @@ const TickerSelectorBox = ({
         {/* Info: (20230427 - Julian) The position of the box */}
         <div
           className="relative mx-auto my-10px min-w-fit"
-          id="tickerSelectorModal"
+          id="TickerSelectorModalMobile"
           ref={tickerSelectorBoxRef}
         >
           {/* Info: (20230427 - Julian) ticker cards section */}

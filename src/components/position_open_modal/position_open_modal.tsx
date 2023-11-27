@@ -664,7 +664,7 @@ const PositionOpenModal = ({
       <div className="my-3 text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
       {/* Info: (20231019 - Julian) Submit Button */}
       <RippleButton
-        id="open-position-submit-button"
+        id="OpenPositionButton"
         disabled={
           secondsLeft < 1 ||
           dataFetchErrorRef.current ||
@@ -685,7 +685,7 @@ const PositionOpenModal = ({
       {/* Info: (20231019 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
         <div
-          id="PositionOpenModal"
+          id="OpenPositionModal"
           className="relative mx-auto flex p-6 sm:p-8 w-90vw items-center h-auto sm:w-400px flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80"
         >
           {/* Info: (20231019 - Julian) Header */}

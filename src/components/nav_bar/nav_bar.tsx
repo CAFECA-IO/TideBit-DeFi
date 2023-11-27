@@ -94,7 +94,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <WalletConnectButton id="desktop-wallet-connect-button" className="mt-4 px-5 py-2 md:mt-0" />
+    <WalletConnectButton id="WalletConnectButtonDesktop" className="mt-4 px-5 py-2 md:mt-0" />
   );
 
   const isDisplayedUnreadNumber =
@@ -126,12 +126,12 @@ const NavBar = () => {
     <User notifyOpen={notifyOpen} setNotifyOpen={setNotifyOpen} />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton id="mobile-wallet-connect-button" className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="WalletConnectButtonMobile" className="px-3 py-2 text-sm" />
   );
 
   const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton id="mobile-submenu-wallet-connect-button" className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="WalletConnectButtonMobileMenu" className="px-3 py-2 text-sm" />
   );
 
   const desktopLayout = (
@@ -198,6 +198,7 @@ const NavBar = () => {
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
                   <div
+                    id="LanguageButtonDesktop"
                     className={`${sidebarVisible ? `pointer-events-none` : `pointer-events-auto`}`}
                   >
                     <I18n />
@@ -205,6 +206,7 @@ const NavBar = () => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button
+                    id="NotificationButtonDesktop"
                     onClick={sidebarOpenHandler}
                     className={`w-10 relative hover:cursor-pointer ${
                       sidebarVisible ? `pointer-events-none` : `pointer-events-auto`
@@ -286,6 +288,7 @@ const NavBar = () => {
                   </div>
                 </Link>
                 <button
+                  id="NotificationButtonMobile"
                   onClick={sidebarOpenHandlerMobile}
                   className="relative hover:cursor-pointer"
                 >
@@ -317,7 +320,7 @@ const NavBar = () => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <div className="px-3 py-5">
+                <div id="LanguageButtonMobile" className="px-3 py-5">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
               </div>

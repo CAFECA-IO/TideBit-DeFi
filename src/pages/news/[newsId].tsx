@@ -74,28 +74,24 @@ const NewsPage = (props: IPageProps) => {
         <meta name="twitter:image:alt" content={newsTitle} />
       </Head>
 
-      {appCtx.isInit ? (
-        <>
-          <nav className="">{displayedNavBar}</nav>
-          <main className="w-full">
-            <div className="w-full">
-              <NewsArticle
-                post={props.newsData}
-                shareId={props.newsId}
-                img={newsImg}
-                recommendations={props.brief}
-              />
-            </div>
-          </main>
-
-          <div className="w-full mx-0">
-            {' '}
-            <Footer />
+      <>
+        <nav className="">{displayedNavBar}</nav>
+        <main className="w-full">
+          <div className="w-full">
+            <NewsArticle
+              post={props.newsData}
+              shareId={props.newsId}
+              img={newsImg}
+              recommendations={props.brief}
+            />
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </main>
+
+        <div className="w-full mx-0">
+          {' '}
+          <Footer />
+        </div>
+      </>
     </>
   );
 

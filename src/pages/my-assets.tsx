@@ -20,26 +20,20 @@ const MyAssets = () => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>My Assets - TideBit DeFi</title>
-            <link rel="icon" href={TIDEBIT_FAVICON} />
-          </Head>
+      <Head>
+        <title>My Assets - TideBit DeFi</title>
+        <link rel="icon" href={TIDEBIT_FAVICON} />
+      </Head>
 
+      <div>
+        {displayedNavBar}
+
+        <main>
           <div>
-            {displayedNavBar}
-
-            <main>
-              <div>
-                <AssetsPageBody />
-              </div>
-            </main>
+            <AssetsPageBody />
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </main>
+      </div>
     </>
   );
 

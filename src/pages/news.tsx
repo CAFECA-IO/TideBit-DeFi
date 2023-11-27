@@ -29,25 +29,19 @@ const News = (props: IPageProps) => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>News - TideBit DeFi</title>
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
+      <Head>
+        <title>News - TideBit DeFi</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
-          <nav className="">{displayedNavBar}</nav>
-          <main className="">
-            <div>
-              <NewsPageBody briefs={props.briefs} />
-            </div>
-          </main>
+      <nav className="">{displayedNavBar}</nav>
+      <main className="">
+        <div>
+          <NewsPageBody briefs={props.briefs} />
+        </div>
+      </main>
 
-          <Footer />
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+      <Footer />
     </>
   );
 

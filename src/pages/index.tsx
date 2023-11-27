@@ -19,7 +19,7 @@ const Home = () => {
     }
   }, []);
 
-  return appCtx.isInit ? (
+  return (
     <>
       <Head>
         <title>TideBit DeFi</title>
@@ -33,8 +33,6 @@ const Home = () => {
 
       <Footer />
     </>
-  ) : (
-    <div>Loading...</div>
   );
 };
 

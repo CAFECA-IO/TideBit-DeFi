@@ -995,6 +995,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTicker(tickerData);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers({...updateTickers});
+        // eslint-disable-next-line no-console
+        // console.log('availableTickers', availableTickersRef.current);
         if (tickerData.instId === selectedTickerRef.current?.instId)
           setSelectedTicker(updateTickers[tickerData.instId]);
       }),
@@ -1025,6 +1027,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
         for (const trade of trades) {
           if (trade.instId === selectedTickerRef.current?.instId) {
+            // eslint-disable-next-line no-console
+            console.log('trade in TideBitEvent.TRADES listener', trade);
             tradeBook.add(trade.instId, {
               tradeId: trade.tradeId,
               targetAsset: trade.baseUnit,

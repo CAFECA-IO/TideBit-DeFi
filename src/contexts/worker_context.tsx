@@ -80,40 +80,99 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const subscribeTickers = () => {
+    // eslint-disable-next-line no-console
+    console.log('subscribeTickers called');
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
       channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
         const tickerData = pusherData as ITickerData;
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.TICKERS: pusherData',
+        //   pusherData,
+        //   'channel:',
+        //   channel,
+        //   'pusherRef:',
+        //   pusherRef.current
+        // );
+
         notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
       });
     }
   };
 
   const subscribeTrades = () => {
+    // eslint-disable-next-line no-console
+    console.log('subscribeTrades called');
     if (publicChannelRef.current) {
       publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
         const trade = pusherData as ITrade;
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.TRADES: pusherData',
+        //   pusherData,
+        //   'publicChannelRef:',
+        //   publicChannelRef.current
+        // );
         notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
       });
     }
   };
 
   const subscribeUser = (address: string) => {
+    // eslint-disable-next-line no-console
+    console.log('subscribeUser called');
     if (pusherRef.current) {
       const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
       const channel = pusherRef.current?.subscribe(channelName);
       channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.BALANCE: data',
+        //   data,
+        //   'channel:',
+        //   channel,
+        //   'channel name:',
+        //   channelName
+        // );
         notificationCtx.emitter.emit(Events.BALANCE, data);
       });
       channel.bind(Events.CFD, (data: IPusherPrivateData) => {
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.CFD: data',
+        //   data,
+        //   'channel:',
+        //   channel,
+        //   'channel name:',
+        //   channelName
+        // );
         notificationCtx.emitter.emit(Events.CFD, data);
       });
       channel.bind(Events.BOLT_TRANSACTION, (data: IPusherPrivateData) => {
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.BOLT_TRANSACTION: data',
+        //   data,
+        //   'channel:',
+        //   channel,
+        //   'channel name:',
+        //   channelName
+        // );
         notificationCtx.emitter.emit(Events.BOLT_TRANSACTION, data);
       });
       channel.bind(Events.ASSETS, (data: IPusherPrivateData) => {
+        // eslint-disable-next-line no-console
+        // console.log(
+        //   'channel bind listener Events.ASSETS: data',
+        //   data,
+        //   'channel:',
+        //   channel,
+        //   'channel name:',
+        //   channelName
+        // );
         notificationCtx.emitter.emit(Events.ASSETS, data);
       });
     }
@@ -140,6 +199,8 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       const socketId = pusher.connection.socket_id;
       setSocketId(socketId);
       const channel = pusherRef.current?.subscribe(PusherChannel.GLOBAL_CHANNEL);
+      // eslint-disable-next-line no-console
+      // console.log('pusher connected listener socketId:', socketId, 'channel:', channel);
       if (channel) {
         setPublicChannel(channel);
         subscribeTickers();

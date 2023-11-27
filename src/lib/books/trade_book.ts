@@ -235,15 +235,15 @@ class TradeBook {
     // );
 
     // eslint-disable-next-line no-console
-    console.log(
-      'before trim',
-      trades?.length,
-      predictedTrades?.length,
-      'last 10 of trades',
-      trades.slice(-10),
-      'last 10 of predictedTrades',
-      predictedTrades.slice(-10)
-    );
+    // console.log(
+    //   'before trim',
+    //   trades?.length,
+    //   predictedTrades?.length,
+    //   'last 10 of trades',
+    //   trades.slice(-10),
+    //   'last 10 of predictedTrades',
+    //   predictedTrades.slice(-10)
+    // );
 
     if (trades[0]?.timestampMs < cutoffTime || predictedTrades[0]?.timestampMs < cutoffTime) {
       const trimmedTrades = Object.values(
@@ -276,13 +276,13 @@ class TradeBook {
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
       // eslint-disable-next-line no-console
-      console.log(
-        'after trim',
-        this.getTrades(instId).length,
-        this.getPredictedTrades(instId).length,
-        'last 10 of predictedTrades',
-        this.getPredictedTrades(instId).slice(-10)
-      );
+      // console.log(
+      //   'after trim',
+      //   this.getTrades(instId).length,
+      //   this.getPredictedTrades(instId).length,
+      //   'last 10 of predictedTrades',
+      //   this.getPredictedTrades(instId).slice(-10)
+      // );
     }
   }
 

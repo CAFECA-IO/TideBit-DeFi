@@ -83,7 +83,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const subscribeTickers = () => {
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      channel.unbind(Events.TICKERS).bind(Events.TICKERS, (pusherData: IPusherData) => {
+      channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
         const tickerData = pusherData as ITickerData;
         notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
       });
@@ -92,12 +92,10 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const subscribeTrades = () => {
     if (publicChannelRef.current) {
-      publicChannelRef.current
-        .unbind(Events.TRADES)
-        .bind(Events.TRADES, (pusherData: IPusherData) => {
-          const trade = pusherData as ITrade;
-          notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
-        });
+      publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
+        const trade = pusherData as ITrade;
+        notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
+      });
     }
   };
 

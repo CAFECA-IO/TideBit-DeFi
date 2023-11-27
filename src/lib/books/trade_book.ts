@@ -275,14 +275,6 @@ class TradeBook {
       ).sort((a, b) => +a.tradeId - +b.tradeId);
 
       this.predictedTrades.set(instId, trimmedPredictedTrades);
-      // eslint-disable-next-line no-console
-      // console.log(
-      //   'after trim',
-      //   this.getTrades(instId).length,
-      //   this.getPredictedTrades(instId).length,
-      //   'last 10 of predictedTrades',
-      //   this.getPredictedTrades(instId).slice(-10)
-      // );
     }
   }
 

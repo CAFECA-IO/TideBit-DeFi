@@ -59,7 +59,7 @@ const Trading = (props: IPageProps) => {
   return appCtx.isInit ? (
     <>
       <Head>
-        <title>[refactor PR] CFD - TideBit DeFi</title>
+        <title>CFD - TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 

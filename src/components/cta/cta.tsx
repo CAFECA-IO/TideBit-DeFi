@@ -44,6 +44,7 @@ const Cta = () => {
             </div>
             <div className="flex items-center space-x-2 pt-6">
               <a
+                id="WhitepaperButton"
                 href={t('HOME_PAGE.WHITEPAPER_LINK')}
                 download
                 className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
@@ -52,6 +53,7 @@ const Cta = () => {
                 <FiBookOpen size={20} />
               </a>
               <a
+                id="ContactEmailButton"
                 href={`mailto:${CONTACT_EMAIL}`}
                 className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
               >

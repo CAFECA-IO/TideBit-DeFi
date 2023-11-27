@@ -45,6 +45,7 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
+                id="IncomeStatementDownload"
                 href={`${t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}`}
                 target="_blank"
                 rel="noreferrer"
@@ -66,6 +67,7 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
+                id="BalanceSheetDownload"
                 href={`${t('HOME_PAGE.BALANCE_SHEET_LINK')}`}
                 target="_blank"
                 rel="noreferrer"
@@ -85,6 +87,7 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
+                id="CashFlowStatementDownload"
                 href={`${t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}`}
                 target="_blank"
                 rel="noreferrer"
@@ -108,6 +111,7 @@ const AuditReport = () => {
             <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
+                id="RedFlagAnalysisDownload"
                 href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
                 target="_blank"
                 rel="noreferrer"

@@ -49,6 +49,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={desktopClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonDesktop`}
                 scroll={false}
                 locale={item.value}
                 href={asPath}
@@ -77,6 +78,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={mobileClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonMobile`}
                 scroll={false}
                 locale={item.value}
                 href={asPath}

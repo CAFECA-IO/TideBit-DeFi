@@ -54,7 +54,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
       className={`cursor-pointer overflow-hidden ${itemStyle} w-full transition-all duration-100 ease-in-out lg:duration-500`}
       onClick={itemClickHandler}
     >
-      <div className="flex">
+      <div id={notificationItem.id} className="flex">
         {/* Info: (20230420 - Julian) Vertical line */}
         <span className={`ml-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
 

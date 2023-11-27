@@ -84,20 +84,24 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     console.log('subscribeTickers called');
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
-        const tickerData = pusherData as ITickerData;
-        // eslint-disable-next-line no-console
-        // console.log(
-        //   'channel bind listener Events.TICKERS: pusherData',
-        //   pusherData,
-        //   'channel:',
-        //   channel,
-        //   'pusherRef:',
-        //   pusherRef.current
-        // );
+      channel.unbind(Events.TICKERS).bind(
+        Events.TICKERS,
+        (pusherData: IPusherData) => {
+          const tickerData = pusherData as ITickerData;
+          // eslint-disable-next-line no-console
+          // console.log(
+          //   'channel bind listener Events.TICKERS: pusherData',
+          //   pusherData,
+          //   'channel:',
+          //   channel,
+          //   'pusherRef:',
+          //   pusherRef.current
+          // );
 
-        notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
-      });
+          notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
+        }
+        // ,channel.unbind.bind(channel, Events.TICKERS)
+      );
     }
   };
 
@@ -105,17 +109,19 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     // eslint-disable-next-line no-console
     console.log('subscribeTrades called');
     if (publicChannelRef.current) {
-      publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const trade = pusherData as ITrade;
-        // eslint-disable-next-line no-console
-        // console.log(
-        //   'channel bind listener Events.TRADES: pusherData',
-        //   pusherData,
-        //   'publicChannelRef:',
-        //   publicChannelRef.current
-        // );
-        notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
-      });
+      publicChannelRef.current
+        .unbind(Events.TRADES)
+        .bind(Events.TRADES, (pusherData: IPusherData) => {
+          const trade = pusherData as ITrade;
+          // eslint-disable-next-line no-console
+          // console.log(
+          //   'channel bind listener Events.TRADES: pusherData',
+          //   pusherData,
+          //   'publicChannelRef:',
+          //   publicChannelRef.current
+          // );
+          notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
+        });
     }
   };
 

@@ -62,7 +62,7 @@ const Cta = () => {
             <div className="pt-2 md:pt-8 xl:pt-5">
               <Link href={TBDURL.TRADE}>
                 <TideButton
-                  id="cta-button"
+                  id="CtaButton"
                   className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
                 >
                   {t('HOME_PAGE.CTA_BUTTON')}
@@ -118,7 +118,7 @@ const Cta = () => {
           <div className="mx-auto pt-4 md:pt-8">
             <Link href={TBDURL.TRADE}>
               <TideButton
-                id="cta-button"
+                id="CtaButton"
                 className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-3 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
               >
                 {t('HOME_PAGE.CTA_BUTTON')}

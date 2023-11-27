@@ -21,7 +21,7 @@ const HelloModal = ({helloModalRef, helloModalVisible = false, helloClickHandler
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           <div
-            id="connectModal"
+            id="HelloModal"
             ref={helloModalRef}
             className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
@@ -47,7 +47,7 @@ const HelloModal = ({helloModalRef, helloModalVisible = false, helloClickHandler
                   </div>
 
                   <TideButton
-                    id="hello-modal-button"
+                    id="HelloModalButton"
                     className="rounded bg-tidebitTheme px-12 py-2 font-normal transition-all hover:opacity-90"
                     onClick={helloClickHandler}
                   >

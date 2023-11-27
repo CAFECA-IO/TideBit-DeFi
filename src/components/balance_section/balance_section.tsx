@@ -126,7 +126,7 @@ const BalanceSection = () => {
 
         <div className="flex justify-center space-x-5">
           <RippleButton
-            id="balance-section-deposit-button"
+            id="BalanceSectionDepositButton"
             className={`${btnStyle}`}
             onClick={depositClickHandler}
             buttonType="button"
@@ -136,7 +136,7 @@ const BalanceSection = () => {
 
           {/* Info: (20230530 - Julian) disabled withdraw */}
           <RippleButton
-            id="balance-section-withdraw-button"
+            id="BalanceSectionWithdrawButton"
             className={`${btnStyle}`}
             onClick={withdrawClickHandler}
             buttonType="button"

@@ -23,7 +23,7 @@ const DevToast = ({
         <div className="flex justify-center space-x-2">
           <div
             className="pointer-events-auto z-80 mx-auto mr-5 mt-2 block w-72 max-w-full rounded-lg bg-white bg-clip-padding text-sm shadow-md shadow-cuteBlue/70 outline-none focus:outline-none"
-            id="delicious toast"
+            id="DeliciousToast"
             role="alert"
             aria-live="assertive"
             aria-atomic="true"

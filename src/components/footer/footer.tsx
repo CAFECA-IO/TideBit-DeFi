@@ -149,13 +149,13 @@ const Footer = () => {
                     <input
                       placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
                       type="text"
-                      id="email_desktop"
+                      id="FooterEmailDesktop"
                       name="email"
                       className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
                     />
                   </div>
                   <RippleButton
-                    id="footer-subscribe-button"
+                    id="FooterSubscribeButton"
                     buttonType="button"
                     className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   >
@@ -224,13 +224,13 @@ const Footer = () => {
                       <input
                         placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
                         type="text"
-                        id="email_mobile"
+                        id="FooterEmailMobile"
                         name="email"
                         className="block w-full rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
                       />
                     </div>
                     <RippleButton
-                      id="footer-subscribe-button"
+                      id="FooterSubscribeButton"
                       buttonType="button"
                       className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                     >

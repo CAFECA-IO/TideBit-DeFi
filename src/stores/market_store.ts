@@ -42,6 +42,7 @@ import useState from 'react-usestateref';
 import TickerBookInstance from '../lib/books/ticker_book';
 import useWorkerStore from './worker_store';
 import {useShallow} from 'zustand/react/shallow';
+import useNewWorkerStore from './new_worker_store';
 
 type MarketStore = {
   isInit: boolean;
@@ -76,11 +77,17 @@ type MarketStore = {
   init: () => Promise<void>;
   addTradesToTradeBook: (trades: ITrade[]) => boolean | undefined;
   convertTradesToCandlesticks: () => ICandlestickData[];
+
+  testResult: {count: number};
+  randNum: number;
 };
 
 const useMarketStore = create<MarketStore>((set, get) => {
   const tickerBook = TickerBookInstance;
   const tradeBook = TradeBookInstance;
+  const workerFetchData = useNewWorkerStore.getState().fetchData;
+  const jobQueue = useNewWorkerStore.getState().jobQueue;
+  const testResult = {count: 1128};
 
   const listWebsiteReserve = async () => {
     const result = await get().fetchData('https://api.tidebit-defi.com/api/v1/public/reserve');
@@ -221,12 +228,44 @@ const useMarketStore = create<MarketStore>((set, get) => {
     await initGuaranteedStopLossFeePercentage();
   };
 
+  // FIXME: setTestResult
+
   const init = async () => {
     if (!get().isInit) {
-      await initBasicInfo();
-      await initCandlestickData('ETH-USDT', TimeSpanUnion._1h);
-      await initMarketTrades('ETH-USDT');
-      // await workerInit();
+      try {
+        // eslint-disable-next-line no-console
+        console.log('marketStore init()');
+        await initBasicInfo();
+        await initCandlestickData('ETH-USDT', TimeSpanUnion._1h);
+        await initMarketTrades('ETH-USDT');
+
+        // const rsFromHandler = await requestHandler({
+        //   name: APIName.TEST_API_URL,
+        //   method: Method.GET,
+        // });
+        // eslint-disable-next-line no-console
+        console.log('jobQueue from worker store in marketStore', jobQueue);
+        const rs = (await workerFetchData('https://api.publicapis.org/entries')) as {count: number};
+        // eslint-disable-next-line no-console
+        console.log('rs from workerFetchData', rs);
+        set({testResult: {count: rs?.count ?? 404}});
+
+        const newJobQueue = useNewWorkerStore.getState().jobQueue;
+        // eslint-disable-next-line no-console
+        console.log('after workerFetchData jobQueue from worker store in marketStore', newJobQueue);
+
+        // const rsDirect = await (await fetch('https://api.publicapis.org/entries')).json();
+        // // eslint-disable-next-line no-console
+        // // console.log('rsFromHandler', rsFromHandler);
+        // // eslint-disable-next-line no-console
+        // console.log('rsDirect', rsDirect);
+
+        // await workerInit();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log('marketStore init() error', error);
+      }
+
       set({isInit: true});
     }
   };
@@ -434,6 +473,20 @@ const useMarketStore = create<MarketStore>((set, get) => {
     set({candlestickIsLoading: false});
   };
 
+  setInterval(() => {
+    const randomNum = Math.random();
+    set({testResult: {count: randomNum}});
+    // eslint-disable-next-line no-console
+    console.log(
+      'interval called in marketStore',
+      Date.now(),
+      'randomNum',
+      randomNum,
+      'testResult',
+      testResult
+    );
+  }, 1000);
+
   return {
     isInit: false,
     selectedTicker: dummyTicker,
@@ -495,6 +548,8 @@ const useMarketStore = create<MarketStore>((set, get) => {
 
     addTradesToTradeBook,
     convertTradesToCandlesticks,
+    testResult,
+    randNum: 200,
   };
 });
 

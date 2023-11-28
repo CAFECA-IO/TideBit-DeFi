@@ -1,7 +1,13 @@
 import {create} from 'zustand';
 import keccak from '@cafeca/keccak';
 import Pusher, {Channel} from 'pusher-js';
-import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
+import {
+  APIName,
+  formatAPIRequest,
+  FormatedTypeRequest,
+  Method,
+  TypeRequest,
+} from '../constants/api_request';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
@@ -40,8 +46,6 @@ type WorkerStore = {
   tickers: ITickerData[] | null;
   userData: any;
 
-  testNum: number;
-
   init: () => Promise<void>;
   // apiInit: () => void;
   // pusherInit: () => void;
@@ -57,14 +61,6 @@ let jobTimer: NodeJS.Timeout | null = null;
 const useWorkerStore = create<WorkerStore>((set, get) => {
   let jobQueueOfWS: ((...args: []) => Promise<void>)[] = [];
   let jobQueueOfAPI: ((...args: []) => Promise<void>)[] = [];
-
-  let testNum = 0;
-
-  const increase = () => {
-    setInterval(() => {
-      set({testNum: testNum++});
-    }, 5000);
-  };
 
   const apiInit = () => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
@@ -118,13 +114,33 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
   };
 
   const init = async () => {
-    // apiInit();
+    apiInit();
     pusherInit();
-    increase();
-    // await _apiWorker();
+    await _apiWorker();
+    /* Info:
+Unhandled Runtime Error
+TypeError: Failed to fetch
+
+Source
+src/lib/workers/api.worker.ts (16:27) @ fetch
+
+  14 |   // mode: 'cors' as RequestMode, //Info: due to enable cors in backend, so here is no need to set request mode (20230508 - Tzuhan)
+  15 | };
+> 16 | const response = await fetch(url, request);
+     |                       ^
+    */
+    // const rsInWorker = await requestHandler({
+    //   name: APIName.GET_TICKER_STATIC,
+    //   method: Method.GET,
+    //   params: 'BTC-USDT',
+    // });
+    // // eslint-disable-next-line no-console
+    // console.log('rsInWorker', rsInWorker);
   };
 
   const createJob = (type: IJobType, callback: () => Promise<unknown>) => {
+    // eslint-disable-next-line no-console
+    console.log('createJob called', type, callback);
     const job = () => {
       return new Promise<void>(async (resolve, reject) => {
         try {
@@ -149,6 +165,8 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
   };
 
   const requestHandler = async (data: TypeRequest) => {
+    // eslint-disable-next-line no-console
+    console.log('worker store requestHandler called', data);
     const apiWorker = get().apiWorker;
 
     if (apiWorker) {
@@ -162,6 +180,7 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
           }
         };
       });
+
       apiWorker.postMessage(request.request);
       return promise;
     } else {
@@ -258,8 +277,6 @@ const useWorkerStore = create<WorkerStore>((set, get) => {
     trades: [],
     tickers: null,
     userData: null,
-
-    testNum,
 
     jobQueueOfWS,
     jobQueueOfAPI,

@@ -70,7 +70,8 @@ export type IAPIName =
   | 'LIST_READ_NOTIFICATIONS'
   | 'READ_NOTIFICATIONS'
   | 'ENABLE_CFD_SHARE'
-  | 'SHARE_CFD';
+  | 'SHARE_CFD'
+  | 'TEST_API_URL';
 export interface IAPINameConstant {
   // general
   LIST_NEWS: IAPIName;
@@ -138,6 +139,7 @@ export interface IAPINameConstant {
   READ_NOTIFICATIONS: IAPIName;
   ENABLE_CFD_SHARE: IAPIName;
   SHARE_CFD: IAPIName;
+  TEST_API_URL: IAPIName;
 }
 export const APIName: IAPINameConstant = {
   // general
@@ -206,6 +208,7 @@ export const APIName: IAPINameConstant = {
   READ_NOTIFICATIONS: 'READ_NOTIFICATIONS',
   ENABLE_CFD_SHARE: 'ENABLE_CFD_SHARE',
   SHARE_CFD: 'SHARE_CFD',
+  TEST_API_URL: 'TEST_API_URL',
 };
 
 export const APIURL = {
@@ -275,6 +278,7 @@ export const APIURL = {
   READ_NOTIFICATIONS: '/api/user/notifications',
   ENABLE_CFD_SHARE: `${apiUrl}/api/${apiVersion}/cfds/share`,
   SHARE_CFD: `${apiUrl}/api/${apiVersion}/public/shared/cfd`,
+  TEST_API_URL: `https://api.publicapis.org/entries`,
 };
 
 export const TBEURL = {

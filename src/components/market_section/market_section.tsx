@@ -8,6 +8,8 @@ import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {DEFAULT_ICON} from '../../constants/display';
 import {DEFAULT_CRYPTO} from '../../constants/config';
+import useNewWorkerStore from '../../stores/new_worker_store';
+import useMarketStore from '../../stores/market_store';
 
 interface IMarketSectionProps {
   briefs: IRecommendedNews[];
@@ -15,6 +17,14 @@ interface IMarketSectionProps {
 }
 
 const MarketSection = (props: IMarketSectionProps) => {
+  const test1 = useMarketStore(s => s.testResult);
+  const test2 = useMarketStore(s => s.testResult);
+
+  // eslint-disable-next-line no-console
+  console.log('test1: ', test1);
+  // eslint-disable-next-line no-console
+  console.log('test2: ', test2);
+
   // const marketCtx = useContext(MarketContext);
 
   // const {
@@ -33,6 +43,7 @@ const MarketSection = (props: IMarketSectionProps) => {
   // } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
   // const displayedTickerHeader = <TradingHeader />;
+  // const fetcher = useNewWorkerStore(s => s.fetchData);
 
   const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
 
@@ -42,6 +53,14 @@ const MarketSection = (props: IMarketSectionProps) => {
 
   return (
     <div className="ml-5 py-100px">
+      <div className="">
+        <div className="">
+          test1 is the same testResult from marketStore in MarketSection component: {test1.count}
+        </div>
+        <div className="">
+          test2 is the same testResult from marketStore in MarketSection component: {test2.count}
+        </div>
+      </div>
       {/* <div className="ml-5">{displayedTickerHeader}</div> */}
 
       <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>

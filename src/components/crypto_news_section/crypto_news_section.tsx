@@ -1,8 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Link from 'next/link';
 import CryptoNewsItem from '../crypto_news_item/crypto_news_item';
 import {useTranslation} from 'next-i18next';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import useMarketStore from '../../stores/market_store';
+import useUserStore from '../../stores/user_store';
+import TestResult from '../test_result/test_result';
+import UserBadge from '../user_badge/user_badge';
 
 type TranslateFunction = (s: string) => string;
 
@@ -41,6 +45,8 @@ const CryptoNewsSection = (props: ICryptoNewsSectionProps) => {
 
   return (
     <>
+      <TestResult />
+      <UserBadge />
       <div className="flex-col justify-start">
         <h1 className="pr-12 text-start text-xl text-lightWhite">
           {t('TRADE_PAGE.CRYPTO_NEWS_SECTION_TITLE')}

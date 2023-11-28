@@ -16,15 +16,18 @@ import useMarketStore from '../stores/market_store';
 import useWorkerStore from '../stores/worker_store';
 import useSyncTrades from '../lib/hooks/use_sync_trades';
 import {useShallow} from 'zustand/react/shallow';
+import useNewWorkerStore from '../stores/new_worker_store';
 
 function MyApp({Component, pageProps}: AppProps) {
   const marketInit = useMarketStore(s => s.init);
   const marketIsInit = useMarketStore(s => s.isInit);
+
   const syncCandlestickData = useMarketStore(s => s.syncCandlestickData);
   const setCandlestickInterval = useMarketStore(s => s.setCandlestickInterval);
   const candlestickChartData = useMarketStore(useShallow(s => s.candlestickChartData));
 
-  const workerInit = useWorkerStore(s => s.init);
+  // const workerInit = useWorkerStore(s => s.init);
+  const newWorkerInit = useNewWorkerStore(s => s.init);
 
   // const syncTrades = useSyncTrades();
 
@@ -50,7 +53,7 @@ function MyApp({Component, pageProps}: AppProps) {
       // // eslint-disable-next-line no-console
       // console.log('before marketInit in _app');
       marketInit();
-      workerInit();
+      newWorkerInit();
       // // eslint-disable-next-line no-console
       // console.log('after marketInit in _app');
     }

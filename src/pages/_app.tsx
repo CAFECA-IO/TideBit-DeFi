@@ -26,7 +26,7 @@ function MyApp({Component, pageProps}: AppProps) {
   const setCandlestickInterval = useMarketStore(s => s.setCandlestickInterval);
   const candlestickChartData = useMarketStore(useShallow(s => s.candlestickChartData));
 
-  // const workerInit = useWorkerStore(s => s.init);
+  const workerInit = useWorkerStore(s => s.init);
   const newWorkerInit = useNewWorkerStore(s => s.init);
 
   // const syncTrades = useSyncTrades();
@@ -52,6 +52,7 @@ function MyApp({Component, pageProps}: AppProps) {
     if (active) {
       // // eslint-disable-next-line no-console
       // console.log('before marketInit in _app');
+      workerInit();
       marketInit();
       newWorkerInit();
       // // eslint-disable-next-line no-console

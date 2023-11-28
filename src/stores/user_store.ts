@@ -29,7 +29,10 @@ const useUserStore = create<UserStore>((set, get) => {
       'https://datausa.io/api/data?drilldowns=Nation&measures=Population'
     )) as NationData;
 
-    set({badge: [...badge, data.data[0]['ID Nation']]});
+    if (!!data) {
+      set({badge: [...badge, data.data[0]['ID Nation']]});
+    }
+
     // eslint-disable-next-line no-console
     console.log('data in updateData', data, 'badge in user store', get().badge);
   };

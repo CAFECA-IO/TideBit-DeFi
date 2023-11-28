@@ -80,6 +80,7 @@ type MarketStore = {
 
   testResult: {count: number};
   randNum: number;
+  setTestResult: (count: number) => void;
 };
 
 const useMarketStore = create<MarketStore>((set, get) => {
@@ -227,8 +228,6 @@ const useMarketStore = create<MarketStore>((set, get) => {
     await initTickers();
     await initGuaranteedStopLossFeePercentage();
   };
-
-  // FIXME: setTestResult
 
   const init = async () => {
     if (!get().isInit) {
@@ -473,19 +472,19 @@ const useMarketStore = create<MarketStore>((set, get) => {
     set({candlestickIsLoading: false});
   };
 
-  setInterval(() => {
-    const randomNum = Math.random();
-    set({testResult: {count: randomNum}});
-    // eslint-disable-next-line no-console
-    console.log(
-      'interval called in marketStore',
-      Date.now(),
-      'randomNum',
-      randomNum,
-      'testResult',
-      testResult
-    );
-  }, 1000);
+  // setInterval(() => {
+  //   const randomNum = Math.random();
+  //   set({testResult: {count: randomNum}});
+  //   // eslint-disable-next-line no-console
+  //   console.log(
+  //     'interval called in marketStore',
+  //     Date.now(),
+  //     'randomNum',
+  //     randomNum,
+  //     'testResult',
+  //     testResult
+  //   );
+  // }, 5000);
 
   return {
     isInit: false,
@@ -550,6 +549,7 @@ const useMarketStore = create<MarketStore>((set, get) => {
     convertTradesToCandlesticks,
     testResult,
     randNum: 200,
+    setTestResult: (count: number) => set({testResult: {count}}),
   };
 });
 

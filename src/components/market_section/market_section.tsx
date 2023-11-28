@@ -10,6 +10,7 @@ import {DEFAULT_ICON} from '../../constants/display';
 import {DEFAULT_CRYPTO} from '../../constants/config';
 import useNewWorkerStore from '../../stores/new_worker_store';
 import useMarketStore from '../../stores/market_store';
+import TestResult1 from '../test_result_1/test_result_1';
 
 interface IMarketSectionProps {
   briefs: IRecommendedNews[];
@@ -17,13 +18,13 @@ interface IMarketSectionProps {
 }
 
 const MarketSection = (props: IMarketSectionProps) => {
-  const test1 = useMarketStore(s => s.testResult);
-  const test2 = useMarketStore(s => s.testResult);
+  // const test1 = useMarketStore(s => s.testResult);
+  // const test2 = useMarketStore(s => s.testResult);
 
-  // eslint-disable-next-line no-console
-  console.log('test1: ', test1);
-  // eslint-disable-next-line no-console
-  console.log('test2: ', test2);
+  // // eslint-disable-next-line no-console
+  // console.log('test1: ', test1);
+  // // eslint-disable-next-line no-console
+  // console.log('test2: ', test2);
 
   // const marketCtx = useContext(MarketContext);
 
@@ -54,12 +55,13 @@ const MarketSection = (props: IMarketSectionProps) => {
   return (
     <div className="ml-5 py-100px">
       <div className="">
-        <div className="">
+        <TestResult1 />
+        {/* <div className="">
           test1 is the same testResult from marketStore in MarketSection component: {test1.count}
         </div>
         <div className="">
           test2 is the same testResult from marketStore in MarketSection component: {test2.count}
-        </div>
+        </div> */}
       </div>
       {/* <div className="ml-5">{displayedTickerHeader}</div> */}
 

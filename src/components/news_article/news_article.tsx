@@ -85,7 +85,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
               <div className="mb-3">Share this on</div>
               <div className="flex justify-start space-x-5">
                 {Object.entries(ShareSettings).map(([key, value]) => (
-                  <div id={`ShareTo${key}`} key={key} className={`${socialMediaStyle}`}>
+                  <div id={`ShareNewsTo${key}`} key={key} className={`${socialMediaStyle}`}>
                     <Image
                       onClick={() => share({socialMedia: key as ISocialMedia, text: value.TEXT})}
                       src={value.ICON}

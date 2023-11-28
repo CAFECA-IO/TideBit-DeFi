@@ -39,6 +39,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       className={`inline-flex space-x-4 text-3xl text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <button
+        id="ShareBadgeToFacebook"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.FACEBOOK,
@@ -49,6 +50,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
         <BsFacebook className="hover:text-lightGray2" />
       </button>
       <button
+        id="ShareBadgeToTwitter"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.TWITTER,
@@ -59,6 +61,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
         <BsTwitter className="hover:text-lightGray2" />
       </button>
       <button
+        id="ShareBadgeToReddit"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.REDDIT,

@@ -303,7 +303,7 @@ const HistoryPositionModal = ({
         <div className="flex items-center justify-between">
           {Object.entries(ShareSettings).map(([key, value]) => (
             <div
-              id={`ShareTo${key}`}
+              id={`ShareHistoryTo${key}`}
               key={key}
               className={`text-base hover:cursor-pointer hover:opacity-80`}
             >

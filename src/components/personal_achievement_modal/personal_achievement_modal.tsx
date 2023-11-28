@@ -224,7 +224,7 @@ const PersonalAchievementModal = ({
     return data;
   });
 
-  const displayedBadgeList = BADGE_LIST.map(({description, icon, iconSkeleton}, index) => {
+  const displayedBadgeList = BADGE_LIST.map(({description, icon, iconSkeleton, id}, index) => {
     const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
     const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
@@ -250,6 +250,7 @@ const PersonalAchievementModal = ({
 
     return (
       <div
+        id={`Badge${id}`}
         key={index}
         className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
         onClick={clickBadgeHandler}
@@ -339,7 +340,7 @@ const PersonalAchievementModal = ({
               <div className="flex items-center justify-between rounded-t pt-9">
                 <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                   <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                    <ImCross onClick={closeModalHandler} />
+                    <ImCross id="PersonalAchievementModalCloseButton" onClick={closeModalHandler} />
                   </span>
                 </button>
               </div>

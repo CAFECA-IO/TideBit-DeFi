@@ -302,7 +302,11 @@ const HistoryPositionModal = ({
         <p>{t('POSITION_MODAL.SHARE')}:</p>
         <div className="flex items-center justify-between">
           {Object.entries(ShareSettings).map(([key, value]) => (
-            <div key={key} className={`text-base hover:cursor-pointer hover:opacity-80`}>
+            <div
+              id={`ShareTo${key}`}
+              key={key}
+              className={`text-base hover:cursor-pointer hover:opacity-80`}
+            >
               <Image
                 onClick={() => share({socialMedia: key as ISocialMedia, text: value.TEXT})}
                 src={value.ICON}
@@ -336,7 +340,7 @@ const HistoryPositionModal = ({
             </div>
             {/* Info: (20231005 - Julian) Close Button */}
             <button className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-              <ImCross onClick={modalClickHandler} />
+              <ImCross id="HistoryPositionModalCloseButton" onClick={modalClickHandler} />
             </button>
           </div>
           {/* Info: (20231005 - Julian) Form Content */}

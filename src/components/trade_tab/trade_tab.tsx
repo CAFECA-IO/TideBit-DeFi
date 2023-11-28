@@ -1084,6 +1084,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       } flex items-start transition-all duration-150 ease-in-out lg:mb-10 lg:mt-0`}
     >
       <input
+        id="LongGuaranteedStopCheckbox"
         type="checkbox"
         disabled={SafeMath.lt(
           availableBalance,
@@ -1230,6 +1231,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     >
       <div className="mt-0 flex items-center">
         <input
+          id="ShortGuaranteedStopCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(
             availableBalance,

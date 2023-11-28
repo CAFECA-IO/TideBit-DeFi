@@ -539,6 +539,7 @@ const UpdateFormModal = ({
     <div className="">
       <div className="flex items-center text-center">
         <input
+          id="UpdateFormGuaranteedStopCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(availableBalance, guaranteedStopFeeRef.current)}
           checked={guaranteedCheckedRef.current}

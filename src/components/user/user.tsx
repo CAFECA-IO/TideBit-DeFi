@@ -72,7 +72,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       >
         <li>
           <button
-            id="MyAssetsButtonMobile"
+            id="MyAssetsButton"
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
             <Link href={TBDURL.MY_ASSETS}>
@@ -85,7 +85,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="DepositButtonMobile"
+            id="DepositButton"
             onClick={depositClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
@@ -97,7 +97,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="WithdrawButtonMobile"
+            id="WithdrawButton"
             onClick={withdrawClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
@@ -110,7 +110,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="AccountSettingButtonMobile"
+            id="AccountSettingButton"
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
@@ -124,7 +124,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="DisconnectButtonMobile"
+            id="DisconnectButton"
             onClick={userCtx.disconnect}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >

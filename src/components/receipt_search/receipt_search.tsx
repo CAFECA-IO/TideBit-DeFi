@@ -124,6 +124,7 @@ const ReceiptSearch = ({
         {/* Info: (20230921 - Julian) Trading Type Dropdown Menu */}
         <div className="relative mt-2 hidden w-160px lg:block">
           <button
+            id="TradingTypeMenuButton"
             className={`flex w-full items-center justify-between px-5 py-3 text-left text-lightGray4 transition-all duration-200 ease-in-out hover:cursor-pointer ${
               tradingTypeMenuOpen ? 'bg-darkGray2' : 'bg-darkGray7'
             }`}
@@ -143,28 +144,58 @@ const ReceiptSearch = ({
               tradingTypeMenuOpen ? 'flex opacity-100' : 'hidden opacity-0'
             }`}
           >
-            <button className={`${dropMenuItemStyle}`} onClick={allButtonClickHandler}>
+            <button
+              id="TypeAllButton"
+              className={`${dropMenuItemStyle}`}
+              onClick={allButtonClickHandler}
+            >
               {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_ALL')}
             </button>
-            <button className={`${dropMenuItemStyle}`} onClick={depositButtonClickHandler}>
+            <button
+              id="TypeDepositButton"
+              className={`${dropMenuItemStyle}`}
+              onClick={depositButtonClickHandler}
+            >
               {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')}
             </button>
-            <button className={`${dropMenuItemStyle}`} onClick={withdrawButtonClickHandler}>
+            <button
+              id="TypeWithdrawButton"
+              className={`${dropMenuItemStyle}`}
+              onClick={withdrawButtonClickHandler}
+            >
               {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')}
             </button>
-            <button className={`${dropMenuItemStyle}`} onClick={openPositionButtonClickHandler}>
+            <button
+              id="TypeOpenButton"
+              className={`${dropMenuItemStyle}`}
+              onClick={openPositionButtonClickHandler}
+            >
               {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')}
             </button>
-            <button className={`${dropMenuItemStyle}`} onClick={closePositionButtonClickHandler}>
+            <button
+              id="TypeCloseButton"
+              className={`${dropMenuItemStyle}`}
+              onClick={closePositionButtonClickHandler}
+            >
               {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')}
             </button>
           </div>
         </div>
         {/* Info: (20230921 - Julian) Date Picker */}
         <div className="mt-2 hidden items-center space-x-2 lg:flex">
-          <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
+          <DatePicker
+            id="DateStart"
+            date={dateStart}
+            setDate={dateStartUpdateHandler}
+            maxDate={dateEnd}
+          />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
-          <DatePicker date={dateEnd} setDate={dateEndUpdateHandler} minDate={dateStart} />
+          <DatePicker
+            id="DateEnd"
+            date={dateEnd}
+            setDate={dateEndUpdateHandler}
+            minDate={dateStart}
+          />
         </div>
         {/* Info: (20230921 - Julian) Search Bar */}
         <div className="relative w-full lg:col-span-2 lg:ml-auto lg:w-300px">

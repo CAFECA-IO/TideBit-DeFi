@@ -133,7 +133,7 @@ const DepositHistoryModal = ({
             <div className="flex items-center justify-between rounded-t pt-9">
               <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
+                  <ImCross id="DepositHistoryModalCloseButton" onClick={modalClickHandler} />
                 </span>
               </button>
             </div>

@@ -17,6 +17,10 @@ interface ITradingInputProps {
   inputValueFromParent?: number;
   setInputValueFromParent?: Dispatch<SetStateAction<number>>;
 
+  inputId: string;
+  decrementBtnId: string;
+  incrementBtnId: string;
+
   inputName: string;
   decrementBtnSize: string;
   incrementBtnSize: string;
@@ -49,6 +53,10 @@ const TradingInput = ({
   inputPlaceholder,
   getInputValue,
   getIsValueValid,
+
+  inputId,
+  decrementBtnId,
+  incrementBtnId,
 
   lowerLimit,
   upperLimit,
@@ -222,9 +230,8 @@ const TradingInput = ({
 
   return (
     <>
-      {' '}
       <div className="flex items-center justify-center">
-        <button type="button" onClick={decrementClickHandler}>
+        <button id={decrementBtnId} type="button" onClick={decrementClickHandler}>
           <svg
             id="Group_15147"
             data-name="Group 15147"
@@ -254,6 +261,7 @@ const TradingInput = ({
 
         <div className="">
           <input
+            id={inputId}
             type="number"
             className={`${inputSize} rounded-none bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
             disabled={
@@ -270,7 +278,7 @@ const TradingInput = ({
           />
         </div>
 
-        <button type="button" onClick={incrementClickHandler} className="">
+        <button id={incrementBtnId} type="button" onClick={incrementClickHandler} className="">
           <svg
             id="Group_15149"
             data-name="Group 15149"

@@ -56,6 +56,7 @@ const PositionTab = ({
       <ul className="mb-2 flex flex-wrap justify-center text-center text-sm font-medium">
         <li className="">
           <button
+            id="OpenTab"
             onClick={openTabClickHandler}
             className={`${activeOpenTabStyle} inline-block px-11 py-1`}
           >
@@ -64,6 +65,7 @@ const PositionTab = ({
         </li>
         <li className="">
           <button
+            id="HistoryTab"
             onClick={historyTabClickHandler}
             className={`${activeHistoryTabStyle} inline-block px-11 py-1`}
           >
@@ -109,7 +111,7 @@ const PositionTab = ({
 
   const mobileLayout = (
     <div className="rounded-md bg-darkGray5 p-3">
-      <button onClick={subMenuClickHandler} className="m-auto block">
+      <button id="PositionMenuMobile" onClick={subMenuClickHandler} className="m-auto block">
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       </button>
 

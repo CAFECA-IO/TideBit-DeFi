@@ -304,6 +304,7 @@ const TickerSelectorBox = ({
       <div className="z-10 hidden w-90vw max-w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
         <div className="pr-1">
           <button
+            id="AllTab"
             type="button"
             className={`${activeAllTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             onClick={allTabClickHandler}
@@ -314,6 +315,7 @@ const TickerSelectorBox = ({
         {userCtx.enableServiceTerm ? (
           <div className="">
             <button
+              id="FavoriteTab"
               type="button"
               onClick={favoriteTabClickHandler}
               className={`${activeFavoriteTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}

@@ -292,6 +292,7 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
   return (
     <div className={`relative my-2 ${hideOpenLineGraph ? `min-h-50px` : `min-h-140px`}`}>
       <div
+        id={`OpenItem${openCfdDetails.id}`}
         className="absolute z-10 h-160px w-280px bg-transparent hover:cursor-pointer"
         onClick={updatedModalClickHandler}
       ></div>
@@ -340,6 +341,7 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
         <div className="relative z-20 -mt-2 h-50px w-50px scale-90">
           {/* Info: (20230411 - Julian) Paused square */}
           <div
+            id={`PausedSquare${openCfdDetails.id}`}
             className={`absolute left-12px top-21px z-30 h-28px w-28px rounded-full hover:cursor-pointer hover:bg-darkGray
               ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
             onClick={closedModalClickHandler}

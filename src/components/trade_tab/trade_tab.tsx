@@ -961,6 +961,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       decrementBtnSize="44"
       incrementBtnSize="44"
       onTypingStatusChange={handleTypingStatusChange.target}
+      inputId="TargetInput"
+      decrementBtnId="TargetDecrementButton"
+      incrementBtnId="TargetIncrementButton"
     />
   );
 
@@ -1004,6 +1007,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.longTp}
+        inputId="LongTpInput"
+        decrementBtnId="LongTpDecrementButton"
+        incrementBtnId="LongTpIncrementButton"
       />
     </div>
   );
@@ -1044,6 +1050,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.longSl}
+        inputId="LongSlInput"
+        decrementBtnId="LongSlDecrementButton"
+        incrementBtnId="LongSlIncrementButton"
       />
     </div>
   );
@@ -1143,6 +1152,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.shortTp}
+        inputId="ShortTpInput"
+        decrementBtnId="ShortTpDecrementButton"
+        incrementBtnId="ShortTpIncrementButton"
       />
     </div>
   );
@@ -1183,6 +1195,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.shortSl}
+        inputId="ShortSlInput"
+        decrementBtnId="ShortSlDecrementButton"
+        incrementBtnId="ShortSlIncrementButton"
       />
     </div>
   );
@@ -1258,6 +1273,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       decrementBtnSize="44"
       incrementBtnSize="44"
       onTypingStatusChange={handleTypingStatusChange.target}
+      inputId="TargetInputMobile"
+      decrementBtnId="TargetDecrementButtonMobile"
+      incrementBtnId="TargetIncrementButtonMobile"
     />
   );
 
@@ -1306,7 +1324,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
           {displayedLongTpSetting}
-          <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
+          <Toggle
+            id="longTpToggleMobile"
+            initialToggleState={longTpToggle}
+            getToggledState={getToggledLongTpSetting}
+          />
         </div>
         <div className="mb-3 w-full">{displayedExpectedLongProfit}</div>
       </div>
@@ -1316,7 +1338,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedLongSlSetting}
-          <Toggle initialToggleState={longSlToggle} getToggledState={getToggledLongSlSetting} />
+          <Toggle
+            id="longSlToggleMobile"
+            initialToggleState={longSlToggle}
+            getToggledState={getToggledLongSlSetting}
+          />
         </div>
         <div className="w-full">{displayedExpectedLongLoss}</div>
 
@@ -1337,7 +1363,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
           {displayedShortTpSetting}
-          <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
+          <Toggle
+            id="shortTpToggleMobile"
+            initialToggleState={shortTpToggle}
+            getToggledState={getToggledShortTpSetting}
+          />
         </div>
         <div className="mb-3 w-full">{displayedExpectedShortProfit}</div>
       </div>
@@ -1347,7 +1377,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedShortSlSetting}
-          <Toggle initialToggleState={shortSlToggle} getToggledState={getToggledShortSlSetting} />
+          <Toggle
+            id="shortSlToggleMobile"
+            initialToggleState={shortSlToggle}
+            getToggledState={getToggledShortSlSetting}
+          />
         </div>
         <div className="w-full">{displayedExpectedShortLoss}</div>
 
@@ -1526,7 +1560,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
                     {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                   </div>
                   {displayedLongTpSetting}
-                  <Toggle getToggledState={getToggledLongTpSetting} />
+                  <Toggle id="longTpToggle" getToggledState={getToggledLongTpSetting} />
                 </div>
 
                 {displayedExpectedLongProfit}
@@ -1539,7 +1573,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
                     {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                   </div>
                   <div className="w-105px">{displayedLongSlSetting}</div>
-                  <Toggle getToggledState={getToggledLongSlSetting} />
+                  <Toggle id="longSlToggle" getToggledState={getToggledLongSlSetting} />
                 </div>
 
                 {displayedExpectedLongLoss}
@@ -1594,7 +1628,8 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
                   <div className="text-sm text-lightGray">
                     {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                   </div>
-                  {displayedShortTpSetting} <Toggle getToggledState={getToggledShortTpSetting} />
+                  {displayedShortTpSetting}{' '}
+                  <Toggle id="shortTpToggle" getToggledState={getToggledShortTpSetting} />
                 </div>
 
                 {displayedExpectedShortProfit}
@@ -1608,7 +1643,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
                   </div>
                   <div className="w-105px">{displayedShortSlSetting}</div>
 
-                  <Toggle getToggledState={getToggledShortSlSetting} />
+                  <Toggle id="shortSlToggle" getToggledState={getToggledShortSlSetting} />
                 </div>
 
                 {displayedExpectedShortLoss}

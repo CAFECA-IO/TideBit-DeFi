@@ -109,12 +109,17 @@ const CryptoCard = ({
   };
 
   const showStar = starredStateRef.current ? (
-    <button type="button" onClick={starClickHandler} className="absolute right-3 top-2">
+    <button
+      id={`Star${currency}`}
+      type="button"
+      onClick={starClickHandler}
+      className="absolute right-3 top-2"
+    >
       <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
     </button>
   ) : star ? (
     <button
-      id={`Star${instId}`}
+      id={`Star${currency}`}
       type="button"
       onClick={starClickHandler}
       className="absolute right-3 top-2 hover:cursor-pointer"
@@ -246,7 +251,7 @@ const CryptoCard = ({
     <>
       {/* -----Info: Desktop (width > 500px) version (Card 200x120) (20230628 - Shirley)----- */}
       <div
-        id={`CryptoCard${instId}`}
+        id={`CryptoCard${currency}`}
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           onTheSamePage && marketCtx.selectTickerHandler(instId);
@@ -288,7 +293,7 @@ const CryptoCard = ({
 
       {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
-        id={`CryptoCardMobile${instId}`}
+        id={`CryptoCardMobile${currency}`}
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-10px border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           onTheSamePage && marketCtx.selectTickerHandler(instId);

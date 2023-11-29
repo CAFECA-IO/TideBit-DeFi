@@ -20,6 +20,7 @@ const Footer = () => {
   const ICON_SIZE = 30;
   const socialMediaLinks = [
     {
+      id: 'FooterFacebookLink',
       label: 'Facebook',
       path: TBDURL.COMING_SOON,
       icon: (
@@ -27,6 +28,7 @@ const Footer = () => {
       ),
     },
     {
+      id: 'FooterInstagramLink',
       label: 'Instagram',
       path: TBDURL.COMING_SOON,
       icon: (
@@ -39,6 +41,7 @@ const Footer = () => {
       ),
     },
     {
+      id: 'FooterTwitterLink',
       label: 'Twitter',
       path: TBDURL.COMING_SOON,
       icon: (
@@ -46,6 +49,7 @@ const Footer = () => {
       ),
     },
     {
+      id: 'FooterRedditLink',
       label: 'Reddit',
       path: TBDURL.COMING_SOON,
       icon: (
@@ -55,20 +59,23 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    {label: t('FOOTER.TRADE'), path: tradeLink},
-    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBDURL.COMING_SOON},
-    {label: t('NAV_BAR.HELP_CENTER'), path: TBDURL.COMING_SOON},
+    {id: 'FooterTradeLink', label: t('FOOTER.TRADE'), path: tradeLink},
+    {id: 'FooterUniversityLink', label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBDURL.COMING_SOON},
+    {id: 'FooterHelpCenterLink', label: t('NAV_BAR.HELP_CENTER'), path: TBDURL.COMING_SOON},
   ];
 
-  const tideBitLinks = [{label: t('FOOTER.HIRING'), path: TBDURL.COMING_SOON}];
+  const tideBitLinks = [
+    {id: 'FooterHiringLink', label: t('FOOTER.HIRING'), path: TBDURL.COMING_SOON},
+  ];
 
   const policyLinks = [
-    {label: t('FOOTER.SERVICE_POLICY'), path: TBDURL.COMING_SOON},
-    {label: t('FOOTER.PRIVACY_POLICY'), path: TBDURL.COMING_SOON},
+    {id: 'FooterServicePolicyLink', label: t('FOOTER.SERVICE_POLICY'), path: TBDURL.COMING_SOON},
+    {id: 'FooterPrivacyPolicyLink', label: t('FOOTER.PRIVACY_POLICY'), path: TBDURL.COMING_SOON},
   ];
 
-  const socialMediaLinksList = socialMediaLinks.map(({label, path, icon}) => (
+  const socialMediaLinksList = socialMediaLinks.map(({id, label, path, icon}) => (
     <TideLink
+      id={id}
       key={label}
       href={path}
       content={icon}
@@ -78,179 +85,98 @@ const Footer = () => {
     />
   ));
 
-  const servicesLinksList = servicesLinks.map(({label, path}) => (
+  const servicesLinksList = servicesLinks.map(({id, label, path}) => (
     <li key={label} className="mt-2 text-base">
-      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+      <TideLink id={id} href={path} content={label} className="text-gray-400 hover:text-slate-50" />
     </li>
   ));
 
-  const tideBitLinksList = tideBitLinks.map(({label, path}) => (
+  const tideBitLinksList = tideBitLinks.map(({id, label, path}) => (
     <li key={label} className="mt-2 text-base">
-      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+      <TideLink id={id} href={path} content={label} className="text-gray-400 hover:text-slate-50" />
     </li>
   ));
 
-  const policyLinksList = policyLinks.map(({label, path}) => (
+  const policyLinksList = policyLinks.map(({id, label, path}) => (
     <li key={label} className="mt-2 text-base">
-      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+      <TideLink id={id} href={path} content={label} className="text-gray-400 hover:text-slate-50" />
     </li>
   ));
-
-  const desktopVersionBreakpoint = 'hidden lg:flex';
-  const mobileVersionBreakpoint = 'flex lg:hidden';
 
   return (
     <>
-      {/* Info: (20230328 - Julian) Desktop */}
-      <div className={`${desktopVersionBreakpoint}`}>
-        <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center container">
-          <div className="mx-auto max-w-1920px flex flex-col justify-between flex-wrap pb-10 pt-24 md:flex-row md:flex-nowrap md:items-center lg:items-start">
-            <div className="flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left justify-around">
-              <div className="mx-auto shrink-0 text-center md:mx-0">
-                <Link
-                  href="/#"
-                  className="flex flex-col items-center justify-center font-medium text-white md:justify-start"
+      <footer className="px-10 py-5 w-screen flex flex-col bg-darkGray text-base justify-center items-center">
+        <div className="flex w-full lg:items-start items-center py-10 flex-col lg:flex-row">
+          <div className="text-center flex-1 flex flex-col items-center">
+            <Link
+              id="FooterTideBitLogo"
+              href="/#"
+              className="flex flex-col items-center justify-center md:justify-start"
+            >
+              <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit_logo" />
+            </Link>
+            <span className="h-1px w-200px bg-white my-3"></span>
+            <div className="inline-flex justify-center">{socialMediaLinksList}</div>
+          </div>
+
+          <div className="flex lg:w-3/4 py-10 lg:py-0 lg:px-16 gap-y-16 flex-col items-center lg:flex-row lg:items-start justify-between">
+            <div className="flex flex-col lg:items-start items-center">
+              <h2 className="text-lg font-bold tracking-widest text-white">
+                {t('FOOTER.SERVICES')}
+              </h2>
+              <ul className="list-none flex flex-col lg:items-start items-center">
+                {servicesLinksList}
+              </ul>
+            </div>
+
+            <div className="flex flex-col lg:items-start items-center">
+              <h2 className="text-lg font-bold tracking-widest text-white">
+                {t('FOOTER.TIDEBIT')}
+              </h2>
+              <ul className="list-none flex flex-col lg:items-start items-center">
+                {tideBitLinksList}
+              </ul>
+            </div>
+            <div className="flex flex-col lg:items-start items-center">
+              <h2 className="text-lg font-bold tracking-widest text-white">
+                {t('FOOTER.POLICY_CONDITIONS')}
+              </h2>
+              <ul className="list-none flex flex-col lg:items-start items-center">
+                {policyLinksList}
+              </ul>
+            </div>
+
+            <div className="flex flex-col lg:items-start items-center">
+              <h2 className="text-lg font-bold tracking-widest text-white">
+                {t('FOOTER.NEWSLETTER')}
+              </h2>
+
+              <div className="flex flex-col lg:items-start items-center max-w-300px">
+                <div className="relative mt-2">
+                  <input
+                    placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
+                    type="text"
+                    id="FooterEmailInput"
+                    name="email"
+                    className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
+                  />
+                </div>
+                <RippleButton
+                  id="FooterSubscribeButton"
+                  buttonType="button"
+                  className={`mt-4 rounded bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none`}
                 >
-                  <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
-                </Link>
-                <span className="mt-3 flex h-px w-full justify-center rounded bg-white xl:w-full"></span>
-
-                <div className="container mx-auto inline-flex justify-center pt-3 sm:mt-0">
-                  {socialMediaLinksList}
-                </div>
-              </div>
-
-              <div className="">
-                <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                  {t('FOOTER.SERVICES')}
-                </h2>
-                <nav className="mb-5 list-none">{servicesLinksList}</nav>
-              </div>
-              <div className="">
-                <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                  {t('FOOTER.TIDEBIT')}
-                </h2>
-                <nav className="mb-5 list-none">{tideBitLinksList}</nav>
-              </div>
-              <div className="">
-                <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                  {t('FOOTER.POLICY_CONDITIONS')}
-                </h2>
-                <nav className="mb-5 list-none">{policyLinksList}</nav>
-              </div>
-
-              <div className="">
-                <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                  {t('FOOTER.NEWSLETTER')}
-                </h2>
-
-                <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start max-w-300px">
-                  <div className="relative mr-2 sm:mr-4 sm:w-auto lg:mr-4">
-                    <input
-                      placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
-                      type="text"
-                      id="FooterEmailDesktop"
-                      name="email"
-                      className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
-                    />
-                  </div>
-                  <RippleButton
-                    id="FooterSubscribeButton"
-                    buttonType="button"
-                    className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
-                  >
-                    {t('FOOTER.SUBSCRIBE_BUTTON')}
-                  </RippleButton>
-                </div>
+                  {t('FOOTER.SUBSCRIBE_BUTTON')}
+                </RippleButton>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="mx-auto max-w-1920px">
-            <div className="flex flex-col flex-wrap pb-4 pt-1 sm:flex-row sm:justify-center md:justify-end">
-              <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {COPYRIGHT}
-              </p>
-            </div>
-          </div>
-        </footer>
-      </div>
-
-      {/* Info: (20230328 - Julian) Mobile */}
-      <div className={`${mobileVersionBreakpoint} w-full`}>
-        <footer className="mx-0 lg:mx-auto w-full justify-center bg-darkGray text-base">
-          <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
-            {/* Info: (20230328 - Julian) LOGO & Social media */}
-            <div className="mx-auto w-full shrink-0 text-center">
-              <Link
-                href="/#"
-                className="flex flex-col items-center justify-center font-medium text-white md:justify-start"
-              >
-                <Image src="/elements/footer_logo.svg" width={96} height={80} alt="TideBit" />
-              </Link>
-              <span className="container mx-auto mt-3 flex h-px w-200px justify-center rounded bg-lightGray"></span>
-
-              <div className="container mx-auto inline-flex justify-center pt-3">
-                {socialMediaLinksList}
-              </div>
-
-              {/* Info: (20230328 - Julian) Links & Newsletter */}
-              <div className="flex grow flex-col flex-wrap text-center">
-                <div className="my-5 w-full">
-                  <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                    {t('FOOTER.SERVICES')}
-                  </h2>
-                  <nav className="mb-5 list-none">{servicesLinksList}</nav>
-                </div>
-                <div className="my-5 w-full">
-                  <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                    {t('FOOTER.TIDEBIT')}
-                  </h2>
-                  <nav className="mb-5 list-none">{tideBitLinksList}</nav>
-                </div>
-                <div className="my-5 w-full">
-                  <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                    {t('FOOTER.POLICY_CONDITIONS')}
-                  </h2>
-                  <nav className="mb-5 list-none">{policyLinksList}</nav>
-                </div>
-                <div className="my-5 w-full">
-                  <h2 className="mb-3 text-lg font-bold tracking-widest text-white">
-                    {t('FOOTER.NEWSLETTER')}
-                  </h2>
-
-                  <div className="flex flex-col flex-wrap items-center justify-center">
-                    <div className="relative w-220px md:mb-5">
-                      <input
-                        placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
-                        type="text"
-                        id="FooterEmailMobile"
-                        name="email"
-                        className="block w-full rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
-                      />
-                    </div>
-                    <RippleButton
-                      id="FooterSubscribeButton"
-                      buttonType="button"
-                      className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
-                    >
-                      {t('FOOTER.SUBSCRIBE_BUTTON')}
-                    </RippleButton>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-0 pb-0">
-            <div className="flex flex-col flex-wrap px-5 pb-8 pt-1 sm:flex-row sm:justify-center md:justify-end">
-              <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {COPYRIGHT}
-              </p>
-            </div>
-          </div>
-        </footer>
-      </div>
+        <div className="w-full lg:text-end text-center lg:px-16">
+          <p className="text-xs text-gray-400">{COPYRIGHT}</p>
+        </div>
+      </footer>
     </>
   );
 };

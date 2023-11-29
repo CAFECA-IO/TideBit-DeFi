@@ -26,26 +26,20 @@ const Custom404 = () => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>Not Found - TideBit DeFi</title>
-            <link rel="icon" href={TIDEBIT_FAVICON} />
-          </Head>
-          <div>
-            {displayedNavBar}
-            <div className="relative flex min-h-600px flex-col items-center justify-center">
-              <Lottie animationData={notFoundAnimation} />
-              <div className="absolute bottom-1/3 text-center text-white">
-                {t('NOT_FOUND_PAGE.DESCRIPTION')}
-              </div>
-            </div>
-            <Footer />
+      <Head>
+        <title>Not Found - TideBit DeFi</title>
+        <link rel="icon" href={TIDEBIT_FAVICON} />
+      </Head>
+      <div>
+        {displayedNavBar}
+        <div className="relative flex min-h-600px flex-col items-center justify-center">
+          <Lottie animationData={notFoundAnimation} />
+          <div className="absolute bottom-1/3 text-center text-white">
+            {t('NOT_FOUND_PAGE.DESCRIPTION')}
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </div>
+        <Footer />
+      </div>
     </>
   );
 

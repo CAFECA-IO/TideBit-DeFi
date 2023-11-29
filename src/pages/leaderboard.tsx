@@ -20,26 +20,20 @@ const Leaderboard = () => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>Leaderboard - TideBit DeFi</title>
-            <link rel="icon" href={TIDEBIT_FAVICON} />
-          </Head>
+      <Head>
+        <title>Leaderboard - TideBit DeFi</title>
+        <link rel="icon" href={TIDEBIT_FAVICON} />
+      </Head>
 
+      <div>
+        {displayedNavBar}
+
+        <main>
           <div>
-            {displayedNavBar}
-
-            <main>
-              <div>
-                <BoardPageBody />
-              </div>
-            </main>
+            <BoardPageBody />
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </main>
+      </div>
     </>
   );
 

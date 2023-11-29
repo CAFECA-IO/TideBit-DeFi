@@ -27,27 +27,21 @@ const ComingSoon = () => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>Coming Soon - TideBit DeFi</title>
-            <link rel="icon" href={TIDEBIT_FAVICON} />
-          </Head>
-          <div>
-            {displayedNavBar}
-            <div className="relative flex min-h-600px flex-col items-center justify-center">
-              <Lottie animationData={comingSoonAnimation} />
-              <div className="absolute bottom-1/3 text-center text-white">
-                <div>{t('COMING_SOON_PAGE.DESCRIPTION1')}</div>
-                <div>{t('COMING_SOON_PAGE.DESCRIPTION2')}</div>
-              </div>
-            </div>
-            <Footer />
+      <Head>
+        <title>Coming Soon - TideBit DeFi</title>
+        <link rel="icon" href={TIDEBIT_FAVICON} />
+      </Head>
+      <div>
+        {displayedNavBar}
+        <div className="relative flex min-h-600px flex-col items-center justify-center">
+          <Lottie animationData={comingSoonAnimation} />
+          <div className="absolute bottom-1/3 text-center text-white">
+            <div>{t('COMING_SOON_PAGE.DESCRIPTION1')}</div>
+            <div>{t('COMING_SOON_PAGE.DESCRIPTION2')}</div>
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </div>
+        <Footer />
+      </div>
     </>
   );
 

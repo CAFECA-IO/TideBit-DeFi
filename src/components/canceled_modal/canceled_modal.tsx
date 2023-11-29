@@ -36,6 +36,7 @@ const CanceledModal = ({
             {btnUrl && btnMsg ? (
               <a href={btnUrl} target="_blank" rel="noreferrer">
                 <RippleButton
+                  id="CanceledModalButton"
                   className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"
                   onClick={modalClickHandler}
@@ -45,6 +46,7 @@ const CanceledModal = ({
               </a>
             ) : btnMsg ? (
               <RippleButton
+                id="CanceledModalButton"
                 className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                 buttonType="button"
                 onClick={modalClickHandler}
@@ -62,9 +64,8 @@ const CanceledModal = ({
     <>
       <div className="fixed inset-0 z-90 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
           <div
-            id="canceledModal"
+            id="CanceledModal"
             className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             <div className="flex items-start justify-between rounded-t pt-6">

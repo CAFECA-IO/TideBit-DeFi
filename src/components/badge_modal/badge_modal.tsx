@@ -39,6 +39,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       className={`inline-flex space-x-4 text-3xl text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <button
+        id="ShareBadgeToFacebook"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.FACEBOOK,
@@ -49,6 +50,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
         <BsFacebook className="hover:text-lightGray2" />
       </button>
       <button
+        id="ShareBadgeToTwitter"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.TWITTER,
@@ -59,6 +61,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
         <BsTwitter className="hover:text-lightGray2" />
       </button>
       <button
+        id="ShareBadgeToReddit"
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.REDDIT,
@@ -113,6 +116,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
             {/* Info:(20230517 - Julian) Button */}
             <div className="flex w-full items-center justify-center">
               <RippleButton
+                id="BadgeModalCloseButton"
                 buttonType="button"
                 onClick={modalClickHandler}
                 className="w-300px whitespace-nowrap rounded border-0 bg-tidebitTheme px-6 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray"

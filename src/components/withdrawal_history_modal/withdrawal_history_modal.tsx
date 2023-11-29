@@ -108,7 +108,7 @@ const WithdrawalHistoryModal = ({
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
-            id="withdrawalHistoryModal"
+            id="WithdrawalHistoryModal"
             className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/* Info:(20230328 - Julian) Header */}

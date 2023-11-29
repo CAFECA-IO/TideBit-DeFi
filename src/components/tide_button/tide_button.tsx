@@ -2,6 +2,7 @@ import React from 'react';
 import RippleButton from '../ripple_button/ripple_button';
 
 interface ITideButton {
+  id: string;
   children: React.ReactNode;
   isHover?: boolean;
   isFocus?: boolean;
@@ -9,12 +10,18 @@ interface ITideButton {
   onClick?: () => void;
 }
 
-const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}: ITideButton) => {
+const TideButton = ({
+  id,
+  children,
+  isHover = false,
+  isFocus = false,
+  ...otherProps
+}: ITideButton) => {
   // const hoverStyle =
   // 	isHover && `hover:scale-110 transition duration-300 ease-in-out`;
   const hoverStyle =
     isHover &&
-    `px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 hover:scale-105`;
+    `px-6 py-3 rounded shadow hover:shadow-lg mr-1 mb-1 ease-linear transition-all duration-150 hover:scale-105`;
   // font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150
   const focusStyle =
     isFocus &&
@@ -22,6 +29,7 @@ const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}:
 
   return (
     <RippleButton
+      id={id}
       buttonType="button"
       className={`${otherProps?.className} ${hoverStyle} ${focusStyle} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
       {...otherProps}

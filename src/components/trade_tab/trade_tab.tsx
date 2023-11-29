@@ -961,6 +961,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       decrementBtnSize="44"
       incrementBtnSize="44"
       onTypingStatusChange={handleTypingStatusChange.target}
+      inputId="TargetInput"
+      decrementBtnId="TargetDecrementButton"
+      incrementBtnId="TargetIncrementButton"
     />
   );
 
@@ -1004,6 +1007,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.longTp}
+        inputId="LongTpInput"
+        decrementBtnId="LongTpDecrementButton"
+        incrementBtnId="LongTpIncrementButton"
       />
     </div>
   );
@@ -1044,6 +1050,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.longSl}
+        inputId="LongSlInput"
+        decrementBtnId="LongSlDecrementButton"
+        incrementBtnId="LongSlIncrementButton"
       />
     </div>
   );
@@ -1075,6 +1084,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       } flex items-start transition-all duration-150 ease-in-out lg:mb-10 lg:mt-0`}
     >
       <input
+        id="LongGuaranteedStopCheckbox"
         type="checkbox"
         disabled={SafeMath.lt(
           availableBalance,
@@ -1143,6 +1153,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.shortTp}
+        inputId="ShortTpInput"
+        decrementBtnId="ShortTpDecrementButton"
+        incrementBtnId="ShortTpIncrementButton"
       />
     </div>
   );
@@ -1183,6 +1196,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.shortSl}
+        inputId="ShortSlInput"
+        decrementBtnId="ShortSlDecrementButton"
+        incrementBtnId="ShortSlIncrementButton"
       />
     </div>
   );
@@ -1215,6 +1231,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     >
       <div className="mt-0 flex items-center">
         <input
+          id="ShortGuaranteedStopCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(
             availableBalance,
@@ -1258,6 +1275,9 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       decrementBtnSize="44"
       incrementBtnSize="44"
       onTypingStatusChange={handleTypingStatusChange.target}
+      inputId="TargetInputMobile"
+      decrementBtnId="TargetDecrementButtonMobile"
+      incrementBtnId="TargetIncrementButtonMobile"
     />
   );
 
@@ -1306,7 +1326,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
           {displayedLongTpSetting}
-          <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
+          <Toggle
+            id="longTpToggleMobile"
+            initialToggleState={longTpToggle}
+            getToggledState={getToggledLongTpSetting}
+          />
         </div>
         <div className="mb-3 w-full">{displayedExpectedLongProfit}</div>
       </div>
@@ -1316,7 +1340,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedLongSlSetting}
-          <Toggle initialToggleState={longSlToggle} getToggledState={getToggledLongSlSetting} />
+          <Toggle
+            id="longSlToggleMobile"
+            initialToggleState={longSlToggle}
+            getToggledState={getToggledLongSlSetting}
+          />
         </div>
         <div className="w-full">{displayedExpectedLongLoss}</div>
 
@@ -1337,7 +1365,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
           {displayedShortTpSetting}
-          <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
+          <Toggle
+            id="shortTpToggleMobile"
+            initialToggleState={shortTpToggle}
+            getToggledState={getToggledShortTpSetting}
+          />
         </div>
         <div className="mb-3 w-full">{displayedExpectedShortProfit}</div>
       </div>
@@ -1347,7 +1379,11 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
           {displayedShortSlSetting}
-          <Toggle initialToggleState={shortSlToggle} getToggledState={getToggledShortSlSetting} />
+          <Toggle
+            id="shortSlToggleMobile"
+            initialToggleState={shortSlToggle}
+            getToggledState={getToggledShortSlSetting}
+          />
         </div>
         <div className="w-full">{displayedExpectedShortLoss}</div>
 
@@ -1377,7 +1413,12 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
               profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
             />
           </div>
-          <div className="flex w-full items-center justify-center">{displayedTargetSetting}</div>
+          <div className="flex w-full flex-col items-center justify-center">
+            <p className="text-xs text-lightGray py-2">
+              {t('TRADE_PAGE.TRADE_TAB_INPUT_REMINDER')}
+            </p>
+            {displayedTargetSetting}
+          </div>
 
           {/* ---universal trading info area--- */}
           <div className="flex w-full flex-col items-center justify-center text-lightGray">
@@ -1430,6 +1471,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       } transition-all duration-500 ease-in-out`}
     >
       <RippleButton
+        id="OpenPositionButtonMobile"
         disabled={
           (openSubMenu &&
             (isActiveTabLong ? marginWarningLongRef.current : marginWarningShortRef.current)) ||
@@ -1467,166 +1509,170 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       style={{right: rightPosition}}
     >
       <div className="relative mx-auto my-6 w-auto max-w-xl">
-        {' '}
-        <div className={`relative`}>
-          {/* Info: (20230925 - Shirley) ---sidebar self--- */}
-          <div
-            className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
-          >
+        {/* Info: (20230925 - Shirley) ---sidebar self--- */}
+        <div
+          className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
+        >
+          <div className="flex items-center flex-col">
+            {/* Info: (20231127 - Julian) --- Typing Reminder --- */}
+            <p className="text-sm text-lightGray py-2">
+              {t('TRADE_PAGE.TRADE_TAB_INPUT_REMINDER')}
+            </p>
             {/* Info: (20230925 - Shirley) ---target input area--- */}
             {displayedTargetAmountSetting}
+          </div>
 
-            {/* Info: (20230925 - Shirley) ---universal trading info area--- */}
-            <div className="mt-2 text-lightGray">
-              <div className="flex justify-center text-xs">{ticker}</div>
-              <div className="mt-2">
-                <div className="flex justify-center text-sm">
-                  {t('TRADE_PAGE.TRADE_TAB_LEVERAGE')}
+          {/* Info: (20230925 - Shirley) ---universal trading info area--- */}
+          <div className="mt-2 text-lightGray">
+            <div className="flex justify-center text-xs">{ticker}</div>
+            <div className="mt-2">
+              <div className="flex justify-center text-sm">
+                {t('TRADE_PAGE.TRADE_TAB_LEVERAGE')}
+              </div>
+              <div className="flex justify-center text-base text-lightWhite">1:{leverage}</div>
+            </div>
+          </div>
+
+          {/* Info: (20230925 - Shirley) ---Long Section--- */}
+          <div className="">
+            {/* Info: (20230925 - Shirley) ---custom trading info area--- */}
+            <div className="mt-2 flex justify-center text-center text-base tracking-normal">
+              <div className="w-1/2 space-y-1">
+                <div className="text-sm text-lightGray">
+                  {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
                 </div>
-                <div className="flex justify-center text-base text-lightWhite">1:{leverage}</div>
+                {displayedRequiredMarginLongStyle}
+              </div>
+              {/* Info: (20230925 - Shirley) Left Divider */}
+              <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
+
+              <div className="w-1/2 space-y-1">
+                <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
+                <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
+                  {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
+                </div>
               </div>
             </div>
 
-            {/* Info: (20230925 - Shirley) ---Long Section--- */}
             <div className="">
-              {/* Info: (20230925 - Shirley) ---custom trading info area--- */}
-              <div className="mt-2 flex justify-center text-center text-base tracking-normal">
-                <div className="w-1/2 space-y-1">
-                  <div className="text-sm text-lightGray">
-                    {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
-                  </div>
-                  {displayedRequiredMarginLongStyle}
-                </div>
-                {/* Info: (20230925 - Shirley) Left Divider */}
-                <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
-
-                <div className="w-1/2 space-y-1">
-                  <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                  <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                    {numberFormatted(valueOfPositionLongRef.current)} {unitAsset}
-                  </div>
-                </div>
-              </div>
-
+              {/* Info: (20230925 - Shirley) Take Profit Setting */}
               <div className="">
-                {/* Info: (20230925 - Shirley) Take Profit Setting */}
-                <div className="">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
-                    </div>
-                    {displayedLongTpSetting}
-                    <Toggle getToggledState={getToggledLongTpSetting} />
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                   </div>
-
-                  {displayedExpectedLongProfit}
+                  {displayedLongTpSetting}
+                  <Toggle id="longTpToggle" getToggledState={getToggledLongTpSetting} />
                 </div>
 
-                {/* Info: (20230925 - Shirley) Stop Loss Setting */}
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
-                    </div>
-                    <div className="w-105px">{displayedLongSlSetting}</div>
-                    <Toggle getToggledState={getToggledLongSlSetting} />
-                  </div>
-
-                  {displayedExpectedLongLoss}
-
-                  {/* Info: (20230925 - Shirley) Guaranteed stop */}
-                  {longGuaranteedStop}
-                </div>
+                {displayedExpectedLongProfit}
               </div>
 
-              {/* Info: (20230925 - Shirley) Long Button */}
-              <div className={`-mt-14 flex justify-center`}>
-                <RippleButton
-                  disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
-                  onClick={longOrderSubmitHandler}
-                  buttonType="button"
-                  className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
-                >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-                  <span className="whitespace-nowrap">
-                    ₮ {numberFormatted(longPriceRef.current)}
-                  </span>
-                </RippleButton>
+              {/* Info: (20230925 - Shirley) Stop Loss Setting */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
+                  </div>
+                  <div className="w-105px">{displayedLongSlSetting}</div>
+                  <Toggle id="longSlToggle" getToggledState={getToggledLongSlSetting} />
+                </div>
+
+                {displayedExpectedLongLoss}
+
+                {/* Info: (20230925 - Shirley) Guaranteed stop */}
+                {longGuaranteedStop}
               </div>
             </div>
 
-            <div className="mt-3 border-b-1px border-lightGray"></div>
+            {/* Info: (20230925 - Shirley) Long Button */}
+            <div className={`-mt-14 flex justify-center`}>
+              <RippleButton
+                id="LongButtonDesktop"
+                disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
+                onClick={longOrderSubmitHandler}
+                buttonType="button"
+                className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
+              >
+                <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
+                <span className="whitespace-nowrap">₮ {numberFormatted(longPriceRef.current)}</span>
+              </RippleButton>
+            </div>
+          </div>
 
-            {/* Info: (20230925 - Shirley) ---Short Section--- */}
-            <div className="pb-24">
-              {/* Info: (20230925 - Shirley) ---custom trading info--- */}
-              <div className="mt-5 flex justify-center text-center text-base tracking-normal">
-                <div className="w-1/2 space-y-1">
-                  <div className="text-sm text-lightGray">
-                    {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
-                  </div>
-                  {displayedRequiredMarginShortStyle}
+          <div className="mt-3 border-b-1px border-lightGray"></div>
+
+          {/* Info: (20230925 - Shirley) ---Short Section--- */}
+          <div className="pb-24">
+            {/* Info: (20230925 - Shirley) ---custom trading info--- */}
+            <div className="mt-5 flex justify-center text-center text-base tracking-normal">
+              <div className="w-1/2 space-y-1">
+                <div className="text-sm text-lightGray">
+                  {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
                 </div>
-                {/* Info: (20230925 - Shirley) Left Divider */}
-                <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
+                {displayedRequiredMarginShortStyle}
+              </div>
+              {/* Info: (20230925 - Shirley) Left Divider */}
+              <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
-                <div className="w-1/2 space-y-1">
-                  <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                  <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
-                    {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
-                  </div>
+              <div className="w-1/2 space-y-1">
+                <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
+                <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
+                  {numberFormatted(valueOfPositionShortRef.current)} {unitAsset}
                 </div>
               </div>
+            </div>
 
+            <div className="">
+              {/* Info: (20230925 - Shirley) Take Profit Setting */}
               <div className="">
-                {/* Info: (20230925 - Shirley) Take Profit Setting */}
-                <div className="">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
-                    </div>
-                    {displayedShortTpSetting} <Toggle getToggledState={getToggledShortTpSetting} />
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                   </div>
-
-                  {displayedExpectedShortProfit}
+                  {displayedShortTpSetting}{' '}
+                  <Toggle id="shortTpToggle" getToggledState={getToggledShortTpSetting} />
                 </div>
 
-                {/* Info: (20230925 - Shirley) Stop Loss Setting */}
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
-                    </div>
-                    <div className="w-105px">{displayedShortSlSetting}</div>
+                {displayedExpectedShortProfit}
+              </div>
 
-                    <Toggle getToggledState={getToggledShortSlSetting} />
+              {/* Info: (20230925 - Shirley) Stop Loss Setting */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                   </div>
+                  <div className="w-105px">{displayedShortSlSetting}</div>
 
-                  {displayedExpectedShortLoss}
-
-                  {/* Info: (20230925 - Shirley) Guaranteed stop */}
-                  {shortGuaranteedStop}
+                  <Toggle id="shortSlToggle" getToggledState={getToggledShortSlSetting} />
                 </div>
-              </div>
 
-              {/* Info: (20230925 - Shirley) Short Button */}
-              <div className={`-mt-14 flex justify-center`}>
-                <RippleButton
-                  disabled={
-                    marginWarningShortRef.current ||
-                    shortBtnDisabledRef.current ||
-                    +targetInputValueRef.current < TARGET_MIN_DIGITS
-                  }
-                  onClick={shortOrderSubmitHandler}
-                  buttonType="button"
-                  className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
-                >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-                  <span className="whitespace-nowrap">
-                    ₮ {numberFormatted(shortPriceRef.current)}
-                  </span>
-                </RippleButton>
+                {displayedExpectedShortLoss}
+
+                {/* Info: (20230925 - Shirley) Guaranteed stop */}
+                {shortGuaranteedStop}
               </div>
+            </div>
+
+            {/* Info: (20230925 - Shirley) Short Button */}
+            <div className={`-mt-14 flex justify-center`}>
+              <RippleButton
+                id="ShortButtonDesktop"
+                disabled={
+                  marginWarningShortRef.current ||
+                  shortBtnDisabledRef.current ||
+                  +targetInputValueRef.current < TARGET_MIN_DIGITS
+                }
+                onClick={shortOrderSubmitHandler}
+                buttonType="button"
+                className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
+              >
+                <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
+                <span className="whitespace-nowrap">
+                  ₮ {numberFormatted(shortPriceRef.current)}
+                </span>
+              </RippleButton>
             </div>
           </div>
         </div>
@@ -1642,6 +1688,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         {/* Info: (20230725 - Julian) Long Button */}
         <div className={`w-120px bg-black/100`}>
           <RippleButton
+            id="LongButtonMobile"
             disabled={
               (openSubMenu && marginWarningLongRef.current) ||
               longBtnDisabledRef.current ||
@@ -1659,6 +1706,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
         {/* Info: (20230725 - Julian) Short Button */}
         <div className={`ml-4 w-120px bg-black/100`}>
           <RippleButton
+            id="ShortButtonMobile"
             disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}

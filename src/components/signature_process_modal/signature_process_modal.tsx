@@ -183,6 +183,7 @@ const SignatureProcessModal = ({
     ) : connectingProcessRef.current === ConnectingProcess.EMPTY ||
       connectingProcessRef.current === ConnectingProcess.REJECTED ? (
       <TideButton
+        id="SendRequestButton"
         onClick={requestSendingHandler}
         className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
       >
@@ -311,7 +312,7 @@ const SignatureProcessModal = ({
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
-            id="connectModal"
+            id="SignatureProcessModal"
             ref={processModalRef}
             className="relative flex h-auto w-full flex-col items-center rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >

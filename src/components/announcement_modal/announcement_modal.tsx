@@ -44,14 +44,14 @@ const AnnouncementModal = ({
     announcementData.messageType === MessageType.ANNOUNCEMENT ? (
       <div className="flex items-center justify-end px-8">
         <input
-          id="dontShowAgainCheckbox"
+          id="DontShowAgainCheckbox"
           type="checkbox"
           checked={isChecked}
           onChange={checkHandler}
           className={`relative h-5 w-5 appearance-none rounded-sm border-transparent ${checkmark} bg-darkGray2 transition-all duration-150 ease-in-out checked:bg-tidebitTheme checked:before:block hover:cursor-pointer`}
         />
         <label
-          htmlFor="dontShowAgainCheckbox"
+          htmlFor="DontShowAgainCheckbox"
           className="ml-2 text-base text-lightWhite hover:cursor-pointer"
         >
           {t('ANNOUNCEMENT_MODAL.CHECKBOX_DESCRIPTION')}
@@ -92,6 +92,7 @@ const AnnouncementModal = ({
             {/* Info:(20230519 - Julian) Button */}
             <div className="flex w-full items-center justify-center">
               <RippleButton
+                id="AnnouncementModalOkButton"
                 buttonType="button"
                 onClick={okButtonClickHandler}
                 className="whitespace-nowrap rounded border-0 bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray"

@@ -145,6 +145,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     ) : (
       <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-2 shadow-top md:px-8">
         <div
+          id="UserPersonalRanking"
           className="flex flex-1 items-center space-x-2 md:space-x-3"
           onClick={personalInfoClickHandler}
         >

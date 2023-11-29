@@ -120,6 +120,7 @@
     "CRYPTO_NEWS_SECTION_TITLE": "最新消息",
     "CRYPTO_NEWS_SECTION_SEE_ALL": "查看全部",
     "TRADE_TAB": "CFD 交易",
+    "TRADE_TAB_INPUT_REMINDER": "輸入前請先切換輸入法",
     "TRADE_TAB_NOT_ENOUGH_MARGIN": "餘額不足",
     "TRADE_TAB_EXPECTED_PROFIT": "預期利潤",
     "TRADE_TAB_EXPECTED_LOSS": "預期損失",

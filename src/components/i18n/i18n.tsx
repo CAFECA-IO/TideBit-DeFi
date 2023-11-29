@@ -40,7 +40,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   const displayedDesktopMenu = (
     <div className="hidden lg:flex relative mx-auto max-w-1920px">
       <div
-        id="i18nDropdown"
+        id="I18nMenuDesktop"
         className={`absolute -right-5 top-5 z-20 w-150px ${
           globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
@@ -49,6 +49,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={desktopClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonDesktop`}
                 scroll={false}
                 locale={item.value}
                 href={asPath}
@@ -70,13 +71,14 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
       } lg:hidden`}
     >
       <div
-        id="i18nDropdown"
+        id="I18nMenuMobile"
         className="absolute left-0 top-28 z-10 h-full w-screen bg-darkGray shadow"
       >
         <ul className="text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={mobileClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonMobile`}
                 scroll={false}
                 locale={item.value}
                 href={asPath}

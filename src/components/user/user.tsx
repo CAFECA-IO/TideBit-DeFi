@@ -49,7 +49,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
 
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
-      id="userDropdown"
+      id="UserAvatarMenu"
       className={`avatarMenuShadow absolute -right-2 top-16 z-10 flex w-285px flex-col ${
         userVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
@@ -71,7 +71,10 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         aria-labelledby="avatarButton"
       >
         <li>
-          <button className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5">
+          <button
+            id="MyAssetsButton"
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
+          >
             <Link href={TBDURL.MY_ASSETS}>
               <div className="flex flex-row items-center space-x-2">
                 <BiWallet />
@@ -82,6 +85,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
+            id="DepositButton"
             onClick={depositClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
@@ -93,6 +97,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
+            id="WithdrawButton"
             onClick={withdrawClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
@@ -105,6 +110,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
+            id="AccountSettingButton"
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
@@ -118,6 +124,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
+            id="DisconnectButton"
             onClick={userCtx.disconnect}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
@@ -134,6 +141,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
     <>
       <button
+        id="UserAvatarButton"
         onClick={avatarClickHandler}
         className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
@@ -173,7 +181,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       } transition-all duration-300`}
     >
       <div
-        id="userDropdown"
+        id="UserAvatarMenuMobile"
         className={`flex h-screen w-screen flex-col ${
           avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray px-9 pt-8`}
@@ -269,6 +277,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   const isDisplayedUserAvatarMobile = userCtx.enableServiceTerm ? (
     <>
       <button
+        id="UserAvatarButtonMobile"
         onClick={avatarMobileClickHandler}
         className="ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >

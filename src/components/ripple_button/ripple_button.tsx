@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 
 interface IRippleButtonProps {
+  id: string;
   className?: string;
   buttonStyle?: string;
   children: React.ReactNode | string;
@@ -14,6 +15,7 @@ interface IRippleButtonProps {
  * @dev const disabledStyle = submitDisabled ? 'cursor-not-allowed' : ' hover:cursor-pointer';
  */
 const RippleButton = ({
+  id,
   onClick,
   className,
   children,
@@ -57,18 +59,17 @@ const RippleButton = ({
   });
 
   return (
-    <div>
-      <button
-        onClick={onClick}
-        className={`${className}`}
-        type={buttonType}
-        ref={buttonRef}
-        disabled={disabled}
-        {...otherProps}
-      >
-        {children}
-      </button>
-    </div>
+    <button
+      id={id}
+      onClick={onClick}
+      className={`${className}`}
+      type={buttonType}
+      ref={buttonRef}
+      disabled={disabled}
+      {...otherProps}
+    >
+      {children}
+    </button>
   );
 };
 

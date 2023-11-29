@@ -373,8 +373,8 @@ const TradingChartSwitch = ({
       <div className="hidden items-center space-x-5 md:flex">
         <p className="text-lightGray">Positions</p>
         <div className="pt-1">
-          {' '}
           <Toggle
+            id="ChartSwitchToggle"
             initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
             getToggledState={getDisplayedPositionsState}
           />
@@ -464,8 +464,8 @@ const TradingChartSwitch = ({
       <div className="hidden items-center space-x-5 md:flex">
         <p className="text-lightGray">Positions</p>
         <div className="pt-1">
-          {' '}
           <Toggle
+            id="ChartSwitchToggleMobile"
             initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
             getToggledState={getDisplayedPositionsState}
           />

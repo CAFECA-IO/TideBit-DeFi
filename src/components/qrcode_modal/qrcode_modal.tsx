@@ -23,7 +23,7 @@ const QrcodeModal = ({
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           <div
-            id="connectModal"
+            id="QRCodeModal"
             ref={qrcodeModalRef}
             className="relative flex h-600px w-450px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >

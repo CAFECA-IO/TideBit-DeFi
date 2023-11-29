@@ -34,8 +34,6 @@ export default function NotificationItem(notificationItem: INotificationItem) {
       ? MessageType.ANNOUNCEMENT
       : MessageType.NOTIFICATION;
 
-  const displayTime = timestampToString(timestamp);
-
   const itemClickHandler = () => {
     globalCtx.dataAnnouncementModalHandler({
       id: id,

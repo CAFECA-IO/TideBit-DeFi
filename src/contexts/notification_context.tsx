@@ -142,6 +142,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
     updatedNotifications.forEach(notification => {
       const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+      // eslint-disable-next-line no-console
+      console.log('cookieValue', cookieValue);
       if (cookieValue) {
         if (!isCookieExpired(cookieValue)) {
           notification.isRead = true;

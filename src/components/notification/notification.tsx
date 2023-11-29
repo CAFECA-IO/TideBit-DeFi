@@ -25,6 +25,8 @@ export default function Notification({
 
   /* Info: (20230522 - Julian) 初始化完成就去抓 notificationCtx ，檢查有沒有重要通知 */
   useEffect(() => {
+    notificationCtx.init();
+
     notificationCtx.unreadNotifications.map(v => {
       if (v.notificationLevel === NotificationLevel.CRITICAL) {
         globalCtx.dataAnnouncementModalHandler({

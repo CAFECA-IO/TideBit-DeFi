@@ -29,6 +29,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';
+import {CandlestickContext} from '../../contexts/candlestick_context';
 
 interface ITradingChartGraphProps {
   candleSize: number;
@@ -183,7 +184,8 @@ export default function CandlestickChart({
   candleSize,
   candlestickChartWidth,
 }: ITradingChartGraphProps) {
-  const marketCtx = useContext(MarketContext);
+  // const marketCtx = useContext(MarketContext);
+  const candlestickCtx = useContext(CandlestickContext);
 
   const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
     open: 0,
@@ -220,7 +222,7 @@ export default function CandlestickChart({
 
   const {firstTime, chartOptions} = createSpec({
     dataSize: candleSize,
-    timespan: getTime(marketCtx.timeSpan),
+    timespan: getTime(candlestickCtx.timeSpan),
     chartWidth: candlestickChartWidth, // ToDo: candlestickChartWidth
     chartHeight: 300, // ToDo: candlestickChartHeight
   });
@@ -321,7 +323,7 @@ export default function CandlestickChart({
   // };
 
   const fetchCandlestickData = () => {
-    const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
+    const originRaw = candlestickCtx.candlestickChartData?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
     const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
@@ -394,7 +396,7 @@ export default function CandlestickChart({
 
   useEffect(() => {
     return drawChart();
-  }, [marketCtx.candlestickChartData]);
+  }, [candlestickCtx.candlestickChartData]);
 
   return (
     <>

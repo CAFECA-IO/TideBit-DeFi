@@ -10,6 +10,7 @@ import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale
 import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
+import {CandlestickProvider} from '../../contexts/candlestick_context';
 
 const DEFAULT_CHART_WIDTH = 900;
 const DEFAULT_CHART_HEIGHT = 400;
@@ -32,8 +33,8 @@ const getChartSize = () => {
       windowSize.width > MAX_SCREEN_WIDTH
         ? MAX_SCREEN_WIDTH / 1.3
         : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
-        : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+          ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
+          : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
     const chartSize = {
       width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
@@ -70,8 +71,8 @@ const getSwitchWidth = () => {
       windowSize.width > MAX_SCREEN_WIDTH
         ? 1450
         : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
-        : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+          ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
+          : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
 
     return {
       width: switchWidth.toString(),
@@ -224,7 +225,7 @@ const TradingView = () => {
   const displayedLayout =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
 
-  return <>{displayedLayout}</>;
+  return <CandlestickProvider>{displayedLayout}</CandlestickProvider>;
 };
 
 export default TradingView;

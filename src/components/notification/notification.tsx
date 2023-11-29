@@ -25,22 +25,22 @@ export default function Notification({
 
   /* Info: (20230522 - Julian) 初始化完成就去抓 notificationCtx ，檢查有沒有重要通知 */
   useEffect(() => {
-    notificationCtx.init();
-
-    notificationCtx.unreadNotifications.map(v => {
-      if (v.notificationLevel === NotificationLevel.CRITICAL) {
-        globalCtx.dataAnnouncementModalHandler({
-          id: v.id,
-          title: v.title,
-          content: v.content,
-          numberOfButton: 1,
-          reactionOfButton: '',
-          messageType: MessageType.ANNOUNCEMENT,
-        });
-        globalCtx.visibleAnnouncementModalHandler();
-      }
-    });
-  }, []);
+    if (notificationCtx.isInit) {
+      notificationCtx.unreadNotifications.map(v => {
+        if (v.notificationLevel === NotificationLevel.CRITICAL) {
+          globalCtx.dataAnnouncementModalHandler({
+            id: v.id,
+            title: v.title,
+            content: v.content,
+            numberOfButton: 1,
+            reactionOfButton: '',
+            messageType: MessageType.ANNOUNCEMENT,
+          });
+          globalCtx.visibleAnnouncementModalHandler();
+        }
+      });
+    }
+  }, [notificationCtx.isInit]);
 
   let timer: NodeJS.Timeout;
 

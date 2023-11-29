@@ -43,6 +43,7 @@ import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 import {UserContext} from '../../contexts/user_context';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -61,6 +62,7 @@ const UpdateFormModal = ({
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
 
@@ -243,17 +245,17 @@ const UpdateFormModal = ({
   };
 
   const displayedPnLSymbol =
-    !marketCtx.selectedTicker?.price && !openCfdDetails?.pnl?.value
+    !tickerCtx.selectedTicker?.price && !openCfdDetails?.pnl?.value
       ? ''
       : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value > 0
-      ? '+'
-      : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
-      ? '-'
-      : openCfdDetails?.pnl?.value !== undefined && Math.abs(openCfdDetails?.pnl?.value) === 0
-      ? '≈'
-      : '';
+        ? '+'
+        : !!openCfdDetails?.pnl?.value && openCfdDetails?.pnl?.value < 0
+          ? '-'
+          : openCfdDetails?.pnl?.value !== undefined && Math.abs(openCfdDetails?.pnl?.value) === 0
+            ? '≈'
+            : '';
 
-  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+  const displayedPnLValue = !!tickerCtx.selectedTicker?.price
     ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
     : '- -';
 
@@ -273,40 +275,40 @@ const UpdateFormModal = ({
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL
+        ? TypeOfPnLColor.LOSS
+        : TypeOfPnLColor.EQUAL
     : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor = !!openCfdDetails?.pnl?.value
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-      ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL
+        ? TypeOfBorderColor.LOSS
+        : TypeOfBorderColor.EQUAL
     : TypeOfBorderColor.EQUAL;
 
   const displayedColorHex = !!openCfdDetails?.pnl?.value
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColorHex.PROFIT
       : openCfdDetails?.pnl?.value < 0
-      ? TypeOfPnLColorHex.LOSS
-      : TypeOfPnLColorHex.EQUAL
+        ? TypeOfPnLColorHex.LOSS
+        : TypeOfPnLColorHex.EQUAL
     : TypeOfPnLColorHex.EQUAL;
 
   const displayedIdBackgroundColor = !!openCfdDetails?.pnl?.value
     ? openCfdDetails?.pnl?.value > 0
       ? 'bg-greenLinear'
       : openCfdDetails?.pnl?.value < 0
-      ? 'bg-redLinear'
-      : ''
+        ? 'bg-redLinear'
+        : ''
     : '';
 
   const displayedCrossColor =
     !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : !!openCfdDetails?.pnl && openCfdDetails?.pnl?.value < 0
-      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
-      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
+        ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+        : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
 
   const displayedCrossStyle =
     'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-6 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-6 after:-rotate-45 after:rounded-md';
@@ -637,19 +639,19 @@ const UpdateFormModal = ({
     remainSecs < 60
       ? Math.round(remainSecs)
       : remainSecs < 3600
-      ? Math.round(remainSecs / 60)
-      : remainSecs < 86400
-      ? Math.round(remainSecs / 3600)
-      : Math.round(remainSecs / 86400);
+        ? Math.round(remainSecs / 60)
+        : remainSecs < 86400
+          ? Math.round(remainSecs / 3600)
+          : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
-      ? [`${Math.round(remainSecs / 60)} M`]
-      : remainSecs < 86400
-      ? [`${Math.round(remainSecs / 3600)} H`]
-      : [`${Math.round(remainSecs / 86400)} D`];
+        ? [`${Math.round(remainSecs / 60)} M`]
+        : remainSecs < 86400
+          ? [`${Math.round(remainSecs / 3600)} H`]
+          : [`${Math.round(remainSecs / 86400)} D`];
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
@@ -749,65 +751,65 @@ const UpdateFormModal = ({
         : TARGET_MAX_DIGITS;
 
     const isLiquidated =
-      marketCtx.selectedTicker?.price !== undefined
+      tickerCtx.selectedTicker?.price !== undefined
         ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-          ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
+          ? openCfdDetails.liquidationPrice > tickerCtx.selectedTicker.price
           : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-          ? openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price
-          : false
+            ? openCfdDetails.liquidationPrice < tickerCtx.selectedTicker.price
+            : false
         : true;
 
     const caledSlLowerLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(
-          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-          2,
-          RoundCondition.SHRINK
-        )
-      : roundToDecimalPlaces(
-          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
-          2,
-          RoundCondition.SHRINK
-        );
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+            2,
+            RoundCondition.SHRINK
+          )
+        : roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+            2,
+            RoundCondition.SHRINK
+          );
 
     const caledSlUpperLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(
-          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-          2,
-          RoundCondition.SHRINK
-        )
-      : roundToDecimalPlaces(
-          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
-          2,
-          RoundCondition.SHRINK
-        );
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+            2,
+            RoundCondition.SHRINK
+          )
+        : roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+            2,
+            RoundCondition.SHRINK
+          );
 
     const caledSl =
-      marketCtx.selectedTicker?.price !== undefined
+      tickerCtx.selectedTicker?.price !== undefined
         ? (openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
-            marketCtx.selectedTicker.price < openCfdDetails.liquidationPrice) ||
+            tickerCtx.selectedTicker.price < openCfdDetails.liquidationPrice) ||
           (openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
-            marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
+            tickerCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
           ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
           : roundToDecimalPlaces(
-              +SafeMath.plus(marketCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
+              +SafeMath.plus(tickerCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
               2,
               RoundCondition.SHRINK
             )
         : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2, RoundCondition.SHRINK);
 
     const suggestedSl =
-      marketCtx.selectedTicker?.price !== undefined
+      tickerCtx.selectedTicker?.price !== undefined
         ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
-          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
+          tickerCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
           ? caledSl
           : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
-            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
-          ? caledSl
-          : openCfdDetails.suggestion.stopLoss
+              tickerCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
+            ? caledSl
+            : openCfdDetails.suggestion.stopLoss
         : openCfdDetails.suggestion.stopLoss;
 
     const gslFee = roundToDecimalPlaces(

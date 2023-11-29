@@ -16,6 +16,7 @@ import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
 import {ITicker, Ticker} from '../../constants/ticker';
 import {arrayDifferences} from '../../lib/common';
+import {ITickerContext, TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -49,6 +50,7 @@ const TickerSelectorBox = ({
   tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
+  const tickerCtx = useContext<ITickerContext>(TickerContext);
   const userCtx = useContext(UserContext) as IUserContext;
   const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
@@ -64,7 +66,9 @@ const TickerSelectorBox = ({
   );
   const [searches, setSearches] = useState<string>();
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
-  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+  const [availableTickers, setAvailableTickers] = useState(
+    Object.values(tickerCtx.availableTickers)
+  );
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [starredTickers, setStarredTickers, starredTickersRef] = useStateRef<string[]>([]);
@@ -128,7 +132,7 @@ const TickerSelectorBox = ({
 
   useEffect(() => {
     setAvailableTickers(marketCtx.listAvailableTickers());
-  }, [marketCtx]);
+  }, [tickerCtx.availableTickers]);
 
   useEffect(() => {
     setStarredTickers(userCtx.favoriteTickers);

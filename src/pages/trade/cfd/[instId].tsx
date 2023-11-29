@@ -39,7 +39,7 @@ const Trading = (props: IPageProps) => {
   const hideOpenLineGraph = router.query?.open_line_graph === HIDDEN;
 
   const redirectToTicker = async () => {
-    if (hasValue(marketCtx.availableTickers) && ticker) {
+    if (marketCtx.isInit && ticker) {
       marketCtx.selectTickerHandler(ticker);
     }
   };

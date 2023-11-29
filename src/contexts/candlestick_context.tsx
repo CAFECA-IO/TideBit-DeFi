@@ -40,7 +40,7 @@ export interface ICandlestickContext {
   candlestickId: string;
   candlestickIsLoading: boolean;
   timeSpan: ITimeSpanUnion;
-  selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
+  selectTimeSpanHandler: (props: ITimeSpanUnion, instId?: string) => void;
   candlestickChartData: ICandlestickData[] | null;
   candlestickChartIdHandler: (id: string) => void;
   showPositionOnChart: boolean;
@@ -105,7 +105,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
     tickerBook.timeSpan = updatedTimeSpan;
     setTimeSpan(tickerBook.timeSpan);
     syncCandlestickData(
-      marketCtx.selectedTickerRef.current?.instId ?? DEFAULT_INSTID,
+      instId ?? marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
       updatedTimeSpan
     );
   }, []);
@@ -377,7 +377,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
 
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER, async (tickerData: ITickerData) => {
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (tickerData: ITickerData) => {
         selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
         await listMarketTrades(tickerData.instId);
       }),
@@ -388,7 +388,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
         for (const trade of trades) {
-          if (trade.instId === marketCtx.selectedTickerRef.current?.instId) {
+          if (trade.instId === marketCtx.selectedTickerProperty?.instId) {
             tradeBook.add(trade.instId, {
               tradeId: trade.tradeId,
               targetAsset: trade.baseUnit,

@@ -8,6 +8,7 @@ import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {DEFAULT_ICON} from '../../constants/display';
 import {DEFAULT_CRYPTO} from '../../constants/config';
+import {TickerProvider} from '../../contexts/ticker_context';
 
 interface IMarketSectionProps {
   briefs: IRecommendedNews[];
@@ -32,20 +33,20 @@ const MarketSection = (props: IMarketSectionProps) => {
     tradingValue,
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
-  const displayedTickerHeader = <TradingHeader />;
-
-  const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
-
   const tradeStatisticsStyle = props?.hideTradingView
     ? 'mt-5 lg:mt-20 lg:pl-5'
     : 'mt-5 lg:mt-8 lg:pl-5';
 
   return (
     <div className="ml-5 py-100px">
-      <div className="ml-5">{displayedTickerHeader}</div>
-
-      <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
-
+      <TickerProvider>
+        <div className="ml-5">
+          <TradingHeader />
+        </div>
+        <div className="mx-auto max-w-1920px container">
+          {props?.hideTradingView ? null : <TradingView />}
+        </div>
+      </TickerProvider>
       <div className={tradeStatisticsStyle}>
         <TradeStatistics
           fiveMin={{
@@ -71,7 +72,7 @@ const MarketSection = (props: IMarketSectionProps) => {
 
       <div className="mt-5 lg:mt-8 lg:pl-5">
         <CryptoSummary
-          icon={icon ?? marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
+          icon={icon ?? marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
           label={label ?? DEFAULT_CRYPTO}
           introduction={introduction ?? ''}
           whitePaperLink={whitePaperLink ?? ''}

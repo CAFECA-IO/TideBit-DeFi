@@ -47,10 +47,10 @@ const TradingChartSwitch = ({
 
   useEffect(() => {
     const handleTickerChange = () => {
-      setActiveButton(marketCtx.timeSpan);
+      setActiveButton(candlestickCtx.timeSpan);
     };
     handleTickerChange();
-  }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]);
+  }, [marketCtx.selectedTickerProperty?.instId, candlestickCtx.timeSpan]);
 
   const getDisplayedPositionsState = (bool: boolean) => {
     getDisplayedPositionLabel(bool);

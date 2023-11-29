@@ -13,6 +13,7 @@ import {MarketContext} from '../../contexts/market_context';
 import AuditReport from '../audit_report/audit_report';
 import {Code} from '../../constants/code';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TickerProvider} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -65,7 +66,9 @@ export default function HeroDescription() {
         </div>
 
         <div id="crypto-category" className="pt-20 pb-40">
-          <CryptoCategory />
+          <TickerProvider>
+            <CryptoCategory />
+          </TickerProvider>
         </div>
 
         {/* Info: removed for supervision reason (20231115 - Shirley) */}

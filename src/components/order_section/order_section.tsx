@@ -10,6 +10,7 @@ import {useTranslation} from 'next-i18next';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 import {useGlobal} from '../../contexts/global_context';
 import {LayoutAssertion} from '../../constants/layout_assertion';
+import {TickerProvider} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -213,7 +214,7 @@ const OrderSection = (props: IOrderSection) => {
   const displayedLayout =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
 
-  return <>{displayedLayout}</>;
+  return <TickerProvider>{displayedLayout}</TickerProvider>;
 };
 
 export default OrderSection;

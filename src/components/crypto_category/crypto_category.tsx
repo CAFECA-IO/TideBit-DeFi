@@ -5,18 +5,19 @@ import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
 import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useTranslation} from 'next-i18next';
+import {ITickerContext, TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 const CryptoCategory = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const marketCtx = useContext<IMarketContext>(MarketContext);
+  const tickerCtx = useContext<ITickerContext>(TickerContext);
 
   const [tickers, setTickers] = useState<ITickerData[] | null>();
 
   useEffect(() => {
-    setTickers(marketCtx.listAvailableTickers());
-  }, [marketCtx.availableTickers]);
+    setTickers(Object.values(tickerCtx.availableTickers));
+  }, [tickerCtx.availableTickers]);
 
   const renderCryptoCard = tickers?.map((item, i) => {
     const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);

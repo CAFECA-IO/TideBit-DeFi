@@ -24,6 +24,7 @@ import {Code} from '../../constants/code';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -36,6 +37,7 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
 
   const notificationCtx = useContext(NotificationContext);
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const {
     visibleUpdateFormModalHandler,
     dataUpdateFormModalHandler,
@@ -96,19 +98,19 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
     remainSecs < 60
       ? Math.round(remainSecs)
       : remainSecs < 3600
-      ? Math.round(remainSecs / 60)
-      : remainSecs < 86400
-      ? Math.round(remainSecs / 3600)
-      : Math.round(remainSecs / 86400);
+        ? Math.round(remainSecs / 60)
+        : remainSecs < 86400
+          ? Math.round(remainSecs / 3600)
+          : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
-      ? [`${Math.round(remainSecs / 60)} M`]
-      : remainSecs < 86400
-      ? [`${Math.round(remainSecs / 3600)} H`]
-      : [`${Math.round(remainSecs / 86400)} D`];
+        ? [`${Math.round(remainSecs / 60)} M`]
+        : remainSecs < 86400
+          ? [`${Math.round(remainSecs / 3600)} H`]
+          : [`${Math.round(remainSecs / 86400)} D`];
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
@@ -216,20 +218,20 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
     stateCode === cfdStateCode.LIQUIDATION
       ? lineGraphAnnotation.LIQUIDATION
       : stateCode === cfdStateCode.STOP_LOSS
-      ? lineGraphAnnotation.STOP_LOSS
-      : stateCode === cfdStateCode.TAKE_PROFIT
-      ? lineGraphAnnotation.TAKE_PROFIT
-      : lineGraphAnnotation.OPEN_PRICE;
+        ? lineGraphAnnotation.STOP_LOSS
+        : stateCode === cfdStateCode.TAKE_PROFIT
+          ? lineGraphAnnotation.TAKE_PROFIT
+          : lineGraphAnnotation.OPEN_PRICE;
 
   /* Info: (20230411 - Julian) 倒數 60 秒時圖表呈現黃色 */
   const displayedColorHex =
     remainSecs <= POSITION_CLOSE_COUNTDOWN_SECONDS
       ? TypeOfPnLColorHex.LIQUIDATION
       : pnl?.value > 0
-      ? TypeOfPnLColorHex.PROFIT
-      : pnl?.value < 0
-      ? TypeOfPnLColorHex.LOSS
-      : TypeOfPnLColorHex.EQUAL;
+        ? TypeOfPnLColorHex.PROFIT
+        : pnl?.value < 0
+          ? TypeOfPnLColorHex.LOSS
+          : TypeOfPnLColorHex.EQUAL;
 
   /* Info: (20230411 - Julian) 折線圖參考線顏色
    * 如果 DASH_LINE 是黃色(LIQUIDATION)或白色(EQUAL)，文字就用黑色(其餘用白色) */
@@ -251,23 +253,23 @@ const OpenPositionItem = ({openCfdDetails, hideOpenLineGraph}: IOpenPositionItem
     pnl?.value > 0
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : pnl?.value < 0
-      ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
-      : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
+        ? 'hover:before:bg-lightRed hover:after:bg-lightRed'
+        : 'hover:before:bg-lightWhite hover:after:bg-lightWhite';
 
   const displayedCrossStyle =
     'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 
-  const displayedPnLSymbol = !marketCtx.selectedTicker?.price
+  const displayedPnLSymbol = !tickerCtx.selectedTicker?.price
     ? ''
     : pnl?.value > 0
-    ? '+'
-    : pnl?.value < 0
-    ? '-'
-    : openPrice !== closePrice && Math.abs(pnl?.value ?? 0) === 0
-    ? '≈'
-    : '';
+      ? '+'
+      : pnl?.value < 0
+        ? '-'
+        : openPrice !== closePrice && Math.abs(pnl?.value ?? 0) === 0
+          ? '≈'
+          : '';
 
-  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
+  const displayedPnLValue = !!!tickerCtx.selectedTicker?.price
     ? '- -'
     : numberFormatted(pnl?.value);
 

@@ -1,10 +1,5 @@
 import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
-import {
-  CANDLESTICK_SIZE,
-  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
-  SAMPLE_NUMBER,
-} from '../constants/display';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
@@ -19,23 +14,15 @@ import {
 } from '../interfaces/tidebit_defi_background/result';
 import {
   ITickerData,
+  ITickerProperty,
   dummyTicker,
-  toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
-import {
-  ICandlestickData,
-  IInstCandlestick,
-  ITrade,
-  TradeSideText,
-  isIInstCandlestick,
-} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {DEFAULT_INSTID, INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL} from '../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -47,8 +34,7 @@ import {Code, Reason} from '../constants/code';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
-import TradeBookInstance from '../lib/books/trade_book';
-import {millisecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
+import {roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -71,15 +57,16 @@ export interface IMarketProvider {
 
 export interface IMarketContext {
   isInit: boolean;
-  selectedTicker: ITickerData | null;
-  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
-  availableTickers: {[instId: string]: ITickerData};
+  selectedTickerProperty: ITickerProperty;
+  // selectedTicker: ITickerData | null;
+  // selectedTickerRef: React.MutableRefObject<ITickerData | null>;
+  // availableTickers: {[instId: string]: ITickerData};
   isCFDTradable: boolean;
   // showPositionOnChart: boolean;
   // candlestickId: string;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  timeSpan: ITimeSpanUnion;
+  // timeSpan: ITimeSpanUnion;
   // candlestickChartData: ICandlestickData[] | null;
   depositCryptocurrencies: ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[];
@@ -135,14 +122,15 @@ export interface IMarketContext {
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   isInit: false,
-  selectedTicker: dummyTicker,
-  selectedTickerRef: React.createRef<ITickerData>(),
-  availableTickers: {},
+  selectedTickerProperty: dummyTicker,
+  // selectedTicker: dummyTicker,
+  // selectedTickerRef: React.createRef<ITickerData>(),
+  // availableTickers: {},
   isCFDTradable: false,
   // showPositionOnChart: false,
   // candlestickId: '',
   // candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1s,
+  // timeSpan: TimeSpanUnion._1s,
   guaranteedStopFeePercentage: null,
   // selectTimeSpanHandler: () => null,
   tickerStatic: null,
@@ -153,7 +141,9 @@ export const MarketContext = createContext<IMarketContext>({
   init: () => Promise.resolve(),
   // showPositionOnChartHandler: () => null,
   // candlestickChartIdHandler: () => null,
-  listAvailableTickers: () => [],
+  listAvailableTickers: () => {
+    throw new Error('Function not implemented.');
+  },
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
@@ -196,7 +186,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [selectedTickerProperty, setSelectedTickerProperty] =
+    useState<ITickerProperty>(dummyTicker);
+  // const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cryptocurrencies, setCryptocurrencies, cryptocurrenciesRef] = useState<ICryptocurrency[]>(
     []
@@ -229,9 +221,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
-    [instId: string]: ITickerData;
-  }>(toDummyTickers);
+  // const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
+  //   [instId: string]: ITickerData;
+  // }>(toDummyTickers);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -288,7 +280,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listAvailableTickers = useCallback(() => {
-    const availableTickers: {[instId: string]: ITickerData} = {...availableTickersRef.current};
+    const availableTickers: {[instId: string]: ITickerData} = {...tickerBook.listTickers()};
     if (userCtx.enableServiceTerm) {
       for (const favoriteTicker of userCtx.favoriteTickers) {
         if (availableTickers[favoriteTicker])
@@ -299,7 +291,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
     return Object.values(availableTickers);
-  }, [userCtx.favoriteTickers, availableTickersRef.current]);
+  }, [userCtx.favoriteTickers]);
 
   // const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
   //   let updatedTimeSpan = timeSpan;
@@ -374,12 +366,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const selectTickerHandler = useCallback(async (instId: string) => {
     if (!instId) return {...defaultResultFailed};
-    const ticker: ITickerData = availableTickersRef.current[instId];
+    const ticker: ITickerData = {...tickerBook.listTickers()[instId]};
     if (!ticker) return {...defaultResultFailed};
     notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
     setTickerLiveStatistics(null);
     setTickerStatic(null);
-    setSelectedTicker(ticker);
+    setSelectedTickerProperty(ticker);
+    // setSelectedTicker(ticker);
     // await listMarketTrades(ticker.instId);
     // selectTimeSpanHandler(timeSpanRef.current, ticker.instId);
     // ++ TODO: get from api
@@ -553,7 +546,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       if (result.success) {
         const tickers = result.data as ITickerData[];
         tickerBook.updateTickers(tickers);
-        setAvailableTickers({...tickerBook.listTickers()});
+        // setAvailableTickers({...tickerBook.listTickers()});
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -983,23 +976,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess) {
       setIsCFDTradable(true);
       setTimeSpan(TimeSpanUnion._1s);
+      notificationCtx.emitter.emit(TideBitEvent.IS_INITIALIZE);
     }
     setIsInit(true);
 
     return await Promise.resolve();
   }, []);
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
-        tickerBook.updateTicker(tickerData);
-        const updateTickers = {...tickerBook.listTickers()};
-        setAvailableTickers({...updateTickers});
-        if (tickerData.instId === selectedTickerRef.current?.instId)
-          setSelectedTicker(updateTickers[tickerData.instId]);
-      }),
-    []
-  );
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
+  //       tickerBook.updateTicker(tickerData);
+  //       const updateTickers = { ...tickerBook.listTickers() };
+  //       setAvailableTickers({...updateTickers});
+  //       if (tickerData.instId === selectedTickerRef.current?.instId)
+  //         setSelectedTicker(updateTickers[tickerData.instId]);
+  //     }),
+  //   []
+  // );
 
   React.useMemo(
     () =>
@@ -1042,18 +1036,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const defaultValue = {
     isInit: isInitRef.current,
-    selectedTicker: selectedTickerRef.current,
-    selectedTickerRef,
+    selectedTickerProperty,
+    // selectedTicker: selectedTickerRef.current,
+    // selectedTickerRef,
     guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
     selectTickerHandler,
     // selectTimeSpanHandler,
-    availableTickers,
+    // availableTickers,
     isCFDTradable,
     // showPositionOnChart,
     // showPositionOnChartHandler,
     // candlestickId,
     // candlestickChartData: candlestickChartDataRef.current,
-    timeSpan,
+    // timeSpan,
     // candlestickChartIdHandler,
     tickerStatic: tickerStaticRef.current,
     tickerLiveStatistics: tickerLiveStatisticsRef.current,

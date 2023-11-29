@@ -38,7 +38,12 @@ const AppDowloadContainer = () => {
               </div>
 
               <div className="mx-auto mt-10 flex shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
-                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
+                <Link
+                  id="AppStoreLink"
+                  target="_blank"
+                  href="/coming-soon"
+                  className="hover:opacity-80"
+                >
                   <Image
                     src="/elements/app_store_badge@2x.png"
                     width={120}
@@ -47,7 +52,12 @@ const AppDowloadContainer = () => {
                   />
                 </Link>
 
-                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
+                <Link
+                  id="GooglePlayLink"
+                  target="_blank"
+                  href="/coming-soon"
+                  className="hover:opacity-80"
+                >
                   <Image
                     src={'/elements/google_play_badge@2x.png'}
                     width={155}
@@ -116,7 +126,12 @@ const AppDowloadContainer = () => {
               </div>
 
               <div className="mx-auto mt-5 flex shrink-0 flex-wrap items-center justify-center space-x-3 sm:mt-10 sm:space-x-4 md:ml-auto md:mr-0">
-                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
+                <Link
+                  id="AppStoreLinkMobile"
+                  target="_blank"
+                  href="/coming-soon"
+                  className="hover:opacity-80"
+                >
                   <Image
                     src="/elements/group_15225@2x.png"
                     width={134}
@@ -125,7 +140,12 @@ const AppDowloadContainer = () => {
                   />
                 </Link>
 
-                <Link target="_blank" href="/coming-soon" className="hover:opacity-80">
+                <Link
+                  id="GooglePlayLinkMobile"
+                  target="_blank"
+                  href="/coming-soon"
+                  className="hover:opacity-80"
+                >
                   <Image
                     src={'/elements/group_15232@2x.png'}
                     width={135}

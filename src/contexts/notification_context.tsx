@@ -14,6 +14,10 @@ import {CustomError, isCustomError} from '../lib/custom_error';
 import {ICode, Reason} from '../constants/code';
 import {IErrorSearchProps, IException} from '../constants/exception';
 import {SEVEREST_EXCEPTION_LEVEL} from '../constants/display';
+import {
+  IFinancialLinks,
+  dummyFinancialLinks,
+} from '../interfaces/tidebit_defi_background/financial_links';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -36,6 +40,7 @@ export interface INotificationContext {
   clearException: () => void;
   removeException: (props: IErrorSearchProps, searchBy: string) => void;
   getSeverestException: () => IException[];
+  financialLinks: IFinancialLinks;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -50,11 +55,19 @@ export const NotificationContext = createContext<INotificationContext>({
   clearException: () => null,
   removeException: () => null,
   getSeverestException: () => [],
+  financialLinks: dummyFinancialLinks,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const exceptionCollector = React.useMemo(() => ExceptionCollectorInstance, []);
+  const baifaProjectId = process.env.BAIFA_PROJECT_ID ?? '';
+  const financialLinks: IFinancialLinks = {
+    balance: `https://baifa.io/reports/${baifaProjectId}/balance`,
+    comprehensiveIncome: `https://baifa.io/reports/${baifaProjectId}/comprehensive-income`,
+    cashFlow: `https://baifa.io/reports/${baifaProjectId}/cash-flow`,
+    redFlags: `https://baifa.io/reports/${baifaProjectId}/red-flags`,
+  };
 
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -217,6 +230,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     clearException,
     removeException,
     getSeverestException,
+    financialLinks,
   };
 
   return (

@@ -56,7 +56,7 @@ const PositionTab = ({
       <ul className="mb-2 flex flex-wrap justify-center text-center text-sm font-medium">
         <li className="">
           <button
-            id="OpenTab"
+            id="OpenTabButton"
             onClick={openTabClickHandler}
             className={`${activeOpenTabStyle} inline-block px-11 py-1`}
           >
@@ -65,7 +65,7 @@ const PositionTab = ({
         </li>
         <li className="">
           <button
-            id="HistoryTab"
+            id="HistoryTabButton"
             onClick={historyTabClickHandler}
             className={`${activeHistoryTabStyle} inline-block px-11 py-1`}
           >

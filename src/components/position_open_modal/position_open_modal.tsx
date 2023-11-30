@@ -583,7 +583,7 @@ const PositionOpenModal = ({
             {/* Info: (20231019 - Julian) Price */}
             {<p className={`${dataRenewedStyle}`}>→ {numberFormatted(openCfdRequest.price)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
+            <Tooltip id="OpenOpenPriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -610,7 +610,7 @@ const PositionOpenModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="flex">
             <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-            <Tooltip className={``} tooltipPosition="left-2">
+            <Tooltip id="OpenTpSlTip" tooltipPosition="left-2">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.TP_AND_SL_HINT')}
               </p>
@@ -638,7 +638,7 @@ const PositionOpenModal = ({
               </span>
             ) : null}
 
-            <Tooltip className="ml-1">
+            <Tooltip id="OpenGuaranteedStopTip" className="ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>

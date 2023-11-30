@@ -558,7 +558,7 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
+            <Tooltip id="CloseOpenPriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -592,7 +592,7 @@ const PositionClosedModal = ({
                 : numberFormatted(gQuotationRef.current.price)}
             </p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
+            <Tooltip id="CloseClosePriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -628,7 +628,7 @@ const PositionClosedModal = ({
                 <span className="text-lightGray text-sm">)</span>
               </span>
             ) : null}
-            <Tooltip className="top-px ml-1">
+            <Tooltip id="CloseGuaranteedStopTip" className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>

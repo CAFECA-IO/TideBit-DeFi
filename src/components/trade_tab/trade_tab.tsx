@@ -1102,7 +1102,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
           {unitAsset})
         </span>
         {/* Info: (20231003 - Julian) Tooltip */}
-        <Tooltip className="ml-1">
+        <Tooltip id="LongGuaranteedStopTip" className="ml-1">
           <p className="w-56 text-left text-sm font-medium text-white">
             {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
           </p>
@@ -1249,7 +1249,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
             {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
-          <Tooltip className="ml-1">
+          <Tooltip id="ShortGuaranteedStopTip" className="ml-1">
             <p className="w-56 text-left text-sm font-medium text-white">
               {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
             </p>

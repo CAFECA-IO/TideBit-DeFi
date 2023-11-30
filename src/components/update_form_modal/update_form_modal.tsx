@@ -552,7 +552,7 @@ const UpdateFormModal = ({
             ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
-          <Tooltip className="ml-3">
+          <Tooltip id="UpdateFormGuaranteedStopTip" className="ml-3">
             <p className="w-56 text-left text-sm font-medium text-white">
               {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
             </p>
@@ -973,7 +973,7 @@ const UpdateFormModal = ({
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip id="UpdateFormOpenPriceTip" className="hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -991,7 +991,7 @@ const UpdateFormModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="flex">
             <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-            <Tooltip className={``} tooltipPosition="left-2">
+            <Tooltip id="UpdateFormTpSlTip" tooltipPosition="left-2">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.TP_AND_SL_HINT')}
               </p>

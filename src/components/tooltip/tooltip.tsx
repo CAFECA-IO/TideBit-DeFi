@@ -3,11 +3,12 @@ import {AiOutlineQuestionCircle} from 'react-icons/ai';
 
 interface ITooltipProps {
   children: React.ReactNode;
+  id: string;
   className?: string;
   tooltipPosition?: string;
 }
 
-const Tooltip = ({children, className, tooltipPosition}: ITooltipProps) => {
+const Tooltip = ({children, id, className, tooltipPosition}: ITooltipProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const mouseEnterHandler = () => setShowTooltip(true);
@@ -15,6 +16,7 @@ const Tooltip = ({children, className, tooltipPosition}: ITooltipProps) => {
 
   return (
     <div
+      id={id}
       className={`relative whitespace-normal ${className}`}
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseLeaveHandler}

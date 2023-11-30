@@ -347,7 +347,7 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder} items-center`}>
               <div className="flex">
                 <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-                <Tooltip className={``} tooltipPosition="left-2">
+                <Tooltip id="UpdateTpSlTip" tooltipPosition="left-2">
                   <p className="w-56 text-left text-sm font-medium text-white">
                     {t('POSITION_MODAL.TP_AND_SL_HINT')}
                   </p>
@@ -379,7 +379,7 @@ const PositionUpdatedModal = ({
                   ) : null}
                 </div>
 
-                <Tooltip className="top-px ml-1">
+                <Tooltip id="UpdateGuaranteedStopTip" className="top-px ml-1">
                   <p className="w-56 text-left text-sm font-medium text-white">
                     {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
                   </p>

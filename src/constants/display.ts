@@ -22,6 +22,7 @@ export const TRANSFER_OPTIONS = [
 
 export const BADGE_LIST = [
   {
+    id: 'DailyTop20',
     name: Badges.DAILY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_DESCRIPTION',
@@ -29,6 +30,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/daily_20.svg',
   },
   {
+    id: 'WeeklyTop20',
     name: Badges.WEEKLY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_DESCRIPTION',
@@ -36,6 +38,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/weekly_20.svg',
   },
   {
+    id: 'MonthlyTop20',
     name: Badges.MONTHLY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_DESCRIPTION',
@@ -43,6 +46,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/monthly_20.svg',
   },
   {
+    id: 'Sharing',
     name: Badges.SHARING,
     title: 'LEADERBOARD_PAGE.BADGE_SHARING_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_SHARING_DESCRIPTION',
@@ -50,6 +54,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/sharing_badge.svg',
   },
   {
+    id: 'Linked',
     name: Badges.LINKED,
     title: 'LEADERBOARD_PAGE.BADGE_LINKED_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_LINKED_DESCRIPTION',
@@ -57,6 +62,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/linked_badge.svg',
   },
   {
+    id: 'Deposit',
     name: Badges.DEPOSIT,
     title: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_DESCRIPTION',
@@ -64,6 +70,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/deposit_badge.svg',
   },
   {
+    id: 'Bachelor',
     name: Badges.BACHELOR,
     title: 'LEADERBOARD_PAGE.BADGE_BACHELOR_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_BACHELOR_DESCRIPTION',
@@ -71,6 +78,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/bachelor_badge.svg',
   },
   {
+    id: 'Master',
     name: Badges.MASTER,
     title: 'LEADERBOARD_PAGE.BADGE_MASTER_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_MASTER_DESCRIPTION',
@@ -78,6 +86,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/master_badge.svg',
   },
   {
+    id: 'Doctor',
     name: Badges.DOCTOR,
     title: 'LEADERBOARD_PAGE.BADGE_DOCTOR_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DOCTOR_DESCRIPTION',

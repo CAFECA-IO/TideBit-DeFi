@@ -1,4 +1,4 @@
-import React, {createContext, useRef, useContext} from 'react';
+import React, {createContext, useRef, useContext, useEffect} from 'react';
 import keccak from '@cafeca/keccak';
 import useState from 'react-usestateref';
 import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
@@ -15,6 +15,7 @@ import {
 } from '../interfaces/tidebit_defi_background/pusher_data';
 import {ITrade} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getCookieByName} from '../lib/common';
+import {INTERVAL_FOR_CLEARING_BINDING} from '../constants/config';
 
 type IJobType = 'API' | 'WS';
 
@@ -82,7 +83,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const subscribeTickers = () => {
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
+      channel.unbind(Events.TICKERS).bind(Events.TICKERS, (pusherData: IPusherData) => {
         const tickerData = pusherData as ITickerData;
         notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
       });
@@ -91,10 +92,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const subscribeTrades = () => {
     if (publicChannelRef.current) {
-      publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const trade = pusherData as ITrade;
-        notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
-      });
+      publicChannelRef.current
+        .unbind(Events.TRADES)
+        .bind(Events.TRADES, (pusherData: IPusherData) => {
+          const trade = pusherData as ITrade;
+          notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
+        });
     }
   };
 
@@ -214,6 +217,19 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     requestHandler,
     subscribeUser,
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (publicChannelRef.current) {
+        publicChannelRef.current.unbind(Events.TRADES);
+        publicChannelRef.current.unbind(Events.TICKERS);
+      }
+    }, INTERVAL_FOR_CLEARING_BINDING);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return <WorkerContext.Provider value={defaultValue}>{children}</WorkerContext.Provider>;
 };

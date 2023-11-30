@@ -70,6 +70,7 @@ const FailedModal = ({
         {btnUrl && btnMsg ? (
           <a href={btnUrl} target="_blank" rel="noreferrer">
             <RippleButton
+              id="FailedModalButton"
               className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
               buttonType="button"
               onClick={btnClickHandler}
@@ -79,6 +80,7 @@ const FailedModal = ({
           </a>
         ) : btnMsg ? (
           <RippleButton
+            id="FailedModalButton"
             className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
             buttonType="button"
             onClick={btnClickHandler}
@@ -96,7 +98,7 @@ const FailedModal = ({
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           <div
-            id="failedModal"
+            id="FailedModal"
             className="relative flex h-auto min-h-420px w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             <div className="flex items-start justify-between rounded-t pt-6">

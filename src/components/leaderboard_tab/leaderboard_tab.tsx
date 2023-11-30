@@ -196,7 +196,12 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         </div>
       </div>
     ) : (
-      <div key={rank} className={`${marginTop} hover:cursor-pointer`} onClick={clickHandler}>
+      <div
+        id={`Ranking${rank}`}
+        key={rank}
+        className={`${marginTop} hover:cursor-pointer`}
+        onClick={clickHandler}
+      >
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
           <div
@@ -258,6 +263,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     return (
       <div key={text} className="w-full">
         <button
+          id={`${text}Tab`}
           type="button"
           className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs transition-all duration-300 hover:cursor-pointer md:text-base`}
           onClick={active}
@@ -290,6 +296,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       </div>
     ) : (
       <div
+        id={`Ranking${rank}`}
         className="flex h-90px w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
         onClick={clickHandler}
       >

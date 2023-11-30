@@ -25,6 +25,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       <div className="flex w-full flex-row items-center justify-between whitespace-nowrap px-7">
         <Link href={btnPath}>
           <RippleButton
+            id="WarningModalReactionButton"
             buttonType="button"
             onClick={modalClickHandler}
             className={`${MODAL_BUTTON_STYLE.SOLID} w-150px py-2`}
@@ -34,6 +35,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         </Link>
 
         <RippleButton
+          id="WarningModalOkButton"
           buttonType="button"
           onClick={modalClickHandler}
           className={`${MODAL_BUTTON_STYLE.HOLLOW} w-70px py-2`}
@@ -46,6 +48,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         <div className="flex flex-row items-center justify-center px-7">
           <Link href={btnPath}>
             <RippleButton
+              id="WarningModalReactionButton"
               buttonType="button"
               onClick={modalClickHandler}
               className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}
@@ -57,6 +60,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       ) : (
         <div className="flex flex-row items-center justify-center px-7">
           <RippleButton
+            id="WarningModalReactionButton"
             buttonType="button"
             onClick={modalClickHandler}
             className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}
@@ -72,7 +76,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
-            id="depositHistoryModal"
+            id="WarningModal"
             className="relative flex h-auto w-300px flex-col space-y-4 rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/* Info:(20230418 - Julian) Header/Title */}

@@ -318,7 +318,6 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
 
           {/* ----------Crypto Menu---------- */}
           <div
-            id="dropdownIcon"
             className={`absolute right-6 top-90px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
           >
             <ul
@@ -367,6 +366,7 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
 
           <div className={``}>
             <RippleButton
+              id="DepositModalButton"
               // Use the logic directly in the `disabled` attribute instead of `setSubmitDisabled`
               disabled={amountInput === 0 || amountInput === undefined}
               onClick={submitClickHandler}
@@ -385,9 +385,8 @@ const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepos
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
           <div
-            id="depositModal"
+            id="DepositModal"
             className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             <div className="flex items-start justify-between rounded-t pt-9">

@@ -644,6 +644,7 @@ const PositionClosedModal = ({
 
       {/* Info: (20231003 - Julian) Submit Button */}
       <RippleButton
+        id="ClosePositionButton"
         disabled={secondsLeft < 1 || quotationErrorRef.current}
         onClick={submitClickHandler}
         buttonType="button"
@@ -658,7 +659,10 @@ const PositionClosedModal = ({
     <>
       {/* Info: (20231003 - Julian) Blur Mask */}
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8">
+        <div
+          id="ClosePositionModal"
+          className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
+        >
           {/* Info: (20231003 - Julian) Header */}
           <div className="flex items-center justify-between">
             <div className="flex w-full flex-col items-center">

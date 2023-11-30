@@ -36,7 +36,7 @@ import {OrderType} from '../../constants/order_type';
 import {TypeOfValidation} from '../../constants/validation';
 import {IResult, defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
-import {Code, Reason} from '../../constants/code';
+import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';

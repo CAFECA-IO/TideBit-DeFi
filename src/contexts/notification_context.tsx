@@ -40,6 +40,7 @@ export interface INotificationContext {
   clearException: () => void;
   removeException: (props: IErrorSearchProps, searchBy: string) => void;
   getSeverestException: () => IException[];
+  isInit: boolean;
   financialLinks: IFinancialLinks;
 }
 
@@ -55,6 +56,7 @@ export const NotificationContext = createContext<INotificationContext>({
   clearException: () => null,
   removeException: () => null,
   getSeverestException: () => [],
+  isInit: false,
   financialLinks: dummyFinancialLinks,
 });
 
@@ -76,6 +78,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const getSeverestException = (): IException[] => {
     return exceptionCollector.getSeverest();
@@ -155,6 +159,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
     updatedNotifications.forEach(notification => {
       const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+
       if (cookieValue) {
         if (!isCookieExpired(cookieValue)) {
           notification.isRead = true;
@@ -190,6 +195,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const init = async () => {
     checkAndResetNotifications();
+    setIsInit(true);
     return await Promise.resolve();
   };
 
@@ -230,6 +236,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     clearException,
     removeException,
     getSeverestException,
+    isInit: isInitRef.current,
     financialLinks,
   };
 

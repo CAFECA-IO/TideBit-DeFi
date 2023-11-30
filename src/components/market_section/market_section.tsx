@@ -37,15 +37,15 @@ const MarketSection = (props: IMarketSectionProps) => {
     ? 'mt-5 lg:mt-20 lg:pl-5'
     : 'mt-5 lg:mt-8 lg:pl-5';
 
+  const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
+
   return (
     <div className="ml-5 py-100px">
       <TickerProvider>
         <div className="ml-5">
           <TradingHeader />
         </div>
-        <div className="mx-auto max-w-1920px container">
-          {props?.hideTradingView ? null : <TradingView />}
-        </div>
+        <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
       </TickerProvider>
       <div className={tradeStatisticsStyle}>
         <TradeStatistics

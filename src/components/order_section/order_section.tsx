@@ -121,6 +121,7 @@ const OrderSection = (props: IOrderSection) => {
       <div className="z-10 flex w-320px border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
         <div className="mr-3px w-full">
           <button
+            id="TradeTabButton"
             type="button"
             className={`${tradeTabStyle} inline-block w-full rounded-t-2xl px-40px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
@@ -130,6 +131,7 @@ const OrderSection = (props: IOrderSection) => {
         </div>
         <div className="w-full">
           <button
+            id="PositionTabButton"
             type="button"
             className={`${positionTabStyle} inline-block w-full rounded-t-2xl px-40px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}

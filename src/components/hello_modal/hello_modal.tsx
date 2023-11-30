@@ -17,61 +17,52 @@ const HelloModal = ({helloModalRef, helloModalVisible = false, helloClickHandler
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const isDisplayedHelloModal = helloModalVisible ? (
-    <>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
-          <div
-            id="HelloModal"
-            ref={helloModalRef}
-            className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
+    /* Info: (20231129 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="HelloModal"
+        ref={helloModalRef}
+        className="relative flex h-auto w-9/10 flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
+      >
+        <button
+          id="HelloCloseButton"
+          onClick={helloClickHandler}
+          className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
+        >
+          <ImCross />
+        </button>
+        <div className="flex flex-col items-center pt-32 pb-5 px-10 text-lg leading-relaxed text-lightWhite">
+          <Image
+            className="mt-10 w-100px"
+            src="/elements/path_25939.svg"
+            width={200}
+            height={200}
+            alt="Hello"
+          />
+          <h2 className="mt-8 mb-40 text-xl text-lightGray">
+            {t('WALLET_PANEL.HELLO_DESCRIPTION')}
+          </h2>
+
+          <TideButton
+            id="HelloModalDone"
+            className="rounded bg-tidebitTheme px-12 py-2 font-normal transition-all hover:opacity-90"
+            onClick={helloClickHandler}
           >
-            <div className="mx-auto flex items-start justify-between rounded-t pt-6">
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                  <ImCross onClick={helloClickHandler} />
-                </span>
-              </button>
-            </div>
-            <div className="flex flex-auto flex-col items-center pt-32 pb-5">
-              <div className="text-lg leading-relaxed text-lightWhite">
-                <div className="flex flex-col items-center px-10">
-                  <Image
-                    className="mt-10 w-100px"
-                    src="/elements/path_25939.svg"
-                    width={200}
-                    height={200}
-                    alt="Hello"
-                  />
-                  <div className="mt-8 mb-40 text-xl text-lightGray">
-                    {t('WALLET_PANEL.HELLO_DESCRIPTION')}
-                  </div>
-
-                  <TideButton
-                    id="HelloModalButton"
-                    className="rounded bg-tidebitTheme px-12 py-2 font-normal transition-all hover:opacity-90"
-                    onClick={helloClickHandler}
-                  >
-                    {t('WALLET_PANEL.DONE_BUTTON')}
-                  </TideButton>
-                  <Link
-                    className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
-                    href="#"
-                  >
-                    {t('WALLET_PANEL.HELLO_CONNECT_LINK')}
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
+            {t('WALLET_PANEL.DONE_BUTTON')}
+          </TideButton>
+          <Link
+            id="ConnectTidebitLink"
+            className="my-3 text-base text-tidebitTheme underline underline-offset-4"
+            href="#"
+          >
+            {t('WALLET_PANEL.HELLO_CONNECT_LINK')}
+          </Link>
         </div>
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedHelloModal}</div>;
+  return <>{isDisplayedHelloModal}</>;
 };
 
 export default HelloModal;

@@ -174,21 +174,21 @@ const NavBar = () => {
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
 
                     <Link
-                      id="NavTradeLinkDesktop"
+                      id="NavTradeDesktop"
                       href={tradeLink}
                       className="hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
-                      id="NavLeaderboardLinkDesktop"
+                      id="NavLeaderboardDesktop"
                       href={TBDURL.LEADERBOARD}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
                     <Link
-                      id="NavSupportLinkDesktop"
+                      id="NavSupportDesktop"
                       href={TBDURL.COMING_SOON}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
                     >
@@ -212,7 +212,7 @@ const NavBar = () => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button
-                    id="NavNotificationDesktop"
+                    id="NavBellDesktop"
                     onClick={sidebarOpenHandler}
                     className={`w-10 relative hover:cursor-pointer ${
                       sidebarVisible ? `pointer-events-none` : `pointer-events-auto`
@@ -248,6 +248,7 @@ const NavBar = () => {
           <div className="flex basis-full items-center">
             <div className="flex border-r border-lightGray1 lg:hidden">
               <button
+                id="NavBurgerMobile"
                 onClick={burgerClickHandler}
                 className="z-50 inline-flex items-center justify-center rounded-md px-3 py-2"
               >
@@ -294,7 +295,7 @@ const NavBar = () => {
                   </div>
                 </Link>
                 <button
-                  id="NavNotificationMobile"
+                  id="NavBellMobile"
                   onClick={sidebarOpenHandlerMobile}
                   className="relative hover:cursor-pointer"
                 >
@@ -310,19 +311,15 @@ const NavBar = () => {
                 </button>
               </div>
 
-              <Link id="NavTradeLinkMobile" href={tradeLink} className={menuItemStyles}>
+              <Link id="NavTradeMobile" href={tradeLink} className={menuItemStyles}>
                 {t('NAV_BAR.TRADE')}
               </Link>
 
-              <Link
-                id="NavLeaderboardLinkMobile"
-                href={TBDURL.LEADERBOARD}
-                className={menuItemStyles}
-              >
+              <Link id="NavLeaderboardMobile" href={TBDURL.LEADERBOARD} className={menuItemStyles}>
                 {t('NAV_BAR.LEADERBOARD')}
               </Link>
 
-              <Link id="NavSupportLinkMobile" href={TBDURL.COMING_SOON} className={menuItemStyles}>
+              <Link id="NavSupportMobile" href={TBDURL.COMING_SOON} className={menuItemStyles}>
                 {t('NAV_BAR.SUPPORT')}
               </Link>
 

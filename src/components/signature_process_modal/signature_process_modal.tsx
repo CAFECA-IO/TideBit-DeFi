@@ -61,21 +61,15 @@ const SignatureProcessModal = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [errorCode, setErrorCode, errorCodeRef] = useStateRef<ICode>(Code.SERVICE_TERM_DISABLE);
 
-  const controlSpace =
-    !userCtx.isConnected || connectingProcess === ConnectingProcess.REJECTED
-      ? 'space-y-12'
-      : 'space-y-12';
-  const btnSpace =
-    userCtx.isConnected && connectingProcess !== ConnectingProcess.REJECTED ? 'mt-10' : 'mt-16';
-
   const firstStepIcon = (
     <div className="relative flex items-center justify-center">
-      <Lottie className="relative w-32" animationData={activeIconPulse} />
+      <Lottie className="absolute w-32 ml-3px mt-2px" animationData={activeIconPulse} />
+
       <Image
-        className="absolute mb-1px mr-1"
+        className="relative"
         src="/elements/group_2415.svg"
-        width={33}
-        height={33}
+        width={32}
+        height={32}
         alt="step 1 icon"
       />
     </div>
@@ -94,14 +88,14 @@ const SignatureProcessModal = ({
   );
 
   const secondStepActivatedIcon = (
-    <div className="relative flex items-center justify-center">
-      <Lottie className="relative w-32" animationData={activeIconPulse} />
+    <div className="relative w-32px flex items-center justify-center">
+      <Lottie className="absolute w-32 ml-1 mt-2px" animationData={activeIconPulse} />
 
       <Image
-        className="absolute mb-1px mr-1"
+        className="relative"
         src="/elements/group_2418(1).svg"
-        width={33}
-        height={33}
+        width={32}
+        height={32}
         alt="step 2 icon"
       />
     </div>
@@ -193,20 +187,18 @@ const SignatureProcessModal = ({
 
   const firstStepDefaultView = (
     <>
-      <div className="-mb-5 -mt-6 inline-flex">
-        <div className="relative -ml-11 -mt-2"> {firstStepIcon}</div>
-        <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
-          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
-          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
-        </div>
+      <div className="relative mr-4">{firstStepIcon}</div>
+      <div className="space-y-1 text-lightWhite">
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
       </div>
     </>
   );
 
   const firstStepSuccessView = (
     <>
-      <div className="mr-6 mt-1">{successIcon}</div>
-      <div className="mt-1 w-271px space-y-1 text-lightWhite">
+      <div className="mr-4">{successIcon}</div>
+      <div className="space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
       </div>
@@ -219,31 +211,27 @@ const SignatureProcessModal = ({
 
   const secondStepDefaultView = (
     <>
-      <div className="mb-1 mt-2 flex items-center justify-center">
-        <div className="mr-6">{secondStepDefaultIcon}</div>
-        <div className="w-271px space-y-1 text-lightGray">
-          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
-          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
-        </div>
+      <div className="mr-4 w-32px relative">{secondStepDefaultIcon}</div>
+      <div className="space-y-1 text-lightGray w-240px lg:w-auto">
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
       </div>
     </>
   );
   const secondStepActiveView = (
     <>
-      <div className="inline-flex">
-        <div className="relative -ml-11"> {secondStepActivatedIcon}</div>
-        <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
-          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
-          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
-        </div>
+      <div className="relative mr-4">{secondStepActivatedIcon}</div>
+      <div className="space-y-1 text-lightWhite">
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
       </div>
     </>
   );
 
   const secondStepSuccessView = (
     <>
-      <div className="mb-1 mr-6 mt-7">{successIcon}</div>
-      <div className="mb-1 mt-7 w-271px space-y-1 text-lightWhite">
+      <div className="mr-4">{successIcon}</div>
+      <div className="space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
       </div>
@@ -252,8 +240,8 @@ const SignatureProcessModal = ({
 
   const secondStepErrorView = (
     <>
-      <div className="-mb-5 mr-6 mt-7">{errorIcon}</div>
-      <div className="-mb-5 mt-7 w-271px space-y-1 text-lightWhite">
+      <div className="mr-4">{errorIcon}</div>
+      <div className="space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         <div className="text-sm text-lightRed3">
@@ -265,8 +253,8 @@ const SignatureProcessModal = ({
 
   const secondStepDisableServiceTermErrorView = (
     <>
-      <div className="-mb-5 mr-6 mt-7">{errorIcon}</div>
-      <div className="-mb-5 mt-7 w-271px space-y-1 text-lightWhite">
+      <div className="mr-4">{errorIcon}</div>
+      <div className="space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         <div className="text-sm text-lightRed3">
@@ -299,7 +287,7 @@ const SignatureProcessModal = ({
   );
 
   const displayedSection = (
-    <div className={`${controlSpace} flex flex-col px-4 pt-16`}>
+    <div className={`space-y-12 flex flex-col pt-16 pb-4 items-start`}>
       <div className="flex items-center justify-center">{firstStepSectionHandler}</div>
 
       {/* Info: Second Step (20231106 - Shirley) */}
@@ -308,55 +296,47 @@ const SignatureProcessModal = ({
   );
 
   const isDisplayedProcessModal = processModalVisible ? (
-    <>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          <div
-            id="SignatureProcessModal"
-            ref={processModalRef}
-            className="relative flex h-auto w-full flex-col items-center rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
+    /* Info: (20231129 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="SignatureProcessModal"
+        ref={processModalRef}
+        className="relative space-y-4 flex h-auto w-9/10 flex-col items-center rounded-xl bg-darkGray1 shadow-lg shadow-black/80 md:w-450px py-8 px-6 lg:p-10"
+      >
+        {/* Info: (20231129 - Julian) Header */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-lightWhite md:text-4xl">
+            {t('WALLET_PANEL.TITLE')}
+          </h3>
+          {/* Info: (20231004 - Julian) Close Button */}
+          <button
+            id="SignatureCloseButton"
+            onClick={processClickHandler}
+            className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
           >
-            <div className="mx-auto flex items-start justify-between rounded-t pt-6">
-              <h3 className="mx-auto mt-2 text-xl font-semibold text-lightWhite md:text-4xl">
-                {t('WALLET_PANEL.TITLE')}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={processClickHandler} />
-                </span>
-              </button>
+            <ImCross />
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center text-lg leading-relaxed text-lightWhite">
+          <div className="text-center text-sm text-lightGray md:text-lg">
+            <div>{t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE1')}</div>
+            <div>
+              {' '}
+              {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART1')}{' '}
+              <span className="text-tidebitTheme">
+                <Link href="#">{t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_HIGHLIGHT')}</Link>
+              </span>{' '}
+              {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART2')}
             </div>
-
-            <div className="flex flex-auto flex-col items-center py-5">
-              <div className="text-lg leading-relaxed text-lightWhite">
-                <div className="mx-auto flex flex-col items-center">
-                  <div className="text-center text-sm text-lightGray md:mt-4 md:text-lg">
-                    <div>{t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE1')}</div>
-                    <div>
-                      {' '}
-                      {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART1')}{' '}
-                      <span className="text-tidebitTheme">
-                        <Link href="#">
-                          {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_HIGHLIGHT')}
-                        </Link>
-                      </span>{' '}
-                      {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART2')}
-                    </div>
-                  </div>
-
-                  {displayedSection}
-
-                  <div className={`${btnSpace}`}>{requestButtonHandler}</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
+
+          {displayedSection}
+
+          <div className={`mt-10`}>{requestButtonHandler}</div>
         </div>
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
   return <div>{isDisplayedProcessModal}</div>;

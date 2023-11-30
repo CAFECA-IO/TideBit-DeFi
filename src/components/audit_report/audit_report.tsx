@@ -132,9 +132,10 @@ const AuditReport = () => {
           </div>
         </div>
 
-        <div className="flex w-full justify-center space-x-3 pt-10 lg:flex-row flex-col items-center lg:space-y-0 space-y-2">
+        <div className="flex w-full justify-center pt-10 lg:flex-row flex-col items-center gap-3">
           <p className=""> {t('HOME_PAGE.POWERED_BY')}</p>
           <a
+            id="PoweredByLink"
             href={baifaLink}
             target="_blank"
             rel="noreferrer"

@@ -44,7 +44,7 @@ const Cta = () => {
             </div>
             <div className="flex items-center space-x-2 pt-6">
               <a
-                id="WhitepaperButton"
+                id="WhitepaperLink"
                 href={t('HOME_PAGE.WHITEPAPER_LINK')}
                 download
                 className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
@@ -64,7 +64,7 @@ const Cta = () => {
             <div className="pt-2 md:pt-8 xl:pt-5">
               <Link href={TBDURL.TRADE}>
                 <TideButton
-                  id="CtaButton"
+                  id="StartTradingButton"
                   className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
                 >
                   {t('HOME_PAGE.CTA_BUTTON')}
@@ -103,6 +103,7 @@ const Cta = () => {
           </div>
           <div className="flex flex-col items-center space-y-4 pt-10">
             <a
+              id="WhitepaperLinkMobile"
               href={t('HOME_PAGE.WHITEPAPER_LINK')}
               className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
             >
@@ -110,6 +111,7 @@ const Cta = () => {
               <FiBookOpen size={20} />
             </a>
             <a
+              id="ContactEmailButtonMobile"
               href={`mailto:${CONTACT_EMAIL}`}
               className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
             >
@@ -120,7 +122,7 @@ const Cta = () => {
           <div className="mx-auto pt-4 md:pt-8">
             <Link href={TBDURL.TRADE}>
               <TideButton
-                id="CtaButton"
+                id="StartTradingButtonMobile"
                 className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-3 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
               >
                 {t('HOME_PAGE.CTA_BUTTON')}

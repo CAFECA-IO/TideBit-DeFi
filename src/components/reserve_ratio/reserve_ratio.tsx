@@ -71,6 +71,7 @@ const ReserveRatio = () => {
         <div className="flex w-full justify-center lg:justify-end pr-0 transition-all duration-150 lg:pr-1/8 2xl:pr-1/5">
           <a
             // TODO: Report updated from context (20230619 - Shirley)
+            id="DownloadReportButton"
             href={`${BAIFA_LINK}/reports/${baifaProjectId}/${t('HOME_PAGE.REPORTS_LINK')}`}
             download
             target="_blank"

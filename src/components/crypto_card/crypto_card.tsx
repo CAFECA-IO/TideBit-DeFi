@@ -13,6 +13,7 @@ import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {numberFormatted} from '../../lib/common';
 import useStateRef from 'react-usestateref';
+import useWindowSize from '../../lib/hooks/use_window_size';
 
 type TranslateFunction = (s: string) => string;
 
@@ -76,6 +77,7 @@ const CryptoCard = ({
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
+  const {width} = useWindowSize();
 
   fluctuating = Number(fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
@@ -108,46 +110,11 @@ const CryptoCard = ({
     passStarredState(starredStateRef.current);
   };
 
-  const showStar = starredStateRef.current ? (
-    <button
-      id={`Star${currency}`}
-      type="button"
-      onClick={starClickHandler}
-      className="absolute right-3 top-2"
-    >
-      <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
-    </button>
+  const starIcon = starredStateRef.current ? (
+    <BsStarFill className={`${starColor}`} />
   ) : star ? (
-    <button
-      id={`Star${currency}`}
-      type="button"
-      onClick={starClickHandler}
-      className="absolute right-3 top-2 hover:cursor-pointer"
-    >
-      <BsStar size={20} className={`${starColor}`} />
-    </button>
+    <BsStar className={`${starColor}`} />
   ) : null;
-
-  const showStarMobile = starredStateRef.current ? (
-    <button
-      type="button"
-      onClick={starClickHandler}
-      className="absolute right-1 top-1 hover:cursor-pointer"
-    >
-      <BsStarFill size={13} className={`${starColor}`} />
-    </button>
-  ) : star ? (
-    <button
-      type="button"
-      onClick={starClickHandler}
-      className="absolute right-1 top-1 hover:cursor-pointer"
-    >
-      <BsStar size={13} className={`${starColor}`} />
-    </button>
-  ) : null;
-
-  const desktopVersionBreakpoint = 'xs:flex';
-  const mobileVersionBreakpoint = 'xs:hidden';
 
   function lineGraph({
     strokeColor = ['#3CC8C8'],
@@ -247,87 +214,65 @@ const CryptoCard = ({
   };
   const thisRandomColor = fakeDataColor();
 
+  const lineGraphWidthRwd =
+    width < 500
+      ? lineGraphProps?.lineGraphWidthMobile ?? '120'
+      : lineGraphProps?.lineGraphWidth ?? '170';
+
   return (
     <>
       {/* -----Info: Desktop (width > 500px) version (Card 200x120) (20230628 - Shirley)----- */}
-      <div
-        id={`CryptoCard${currency}`}
-        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
-        onClick={() => {
-          onTheSamePage && marketCtx.selectTickerHandler(instId);
-          cardClickHandler && cardClickHandler();
-        }}
-      >
-        <div className="px-2 py-1">
-          <div className="flex items-center">
-            <Image src={tokenImg} alt={currency} height={40} width={40} />
-
-            <div className="ml-3 items-center">
-              <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
-              <p className="text-sm text-lightWhite opacity-60">{currency}</p>
-            </div>
-            <div className="">{showStar}</div>
-          </div>
-
-          <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 z-100 h-60px bg-transparent">
-              {lineGraph({
-                dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
-              })}
-            </div>
-            <div className="absolute bottom-0 flex w-200px justify-between">
-              <span
-                className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
-              >
-                <p className="mx-1 text-left text-xl font-normal tracking-wide">₮ {price}</p>
-                <div className="absolute right-4 flex">
-                  <span className="text-sm"> {fluctuatingRate}</span>
-                </div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
-        id={`CryptoCardMobile${currency}`}
-        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-10px border-0.5px p-0 ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
+        id={`CryptoCard${currency}`}
+        className={`${otherProps?.className} relative flex xs:h-120px xs:w-200px xs:rounded-2xl h-81px w-134px rounded-10px border-0.5px hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >
         <div className="px-2 py-1">
-          <div className="mb-1 flex items-center">
-            <Image src={tokenImg} alt={currency} width={28} height={28} />
+          <div className="flex items-center mb-1 xs:mb-0">
+            {/* Info:(20231129 - Julian) Desktop Icon 40x40 & Mobile Icon 28x28 */}
+            <div className="xs:w-10 xs:h-10 w-7 h-7 relative">
+              <Image style={{objectFit: 'contain'}} fill src={tokenImg} alt={currency} />
+            </div>
 
             <div className="ml-3 items-center">
-              <p className="text-sm leading-none text-lightWhite"> {chain}</p>
-              <p className="text-xs text-lightWhite opacity-60">{currency}</p>
+              <p className="xs:text-lg text-sm leading-none xs:leading-6 text-lightWhite">
+                {chain}
+              </p>
+              <p className="xs:text-sm text-xs text-lightWhite opacity-60">{currency}</p>
             </div>
-            <div className="">{showStarMobile}</div>
+
+            {/* Info: (20231129 - Julian) Desktop Star 20x20 & Mobile Star 13x13 */}
+            <button
+              id={`Star${currency}`}
+              type="button"
+              onClick={starClickHandler}
+              className="absolute xs:right-3 xs:top-2 right-2 top-1 xs:w-5 xs:h-5 w-3 h-3 hover:cursor-pointer"
+            >
+              {starIcon}
+            </button>
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute right-2 top-1 bg-transparent">
+            <div className="pointer-events-none absolute right-2 top-1 xs:top-4 z-100 xs:h-60px bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '120',
+                lineGraphWidth: lineGraphWidthRwd,
               })}
             </div>
-            <div className="absolute bottom-0 flex w-134px justify-between">
+            <div className="absolute bottom-0 flex w-134px xs:w-200px justify-between">
               <span
-                className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
+                className={`flex items-center justify-between text-xs xs:text-sm ${priceColor} mt-3 align-middle`}
               >
-                <p className="mb-1 ml-0 text-left text-xs font-normal tracking-wide">
-                  ₮ {numberFormatted(price)}
+                <p className="mb-1 xs:mb-0 xs:mx-1 text-left text-xs xs:text-xl font-normal tracking-wide">
+                  ₮ {price}
                 </p>
-                <div className="absolute bottom-5px right-4 flex">
-                  <span className="text-xxs"> {fluctuatingRate}</span>
+                <div className="absolute bottom-5px xs:bottom-0 right-4 flex">
+                  <span className="xs:text-sm text-xxs"> {fluctuatingRate}</span>
                 </div>
               </span>
             </div>

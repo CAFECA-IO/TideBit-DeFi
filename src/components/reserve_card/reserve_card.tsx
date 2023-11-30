@@ -52,6 +52,7 @@ const ReserveCard = ({
 
               <Link
                 // TODO: link on Etherscan and other blockchain explorers (20230619 - Shirley)
+                id={`${name}ReserveRatioLink`}
                 href={link}
                 target="_blank"
                 className={`space-x-2 font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black ${cardForTwMobile} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}

@@ -1,10 +1,5 @@
 import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
-import {
-  CANDLESTICK_SIZE,
-  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
-  SAMPLE_NUMBER,
-} from '../constants/display';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
@@ -19,23 +14,15 @@ import {
 } from '../interfaces/tidebit_defi_background/result';
 import {
   ITickerData,
+  ITickerProperty,
   dummyTicker,
-  toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
-import {
-  ICandlestickData,
-  IInstCandlestick,
-  ITrade,
-  TradeSideText,
-  isIInstCandlestick,
-} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {DEFAULT_INSTID, INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL} from '../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -47,8 +34,7 @@ import {Code, Reason} from '../constants/code';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
-import TradeBookInstance from '../lib/books/trade_book';
-import {millisecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
+import {roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -71,16 +57,17 @@ export interface IMarketProvider {
 
 export interface IMarketContext {
   isInit: boolean;
-  selectedTicker: ITickerData | null;
-  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
-  availableTickers: {[instId: string]: ITickerData};
+  selectedTickerProperty: ITickerProperty;
+  // selectedTicker: ITickerData | null;
+  // selectedTickerRef: React.MutableRefObject<ITickerData | null>;
+  // availableTickers: {[instId: string]: ITickerData};
   isCFDTradable: boolean;
-  showPositionOnChart: boolean;
-  candlestickId: string;
+  // showPositionOnChart: boolean;
+  // candlestickId: string;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  timeSpan: ITimeSpanUnion;
-  candlestickChartData: ICandlestickData[] | null;
+  // timeSpan: ITimeSpanUnion;
+  // candlestickChartData: ICandlestickData[] | null;
   depositCryptocurrencies: ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[];
   tidebitPromotion: ITideBitPromotion;
@@ -89,11 +76,11 @@ export interface IMarketContext {
   init: () => Promise<void>;
   getTideBitPromotion: () => Promise<IResult>;
   getWebsiteReserve: () => Promise<IResult>;
-  showPositionOnChartHandler: (bool: boolean) => void;
-  candlestickChartIdHandler: (id: string) => void;
+  // showPositionOnChartHandler: (bool: boolean) => void;
+  // candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
   selectTickerHandler: (instId: string) => Promise<IResult>;
-  selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
+  // selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCFDQuotation: (instId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getCFDSuggestion: (
     instId: string,
@@ -130,30 +117,33 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => Promise<IResult>;
-  candlestickIsLoading: boolean;
+  // candlestickIsLoading: boolean;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   isInit: false,
-  selectedTicker: dummyTicker,
-  selectedTickerRef: React.createRef<ITickerData>(),
-  availableTickers: {},
+  selectedTickerProperty: dummyTicker,
+  // selectedTicker: dummyTicker,
+  // selectedTickerRef: React.createRef<ITickerData>(),
+  // availableTickers: {},
   isCFDTradable: false,
-  showPositionOnChart: false,
-  candlestickId: '',
-  candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1s,
+  // showPositionOnChart: false,
+  // candlestickId: '',
+  // candlestickChartData: [],
+  // timeSpan: TimeSpanUnion._1s,
   guaranteedStopFeePercentage: null,
-  selectTimeSpanHandler: () => null,
+  // selectTimeSpanHandler: () => null,
   tickerStatic: null,
   tickerLiveStatistics: null,
   depositCryptocurrencies: [...dummyCryptocurrencies],
   withdrawCryptocurrencies: [...dummyCryptocurrencies],
   tidebitPromotion: dummyTideBitPromotion,
   init: () => Promise.resolve(),
-  showPositionOnChartHandler: () => null,
-  candlestickChartIdHandler: () => null,
-  listAvailableTickers: () => [],
+  // showPositionOnChartHandler: () => null,
+  // candlestickChartIdHandler: () => null,
+  listAvailableTickers: () => {
+    throw new Error('Function not implemented.');
+  },
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
@@ -184,19 +174,21 @@ export const MarketContext = createContext<IMarketContext>({
   listCandlesticks: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
-  candlestickIsLoading: true,
+  // candlestickIsLoading: true,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
-  const tradeBook = React.useMemo(() => TradeBookInstance, []);
+  // const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [selectedTickerProperty, setSelectedTickerProperty] =
+    useState<ITickerProperty>(dummyTicker);
+  // const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cryptocurrencies, setCryptocurrencies, cryptocurrenciesRef] = useState<ICryptocurrency[]>(
     []
@@ -219,9 +211,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [tickerLiveStatistics, setTickerLiveStatistics, tickerLiveStatisticsRef] =
     useState<ITickerLiveStatistics | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
-    ICandlestickData[] | null
-  >(null);
+  // const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
+  //   ICandlestickData[] | null
+  // >(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] = useState<
     number | null
@@ -229,13 +221,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
-    [instId: string]: ITickerData;
-  }>(toDummyTickers);
+  // const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
+  //   [instId: string]: ITickerData;
+  // }>(toDummyTickers);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
+  // const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tidebitPromotion, setTidebitPromotion, tidebitPromotionRef] =
@@ -244,20 +236,20 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [websiteReserve, setWebsiteReserve, websiteReserveRef] =
     useState<IWebsiteReserve>(dummyWebsiteReserve);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
-    INITIAL_POSITION_LABEL_DISPLAYED_STATE
-  ); // Deprecated: stale (20231019 - Shirley)
+  // const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
+  //   INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  // ); // Deprecated: stale (20231019 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
-    useState<boolean>(true);
+  // const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
+  //   useState<boolean>(true);
 
-  const showPositionOnChartHandler = (bool: boolean) => {
-    setShowPositionOnChart(bool);
-  };
+  // const showPositionOnChartHandler = (bool: boolean) => {
+  //   setShowPositionOnChart(bool);
+  // };
 
-  const candlestickChartIdHandler = (id: string) => {
-    setCandlestickId(id);
-  };
+  // const candlestickChartIdHandler = (id: string) => {
+  //   setCandlestickId(id);
+  // };
 
   // TODO: 從 API 拿新聞資料 (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -288,7 +280,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listAvailableTickers = useCallback(() => {
-    const availableTickers: {[instId: string]: ITickerData} = {...availableTickersRef.current};
+    const availableTickers: {[instId: string]: ITickerData} = {...tickerBook.listTickers()};
     if (userCtx.enableServiceTerm) {
       for (const favoriteTicker of userCtx.favoriteTickers) {
         if (availableTickers[favoriteTicker])
@@ -299,22 +291,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
     return Object.values(availableTickers);
-  }, [userCtx.favoriteTickers, availableTickersRef.current]);
+  }, [userCtx.favoriteTickers]);
 
-  const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
-    let updatedTimeSpan = timeSpan;
+  // const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
+  //   let updatedTimeSpan = timeSpan;
 
-    if (instId) {
-      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
-      if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
-        updatedTimeSpan = TimeSpanUnion._1s;
-      }
-    }
+  //   if (instId) {
+  //     const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+  //     if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
+  //       updatedTimeSpan = TimeSpanUnion._1s;
+  //     }
+  //   }
 
-    tickerBook.timeSpan = updatedTimeSpan;
-    setTimeSpan(tickerBook.timeSpan);
-    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, updatedTimeSpan);
-  }, []);
+  //   tickerBook.timeSpan = updatedTimeSpan;
+  //   setTimeSpan(tickerBook.timeSpan);
+  //   syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, updatedTimeSpan);
+  // }, []);
 
   const getTickerStatic = useCallback(async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
@@ -374,14 +366,15 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const selectTickerHandler = useCallback(async (instId: string) => {
     if (!instId) return {...defaultResultFailed};
-    const ticker: ITickerData = availableTickersRef.current[instId];
+    const ticker: ITickerData = {...tickerBook.listTickers()[instId]};
     if (!ticker) return {...defaultResultFailed};
     notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
     setTickerLiveStatistics(null);
     setTickerStatic(null);
-    setSelectedTicker(ticker);
-    await listMarketTrades(ticker.instId);
-    selectTimeSpanHandler(timeSpanRef.current, ticker.instId);
+    setSelectedTickerProperty(ticker);
+    // setSelectedTicker(ticker);
+    // await listMarketTrades(ticker.instId);
+    // selectTimeSpanHandler(timeSpanRef.current, ticker.instId);
     // ++ TODO: get from api
     const getTickerStaticResult = await getTickerStatic(ticker.instId);
     if (getTickerStaticResult?.success)
@@ -553,7 +546,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       if (result.success) {
         const tickers = result.data as ITickerData[];
         tickerBook.updateTickers(tickers);
-        setAvailableTickers({...tickerBook.listTickers()});
+        // setAvailableTickers({...tickerBook.listTickers()});
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -606,106 +599,106 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   }, []);
 
-  const listMarketTrades = useCallback(
-    async (
-      instId: string,
-      options?: {
-        begin?: number; // Info: in milliseconds (20230530 - tzuhan)
-        end?: number; // Info: in milliseconds (20230530 - tzuhan)
-        asc?: boolean;
-        limit?: number;
-      }
-    ) => {
-      let result: IResult = {...defaultResultFailed};
-      if (!options) {
-        const dateTime = new Date().getTime();
-        options = {
-          begin: dateTime - INITIAL_TRADES_INTERVAL,
-          end: dateTime + INITIAL_TRADES_BUFFER,
-          asc: false,
-        };
-      }
-      try {
-        result = (await workerCtx.requestHandler({
-          name: APIName.LIST_MARKET_TRADES,
-          method: Method.GET,
-          params: instId,
-          query: {...(options || {})},
-        })) as IResult;
-        if (result.success) {
-          const trades = (result.data as ITrade[]).map(trade => ({
-            ...trade,
-            tradeId: trade.tradeId,
-            targetAsset: trade.baseUnit,
-            unitAsset: trade.quoteUnit,
-            direct: TradeSideText[trade.side],
-            price: trade.price,
-            timestampMs: trade.timestamp,
-            quantity: trade.amount,
-          }));
-          const target = trades[0]?.instId;
-          trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
-          tradeBook.addTrades(target, trades);
-        }
-      } catch (error) {
-        // Deprecate: error handle (Tzuhan - 20230321)
-        // eslint-disable-next-line no-console
-        console.error(`listMarketTrades error`, error);
-        result = {
-          success: false,
-          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-          reason: isCustomError(error)
-            ? Reason[error.code]
-            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-        };
+  // const listMarketTrades = useCallback(
+  //   async (
+  //     instId: string,
+  //     options?: {
+  //       begin?: number; // Info: in milliseconds (20230530 - tzuhan)
+  //       end?: number; // Info: in milliseconds (20230530 - tzuhan)
+  //       asc?: boolean;
+  //       limit?: number;
+  //     }
+  //   ) => {
+  //     let result: IResult = {...defaultResultFailed};
+  //     if (!options) {
+  //       const dateTime = new Date().getTime();
+  //       options = {
+  //         begin: dateTime - INITIAL_TRADES_INTERVAL,
+  //         end: dateTime + INITIAL_TRADES_BUFFER,
+  //         asc: false,
+  //       };
+  //     }
+  //     try {
+  //       result = (await workerCtx.requestHandler({
+  //         name: APIName.LIST_MARKET_TRADES,
+  //         method: Method.GET,
+  //         params: instId,
+  //         query: {...(options || {})},
+  //       })) as IResult;
+  //       if (result.success) {
+  //         const trades = (result.data as ITrade[]).map(trade => ({
+  //           ...trade,
+  //           tradeId: trade.tradeId,
+  //           targetAsset: trade.baseUnit,
+  //           unitAsset: trade.quoteUnit,
+  //           direct: TradeSideText[trade.side],
+  //           price: trade.price,
+  //           timestampMs: trade.timestamp,
+  //           quantity: trade.amount,
+  //         }));
+  //         const target = trades[0]?.instId;
+  //         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
+  //         tradeBook.addTrades(target, trades);
+  //       }
+  //     } catch (error) {
+  //       // Deprecate: error handle (Tzuhan - 20230321)
+  //       // eslint-disable-next-line no-console
+  //       console.error(`listMarketTrades error`, error);
+  //       result = {
+  //         success: false,
+  //         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+  //         reason: isCustomError(error)
+  //           ? Reason[error.code]
+  //           : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+  //       };
 
-        notificationCtx.addException(
-          'listMarketTrades',
-          error as Error,
-          Code.INTERNAL_SERVER_ERROR
-        );
-      }
-      return result;
-    },
-    [tradeBook]
-  );
+  //       notificationCtx.addException(
+  //         'listMarketTrades',
+  //         error as Error,
+  //         Code.INTERNAL_SERVER_ERROR
+  //       );
+  //     }
+  //     return result;
+  //   },
+  //   [tradeBook]
+  // );
 
-  const processCandlesticks = useCallback(
-    (timeSpan: ITimeSpanUnion, instCandlestick: IInstCandlestick) => {
-      if (!instCandlestick || !isIInstCandlestick(instCandlestick)) return [];
-      // Info: 轉換成圖表要的格式 (20230817 - Shirley)
-      const dataWithDate = instCandlestick.candlesticks.map(candlestick => ({
-        x: new Date(candlestick.x),
-        y: candlestick.y,
-      }));
+  // const processCandlesticks = useCallback(
+  //   (timeSpan: ITimeSpanUnion, instCandlestick: IInstCandlestick) => {
+  //     if (!instCandlestick || !isIInstCandlestick(instCandlestick)) return [];
+  //     // Info: 轉換成圖表要的格式 (20230817 - Shirley)
+  //     const dataWithDate = instCandlestick.candlesticks.map(candlestick => ({
+  //       x: new Date(candlestick.x),
+  //       y: candlestick.y,
+  //     }));
 
-      // Info: 避免重複的資料並從舊到新排序資料 (20230817 - Shirley)
-      const uniqueData = dataWithDate
-        .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
-          const xtime = current.x.getTime();
-          if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
-            acc.push(current);
-          }
-          return acc;
-        }, [])
-        .sort((a, b) => a.x.getTime() - b.x.getTime());
+  //     // Info: 避免重複的資料並從舊到新排序資料 (20230817 - Shirley)
+  //     const uniqueData = dataWithDate
+  //       .reduce((acc: ICandlestickData[], current: ICandlestickData) => {
+  //         const xtime = current.x.getTime();
+  //         if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
+  //           acc.push(current);
+  //         }
+  //         return acc;
+  //       }, [])
+  //       .sort((a, b) => a.x.getTime() - b.x.getTime());
 
-      const partialData = uniqueData.slice(-SAMPLE_NUMBER);
+  //     const partialData = uniqueData.slice(-SAMPLE_NUMBER);
 
-      const alignedData = tradeBook.alignCandlesticks(
-        instCandlestick?.instId ?? '',
-        partialData,
-        timeSpan
-      );
+  //     const alignedData = tradeBook.alignCandlesticks(
+  //       instCandlestick?.instId ?? '',
+  //       partialData,
+  //       timeSpan
+  //     );
 
-      const organizedData = alignedData
-        ? uniqueData.slice(0, -SAMPLE_NUMBER).concat(alignedData)
-        : uniqueData;
+  //     const organizedData = alignedData
+  //       ? uniqueData.slice(0, -SAMPLE_NUMBER).concat(alignedData)
+  //       : uniqueData;
 
-      return organizedData;
-    },
-    []
-  );
+  //     return organizedData;
+  //   },
+  //   []
+  // );
 
   const listCandlesticks = useCallback(
     async (
@@ -743,133 +736,133 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  const initCandlestickData = useCallback(
-    async (instId: string, timeSpan?: ITimeSpanUnion) => {
-      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
-      // Info: initialize the candlestick chart data (20231018 - Shirley)
-      if (timeSpan) {
-        if (timeSpan !== TimeSpanUnion._1s) {
-          const result = await listCandlesticks(instId, {
-            timeSpan,
-            limit: CANDLESTICK_SIZE,
-          });
-          const candlesticks = result.data as IInstCandlestick;
-          const data = processCandlesticks(timeSpan, candlesticks);
-          tradeBook.addCandlestickData(instId, timeSpan, data);
-        } else {
-          const candlesticks = tradeBook.toCandlestick(
-            instId,
-            millisecondsToSeconds(getTime(timeSpan)),
-            CANDLESTICK_SIZE
-          );
-          tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
-        }
-      } else {
-        for (const timeSpan of Object.values(TimeSpanUnion)) {
-          if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length > 0) {
-            setCandlestickChartData(candlestickDataByInstId?.[timeSpan] || null);
-          } else {
-            if (timeSpan !== TimeSpanUnion._1s) {
-              const result = await listCandlesticks(instId, {
-                timeSpan,
-                limit: CANDLESTICK_SIZE,
-              });
-              const candlesticks = result.data as IInstCandlestick;
-              const data = processCandlesticks(timeSpan, candlesticks);
-              tradeBook.addCandlestickData(instId, timeSpan, data);
-            }
-          }
-        }
-      }
-    },
-    [tradeBook]
-  );
+  // const initCandlestickData = useCallback(
+  //   async (instId: string, timeSpan?: ITimeSpanUnion) => {
+  //     const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+  //     // Info: initialize the candlestick chart data (20231018 - Shirley)
+  //     if (timeSpan) {
+  //       if (timeSpan !== TimeSpanUnion._1s) {
+  //         const result = await listCandlesticks(instId, {
+  //           timeSpan,
+  //           limit: CANDLESTICK_SIZE,
+  //         });
+  //         const candlesticks = result.data as IInstCandlestick;
+  //         const data = processCandlesticks(timeSpan, candlesticks);
+  //         tradeBook.addCandlestickData(instId, timeSpan, data);
+  //       } else {
+  //         const candlesticks = tradeBook.toCandlestick(
+  //           instId,
+  //           millisecondsToSeconds(getTime(timeSpan)),
+  //           CANDLESTICK_SIZE
+  //         );
+  //         tradeBook.addCandlestickData(instId, timeSpan, candlesticks);
+  //       }
+  //     } else {
+  //       for (const timeSpan of Object.values(TimeSpanUnion)) {
+  //         if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length > 0) {
+  //           setCandlestickChartData(candlestickDataByInstId?.[timeSpan] || null);
+  //         } else {
+  //           if (timeSpan !== TimeSpanUnion._1s) {
+  //             const result = await listCandlesticks(instId, {
+  //               timeSpan,
+  //               limit: CANDLESTICK_SIZE,
+  //             });
+  //             const candlesticks = result.data as IInstCandlestick;
+  //             const data = processCandlesticks(timeSpan, candlesticks);
+  //             tradeBook.addCandlestickData(instId, timeSpan, data);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   },
+  //   [tradeBook]
+  // );
 
-  const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
-    if (typeof candlestickIntervalRef.current === 'number') {
-      clearInterval(candlestickIntervalRef.current);
-      setCandlestickInterval(null);
-    }
+  // const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
+  //   if (typeof candlestickIntervalRef.current === 'number') {
+  //     clearInterval(candlestickIntervalRef.current);
+  //     setCandlestickInterval(null);
+  //   }
 
-    setCandlestickIsLoading(true);
+  //   setCandlestickIsLoading(true);
 
-    const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
+  //   const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
 
-    if (timeSpan) setTimeSpan(timeSpan);
-    const ts = timeSpan ? timeSpan : timeSpanRef.current;
+  //   if (timeSpan) setTimeSpan(timeSpan);
+  //   const ts = timeSpan ? timeSpan : timeSpanRef.current;
 
-    // Info: initialize the candlestick chart data (20231018 - Shirley)
-    if (candlestickDataByInstId && candlestickDataByInstId?.[ts]?.length <= 0) {
-      await initCandlestickData(instId, ts);
-    }
+  //   // Info: initialize the candlestick chart data (20231018 - Shirley)
+  //   if (candlestickDataByInstId && candlestickDataByInstId?.[ts]?.length <= 0) {
+  //     await initCandlestickData(instId, ts);
+  //   }
 
-    const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+  //   const candlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
 
-    setCandlestickChartData(candlesticks);
+  //   setCandlestickChartData(candlesticks);
 
-    // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
-    const candlestickInterval = window.setInterval(() => {
-      const interval = millisecondsToSeconds(getTime(ts));
+  //   // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
+  //   const candlestickInterval = window.setInterval(() => {
+  //     const interval = millisecondsToSeconds(getTime(ts));
 
-      if (ts === TimeSpanUnion._1s) {
-        const candlesticks = tradeBook.toCandlestick(
-          instId,
-          millisecondsToSeconds(getTime(ts)),
-          CANDLESTICK_SIZE
-        );
+  //     if (ts === TimeSpanUnion._1s) {
+  //       const candlesticks = tradeBook.toCandlestick(
+  //         instId,
+  //         millisecondsToSeconds(getTime(ts)),
+  //         CANDLESTICK_SIZE
+  //       );
 
-        tradeBook.addCandlestickData(instId, ts, candlesticks);
-        const liveCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
+  //       tradeBook.addCandlestickData(instId, ts, candlesticks);
+  //       const liveCandlesticks = tradeBook.getCandlestickData(instId)?.[ts] || [];
 
-        setCandlestickChartData(liveCandlesticks);
-      } else {
-        const origin = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        const sample = origin.slice(-SAMPLE_NUMBER);
-        const latestTimestampMs = tradeBook.getLatestTimestampMs(sample, ts) ?? 0;
-        const lastOfOrigin = origin[origin.length - 1];
-        const lastTsOfOrigin = lastOfOrigin?.x.getTime() ?? 0;
-        const now = new Date().getTime();
-        const futureTs = latestTimestampMs + interval * 1000;
+  //       setCandlestickChartData(liveCandlesticks);
+  //     } else {
+  //       const origin = tradeBook.getCandlestickData(instId)?.[ts] || [];
+  //       const sample = origin.slice(-SAMPLE_NUMBER);
+  //       const latestTimestampMs = tradeBook.getLatestTimestampMs(sample, ts) ?? 0;
+  //       const lastOfOrigin = origin[origin.length - 1];
+  //       const lastTsOfOrigin = lastOfOrigin?.x.getTime() ?? 0;
+  //       const now = new Date().getTime();
+  //       const futureTs = latestTimestampMs + interval * 1000;
 
-        /* 
-        Info: 如果最新的時間戳記是最後一筆資料的時間戳記，就合併最後一筆資料 (20231018 - Shirley)
-        如果最新的時間戳記大於最後一筆資料的時間戳記，就直接加入最後一筆資料 (20231018 - Shirley)
-        */
-        if (latestTimestampMs === lastTsOfOrigin && latestTimestampMs < now && now < futureTs) {
-          const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
-          const merged =
-            tradeBook.mergeCandlesticks(
-              [lastOfOrigin, ...newCandle],
-              new Date(latestTimestampMs)
-            ) ?? [];
-          const result = origin.slice(0, origin.length - 1).concat(merged);
+  //       /*
+  //       Info: 如果最新的時間戳記是最後一筆資料的時間戳記，就合併最後一筆資料 (20231018 - Shirley)
+  //       如果最新的時間戳記大於最後一筆資料的時間戳記，就直接加入最後一筆資料 (20231018 - Shirley)
+  //       */
+  //       if (latestTimestampMs === lastTsOfOrigin && latestTimestampMs < now && now < futureTs) {
+  //         const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
+  //         const merged =
+  //           tradeBook.mergeCandlesticks(
+  //             [lastOfOrigin, ...newCandle],
+  //             new Date(latestTimestampMs)
+  //           ) ?? [];
+  //         const result = origin.slice(0, origin.length - 1).concat(merged);
 
-          tradeBook.addCandlestickData(instId, ts, result);
-        } else if (latestTimestampMs > lastTsOfOrigin) {
-          const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
-          const result = origin.concat(newCandle);
+  //         tradeBook.addCandlestickData(instId, ts, result);
+  //       } else if (latestTimestampMs > lastTsOfOrigin) {
+  //         const newCandle = tradeBook.toCandlestick(instId, interval, 1, latestTimestampMs);
+  //         const result = origin.concat(newCandle);
 
-          tradeBook.addCandlestickData(instId, ts, result);
-        }
+  //         tradeBook.addCandlestickData(instId, ts, result);
+  //       }
 
-        const newData = tradeBook.getCandlestickData(instId)?.[ts] || [];
-        const fiveMinData =
-          ts === TimeSpanUnion._5m
-            ? newData
-            : tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
+  //       const newData = tradeBook.getCandlestickData(instId)?.[ts] || [];
+  //       const fiveMinData =
+  //         ts === TimeSpanUnion._5m
+  //           ? newData
+  //           : tradeBook.getCandlestickData(instId)?.[TimeSpanUnion._5m] || [];
 
-        if (fiveMinData.length > CANDLESTICK_SIZE) {
-          tradeBook.trimCandlestickData(CANDLESTICK_SIZE);
-        }
+  //       if (fiveMinData.length > CANDLESTICK_SIZE) {
+  //         tradeBook.trimCandlestickData(CANDLESTICK_SIZE);
+  //       }
 
-        setCandlestickChartData(newData);
-      }
-    }, 100);
+  //       setCandlestickChartData(newData);
+  //     }
+  //   }, 100);
 
-    setCandlestickInterval(candlestickInterval);
+  //   setCandlestickInterval(candlestickInterval);
 
-    setCandlestickIsLoading(false);
-  }, []);
+  //   setCandlestickIsLoading(false);
+  // }, []);
 
   const getWebsiteReserve = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
@@ -983,23 +976,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess) {
       setIsCFDTradable(true);
       setTimeSpan(TimeSpanUnion._1s);
+      notificationCtx.emitter.emit(TideBitEvent.IS_INITIALIZE);
     }
     setIsInit(true);
 
     return await Promise.resolve();
   }, []);
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
-        tickerBook.updateTicker(tickerData);
-        const updateTickers = {...tickerBook.listTickers()};
-        setAvailableTickers({...updateTickers});
-        if (tickerData.instId === selectedTickerRef.current?.instId)
-          setSelectedTicker(updateTickers[tickerData.instId]);
-      }),
-    []
-  );
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
+  //       tickerBook.updateTicker(tickerData);
+  //       const updateTickers = { ...tickerBook.listTickers() };
+  //       setAvailableTickers({...updateTickers});
+  //       if (tickerData.instId === selectedTickerRef.current?.instId)
+  //         setSelectedTicker(updateTickers[tickerData.instId]);
+  //     }),
+  //   []
+  // );
 
   React.useMemo(
     () =>
@@ -1020,41 +1014,42 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
-        for (const trade of trades) {
-          if (trade.instId === selectedTickerRef.current?.instId) {
-            tradeBook.add(trade.instId, {
-              tradeId: trade.tradeId,
-              targetAsset: trade.baseUnit,
-              unitAsset: trade.quoteUnit,
-              direct: TradeSideText[trade.side],
-              price: trade.price,
-              timestampMs: trade.timestamp,
-              quantity: trade.amount,
-            });
-          }
-        }
-      }),
-    []
-  );
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+  //       for (const trade of trades) {
+  //         if (trade.instId === selectedTickerRef.current?.instId) {
+  //           tradeBook.add(trade.instId, {
+  //             tradeId: trade.tradeId,
+  //             targetAsset: trade.baseUnit,
+  //             unitAsset: trade.quoteUnit,
+  //             direct: TradeSideText[trade.side],
+  //             price: trade.price,
+  //             timestampMs: trade.timestamp,
+  //             quantity: trade.amount,
+  //           });
+  //         }
+  //       }
+  //     }),
+  //   []
+  // );
 
   const defaultValue = {
     isInit: isInitRef.current,
-    selectedTicker: selectedTickerRef.current,
-    selectedTickerRef,
+    selectedTickerProperty,
+    // selectedTicker: selectedTickerRef.current,
+    // selectedTickerRef,
     guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
     selectTickerHandler,
-    selectTimeSpanHandler,
-    availableTickers,
+    // selectTimeSpanHandler,
+    // availableTickers,
     isCFDTradable,
-    showPositionOnChart,
-    showPositionOnChartHandler,
-    candlestickId,
-    candlestickChartData: candlestickChartDataRef.current,
-    timeSpan,
-    candlestickChartIdHandler,
+    // showPositionOnChart,
+    // showPositionOnChartHandler,
+    // candlestickId,
+    // candlestickChartData: candlestickChartDataRef.current,
+    // timeSpan,
+    // candlestickChartIdHandler,
     tickerStatic: tickerStaticRef.current,
     tickerLiveStatistics: tickerLiveStatisticsRef.current,
     listAvailableTickers,
@@ -1077,7 +1072,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getTickerSpread,
     predictCFDClosePrice,
     listCandlesticks,
-    candlestickIsLoading: candlestickIsLoadingRef.current,
+    // candlestickIsLoading: candlestickIsLoadingRef.current,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

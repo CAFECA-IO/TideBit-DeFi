@@ -62,6 +62,7 @@ import {Locale, TranslateFunction} from '../interfaces/tidebit_defi_background/l
 import {useTranslation} from 'next-i18next';
 import {useRouter} from 'next/router';
 import {mapBrowserLangToLocale} from '../lib/common';
+import {TickerProvider} from './ticker_context';
 
 export interface IToastify {
   type: IToastType;
@@ -1255,12 +1256,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloModalVisible={visibleHelloModal}
         helloClickHandler={visibleHelloModalHandler}
       />
-
-      <UpdateFormModal
-        modalVisible={visibleUpdateFormModal}
-        modalClickHandler={visibleUpdateFormModalHandler}
-        openCfdDetails={dataUpdateFormModal}
-      />
       <HistoryPositionModal
         modalVisible={visibleHistoryPositionModal}
         modalClickHandler={visibleHistoryPositionModalHandler}
@@ -1271,11 +1266,18 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionOpenModalHandler}
         openCfdRequest={dataPositionOpenModal.openCfdRequest}
       />
-      <PositionClosedModal
-        modalVisible={visiblePositionClosedModal}
-        modalClickHandler={visiblePositionClosedModalHandler}
-        openCfdDetails={dataPositionClosedModal}
-      />
+      <TickerProvider>
+        <UpdateFormModal
+          modalVisible={visibleUpdateFormModal}
+          modalClickHandler={visibleUpdateFormModalHandler}
+          openCfdDetails={dataUpdateFormModal}
+        />
+        <PositionClosedModal
+          modalVisible={visiblePositionClosedModal}
+          modalClickHandler={visiblePositionClosedModalHandler}
+          openCfdDetails={dataPositionClosedModal}
+        />
+      </TickerProvider>
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}
         modalClickHandler={visiblePositionUpdatedModalHandler}
@@ -1327,10 +1329,10 @@ export const useGlobal = () => {
     typeof globalThis === 'object'
       ? globalThis
       : typeof window === 'object'
-      ? window
-      : typeof global === 'object'
-      ? global
-      : null; // Info: Causes an error on the next line
+        ? window
+        : typeof global === 'object'
+          ? global
+          : null; // Info: Causes an error on the next line
 
   g.globalContext = context;
 

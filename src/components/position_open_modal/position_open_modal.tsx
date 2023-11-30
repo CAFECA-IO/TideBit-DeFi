@@ -543,12 +543,12 @@ const PositionOpenModal = ({
         {/* Info: (20231003 - Julian) Ticker Title */}
         <div className="flex items-center space-x-2 text-center">
           <Image
-            src={marketCtx.selectedTicker?.tokenImg ?? ''}
+            src={marketCtx.selectedTickerProperty?.tokenImg ?? ''}
             width={30}
             height={30}
             alt="ticker icon"
           />
-          <p className="text-2xl">{marketCtx.selectedTicker?.instId}</p>
+          <p className="text-2xl">{marketCtx.selectedTickerProperty?.instId}</p>
         </div>
 
         {/* Info: (20231003 - Julian) Timer */}

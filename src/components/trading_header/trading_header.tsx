@@ -11,6 +11,7 @@ import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
 import {numberFormatted} from '../../lib/common';
 import Image from 'next/image';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -18,6 +19,7 @@ const TradingHeader = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const globalCtx = useGlobal();
 
   const {
@@ -31,18 +33,18 @@ const TradingHeader = () => {
   };
 
   const priceShadowColor =
-    marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
+    tickerCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
   const priceChange = numberFormatted(
-    Math.abs(marketCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE)
+    Math.abs(tickerCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE)
   );
 
   const priceChangePercentage = numberFormatted(
-    Math.abs(marketCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION)
+    Math.abs(tickerCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION)
   );
 
   const tickerTitle = (
-    <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
+    <h1 className="text-3xl font-medium">{marketCtx.selectedTickerProperty?.currency}</h1>
   );
 
   const tickerHeaderDesktop = (
@@ -58,8 +60,8 @@ const TradingHeader = () => {
           >
             <span className="relative h-40px w-40px">
               <Image
-                src={marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
-                alt={marketCtx.selectedTicker?.currency ?? DEFAULT_CRYPTO}
+                src={marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
+                alt={marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CRYPTO}
                 width={40}
                 height={40}
               />
@@ -76,10 +78,10 @@ const TradingHeader = () => {
           className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >
           <div className="text-3xl">
-            <span className="">₮ {numberFormatted(marketCtx.selectedTicker?.price)}</span>
+            <span className="">₮ {numberFormatted(tickerCtx.selectedTicker?.price)}</span>
           </div>
           <div className="text-lg">{`${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
+            tickerCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
           } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
 
@@ -87,7 +89,7 @@ const TradingHeader = () => {
         <div className="relative">
           <div className="absolute -right-48 top-5 w-300px text-sm text-lightWhite/60 lg:left-0">
             {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')}{' '}
-            {numberFormatted(marketCtx.selectedTicker?.tradingVolume)} {unitAsset}
+            {numberFormatted(tickerCtx.selectedTicker?.tradingVolume)} {unitAsset}
           </div>
         </div>
       </div>
@@ -108,8 +110,8 @@ const TradingHeader = () => {
             <span className="relative h-40px w-40px">
               {/* ToDo (20230419 - Julian) default currency icon */}
               <Image
-                src={marketCtx.selectedTicker?.tokenImg ?? DEFAULT_ICON}
-                alt={marketCtx.selectedTicker?.currency ?? DEFAULT_CRYPTO}
+                src={marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
+                alt={marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CRYPTO}
                 width={40}
                 height={40}
               />
@@ -127,10 +129,10 @@ const TradingHeader = () => {
         {/*  bg-gradient-to-r from-lightGreen to-purple-800 bg-clip-text text-transparent */}
         <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
           <div className="text-3xl">
-            <span className="">₮ {numberFormatted(marketCtx.selectedTicker?.price)}</span>
+            <span className="">₮ {numberFormatted(tickerCtx.selectedTicker?.price)}</span>
           </div>
           <div className="text-lg">{`${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
+            tickerCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
           } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
       </div>

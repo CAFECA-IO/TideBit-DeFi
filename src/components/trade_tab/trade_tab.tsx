@@ -55,6 +55,7 @@ import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_con
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {Code} from '../../constants/code';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -63,6 +64,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
 
@@ -73,7 +75,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
-  const ticker = marketCtx.selectedTicker?.instId ?? '';
+  const ticker = marketCtx.selectedTickerProperty?.instId ?? '';
   const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
@@ -267,7 +269,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
     // TODO: FIXME: [To be optimized] May run more than 10 times in a second (20230714 - Shirley)
     if (!longTpToggle && !shortTpToggle) setSuggestions();
-  }, [marketCtx.selectedTicker?.price, isTypingRef.current]);
+  }, [tickerCtx.selectedTicker?.price, isTypingRef.current]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
@@ -281,7 +283,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     return () => {
       notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTicker]);
+  }, [tickerCtx.selectedTicker]);
 
   useEffect(() => {
     validateInputs();
@@ -341,14 +343,20 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
   const handleTypingStatusChange = handleTypingStatusChangeRouter();
 
   const setPrice = () => {
-    if (marketCtx.selectedTicker?.instId) {
+    if (marketCtx.selectedTickerProperty?.instId) {
       const buyPrice = roundToDecimalPlaces(
-        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.SELL),
+        marketCtx.predictCFDClosePrice(
+          marketCtx.selectedTickerProperty?.instId,
+          TypeOfPosition.SELL
+        ),
         2
       );
 
       const sellPrice = roundToDecimalPlaces(
-        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.BUY),
+        marketCtx.predictCFDClosePrice(
+          marketCtx.selectedTickerProperty?.instId,
+          TypeOfPosition.BUY
+        ),
         2,
         RoundCondition.SHRINK
       );
@@ -377,13 +385,13 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       ) {
       } else {
         const buyQuotation: IQuotation = {
-          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
+          instId: marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
+          targetAsset: marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: longPriceRef.current,
-          spotPrice: marketCtx.selectedTicker?.price ?? 0,
-          spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
+          spotPrice: tickerCtx.selectedTicker?.price ?? 0,
+          spreadFee: longPriceRef.current - (tickerCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -398,13 +406,13 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       ) {
       } else {
         const sellQuotation: IQuotation = {
-          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
+          instId: marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
+          targetAsset: marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: shortPriceRef.current,
-          spotPrice: marketCtx.selectedTicker?.price ?? 0,
-          spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
+          spotPrice: tickerCtx.selectedTicker?.price ?? 0,
+          spreadFee: shortPriceRef.current - (tickerCtx.selectedTicker?.price ?? 0),
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -414,25 +422,25 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     } catch (err) {
       notificationCtx.addException('getQuotation trade_tab', err as Error, Code.UNKNOWN_ERROR);
       const buyQuotation: IQuotation = {
-        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
+        instId: marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
+        targetAsset: marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: longPriceRef.current,
-        spotPrice: marketCtx.selectedTicker?.price ?? 0,
-        spreadFee: longPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
+        spotPrice: tickerCtx.selectedTicker?.price ?? 0,
+        spreadFee: longPriceRef.current - (tickerCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
 
       const sellQuotation: IQuotation = {
-        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
+        instId: marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
+        targetAsset: tickerCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: shortPriceRef.current,
-        spotPrice: marketCtx.selectedTicker?.price ?? 0,
-        spreadFee: shortPriceRef.current - (marketCtx.selectedTicker?.price ?? 0),
+        spotPrice: tickerCtx.selectedTicker?.price ?? 0,
+        spreadFee: shortPriceRef.current - (tickerCtx.selectedTicker?.price ?? 0),
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
@@ -838,7 +846,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
 
   const toApplyCreateOrder = async () => {
     const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID
+      marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID
     );
 
     const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
@@ -847,8 +855,8 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     const short = shortQuotation.data as IQuotation;
 
     const share = {
-      instId: marketCtx.selectedTicker?.instId ?? DEFAULT_INSTID,
-      targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
+      instId: marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
+      targetAsset: tickerCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
       amount: roundToDecimalPlaces(targetInputValueRef.current, 2, RoundCondition.SHRINK),
       leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,

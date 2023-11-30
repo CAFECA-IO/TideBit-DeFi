@@ -3,13 +3,14 @@ import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
-import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import {unitAsset} from '../../constants/config';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'next-i18next';
 import {LayoutAssertion} from '../../constants/layout_assertion';
 import {useGlobal} from '../../contexts/global_context';
+import {CandlestickProvider} from '../../contexts/candlestick_context';
+import {TickerContext} from '../../contexts/ticker_context';
 
 const DEFAULT_CHART_WIDTH = 900;
 const DEFAULT_CHART_HEIGHT = 400;
@@ -32,8 +33,8 @@ const getChartSize = () => {
       windowSize.width > MAX_SCREEN_WIDTH
         ? MAX_SCREEN_WIDTH / 1.3
         : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
-        : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+          ? windowSize.width / 1.05 - TRADE_TAB_WIDTH
+          : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
     const chartSize = {
       width: chartWidth,
       height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
@@ -70,8 +71,8 @@ const getSwitchWidth = () => {
       windowSize.width > MAX_SCREEN_WIDTH
         ? 1450
         : windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-        ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
-        : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+          ? windowSize.width / 1.09 - TRADE_TAB_WIDTH
+          : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
 
     return {
       width: switchWidth.toString(),
@@ -96,7 +97,7 @@ const getSwitchWidth = () => {
 const TradingView = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const globalCtx = useGlobal();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickOn, setCandlestickOn, candlestickOnRef] = useStateRef(true);
@@ -201,7 +202,7 @@ const TradingView = () => {
   const mobileLayout = (
     <div className="relative">
       <div className="absolute top-0 text-sm text-lightWhite/60">
-        {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
+        {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {tickerCtx.selectedTicker?.tradingVolume}{' '}
         {unitAsset}
       </div>
       <div className="pt-20">{displayedTradingViewMobile}</div>
@@ -224,7 +225,7 @@ const TradingView = () => {
   const displayedLayout =
     globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
 
-  return <>{displayedLayout}</>;
+  return <CandlestickProvider>{displayedLayout}</CandlestickProvider>;
 };
 
 export default TradingView;

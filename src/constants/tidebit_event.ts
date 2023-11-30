@@ -1,4 +1,5 @@
 export type ITideBitEvent =
+  | 'IS_INITIALIZE'
   | 'CONNECTED'
   | 'DISCONNECTED'
   | 'ACCOUNT_CHANGED'
@@ -26,6 +27,7 @@ export type ITideBitEvent =
   | 'EXCEPTION_CLEARED';
 
 export interface ITideBitEventConstant {
+  IS_INITIALIZE: ITideBitEvent;
   CONNECTED: ITideBitEvent;
   DISCONNECTED: ITideBitEvent;
   ACCOUNT_CHANGED: ITideBitEvent;
@@ -53,6 +55,7 @@ export interface ITideBitEventConstant {
   EXCEPTION_CLEARED: ITideBitEvent;
 }
 export const TideBitEvent: ITideBitEventConstant = {
+  IS_INITIALIZE: 'IS_INITIALIZE',
   CONNECTED: 'CONNECTED',
   DISCONNECTED: 'DISCONNECTED',
   ACCOUNT_CHANGED: 'ACCOUNT_CHANGED',

@@ -49,6 +49,8 @@ let wsWorker: WebSocket | null;
 */
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
+  //Info: 使用一个映射表来存儲每个請求的解決（resolve）和拒絕（reject）函數 （20231130 - tzuhan)
+  const callbacks = new Map();
   const pusherKey = process.env.PUSHER_APP_KEY ?? '';
   const pusherHost = process.env.PUSHER_HOST ?? '';
   const pusherPort = +(process.env.PUSHER_PORT ?? '0');
@@ -196,17 +198,27 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
     if (apiWorker) {
       const request: FormatedTypeRequest = formatAPIRequest(data);
-      const promise = new Promise((resolve, reject) => {
-        apiWorker.onmessage = event => {
-          const {name, result, error} = event.data;
-          if (name === request.name) {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        };
+
+      apiWorker.onmessage = event => {
+        const {name, result, error} = event.data;
+
+        //Info: 檢查是否存在對應的回調 （20231130 - tzuhan)
+        const {resolve, reject} = callbacks.get(name) || {};
+
+        if (resolve && reject) {
+          if (error) reject(error);
+          else resolve(result);
+
+          //Info: 完成後移除回調 （20231130 - tzuhan)
+          callbacks.delete(name);
+        }
+      };
+
+      return new Promise((resolve, reject) => {
+        //Info: 存儲當前請求的回調 （20231130 - tzuhan)
+        callbacks.set(request.name, {resolve, reject});
+        apiWorker.postMessage(request.request);
       });
-      apiWorkerRef.current.postMessage(request.request);
-      return promise;
     } else {
       createJob(JobType.API, () => requestHandler(data));
     }

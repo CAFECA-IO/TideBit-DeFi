@@ -51,7 +51,7 @@ const TradingHeader = () => {
         {/* Ticker */}
         <div className="flex w-200px items-center space-x-3 text-center">
           <button
-            id="TickerSelectorButtonDesktop"
+            id="TickerSelectorDesktop"
             type="button"
             className="flex items-center space-x-3 text-center hover:cursor-pointer"
             onClick={tickerBoxClickHandler}
@@ -100,7 +100,7 @@ const TradingHeader = () => {
         {/* Ticker */}
         <div className="flex items-center space-x-3 text-center">
           <button
-            id="TickerSelectorButtonMobile"
+            id="TickerSelectorMobile"
             type="button"
             className="flex items-center space-x-3 text-center hover:cursor-pointer"
             onClick={tickerBoxClickHandler}

@@ -301,7 +301,7 @@ const PositionUpdatedModal = ({
 
   const formContent = (
     <div className="mt-4 flex flex-col px-2 pb-2">
-      <div className="flex items-center justify-center space-x-2 text-center lg:text-sm">
+      <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
@@ -311,9 +311,9 @@ const PositionUpdatedModal = ({
         <div className="text-2xl">{openCfdDetails?.instId}</div>
       </div>
 
-      <div className="relative flex flex-col items-center pt-1">
+      <div className="relative flex flex-col items-center">
         <div
-          className={`${displayedBorderColor} mt-3 w-full flex flex-col justify-center text-center p-4 border-1px py-3 space-y-3 text-sm leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-3 w-full flex flex-col justify-center text-center border-1px space-y-3 p-4 text-xs lg:text-sm leading-relaxed text-lightWhite`}
         >
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
@@ -326,17 +326,18 @@ const PositionUpdatedModal = ({
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-            <div className="flex flex-col items-baseline space-x-1">
-              <p className="whitespace-nowrap">
-                {numberFormatted(openCfdDetails?.openSpotPrice)}{' '}
-                <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
-                  {spreadSymbol}
-                  {numberFormatted(openCfdDetails?.openSpreadFee)}
-                </span>
-              </p>
-              <p className="whitespace-nowrap">
+            <div className="flex items-baseline space-x-1">
+              {/* Info: (20231019 - Julian) Spot Price */}
+              {numberFormatted(openCfdDetails?.openSpotPrice)}
+              {/* Info: (20231019 - Julian) Spread */}
+              <span className={`ml-1 whitespace-nowrap text-xs text-lightGray`}>
+                {spreadSymbol}
+                {numberFormatted(openCfdDetails?.openSpreadFee)}
+              </span>
+              {/* Info: (20231019 - Julian) Price */}
+              <p>
                 → {numberFormatted(openCfdDetails.openPrice)}
-                <span className="ml-1 text-lightGray text-xs"> {unitAsset}</span>
+                <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
               </p>
             </div>
           </div>

@@ -83,7 +83,11 @@ const PositionTab = ({
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
       <div className="mb-3 mr-30px flex self-end sm:pr-30px">
-        <ImCross onClick={subMenuClickHandler} className="cursor-pointer" />
+        <ImCross
+          id="PositionMenuMobileCloseButton"
+          onClick={subMenuClickHandler}
+          className="cursor-pointer"
+        />
       </div>
       {currentSubTab}
     </div>

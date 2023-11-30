@@ -576,12 +576,12 @@ const PositionOpenModal = ({
             {/* Info: (20231019 - Julian) Spot Price */}
             {numberFormatted(openCfdRequest.quotation.spotPrice)}
             {/* Info: (20231019 - Julian) Spread */}
-            <span className={`${dataRenewedStyle} ml-1 whitespace-nowrap text-xs text-lightGray`}>
+            <span className={`ml-1 whitespace-nowrap text-xs text-lightGray`}>
               {spreadSymbol}
               {numberFormatted(openCfdRequest.quotation.spreadFee)}
             </span>
             {/* Info: (20231019 - Julian) Price */}
-            {<p className={`${dataRenewedStyle}`}>→ {numberFormatted(openCfdRequest.price)}</p>}
+            <p className={`${dataRenewedStyle}`}>→ {numberFormatted(openCfdRequest.price)}</p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
             <Tooltip id="OpenOpenPriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
@@ -681,31 +681,29 @@ const PositionOpenModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      {/* Info: (20231019 - Julian) Blur Mask */}
-      <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
-        <div
-          id="OpenPositionModal"
-          className="relative mx-auto flex p-6 sm:p-8 w-90vw items-center h-auto sm:w-400px flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80"
-        >
-          {/* Info: (20231019 - Julian) Header */}
-          <div className="flex items-center justify-between rounded-t">
-            <div className="flex w-full flex-col items-center">
-              <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
-                {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
-              </h3>
+    /* Info: (20231019 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+      <div
+        id="OpenPositionModal"
+        className="relative mx-auto flex p-6 sm:p-8 w-90vw items-center h-auto sm:w-400px flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80"
+      >
+        {/* Info: (20231019 - Julian) Header */}
+        <div className="flex items-center justify-between rounded-t">
+          <div className="flex w-full flex-col items-center">
+            <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
+              {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
+            </h3>
 
-              <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
-            </div>
-
-            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-              <ImCross onClick={modalClickHandler} />
-            </button>
+            <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
           </div>
-          {formContent}
+
+          <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+            <ImCross onClick={modalClickHandler} />
+          </button>
         </div>
+        {formContent}
       </div>
-    </>
+    </div>
   ) : null;
 
   return <div>{isDisplayedModal}</div>;

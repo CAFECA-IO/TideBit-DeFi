@@ -57,7 +57,7 @@ const PositionUpdatedModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
   const displayedBorderColor = TypeOfBorderColor.EQUAL;
-  const layoutInsideBorder = 'flex justify-between w-full px-5 my-2';
+  const layoutInsideBorder = 'flex justify-between w-full';
   const spreadSymbol = openCfdDetails.openSpreadFee > 0 ? '+' : '-';
 
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
@@ -313,78 +313,80 @@ const PositionUpdatedModal = ({
 
       <div className="relative flex flex-col items-center pt-1">
         <div
-          className={`${displayedBorderColor} mt-3 w-full border-1px py-3 text-sm leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-3 w-full flex flex-col justify-center text-center p-4 border-1px py-3 space-y-3 text-sm leading-relaxed text-lightWhite`}
         >
-          <div className="flex flex-col justify-center text-center">
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
 
-              <div className={`${displayedPositionColor}`}>
-                {displayedTypeOfPosition}
-                <span className="ml-1 text-lightWhite">{displayedBuyOrSell}</span>
-              </div>
+            <div className={`${displayedPositionColor}`}>
+              {displayedTypeOfPosition}
+              <span className="ml-1 text-lightWhite">{displayedBuyOrSell}</span>
             </div>
+          </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-              <div className="flex items-baseline space-x-1">
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+            <div className="flex flex-col items-baseline space-x-1">
+              <p className="whitespace-nowrap">
                 {numberFormatted(openCfdDetails?.openSpotPrice)}{' '}
                 <span className="ml-1 whitespace-nowrap text-xs text-lightGray">
                   {spreadSymbol}
                   {numberFormatted(openCfdDetails?.openSpreadFee)}
                 </span>
-                {<p>→ {numberFormatted(openCfdDetails.openPrice)}</p>}
-                <span className="ml-1 text-lightGray text-xs">{unitAsset}</span>
-              </div>
+              </p>
+              <p className="whitespace-nowrap">
+                → {numberFormatted(openCfdDetails.openPrice)}
+                <span className="ml-1 text-lightGray text-xs"> {unitAsset}</span>
+              </p>
+            </div>
+          </div>
+
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
+            <div className="">
+              {displayedTime.date} {displayedTime.time}
+            </div>
+          </div>
+          <div className={`${layoutInsideBorder} items-center`}>
+            <div className="flex">
+              <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+              <Tooltip id="UpdateTpSlTip" tooltipPosition="left-2">
+                <p className="w-56 text-left text-sm font-medium text-white">
+                  {t('POSITION_MODAL.TP_AND_SL_HINT')}
+                </p>
+              </Tooltip>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
+            <div className="">
+              <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
+              <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
+              <span className={`ml-1 text-lightGray text-xs`}>{unitAsset}</span>
             </div>
-            <div className={`${layoutInsideBorder} items-center`}>
-              <div className="flex">
-                <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-                <Tooltip id="UpdateTpSlTip" tooltipPosition="left-2">
-                  <p className="w-56 text-left text-sm font-medium text-white">
-                    {t('POSITION_MODAL.TP_AND_SL_HINT')}
-                  </p>
-                </Tooltip>
+          </div>
+
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
+            <div className="flex">
+              <div className={`${gtslTextStyle} flex`}>
+                {displayedGuaranteedStopSetting}
+
+                {updatedProps?.guaranteedStop || openCfdDetails?.guaranteedStop ? (
+                  <span className="flex items-baseline">
+                    <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
+                    <span className="">{`${numberFormatted(
+                      (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
+                    )}`}</span>
+                    <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                    <span className="text-lightGray text-sm">)</span>
+                  </span>
+                ) : null}
               </div>
 
-              <div className="">
-                <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
-                <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
-                <span className={`ml-1 text-lightGray text-xs`}>{unitAsset}</span>
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
-              <div className="flex">
-                <div className={`${gtslTextStyle} flex`}>
-                  {displayedGuaranteedStopSetting}
-
-                  {updatedProps?.guaranteedStop || openCfdDetails?.guaranteedStop ? (
-                    <span className="flex items-baseline">
-                      <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
-                      <span className="">{`${numberFormatted(
-                        (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
-                      )}`}</span>
-                      <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
-                      <span className="text-lightGray text-sm">)</span>
-                    </span>
-                  ) : null}
-                </div>
-
-                <Tooltip id="UpdateGuaranteedStopTip" className="top-px ml-1">
-                  <p className="w-56 text-left text-sm font-medium text-white">
-                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
-                  </p>
-                </Tooltip>
-              </div>
+              <Tooltip id="UpdateGuaranteedStopTip" className="top-px ml-1">
+                <p className="w-56 text-left text-sm font-medium text-white">
+                  {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                </p>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -392,11 +394,11 @@ const PositionUpdatedModal = ({
         <div className="my-5 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          id="UpdatePositionSubmitButton"
+          id="UpdateSubmitButton"
           disabled={disabled}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme w-90vw sm:w-300px py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+          className={`whitespace-nowrap rounded border-0 bg-tidebitTheme w-9/10 sm:w-300px py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -405,34 +407,30 @@ const PositionUpdatedModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          <div className="relative flex h-auto w-90vw flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8">
-            <div className="flex items-start justify-between rounded-t pt-9 lg:pt-3">
-              <div className="flex w-full flex-col items-center">
-                <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
-                  {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
-                </h3>
-                <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
-              </div>
-
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-
-            {formContent}
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
+    /* Info: (20231019 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+      <div
+        id="UpdatePositionModal"
+        className="relative flex h-auto w-90vw flex-col p-4 rounded-xl bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
+      >
+        <div className="flex items-start justify-between rounded-t pt-3">
+          <div className="flex w-full flex-col items-center">
+            <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
+              {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
+            </h3>
+            <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
           </div>
+
+          <button
+            id="UpdateModalCloseButton"
+            className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+          >
+            <ImCross onClick={modalClickHandler} />
+          </button>
         </div>
+        {formContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
   return <div>{isDisplayedModal}</div>;

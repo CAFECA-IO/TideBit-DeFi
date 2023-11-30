@@ -1084,6 +1084,7 @@ const UpdateFormModal = ({
             {/* Info: (20231004 - Julian) Circular Progress Bar */}
             <div className="relative flex h-40px w-40px items-center">
               <div
+                id="UpdateFormModalPauseSquare"
                 className={`absolute left-9px top-4px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
                 onClick={closedModalClickHandler}
@@ -1104,6 +1105,7 @@ const UpdateFormModal = ({
 
             {/* Info: (20231004 - Julian) Close Button */}
             <button
+              id="UpdateFormModalCloseButton"
               onClick={modalClickHandler}
               className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
             >

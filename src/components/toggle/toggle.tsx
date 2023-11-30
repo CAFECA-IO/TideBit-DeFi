@@ -1,6 +1,7 @@
 import React, {Dispatch, SetStateAction, useState} from 'react';
 
 interface IToggleProps {
+  id: string;
   lockedToOpen?: boolean;
   initialToggleState?: boolean;
   getToggledState: (props: boolean) => void;
@@ -9,6 +10,7 @@ interface IToggleProps {
 }
 
 const Toggle = ({
+  id,
   initialToggleState = false,
   getToggledState,
   lockedToOpen: lockedToOpen,
@@ -43,6 +45,7 @@ const Toggle = ({
 
   const tidebitToggle = (
     <div
+      id={id}
       onClick={toggleClickHandler}
       className={`${toggleBackgroundStyle} flex h-2 w-8 cursor-pointer items-center rounded-full duration-300 ease-in-out`}
     >
@@ -52,7 +55,7 @@ const Toggle = ({
     </div>
   );
 
-  return <div>{tidebitToggle}</div>;
+  return <>{tidebitToggle}</>;
 };
 
 export default Toggle;

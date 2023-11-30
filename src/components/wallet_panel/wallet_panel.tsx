@@ -100,6 +100,7 @@ export default function WalletPanel({panelVisible, panelClickHandler}: IWalletPa
     <div className="grid grid-cols-3 gap-3">
       {renderWalletData.map(option => (
         <div
+          id={`${option.name}Button`}
           key={option.name}
           className="col-span-1 flex items-center justify-center rounded bg-darkGray2"
         >

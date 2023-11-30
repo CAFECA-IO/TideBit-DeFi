@@ -10,6 +10,7 @@ type Dates = {
   disable: boolean;
 };
 interface IPopulateDatesParams {
+  id: string;
   daysInMonth: Dates[];
   selectedTime: number;
   selectedYear: number;
@@ -18,6 +19,7 @@ interface IPopulateDatesParams {
 }
 
 interface IDatePickerProps {
+  id: string;
   date: number;
   minDate?: number;
   maxDate?: number;
@@ -28,6 +30,7 @@ const formatGridStyle = 'grid grid-cols-7 gap-4';
 
 /* Info:(20230530 - Julian) Safari 只接受 YYYY/MM/DD 格式的日期 */
 const PopulateDates = ({
+  id,
   daysInMonth,
   selectedTime,
   selectedYear,
@@ -45,22 +48,23 @@ const PopulateDates = ({
     };
 
     return (
-      <div
+      <button
         key={index}
+        id={`${id}${formatDate}`}
         className={`whitespace-nowrap rounded-full text-center ${
           isSelected ? 'bg-tidebitTheme hover:bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : 'hover:bg-cuteBlue hover:cursor-pointer'}`}
         onClick={dateClickHandler}
       >
         {formatDate}
-      </div>
+      </button>
     );
   });
 
   return <div className={formatGridStyle}>{formatDaysInMonth}</div>;
 };
 
-const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
+const DatePicker = ({id, date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const [selectedMonth, setSelectedMonth] = useState(+timestampToString(date).month);
   const [selectedYear, setSelectedYear] = useState(+timestampToString(date).year);
   const {targetRef, componentVisible, setComponentVisible} = useOuterClick<HTMLDivElement>(false);
@@ -134,6 +138,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
       } transition-all duration-200 ease-in-out`}
     >
       <button
+        id={id}
         className="inline-flex w-140px items-center justify-between px-5 py-3"
         onClick={openDateHandler}
       >
@@ -169,6 +174,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         </div>
 
         <PopulateDates
+          id={id}
           daysInMonth={daysInMonth(selectedYear, selectedMonth)}
           selectedTime={date}
           selectedYear={selectedYear}

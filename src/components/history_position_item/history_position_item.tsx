@@ -57,7 +57,11 @@ const HistoryPositionItem = ({closedCfdDetails}: IHistoryPositionItemProps) => {
 
   return (
     <>
-      <div className="mt-3 text-xs hover:cursor-pointer" onClick={itemClickHandler}>
+      <div
+        id={`HistoryItem${closedCfdDetails.id}`}
+        className="mt-3 text-xs hover:cursor-pointer"
+        onClick={itemClickHandler}
+      >
         <div className="flex justify-center">
           <div className="w-48px">
             <div className="text-lightGray">

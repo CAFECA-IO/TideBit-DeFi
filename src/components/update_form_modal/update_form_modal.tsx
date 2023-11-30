@@ -506,6 +506,9 @@ const UpdateFormModal = ({
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.tp}
+        inputId="UpdateFormTpInput"
+        decrementBtnId="UpdateFormTpDecrementButton"
+        incrementBtnId="UpdateFormTpIncrementButton"
       />
     </div>
   );
@@ -527,6 +530,9 @@ const UpdateFormModal = ({
         decrementBtnSize="25"
         incrementBtnSize="25"
         onTypingStatusChange={handleTypingStatusChange.sl}
+        inputId="UpdateFormSlInput"
+        decrementBtnId="UpdateFormSlDecrementButton"
+        incrementBtnId="UpdateFormSlIncrementButton"
       />
     </div>
   );
@@ -535,6 +541,7 @@ const UpdateFormModal = ({
     <div className="">
       <div className="flex items-center text-center">
         <input
+          id="UpdateFormGuaranteedStopCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(availableBalance, guaranteedStopFeeRef.current)}
           checked={guaranteedCheckedRef.current}
@@ -1019,6 +1026,7 @@ const UpdateFormModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_SETTING')}</div>
             <div className="-mr-10">{displayedTakeProfitSetting}</div>
             <Toggle
+              id="UpdateFormTpToggle"
               setToggleStateFromParent={setTpToggle}
               toggleStateFromParent={tpToggle}
               getToggledState={getToggledTpSetting}
@@ -1033,6 +1041,7 @@ const UpdateFormModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.SL_SETTING')}</div>
             <div className="-mr-50px">{displayedStopLossSetting}</div>
             <Toggle
+              id="UpdateFormSlToggle"
               getToggledState={getToggledSlSetting}
               lockedToOpen={guaranteedChecked}
               initialToggleState={guaranteedChecked}
@@ -1045,6 +1054,7 @@ const UpdateFormModal = ({
         </div>
 
         <RippleButton
+          id="UpdateFormModalButton"
           disabled={submitDisabledRef.current}
           onClick={buttonClickHandler}
           buttonType="button"

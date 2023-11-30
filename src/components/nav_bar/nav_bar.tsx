@@ -94,7 +94,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <WalletConnectButton className="mt-4 px-5 py-2 md:mt-0" />
+    <WalletConnectButton id="NavWalletButtonDesktop" className="mt-4 px-5 py-2 md:mt-0" />
   );
 
   const isDisplayedUnreadNumber =
@@ -126,12 +126,12 @@ const NavBar = () => {
     <User notifyOpen={notifyOpen} setNotifyOpen={setNotifyOpen} />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="NavWalletButtonMobile" className="px-3 py-2 text-sm" />
   );
 
   const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="px-3 py-2 text-sm" />
+    <WalletConnectButton id="NavWalletButtonMobileMenu" className="px-3 py-2 text-sm" />
   );
 
   const desktopLayout = (
@@ -144,7 +144,7 @@ const NavBar = () => {
             <div className="flex h-16 items-center justify-between bg-black">
               <div className="flex items-center">
                 {/* Info: (20230327 - Julian) logo */}
-                <Link className="shrink-0 pt-5" href="/">
+                <Link id="NavLogoDesktop" className="shrink-0 pt-5" href="/">
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -173,16 +173,22 @@ const NavBar = () => {
                   <div className="ml-4 mt-8 flex flex-1 items-center space-x-4">
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
 
-                    <Link href={tradeLink} className="hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link
+                      id="NavTradeLinkDesktop"
+                      href={tradeLink}
+                      className="hover:cursor-pointer hover:text-tidebitTheme"
+                    >
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
+                      id="NavLeaderboardLinkDesktop"
                       href={TBDURL.LEADERBOARD}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
                     <Link
+                      id="NavSupportLinkDesktop"
                       href={TBDURL.COMING_SOON}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
                     >
@@ -198,6 +204,7 @@ const NavBar = () => {
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
                   <div
+                    id="NavLanguageDesktop"
                     className={`${sidebarVisible ? `pointer-events-none` : `pointer-events-auto`}`}
                   >
                     <I18n />
@@ -205,6 +212,7 @@ const NavBar = () => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button
+                    id="NavNotificationDesktop"
                     onClick={sidebarOpenHandler}
                     className={`w-10 relative hover:cursor-pointer ${
                       sidebarVisible ? `pointer-events-none` : `pointer-events-auto`
@@ -263,7 +271,7 @@ const NavBar = () => {
           <div className="flex h-screen flex-col items-center justify-start px-2 pb-24 pt-8 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex w-full items-center justify-around space-x-5 px-3 pt-3">
-                <Link className="shrink-0" href="/" onClick={logoClickHandler}>
+                <Link id="NavLogoMobile" className="shrink-0" href="/" onClick={logoClickHandler}>
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -286,6 +294,7 @@ const NavBar = () => {
                   </div>
                 </Link>
                 <button
+                  id="NavNotificationMobile"
                   onClick={sidebarOpenHandlerMobile}
                   className="relative hover:cursor-pointer"
                 >
@@ -301,26 +310,26 @@ const NavBar = () => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-start px-3">
-                <Link href={tradeLink} className={menuItemStyles}>
-                  {t('NAV_BAR.TRADE')}
-                </Link>
+              <Link id="NavTradeLinkMobile" href={tradeLink} className={menuItemStyles}>
+                {t('NAV_BAR.TRADE')}
+              </Link>
+
+              <Link
+                id="NavLeaderboardLinkMobile"
+                href={TBDURL.LEADERBOARD}
+                className={menuItemStyles}
+              >
+                {t('NAV_BAR.LEADERBOARD')}
+              </Link>
+
+              <Link id="NavSupportLinkMobile" href={TBDURL.COMING_SOON} className={menuItemStyles}>
+                {t('NAV_BAR.SUPPORT')}
+              </Link>
+
+              <div id="NavLanguageMobile" className="px-3 py-5">
+                <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
               </div>
-              <div className="flex items-center justify-start px-3">
-                <Link href={TBDURL.LEADERBOARD} className={menuItemStyles}>
-                  {t('NAV_BAR.LEADERBOARD')}
-                </Link>
-              </div>
-              <div className="flex items-center justify-start px-3">
-                <Link href={TBDURL.COMING_SOON} className={menuItemStyles}>
-                  {t('NAV_BAR.SUPPORT')}
-                </Link>
-              </div>
-              <div className="flex items-center justify-start px-3">
-                <div className="px-3 py-5">
-                  <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
-                </div>
-              </div>
+
               <span className={`${dividerInsideMobileNavBar}`}></span>
               <div className="p-5">{isDisplayedSubNavWalletConnect}</div>
             </div>

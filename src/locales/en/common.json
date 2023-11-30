@@ -120,6 +120,7 @@
     "CRYPTO_NEWS_SECTION_TITLE": "News",
     "CRYPTO_NEWS_SECTION_SEE_ALL": "SEE ALL",
     "TRADE_TAB": "CFD trade",
+    "TRADE_TAB_INPUT_REMINDER": "Please switch to English input before typing.",
     "TRADE_TAB_NOT_ENOUGH_MARGIN": "Not enough margin",
     "TRADE_TAB_EXPECTED_PROFIT": "Expected profit",
     "TRADE_TAB_EXPECTED_LOSS": "Expected loss",

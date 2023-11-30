@@ -26,7 +26,7 @@ const CryptoNewsItem = ({id: id, timestamp, title: heading, content, img}: IBrie
   return (
     <>
       <section className={`${overallWidth}`}>
-        <Link href={`/news/${id}`}>
+        <Link id={`${id}`} href={`/news/${id}`}>
           <div className="mx-auto flex flex-col items-center px-0 py-0 lg:flex-row">
             <div className="mb-2 flex max-w-3xs justify-center md:mb-0 lg:mb-10 lg:justify-start">
               {displayedImg}

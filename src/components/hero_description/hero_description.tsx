@@ -57,15 +57,15 @@ export default function HeroDescription() {
           <StatisticBlock />
         </div>
 
-        <div id="reserve-ratio" className="py-16">
+        <div id="ReserveRatio" className="py-16">
           <ReserveRatio />
         </div>
 
-        <div id="audit-report" className="py-16">
+        <div id="AuditReport" className="py-16">
           <AuditReport />
         </div>
 
-        <div id="crypto-category" className="pt-20 pb-40">
+        <div id="CryptoCategory" className="pt-20 pb-40">
           <TickerProvider>
             <CryptoCategory />
           </TickerProvider>

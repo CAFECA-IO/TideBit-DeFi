@@ -202,7 +202,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
                 {accountTruncate(userCtx.user?.address, 20)}
               </div>
             </div>
-            <button id="UserEditButtonMobile" className="p-4">
+            <button id="UserEditMobile" className="p-4">
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />
             </button>
           </div>

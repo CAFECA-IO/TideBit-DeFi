@@ -178,7 +178,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       type: ToastTypeAndText.INFO.type,
       message: t('TOAST.COPY_SUCCESS'),
       toastId: ToastId.COPY_SUCCESS,
-      autoClose: 300,
+      autoClose: 500,
       isLoading: false,
       typeText: t(ToastTypeAndText.INFO.text),
     });
@@ -193,7 +193,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       )
     ) : (
-      <button onClick={copyClickHandler}>
+      <button id={`TxIdCopy${order.id}`} onClick={copyClickHandler}>
         <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
       </button>
     );

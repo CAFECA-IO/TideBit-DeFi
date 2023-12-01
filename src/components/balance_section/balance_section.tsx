@@ -106,7 +106,7 @@ const BalanceSection = () => {
               {t('MY_ASSETS_PAGE.BALANCE_SECTION_TOTAL_BALANCE')}
             </p>
             <button
-              id="TotalBalanceShowButton"
+              id="ShowBalanceButton"
               onClick={hiddenClickHandler}
               type="button"
               className="hover:cursor-pointer"
@@ -131,7 +131,7 @@ const BalanceSection = () => {
 
         <div className="flex justify-center space-x-5">
           <RippleButton
-            id="DepositButton"
+            id="MyAssetsDeposit"
             className={`${btnStyle}`}
             onClick={depositClickHandler}
             buttonType="button"
@@ -141,7 +141,7 @@ const BalanceSection = () => {
 
           {/* Info: (20230530 - Julian) disabled withdraw */}
           <RippleButton
-            id="WithdrawButton"
+            id="MyAssetsWithdraw"
             className={`${btnStyle}`}
             onClick={withdrawClickHandler}
             buttonType="button"

@@ -252,13 +252,14 @@ const ReceiptSection = () => {
         {listCluster}
         {/* Info: (20230829 - Julian) See more button */}
         <button
+          id="SeeMoreReceiptsButton"
           onClick={seeMoreHandler}
           className={`${
             isShowMore ? 'flex' : 'hidden'
-          } mb-2 items-center justify-center space-x-2 text-base uppercase text-tidebitTheme`}
+          } mb-2 items-center justify-center text-base uppercase text-tidebitTheme`}
         >
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEE_MORE')}</p>
-          <FiChevronDown className="text-xl" />
+          <FiChevronDown size={20} />
         </button>
       </div>
     </div>

@@ -539,7 +539,7 @@ const UpdateFormModal = ({
     <div className="">
       <div className="flex items-center text-center">
         <input
-          id="UpdateFormGuaranteedStopCheckbox"
+          id="UpdateFormGslCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(availableBalance, guaranteedStopFeeRef.current)}
           checked={guaranteedCheckedRef.current}
@@ -552,7 +552,7 @@ const UpdateFormModal = ({
             ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
-          <Tooltip id="UpdateFormGuaranteedStopTip" className="ml-3">
+          <Tooltip id="UpdateFormGslTip" className="ml-3">
             <p className="w-56 text-left text-sm font-medium text-white">
               {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
             </p>
@@ -1052,7 +1052,7 @@ const UpdateFormModal = ({
         </div>
 
         <RippleButton
-          id="UpdateFormModalButton"
+          id="UpdateFormButton"
           disabled={submitDisabledRef.current}
           onClick={buttonClickHandler}
           buttonType="button"
@@ -1084,7 +1084,7 @@ const UpdateFormModal = ({
             {/* Info: (20231004 - Julian) Circular Progress Bar */}
             <div className="relative flex h-40px w-40px items-center">
               <div
-                id="UpdateFormModalPauseSquare"
+                id="UpdateFormPauseSquare"
                 className={`absolute left-9px top-4px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
                 onClick={closedModalClickHandler}
@@ -1105,7 +1105,7 @@ const UpdateFormModal = ({
 
             {/* Info: (20231004 - Julian) Close Button */}
             <button
-              id="UpdateFormModalCloseButton"
+              id="UpdateFormCloseButton"
               onClick={modalClickHandler}
               className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
             >

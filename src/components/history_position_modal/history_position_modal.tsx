@@ -269,7 +269,7 @@ const HistoryPositionModal = ({
               ) : null}
             </div>
 
-            <Tooltip id="HistoryGuaranteedStopTip" className="top-px ml-1">
+            <Tooltip id="HistoryGslTip" className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>

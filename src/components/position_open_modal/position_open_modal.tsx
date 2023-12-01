@@ -638,7 +638,7 @@ const PositionOpenModal = ({
               </span>
             ) : null}
 
-            <Tooltip id="OpenGuaranteedStopTip" className="ml-1">
+            <Tooltip id="OpenGslTip" className="ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>
@@ -697,8 +697,12 @@ const PositionOpenModal = ({
             <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
           </div>
 
-          <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-            <ImCross onClick={modalClickHandler} />
+          <button
+            id="OpenModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+          >
+            <ImCross />
           </button>
         </div>
         {formContent}

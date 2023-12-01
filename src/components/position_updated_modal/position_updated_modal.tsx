@@ -383,7 +383,7 @@ const PositionUpdatedModal = ({
                 ) : null}
               </div>
 
-              <Tooltip id="UpdateGuaranteedStopTip" className="top-px ml-1">
+              <Tooltip id="UpdateGslTip" className="top-px ml-1">
                 <p className="w-56 text-left text-sm font-medium text-white">
                   {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
                 </p>
@@ -424,9 +424,10 @@ const PositionUpdatedModal = ({
 
           <button
             id="UpdateModalCloseButton"
+            onClick={modalClickHandler}
             className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
           >
-            <ImCross onClick={modalClickHandler} />
+            <ImCross />
           </button>
         </div>
         {formContent}

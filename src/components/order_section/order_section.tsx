@@ -150,6 +150,7 @@ const OrderSection = (props: IOrderSection) => {
       <ul className="ml-5 flex basis-full items-center text-center text-sm font-medium">
         <li className="w-full">
           <button
+            id="OpenTabButtonMobile"
             onClick={openTabClickHandler}
             className={`${openTabStyle} inline-block w-full rounded-md px-7 py-3`}
           >
@@ -158,6 +159,7 @@ const OrderSection = (props: IOrderSection) => {
         </li>
         <li className="ml-1 w-full">
           <button
+            id="HistoryTabButtonMobile"
             onClick={historyTabClickHandler}
             className={`${historyTabStyle} inline-block w-full rounded-md px-7 py-3`}
           >

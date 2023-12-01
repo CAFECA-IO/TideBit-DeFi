@@ -628,7 +628,7 @@ const PositionClosedModal = ({
                 <span className="text-lightGray text-sm">)</span>
               </span>
             ) : null}
-            <Tooltip id="CloseGuaranteedStopTip" className="top-px ml-1">
+            <Tooltip id="CloseGslTip" className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>
@@ -669,8 +669,12 @@ const PositionClosedModal = ({
               </h3>
               <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
             </div>
-            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-              <ImCross onClick={modalClickHandler} />
+            <button
+              id="CloseModalCloseButton"
+              onClick={modalClickHandler}
+              className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+            >
+              <ImCross />
             </button>
           </div>
           {/* Info: (20231003 - Julian) Form Content */}

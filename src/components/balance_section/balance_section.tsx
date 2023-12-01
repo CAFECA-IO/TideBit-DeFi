@@ -17,7 +17,6 @@ const BalanceSection = () => {
 
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
-
   const {userAssets} = userCtx;
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */

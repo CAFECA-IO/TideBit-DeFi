@@ -29,14 +29,14 @@ interface IReceiptItemProps {
   histories: IAcceptedOrder;
 }
 
-const ReceiptItem = (histories: IReceiptItemProps) => {
+const ReceiptItem = ({histories}: IReceiptItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const {createTimestamp, receipt, isClosed} = histories.histories;
+  const {createTimestamp, receipt, isClosed} = histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
 
   const balance = balanceSnapshot.shift();
@@ -64,7 +64,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : +SafeMath.mult((order as IWithdrawOrder).targetAmount, -1);
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
-  const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
+  const cfdType = (histories as IAcceptedCFDOrder).applyData.operation;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -159,15 +159,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         : updateCfdHandler
       : orderType === OrderType.DEPOSIT
       ? () => {
-          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
-          globalCtx.visibleDepositHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedDepositOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : orderType === OrderType.WITHDRAW
       ? () => {
-          globalCtx.dataWithdrawalHistoryModalHandler(
-            histories.histories as IAcceptedWithdrawOrder
-          );
-          globalCtx.visibleWithdrawalHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedWithdrawOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : () => null;
 

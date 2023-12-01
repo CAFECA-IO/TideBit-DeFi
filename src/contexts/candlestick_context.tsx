@@ -294,8 +294,6 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   );
 
   const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
-    // eslint-disable-next-line no-console
-    console.log('freq', frequencyRef.current);
     if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);

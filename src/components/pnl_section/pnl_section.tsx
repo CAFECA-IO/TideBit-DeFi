@@ -60,8 +60,7 @@ const PnlSection = () => {
   const statisticContentList = statisticContent.map(({title, content, remarks, textColor}) => (
     <div
       key={title}
-      style={{marginTop: '10px'}}
-      className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
+      className="mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mb-0 lg:w-1/3 lg:border-b-0"
     >
       <div className="h-full space-y-3 text-center lg:text-start">
         <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
@@ -72,12 +71,8 @@ const PnlSection = () => {
   ));
 
   return (
-    <section className={`mt-10 bg-black text-lightGray lg:mt-0`}>
-      <div className="mx-20 mt-10 hidden border-t border-lightGray/50 lg:flex"></div>
-      <div className="mx-auto">
-        <div className="flex flex-wrap">{statisticContentList}</div>
-      </div>
-      <div className="mx-20 mt-5 hidden border-b border-lightGray/50 lg:flex"></div>
+    <section className="my-10 lg:mx-20 bg-black text-lightGray lg:border-t lg:border-b border-lightGray/50 flex flex-wrap py-4 lg:divide-x divide-lightGray/50">
+      {statisticContentList}
     </section>
   );
 };

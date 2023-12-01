@@ -66,9 +66,7 @@ const BalanceSection = () => {
   );
 
   const displayedBalance = hidden ? '********' : numberFormatted(totalBalance);
-
   const displayedAvalibleBalance = hidden ? '*****' : numberFormatted(availableBalance);
-
   const displayedLockedBalance = hidden ? '*****' : numberFormatted(lockedBalance);
 
   const hiddenClickHandler = () => setHidden(!hidden);
@@ -76,9 +74,8 @@ const BalanceSection = () => {
   const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
   return (
-    <>
+    <div className="mb-10">
       {/* Info: (20230530 - Julian) balance Circle Container */}
-
       <div className="relative pt-20 text-center">
         <CircularProgressBar
           progressBarColor={['#29C1E1']}
@@ -109,13 +106,11 @@ const BalanceSection = () => {
           {displayedBalance}&nbsp;&nbsp;{unitAsset}
         </div>
 
-        <div className="">
-          <div className="text-xs text-lightGray">
-            {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
-            <span className="text-base text-lightWhite">{displayedAvalibleBalance}</span> /
-            {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
-            <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
-          </div>
+        <div className="text-xs text-lightGray">
+          {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
+          <span className="text-base text-lightWhite">{displayedAvalibleBalance}</span> /
+          {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
+          <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
         </div>
       </div>
 
@@ -140,7 +135,7 @@ const BalanceSection = () => {
           {withdrawBtn}
         </RippleButton>
       </div>
-    </>
+    </div>
   );
 };
 

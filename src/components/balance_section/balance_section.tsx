@@ -50,10 +50,6 @@ const BalanceSection = () => {
     </p>
   );
 
-  const hiddenClickHandler = () => {
-    setHidden(!hidden);
-  };
-
   const displayedIcon = hidden ? (
     <Image
       src="/elements/group_152051.svg"
@@ -76,80 +72,74 @@ const BalanceSection = () => {
 
   const displayedLockedBalance = hidden ? '*****' : numberFormatted(lockedBalance);
 
-  const depositClickHandler = () => {
-    globalCtx.visibleDepositModalHandler();
-  };
-
-  const withdrawClickHandler = () => {
-    globalCtx.visibleWithdrawalModalHandler();
-  };
+  const hiddenClickHandler = () => setHidden(!hidden);
+  const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
+  const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
   return (
     <>
-      <div>
-        {/* Info: (20230530 - Julian) balance Circle Container */}
+      {/* Info: (20230530 - Julian) balance Circle Container */}
 
-        <div className="relative pt-20 text-center">
-          <CircularProgressBar
-            progressBarColor={['#29C1E1']}
-            numerator={availableBalance}
-            denominator={totalBalance}
-            hollowSize="85%"
-            circularBarSize={circleSize}
-          />
-        </div>
+      <div className="relative pt-20 text-center">
+        <CircularProgressBar
+          progressBarColor={['#29C1E1']}
+          numerator={availableBalance}
+          denominator={totalBalance}
+          hollowSize="85%"
+          circularBarSize={circleSize}
+        />
+      </div>
 
-        {/* Info: (20230530 - Julian) balance Text Centered */}
-        <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-transparent">
-          <div className="flex items-center justify-center space-x-2 text-center">
-            <p className="text-base text-lightGray">
-              {t('MY_ASSETS_PAGE.BALANCE_SECTION_TOTAL_BALANCE')}
-            </p>
-            <button
-              id="ShowBalanceButton"
-              onClick={hiddenClickHandler}
-              type="button"
-              className="hover:cursor-pointer"
-            >
-              {displayedIcon}
-            </button>
-          </div>
-
-          <div className="flex justify-center text-3xl font-extrabold">
-            {displayedBalance}&nbsp;&nbsp;{unitAsset}
-          </div>
-
-          <div className="">
-            <div className="text-xs text-lightGray">
-              {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
-              <span className="text-base text-lightWhite">{displayedAvalibleBalance}</span> /
-              {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
-              <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-5">
-          <RippleButton
-            id="MyAssetsDeposit"
-            className={`${btnStyle}`}
-            onClick={depositClickHandler}
-            buttonType="button"
+      {/* Info: (20230530 - Julian) balance Text Centered */}
+      <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-transparent">
+        <div className="flex items-center justify-center space-x-2 text-center">
+          <p className="text-base text-lightGray">
+            {t('MY_ASSETS_PAGE.BALANCE_SECTION_TOTAL_BALANCE')}
+          </p>
+          <button
+            id="ShowBalanceButton"
+            onClick={hiddenClickHandler}
+            type="button"
+            className="hover:cursor-pointer"
           >
-            {depositBtn}
-          </RippleButton>
-
-          {/* Info: (20230530 - Julian) disabled withdraw */}
-          <RippleButton
-            id="MyAssetsWithdraw"
-            className={`${btnStyle}`}
-            onClick={withdrawClickHandler}
-            buttonType="button"
-            disabled
-          >
-            {withdrawBtn}
-          </RippleButton>
+            {displayedIcon}
+          </button>
         </div>
+
+        <div className="flex justify-center text-3xl font-extrabold">
+          {displayedBalance}&nbsp;&nbsp;{unitAsset}
+        </div>
+
+        <div className="">
+          <div className="text-xs text-lightGray">
+            {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
+            <span className="text-base text-lightWhite">{displayedAvalibleBalance}</span> /
+            {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
+            <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-center space-x-5">
+        <RippleButton
+          id="MyAssetsDeposit"
+          className={`${btnStyle}`}
+          onClick={depositClickHandler}
+          buttonType="button"
+        >
+          {depositBtn}
+        </RippleButton>
+
+        {/* Info: (20230530 - Julian) disabled withdraw */}
+        <RippleButton
+          id="MyAssetsWithdraw"
+          className={`${btnStyle}`}
+          onClick={withdrawClickHandler}
+          buttonType="button"
+          disabled
+        >
+          {withdrawBtn}
+        </RippleButton>
       </div>
     </>
   );

@@ -221,7 +221,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         className={`inline-flex items-center rounded-full px-3 py-1 ${displayedButtonColor}`}
         onClick={buttonClickHandler}
       >
-        <Image src={displayedButtonImage} width={15} height={15} alt="deposit icon" />
+        <Image src={displayedButtonImage} width={15} height={15} alt="" />
         <p className="ml-2 whitespace-nowrap">{displayedButtonText}</p>
       </button>
     </div>

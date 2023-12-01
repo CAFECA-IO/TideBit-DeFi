@@ -58,7 +58,7 @@ const PositionTab = ({
           <button
             id="OpenTabButton"
             onClick={openTabClickHandler}
-            className={`${activeOpenTabStyle} inline-block px-11 py-1`}
+            className={`${activeOpenTabStyle} inline-block px-11 py-1 focus:outline-none outline-none`}
           >
             {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
@@ -67,7 +67,7 @@ const PositionTab = ({
           <button
             id="HistoryTabButton"
             onClick={historyTabClickHandler}
-            className={`${activeHistoryTabStyle} inline-block px-11 py-1`}
+            className={`${activeHistoryTabStyle} inline-block px-11 py-1 focus:outline-none outline-none`}
           >
             {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>

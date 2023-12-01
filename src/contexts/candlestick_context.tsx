@@ -1,4 +1,4 @@
-import React, {useContext, createContext, useCallback} from 'react';
+import React, {useContext, createContext, useCallback, useEffect} from 'react';
 import useState from 'react-usestateref';
 import {
   CANDLESTICK_SIZE,
@@ -31,6 +31,7 @@ import {Code, Reason} from '../constants/code';
 import TradeBookInstance from '../lib/books/trade_book';
 import {millisecondsToSeconds} from '../lib/common';
 import {MarketContext} from './market_context';
+import {useGlobal} from './global_context';
 
 export interface ICandlestickProvider {
   children: React.ReactNode;
@@ -65,6 +66,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
+  const globalCtx = useGlobal();
   const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -83,6 +85,8 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [candlestickIsLoading, setCandlestickIsLoading, candlestickIsLoadingRef] =
     useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [frequency, setFrequency, frequencyRef] = useState<number>(100);
 
   const candlestickChartIdHandler = (id: string) => {
     setCandlestickId(id);
@@ -290,6 +294,8 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   );
 
   const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
+    // eslint-disable-next-line no-console
+    console.log('freq', frequencyRef.current);
     if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
@@ -368,12 +374,20 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
 
         setCandlestickChartData(newData);
       }
-    }, 100);
+    }, frequencyRef.current);
 
     setCandlestickInterval(candlestickInterval);
 
     setCandlestickIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (globalCtx.layoutAssertion === 'MOBILE') {
+      setFrequency(1000);
+    } else {
+      setFrequency(100);
+    }
+  }, [globalCtx.layoutAssertion]);
 
   React.useMemo(
     () =>

@@ -414,7 +414,7 @@ const PositionUpdatedModal = ({
         id="UpdatePositionModal"
         className="relative flex h-auto w-90vw flex-col p-4 rounded-xl bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
       >
-        <div className="flex items-start justify-between rounded-t pt-3">
+        <div className="flex items-start justify-between">
           <div className="flex w-full flex-col items-center">
             <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
               {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
@@ -435,7 +435,7 @@ const PositionUpdatedModal = ({
     </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default PositionUpdatedModal;

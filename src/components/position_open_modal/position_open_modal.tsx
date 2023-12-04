@@ -688,7 +688,7 @@ const PositionOpenModal = ({
         className="relative mx-auto flex p-6 sm:p-8 w-90vw items-center h-auto sm:w-400px flex-col rounded-xl bg-darkGray1 shadow-lg shadow-black/80"
       >
         {/* Info: (20231019 - Julian) Header */}
-        <div className="flex items-center justify-between rounded-t">
+        <div className="flex items-center justify-between">
           <div className="flex w-full flex-col items-center">
             <h3 className="w-full text-center text-xl font-normal lg:text-3xl text-lightWhite">
               {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
@@ -710,7 +710,7 @@ const PositionOpenModal = ({
     </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default PositionOpenModal;

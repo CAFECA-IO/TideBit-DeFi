@@ -303,7 +303,7 @@ const PersonalAchievementModal = ({
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
         <div className="text-2xl sm:text-4xl">{displayedUserName}</div>
-        <div>
+        <div id="UserAvatar">
           <Image
             src={userAvatar ?? DEFAULT_USER_AVATAR}
             alt="user_avatar"
@@ -320,7 +320,7 @@ const PersonalAchievementModal = ({
       <div className="flex flex-col space-y-6 py-6 text-sm sm:px-4">{displayedDetailList}</div>
 
       {/* Info:(20230515 - Julian) Badges */}
-      <div className="flex flex-col px-4">
+      <div className="flex flex-col sm:px-4">
         <div className="py-4 text-lightGray">{t('LEADERBOARD_PAGE.BADGES')}</div>
         <div className="grid grid-cols-3 gap-3">{displayedBadgeList}</div>
       </div>
@@ -330,27 +330,28 @@ const PersonalAchievementModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
-        <div className="fixed inset-0 z-80 flex items-center justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-sm focus:outline-none">
-          <div className="relative mx-auto my-6 w-auto max-w-xl">
-            <div
-              id="PersonalInfoModal"
-              className="relative flex h-530px w-screen flex-col overflow-hidden rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
-            >
-              {/* Info:(20230515 - Julian) Header */}
-              <div className="flex items-center justify-between rounded-t pt-9">
-                <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                    <ImCross id="PersonalAchievementModalCloseButton" onClick={closeModalHandler} />
-                  </span>
-                </button>
-              </div>
-
-              {/* Info:(20230515 - Julian) Body */}
-              {formContent}
-
-              {/* Info:(20230515 - Julian) Footer */}
-              <div className="flex items-center justify-end rounded-b p-4"></div>
+        {/* Info: (20231204 - Julian) Blur Mask */}
+        <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+          <div
+            id="PersonalInfoModal"
+            className="relative flex h-530px w-9/10 flex-col overflow-hidden rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
+          >
+            {/* Info:(20230515 - Julian) Header */}
+            <div className="flex items-center justify-between rounded-t pt-9">
+              <button
+                id="AchievementModalCloseButton"
+                onClick={closeModalHandler}
+                className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+              >
+                <ImCross />
+              </button>
             </div>
+
+            {/* Info:(20230515 - Julian) Body */}
+            {formContent}
+
+            {/* Info:(20230515 - Julian) Footer */}
+            <div className="flex items-center justify-end rounded-b p-4"></div>
           </div>
         </div>
       </SkeletonTheme>

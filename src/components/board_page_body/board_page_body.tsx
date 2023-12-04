@@ -68,19 +68,19 @@ const BoardPageBody = () => {
 
   const subtitle =
     timeSpan === RankingInterval.LIVE ? (
-      <div className="inline-block text-base md:text-xl">
+      <div id="LiveRemainingTime" className="inline-block text-base md:text-xl">
         {t('LEADERBOARD_PAGE.SUBTITLE_LIVE')}{' '}
         <span className="text-tidebitTheme">{timestampToString(leaderboardLiveRemains).time} </span>
         {t('LEADERBOARD_PAGE.SUBTITLE_LIVE_2')}
       </div>
     ) : timeSpan === RankingInterval.DAILY ? (
-      <div className="inline-block text-base md:text-xl">
+      <div id="DailyTimePeriod" className="inline-block text-base md:text-xl">
         {t('LEADERBOARD_PAGE.SUBTITLE_DAILY')}{' '}
         <span className="text-tidebitTheme">{timeSpanEnd}</span>
         {t('LEADERBOARD_PAGE.SUBTITLE_DAILY_2')}
       </div>
     ) : timeSpan === RankingInterval.WEEKLY ? (
-      <div className="inline-block text-base md:text-xl">
+      <div id="WeeklyTimePeriod" className="inline-block text-base md:text-xl">
         {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY')}{' '}
         <span className="text-tidebitTheme">{timeSpanStart}</span>{' '}
         {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY_2')}{' '}
@@ -88,7 +88,7 @@ const BoardPageBody = () => {
         {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY_3')}
       </div>
     ) : timeSpan === RankingInterval.MONTHLY ? (
-      <div className="inline-block text-base md:text-xl">
+      <div id="MonthlyTimePeriod" className="inline-block text-base md:text-xl">
         {t('LEADERBOARD_PAGE.SUBTITLE_MONTHLY')}{' '}
         <span className="text-tidebitTheme">{timeSpanMonthly}</span>
         {t('LEADERBOARD_PAGE.SUBTITLE_MONTHLY_2')}

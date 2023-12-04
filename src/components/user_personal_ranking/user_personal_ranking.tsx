@@ -100,13 +100,13 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
         shareListVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
-      <a>
+      <a id="ShareRankingToFacebook">
         <BsFacebook className="hover:text-lightGray2" />
       </a>
-      <a>
+      <a id="ShareRankingToTwitter">
         <BsTwitter className="hover:text-lightGray2" />
       </a>
-      <a>
+      <a id="ShareRankingToReddit">
         <BsReddit className="hover:text-lightGray2" />
       </a>
     </div>
@@ -116,7 +116,9 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     timeSpan === RankingInterval.LIVE ? null : (
       <div className="relative text-2xl text-lightWhite hover:cursor-pointer hover:text-lightGray2 md:text-4xl">
         {socialMediaList}
-        <RiShareForwardFill onClick={shareClickHandler} />
+        <div id="RankingShareButton" onClick={shareClickHandler}>
+          <RiShareForwardFill />
+        </div>
       </div>
     );
 
@@ -175,7 +177,11 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
     )
   ) : null;
 
-  return <div className="sticky bottom-0 z-30 hover:cursor-pointer">{personalRanking}</div>;
+  return (
+    <div id="MyRanking" className="sticky bottom-0 z-30 hover:cursor-pointer">
+      {personalRanking}
+    </div>
+  );
 };
 
 export default UserPersonalRanking;

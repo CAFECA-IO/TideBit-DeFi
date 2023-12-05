@@ -300,7 +300,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
-      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.instId);
 
       workerCtx.subscribeUser(address);
     } else {
@@ -1678,7 +1677,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           setSelectedTicker(ticker);
           setOpenedCFDs([]);
           setClosedCFDs([]);
-          setIsLoadingCFDs(true);
         }
       }),
     []

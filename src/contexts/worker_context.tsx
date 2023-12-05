@@ -44,13 +44,13 @@ export const WorkerContext = createContext<IWorkerContext>({
 });
 
 let jobTimer: NodeJS.Timeout | null = null;
+const callbacks = new Map();
 /** Deprecated: replaced by pusher (20230502 - tzuhan) 
 let wsWorker: WebSocket | null;
 */
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
   //Info: 使用一个映射表来存儲每个請求的解決（resolve）和拒絕（reject）函數 （20231130 - tzuhan)
-  const callbacks = new Map();
   const pusherKey = process.env.PUSHER_APP_KEY ?? '';
   const pusherHost = process.env.PUSHER_HOST ?? '';
   const pusherPort = +(process.env.PUSHER_PORT ?? '0');

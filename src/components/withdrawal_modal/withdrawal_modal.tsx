@@ -255,82 +255,72 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
     <div className="relative flex-auto pt-0">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          {/* ----------Type input---------- */}
+          {/* Info: (20231204 - Julian) ---------- Asset ---------- */}
           <div className="mx-6 pt-8 text-start">
             <p className="text-sm text-lightGray4">{t('D_W_MODAL.ASSET')}</p>
-            <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
-              <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
-                <div className={`z-50 flex items-center space-x-2 pl-2`}>
-                  {/* Targeted Crypto icon */}
-                  {selectedCrypto.icon === '' ? (
-                    <></>
-                  ) : (
-                    <Image src={selectedCrypto.icon} width={20} height={20} alt="crypto icon" />
-                  )}
-                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.symbol}</p>
-                </div>
-                {/* TODO: input search */}
-                <input
-                  className="w-150px rounded-md bg-darkGray8 py-2 pl-0 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
-                  type="text"
-                  placeholder={selectedCrypto.name}
-                  disabled
-                  value={selectedCrypto?.name}
-                />
-
-                <button
-                  type="button"
-                  className="absolute right-36px top-55px animate-openMenu"
-                  onClick={cryptoMenuClickHandler}
-                >
-                  <MdKeyboardArrowDown
-                    className={`transition-all duration-300 ${rotationStyle}`}
-                    size={30}
-                  />
-                </button>
+            <button
+              id="WithdrawalAssetMenuButton"
+              className={`${formStyle} w-full p-1 flex items-center rounded-md bg-darkGray8 focus:ring-0 focus:outline-none`}
+              onClick={cryptoMenuClickHandler}
+            >
+              <div className={`z-50 flex items-center space-x-2 pl-2 flex-1`}>
+                {/* Info: (20231204 - Julian) Targeted Crypto icon */}
+                {selectedCrypto.icon === '' ? (
+                  <></>
+                ) : (
+                  <Image src={selectedCrypto.icon} width={20} height={20} alt="crypto icon" />
+                )}
+                <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.symbol}</p>
+                <p className="text-sm text-lightGray">{selectedCrypto.name}</p>
               </div>
-            </div>
+              {/* Info: (20231204 - Julian) Arrow animation */}
+              <div className="animate-openMenu">
+                <MdKeyboardArrowDown
+                  className={`transition-all duration-300 ${rotationStyle}`}
+                  size={30}
+                />
+              </div>
+            </button>
           </div>
 
-          {/* ----------Crypto Menu---------- */}
+          {/* Info: (20231204 - Julian) ----------Crypto Menu---------- */}
           <div
-            className={`absolute right-6 top-90px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
+            className={`absolute right-6 top-95px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
           >
             <ul
-              className="h-auto overflow-y-scroll py-1 text-start text-sm text-gray-200"
+              className="h-auto overflow-y-scroll text-start text-sm text-gray-200 no-scrollbar"
               aria-labelledby="dropdownMenuIconButton"
             >
               {avaliableCryptoMenu}
             </ul>
           </div>
 
-          {/* ----------Amount input---------- */}
+          {/* Info: (20231204 - Julian) ----------Amount input---------- */}
           <div className="mx-6 pt-12 text-start">
             <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
-            <div className="flex rounded-md bg-darkGray8">
+            <div className="flex items-center rounded-md bg-darkGray8">
               <input
+                id="WithdrawalAmountInput"
                 className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
                 type="number"
-                placeholder=""
                 value={amountInput === undefined ? '' : amountInput}
                 onChange={amountOnChangeHandler}
               />
-
-              <button
-                type="button"
-                className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default"
-              >
+              {/* Info: (20231204 - Julian) Amount unit */}
+              <p className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default">
                 {selectedCrypto.symbol}
-              </button>
+              </p>
+              {/* Info: (20231204 - Julian) Max button */}
               <button
+                id="WithdrawalMaxButton"
                 type="button"
                 onClick={maxClickHandler}
-                className="mx-1 my-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+                className="mx-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 py-1 text-xs text-white hover:bg-lightGray3/80"
               >
                 {t('D_W_MODAL.MAX')}
               </button>
             </div>
-
+            {/* Info: (20231204 - Julian) Available balance */}
             <div className="flex justify-end">
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_ON_TIDEBIT')}:{' '}
@@ -340,52 +330,46 @@ const WithdrawalModal = ({modalVisible, modalClickHandler, getTransferData}: IWi
             </div>
           </div>
 
-          <div className={``}>
-            <RippleButton
-              id="WithdrawalModalButton"
-              disabled={amountInput === 0 || amountInput === undefined}
-              onClick={submitClickHandler}
-              buttonType="button"
-              className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
-            >
-              {formButton}
-            </RippleButton>
-          </div>
+          {/* Info: (20231204 - Julian) ---------- Withdrawal button ---------- */}
+          <RippleButton
+            id="WithdrawalButton"
+            disabled={amountInput === 0 || amountInput === undefined}
+            onClick={submitClickHandler}
+            buttonType="button"
+            className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+          >
+            {formButton}
+          </RippleButton>
         </div>
       </div>
     </div>
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          <div
-            id="WithdrawalModal"
-            className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+    /* Info: (20231204 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="WithdrawalModal"
+        className="relative flex h-420px w-296px flex-col py-6 rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
+            {t('D_W_MODAL.WITHDRAW')}
+          </h3>
+          <button
+            id="WithdrawalModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
           >
-            <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
-                {t('D_W_MODAL.WITHDRAW')}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {formContent}
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
+            <ImCross />
+          </button>
         </div>
+        {formContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default WithdrawalModal;

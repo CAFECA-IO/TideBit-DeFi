@@ -18,14 +18,12 @@ const BalanceSection = () => {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const {userAssets} = userCtx;
+  const {userAssets, isBalanceShow, showBalance} = userCtx;
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const availableBalance = userAssets?.balance.available ?? DEFAULT_BALANCE.available;
   const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE.locked;
   const totalBalance = SafeMath.plus(availableBalance, lockedBalance);
-
-  const [hidden, setHidden] = useState(true);
 
   const circleSize = '380';
   const eyeIconSize = 30;
@@ -50,31 +48,27 @@ const BalanceSection = () => {
     </p>
   );
 
-  const hiddenClickHandler = () => {
-    setHidden(!hidden);
-  };
-
-  const displayedIcon = hidden ? (
-    <Image
-      src="/elements/group_152051.svg"
-      width={eyeIconSize}
-      height={eyeIconSize}
-      alt="eye close icon"
-    />
-  ) : (
+  const displayedIcon = isBalanceShow ? (
     <Image
       src="/elements/group_15205.svg"
       width={eyeIconSize}
       height={eyeIconSize}
       alt="eye open icon"
     />
+  ) : (
+    <Image
+      src="/elements/group_152051.svg"
+      width={eyeIconSize}
+      height={eyeIconSize}
+      alt="eye close icon"
+    />
   );
 
-  const displayedBalance = hidden ? '********' : numberFormatted(totalBalance);
+  const displayedBalance = isBalanceShow ? numberFormatted(totalBalance) : '********';
 
-  const displayedAvalibleBalance = hidden ? '*****' : numberFormatted(availableBalance);
+  const displayedAvalibleBalance = isBalanceShow ? numberFormatted(availableBalance) : '*****';
 
-  const displayedLockedBalance = hidden ? '*****' : numberFormatted(lockedBalance);
+  const displayedLockedBalance = isBalanceShow ? numberFormatted(lockedBalance) : '*****';
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();
@@ -107,7 +101,7 @@ const BalanceSection = () => {
             </p>
             <button
               id="TotalBalanceShowButton"
-              onClick={hiddenClickHandler}
+              onClick={showBalance}
               type="button"
               className="hover:cursor-pointer"
             >

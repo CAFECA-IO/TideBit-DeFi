@@ -80,6 +80,7 @@ export interface IUserContext {
   isEnabledEmailNotification: boolean;
   isConnectedWithEmail: boolean;
   isConnectedWithTideBit: boolean;
+  isBalanceShow: boolean;
   openCFDs: ICFDOrder[];
   closedCFDs: ICFDOrder[];
   deposits: IDepositOrder[];
@@ -114,6 +115,7 @@ export interface IUserContext {
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
   getBadge: (badgeId: string) => Promise<IResult>;
+  showBalance: () => void;
   walletExtensions: IWalletExtension[];
 }
 
@@ -131,6 +133,7 @@ export const UserContext = createContext<IUserContext>({
   isEnabledEmailNotification: false,
   isConnectedWithEmail: false,
   isConnectedWithTideBit: false,
+  isBalanceShow: false,
   openCFDs: [],
   closedCFDs: [],
   deposits: [],
@@ -218,6 +221,9 @@ export const UserContext = createContext<IUserContext>({
   getBadge: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  showBalance: function (): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -270,6 +276,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isBalanceShow, setIsBalanceShow, isBalanceShowRef] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -830,6 +838,8 @@ export const UserProvider = ({children}: IUserProvider) => {
 
     return result;
   }, []);
+
+  const showBalance = () => setIsBalanceShow(!isBalanceShowRef.current);
 
   const getCFD = useCallback((id: string) => {
     let CFD: ICFDOrder | null = CFDsRef.current[id] ?? null;
@@ -1753,6 +1763,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     isEnabledEmailNotification: isEnabledEmailNotificationRef.current,
     isConnectedWithEmail: isConnectedWithEmailRef.current,
     isConnectedWithTideBit: isConnectedWithTideBitRef.current,
+    isBalanceShow: isBalanceShowRef.current,
     openCFDs: openCFDsRef.current,
     closedCFDs: closedCFDsRef.current,
     deposits: depositsRef.current,
@@ -1787,6 +1798,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getPersonalAchievements,
     // getTotalBalance,
     getBadge,
+    showBalance,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

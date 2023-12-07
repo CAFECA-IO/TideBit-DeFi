@@ -39,7 +39,7 @@ const Trading = (props: IPageProps) => {
   const hideOpenLineGraph = router.query?.open_line_graph === HIDDEN;
 
   const redirectToTicker = async () => {
-    if (hasValue(marketCtx.availableTickers) && ticker) {
+    if (marketCtx.isInit && ticker) {
       marketCtx.selectTickerHandler(ticker);
     }
   };
@@ -56,7 +56,7 @@ const Trading = (props: IPageProps) => {
     return <Error statusCode={404} />;
   }
 
-  return appCtx.isInit ? (
+  return (
     <>
       <Head>
         <title>CFD - TideBit DeFi</title>
@@ -73,8 +73,6 @@ const Trading = (props: IPageProps) => {
         />
       </main>
     </>
-  ) : (
-    <div>Loading...</div>
   );
 };
 

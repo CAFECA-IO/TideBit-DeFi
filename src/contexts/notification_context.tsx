@@ -14,6 +14,10 @@ import {CustomError, isCustomError} from '../lib/custom_error';
 import {ICode, Reason} from '../constants/code';
 import {IErrorSearchProps, IException} from '../constants/exception';
 import {SEVEREST_EXCEPTION_LEVEL} from '../constants/display';
+import {
+  IFinancialLinks,
+  dummyFinancialLinks,
+} from '../interfaces/tidebit_defi_background/financial_links';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -36,6 +40,8 @@ export interface INotificationContext {
   clearException: () => void;
   removeException: (props: IErrorSearchProps, searchBy: string) => void;
   getSeverestException: () => IException[];
+  isInit: boolean;
+  financialLinks: IFinancialLinks;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -50,11 +56,20 @@ export const NotificationContext = createContext<INotificationContext>({
   clearException: () => null,
   removeException: () => null,
   getSeverestException: () => [],
+  isInit: false,
+  financialLinks: dummyFinancialLinks,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const exceptionCollector = React.useMemo(() => ExceptionCollectorInstance, []);
+  const baifaProjectId = process.env.BAIFA_PROJECT_ID ?? '';
+  const financialLinks: IFinancialLinks = {
+    balance: `https://baifa.io/reports/${baifaProjectId}/balance`,
+    comprehensiveIncome: `https://baifa.io/reports/${baifaProjectId}/comprehensive-income`,
+    cashFlow: `https://baifa.io/reports/${baifaProjectId}/cash-flow`,
+    redFlags: `https://baifa.io/reports/${baifaProjectId}/red-flags`,
+  };
 
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,6 +78,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const getSeverestException = (): IException[] => {
     return exceptionCollector.getSeverest();
@@ -142,6 +159,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
     updatedNotifications.forEach(notification => {
       const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+
       if (cookieValue) {
         if (!isCookieExpired(cookieValue)) {
           notification.isRead = true;
@@ -177,6 +195,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const init = async () => {
     checkAndResetNotifications();
+    setIsInit(true);
     return await Promise.resolve();
   };
 
@@ -217,6 +236,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     clearException,
     removeException,
     getSeverestException,
+    isInit: isInitRef.current,
+    financialLinks,
   };
 
   return (

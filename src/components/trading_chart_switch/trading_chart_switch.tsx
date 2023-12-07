@@ -7,6 +7,7 @@ import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../contexts/market_context';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import useStateRef from 'react-usestateref';
+import {CandlestickContext} from '../../contexts/candlestick_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -26,7 +27,7 @@ const TradingChartSwitch = ({
   switchWidth,
 }: ITradingChartSwitchProps) => {
   const marketCtx = useContext(MarketContext);
-  const {selectTimeSpanHandler} = useContext(MarketContext);
+  const candlestickCtx = useContext(CandlestickContext);
   const [activeButton, setActiveButton] = useState(TimeSpanUnion._1s);
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);
@@ -36,15 +37,15 @@ const TradingChartSwitch = ({
   const [disabled, setDisabled, disabledRef] = useStateRef(true);
 
   useEffect(() => {
-    setDisabled(!marketCtx.isInit || marketCtx.candlestickIsLoading);
-  }, [marketCtx.isInit, marketCtx.candlestickIsLoading]);
+    setDisabled(!marketCtx.isInit || candlestickCtx.candlestickIsLoading);
+  }, [marketCtx.isInit, candlestickCtx.candlestickIsLoading]);
 
   useEffect(() => {
     const handleTickerChange = () => {
-      setActiveButton(marketCtx.timeSpan);
+      setActiveButton(candlestickCtx.timeSpan);
     };
     handleTickerChange();
-  }, [marketCtx.selectedTicker?.instId, marketCtx.timeSpan]);
+  }, [marketCtx.selectedTickerProperty?.instId, candlestickCtx.timeSpan]);
 
   const getDisplayedPositionsState = (bool: boolean) => {
     getDisplayedPositionLabel(bool);
@@ -101,49 +102,49 @@ const TradingChartSwitch = ({
   const liveButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._1s);
     getTradingViewInterval(TimeSpanUnion._1s);
-    selectTimeSpanHandler(TimeSpanUnion._1s);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._1s);
   };
 
   const fiveMinButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._5m);
     getTradingViewInterval(TimeSpanUnion._5m);
-    selectTimeSpanHandler(TimeSpanUnion._5m);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._5m);
   };
 
   const fifteenMinButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._15m);
     getTradingViewInterval(TimeSpanUnion._15m);
-    selectTimeSpanHandler(TimeSpanUnion._15m);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._15m);
   };
 
   const thirtyMinButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._30m);
     getTradingViewInterval(TimeSpanUnion._30m);
-    selectTimeSpanHandler(TimeSpanUnion._30m);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._30m);
   };
 
   const oneHrButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._1h);
     getTradingViewInterval(TimeSpanUnion._1h);
-    selectTimeSpanHandler(TimeSpanUnion._1h);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._1h);
   };
 
   const fourHrButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._4h);
     getTradingViewInterval(TimeSpanUnion._4h);
-    selectTimeSpanHandler(TimeSpanUnion._4h);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._4h);
   };
 
   const twelveHrButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._12h);
     getTradingViewInterval(TimeSpanUnion._12h);
-    selectTimeSpanHandler(TimeSpanUnion._12h);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._12h);
   };
 
   const oneDayButtonClickHandler = () => {
     setActiveButton(TimeSpanUnion._1d);
     getTradingViewInterval(TimeSpanUnion._1d);
-    selectTimeSpanHandler(TimeSpanUnion._1d);
+    candlestickCtx.selectTimeSpanHandler(TimeSpanUnion._1d);
   };
 
   const candlestickChartButton = (

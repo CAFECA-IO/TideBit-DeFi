@@ -55,6 +55,7 @@ import {CustomError, isCustomError} from '../../lib/custom_error';
 import SafeMath from '../../lib/safe_math';
 import {RoundCondition} from '../../interfaces/tidebit_defi_background/round_condition';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -73,6 +74,7 @@ const PositionClosedModal = ({
 
   const notificationCtx = useContext(NotificationContext);
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
   // Info: for the use of useStateRef (20231106 - Shirley)
@@ -109,16 +111,16 @@ const PositionClosedModal = ({
     ? (openCfdDetails.pnl as IPnL).value > 0
       ? '+'
       : (openCfdDetails.pnl as IPnL).value < 0
-      ? '-'
-      : ''
+        ? '-'
+        : ''
     : openCfdDetails.pnl !== undefined && Math.abs((openCfdDetails.pnl as IPnL).value) === 0
-    ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
-      openCfdDetails.openPrice !== gQuotationRef.current.price
-      ? '≈'
-      : ''
-    : '';
+      ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
+        openCfdDetails.openPrice !== gQuotationRef.current.price
+        ? '≈'
+        : ''
+      : '';
 
-  const displayedPnLValue = !!marketCtx.selectedTicker?.price
+  const displayedPnLValue = !!tickerCtx.selectedTicker?.price
     ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
     : '- -';
 
@@ -136,16 +138,16 @@ const PositionClosedModal = ({
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL
+        ? TypeOfPnLColor.LOSS
+        : TypeOfPnLColor.EQUAL
     : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor = !!openCfdDetails.pnl
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-      ? TypeOfBorderColor.LOSS
-      : TypeOfBorderColor.EQUAL
+        ? TypeOfBorderColor.LOSS
+        : TypeOfBorderColor.EQUAL
     : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';

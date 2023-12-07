@@ -80,6 +80,7 @@ export interface IUserContext {
   isEnabledEmailNotification: boolean;
   isConnectedWithEmail: boolean;
   isConnectedWithTideBit: boolean;
+  isBalanceShow: boolean;
   openCFDs: ICFDOrder[];
   closedCFDs: ICFDOrder[];
   deposits: IDepositOrder[];
@@ -114,6 +115,7 @@ export interface IUserContext {
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
   getBadge: (badgeId: string) => Promise<IResult>;
+  showBalance: () => void;
   walletExtensions: IWalletExtension[];
 }
 
@@ -131,6 +133,7 @@ export const UserContext = createContext<IUserContext>({
   isEnabledEmailNotification: false,
   isConnectedWithEmail: false,
   isConnectedWithTideBit: false,
+  isBalanceShow: false,
   openCFDs: [],
   closedCFDs: [],
   deposits: [],
@@ -218,6 +221,9 @@ export const UserContext = createContext<IUserContext>({
   getBadge: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  showBalance: function (): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -271,6 +277,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isBalanceShow, setIsBalanceShow, isBalanceShowRef] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
@@ -284,9 +292,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       reason: Reason[Code.INTERNAL_SERVER_ERROR],
     };
     result = await deWTLogin(address, deWT);
-    // Deprecate: [debug] (20230524 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`setPrivateData deWTLogin result`, result);
     if (result.success) {
       const {user, expiredAt} = result.data as {user: IUser; expiredAt: string};
       const expiredAtDate = new Date(expiredAt);
@@ -303,7 +308,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
-      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.instId);
 
       workerCtx.subscribeUser(address);
     } else {
@@ -330,9 +334,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   const privateRequestHandler = useCallback(async (data: TypeRequest) => {
     try {
       const isDeWTLegit = checkDeWT();
-      // Deprecate: [debug] (20230717 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`privateRequestHandler isDeWTLegit`, isDeWTLegit);
       if (isDeWTLegit) {
         return await workerCtx.requestHandler({
           ...data,
@@ -418,6 +419,14 @@ export const UserProvider = ({children}: IUserProvider) => {
           }
           setOpenedCFDs(openCFDs);
           setClosedCFDs(closedCFDs);
+        } else {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+          notificationCtx.addException(
+            'listCFDs',
+            new Error('API result is failed'),
+            Code.INTERNAL_SERVER_ERROR
+          );
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -427,9 +436,10 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
 
         notificationCtx.addException('listCFDs', error as Error, Code.INTERNAL_SERVER_ERROR);
+      } finally {
+        setIsLoadingCFDs(false);
       }
     }
-    setIsLoadingCFDs(false);
     return result;
   }, []);
 
@@ -625,15 +635,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       const [encodedData, signature] = deWT.split('.');
       // 2. decode and verify signed serviceTermContract
       const result = verifySignedServiceTerm(encodedData);
-      // Deprecated: (20230717 - tzuhan) [debug]
-      // eslint-disable-next-line no-console
-      console.log(`checkDeWT: `, ` result: `, result);
       isDeWTLegit = result.isDeWTLegit;
       if (isDeWTLegit && result.serviceTerm?.message?.signer) {
         signer = toChecksumAddress(result.serviceTerm.message.signer);
-        // Deprecated: (20230717 - tzuhan) [debug]
-        // eslint-disable-next-line no-console
-        console.log(`checkDeWT: `, ` signer: `, signer);
         // 3. verify signature with recreate serviceTermContract
         const serviceTermContractTemplate = getServiceTermContract(lunar.address);
         const serviceTermContract = {
@@ -641,16 +645,10 @@ export const UserProvider = ({children}: IUserProvider) => {
           ...result.serviceTerm,
         };
         const verifyR = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
-        // Deprecated: (20230717 - tzuhan) [debug]
-        // eslint-disable-next-line no-console
-        console.log(`checkDeWT: `, ` verifyR: `, verifyR);
         isDeWTLegit = isDeWTLegit && !!signer && verifyR;
       }
     }
     if (!isDeWTLegit) {
-      // Deprecate: [debug] (20230524 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`checkDeWT isDeWTLegit: ${isDeWTLegit} === false => clearPrivateData`);
       clearPrivateData();
     }
     return {isDeWTLegit, signer, deWT};
@@ -840,6 +838,8 @@ export const UserProvider = ({children}: IUserProvider) => {
 
     return result;
   }, []);
+
+  const showBalance = () => setIsBalanceShow(!isBalanceShowRef.current);
 
   const getCFD = useCallback((id: string) => {
     let CFD: ICFDOrder | null = CFDsRef.current[id] ?? null;
@@ -1687,7 +1687,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           setSelectedTicker(ticker);
           setOpenedCFDs([]);
           setClosedCFDs([]);
-          setIsLoadingCFDs(true);
         }
       }),
     []
@@ -1764,6 +1763,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     isEnabledEmailNotification: isEnabledEmailNotificationRef.current,
     isConnectedWithEmail: isConnectedWithEmailRef.current,
     isConnectedWithTideBit: isConnectedWithTideBitRef.current,
+    isBalanceShow: isBalanceShowRef.current,
     openCFDs: openCFDsRef.current,
     closedCFDs: closedCFDsRef.current,
     deposits: depositsRef.current,
@@ -1798,6 +1798,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getPersonalAchievements,
     // getTotalBalance,
     getBadge,
+    showBalance,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

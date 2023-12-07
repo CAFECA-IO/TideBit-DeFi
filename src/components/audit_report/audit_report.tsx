@@ -6,7 +6,8 @@ import {BAIFA_LINK} from '../../constants/config';
 import useCheckLink from '../../lib/hooks/use_check_link';
 import {getTimestamp, timestampToString} from '../../lib/common';
 import {ONE_DAY_IN_SECONDS} from '../../constants/display';
-import React from 'react';
+import React, {useContext} from 'react';
+import {NotificationContext} from '../../contexts/notification_context';
 
 const yesterday = getTimestamp() - ONE_DAY_IN_SECONDS;
 const reportDate = timestampToString(yesterday);
@@ -14,6 +15,8 @@ const reportDate = timestampToString(yesterday);
 const AuditReport = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const baifaLink = useCheckLink(BAIFA_LINK, BAIFA_LINK);
+  const notificationCtx = useContext(NotificationContext);
+  const {financialLinks} = notificationCtx;
 
   return (
     <section>
@@ -46,7 +49,7 @@ const AuditReport = () => {
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="IncomeStatementDownload"
-                href={`${t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}`}
+                href={`${financialLinks.comprehensiveIncome}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
@@ -68,7 +71,7 @@ const AuditReport = () => {
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="BalanceSheetDownload"
-                href={`${t('HOME_PAGE.BALANCE_SHEET_LINK')}`}
+                href={`${financialLinks.balance}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
@@ -88,7 +91,7 @@ const AuditReport = () => {
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="CashFlowStatementDownload"
-                href={`${t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}`}
+                href={`${financialLinks.cashFlow}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"
@@ -112,7 +115,7 @@ const AuditReport = () => {
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="RedFlagAnalysisDownload"
-                href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
+                href={financialLinks.redFlags}
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-col items-center justify-center space-y-5"

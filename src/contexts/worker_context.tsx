@@ -1,4 +1,4 @@
-import React, {createContext, useRef, useContext} from 'react';
+import React, {createContext, useRef, useContext, useEffect} from 'react';
 import keccak from '@cafeca/keccak';
 import useState from 'react-usestateref';
 import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
@@ -15,6 +15,7 @@ import {
 } from '../interfaces/tidebit_defi_background/pusher_data';
 import {ITrade} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getCookieByName} from '../lib/common';
+import {INTERVAL_FOR_CLEARING_BINDING} from '../constants/config';
 
 type IJobType = 'API' | 'WS';
 
@@ -43,11 +44,13 @@ export const WorkerContext = createContext<IWorkerContext>({
 });
 
 let jobTimer: NodeJS.Timeout | null = null;
+const callbacks = new Map();
 /** Deprecated: replaced by pusher (20230502 - tzuhan) 
 let wsWorker: WebSocket | null;
 */
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
+  //Info: 使用一个映射表来存儲每个請求的解決（resolve）和拒絕（reject）函數 （20231130 - tzuhan)
   const pusherKey = process.env.PUSHER_APP_KEY ?? '';
   const pusherHost = process.env.PUSHER_HOST ?? '';
   const pusherPort = +(process.env.PUSHER_PORT ?? '0');
@@ -82,7 +85,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const subscribeTickers = () => {
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
+      channel.unbind(Events.TICKERS).bind(Events.TICKERS, (pusherData: IPusherData) => {
         const tickerData = pusherData as ITickerData;
         notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
       });
@@ -91,10 +94,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const subscribeTrades = () => {
     if (publicChannelRef.current) {
-      publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const trade = pusherData as ITrade;
-        notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
-      });
+      publicChannelRef.current
+        .unbind(Events.TRADES)
+        .bind(Events.TRADES, (pusherData: IPusherData) => {
+          const trade = pusherData as ITrade;
+          notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
+        });
     }
   };
 
@@ -193,17 +198,27 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
     if (apiWorker) {
       const request: FormatedTypeRequest = formatAPIRequest(data);
-      const promise = new Promise((resolve, reject) => {
-        apiWorker.onmessage = event => {
-          const {name, result, error} = event.data;
-          if (name === request.name) {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        };
+
+      apiWorker.onmessage = event => {
+        const {name, result, error} = event.data;
+
+        //Info: 檢查是否存在對應的回調 （20231130 - tzuhan)
+        const {resolve, reject} = callbacks.get(name) || {};
+
+        if (resolve && reject) {
+          if (error) reject(error);
+          else resolve(result);
+
+          //Info: 完成後移除回調 （20231130 - tzuhan)
+          callbacks.delete(name);
+        }
+      };
+
+      return new Promise((resolve, reject) => {
+        //Info: 存儲當前請求的回調 （20231130 - tzuhan)
+        callbacks.set(request.name, {resolve, reject});
+        apiWorker.postMessage(request.request);
       });
-      apiWorkerRef.current.postMessage(request.request);
-      return promise;
     } else {
       createJob(JobType.API, () => requestHandler(data));
     }
@@ -214,6 +229,19 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     requestHandler,
     subscribeUser,
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (publicChannelRef.current) {
+        publicChannelRef.current.unbind(Events.TRADES);
+        publicChannelRef.current.unbind(Events.TICKERS);
+      }
+    }, INTERVAL_FOR_CLEARING_BINDING);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return <WorkerContext.Provider value={defaultValue}>{children}</WorkerContext.Provider>;
 };

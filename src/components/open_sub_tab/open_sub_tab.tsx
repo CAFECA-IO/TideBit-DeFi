@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
-import {MarketContext} from '../../contexts/market_context';
+import {TickerContext} from '../../contexts/ticker_context';
 import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
@@ -15,7 +15,7 @@ interface IOpenSubTab {
 
 const OpenSubTab = (props: IOpenSubTab) => {
   const userCtx = useContext(UserContext);
-  const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
   const globalCtx = useGlobal();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +24,7 @@ const OpenSubTab = (props: IOpenSubTab) => {
   useEffect(() => {
     const cfdList = userCtx.openCFDs
       .map(cfd => {
-        const tickerPrice = marketCtx.availableTickers[cfd.instId]?.price;
+        const tickerPrice = tickerCtx.selectedTicker?.price ?? 0;
         const displayCFD: IDisplayCFDOrder = {
           ...toDisplayCFDOrder(cfd),
           stateCode: getStateCode(cfd, tickerPrice),

@@ -415,10 +415,10 @@ export const getStateCode = (cfd: ICFDOrder, tickerPrice: number): number => {
     Math.abs(tickerPrice - liquidationPrice) <= rangingLiquidation * 0.1
       ? cfdStateCode.LIQUIDATION
       : Math.abs(tickerPrice - stopLossPrice) <= rangingSL * 0.1
-      ? cfdStateCode.STOP_LOSS
-      : Math.abs(tickerPrice - takeProfitPrice) <= rangingTP * 0.1
-      ? cfdStateCode.TAKE_PROFIT
-      : cfdStateCode.COMMON;
+        ? cfdStateCode.STOP_LOSS
+        : Math.abs(tickerPrice - takeProfitPrice) <= rangingTP * 0.1
+          ? cfdStateCode.TAKE_PROFIT
+          : cfdStateCode.COMMON;
   return stateCode;
 };
 
@@ -510,9 +510,6 @@ export const rlpDecodeServiceTerm = (data: string) => {
 export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   let isDeWTLegit = true;
   const serviceTerm = rlpDecodeServiceTerm(encodedServiceTerm);
-  // Deprecated: (20230717 - tzuhan) [debug]
-  // eslint-disable-next-line no-console
-  console.log(`verifySignedServiceTerm: `, ` serviceTerm: `, serviceTerm);
   // Info: 1. verify contract domain (20230411 - tzuhan)
   if (serviceTerm.message.domain !== DOMAIN) isDeWTLegit = false && isDeWTLegit;
   // Info: 2. verify contract agreement (20230411 - tzuhan)
@@ -530,30 +527,40 @@ export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   )
     isDeWTLegit = false && isDeWTLegit;
   // Deprecated: (20230717 - tzuhan) [debug]
-  // eslint-disable-next-line no-console
-  console.log(
-    `verifySignedServiceTerm:`,
-    `serviceTerm.message.domain(${serviceTerm.message.domain}) !== DOMAIN(${DOMAIN})`,
-    serviceTerm.message.domain !== DOMAIN,
-    `serviceTerm.message.agree[0](${serviceTerm.message.agree[0]}) !== TERM_OF_SERVICE(${TERM_OF_SERVICE})`,
-    serviceTerm.message.agree[0] !== TERM_OF_SERVICE,
-    `serviceTerm.message.agree[1](${serviceTerm.message.agree[1]}) !== PRIVATE_POLICY(${PRIVATE_POLICY})`,
-    serviceTerm.message.agree[1] !== PRIVATE_POLICY,
-    `serviceTerm.message.iat(${serviceTerm.message.iat}) > serviceTerm.message.expired(${serviceTerm.message.expired})`,
-    (serviceTerm.message?.iat ?? 0) > (serviceTerm.message?.expired ?? 0),
-    `getTimestamp()`,
-    getTimestamp(),
-    `serviceTerm.message.iat(${serviceTerm.message?.iat ?? 0}) > getTimestamp()(${getTimestamp()})`,
-    (serviceTerm.message?.iat ?? 0) > getTimestamp(),
-    `serviceTerm.message.expired(${
-      serviceTerm.message?.expired ?? 0
-    }) < getTimestamp()(${getTimestamp()})`,
-    (serviceTerm.message?.expired ?? 0) < getTimestamp(),
-    `getTimestamp()(${getTimestamp()}) - serviceTerm.message.iat(${
-      serviceTerm.message?.iat ?? 0
-    }) > DeWT_VALIDITY_PERIOD(${DeWT_VALIDITY_PERIOD})`,
-    getTimestamp() - (serviceTerm.message?.iat ?? 0) > DeWT_VALIDITY_PERIOD
-  );
+  if (!isDeWTLegit) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `verifySignedServiceTerm:`,
+      `serviceTerm.message.domain(${serviceTerm.message.domain}) !== DOMAIN(${DOMAIN})`,
+      serviceTerm.message.domain !== DOMAIN,
+      `serviceTerm.message.agree[0](${serviceTerm.message.agree[0]}) !== TERM_OF_SERVICE(${TERM_OF_SERVICE})`,
+      serviceTerm.message.agree[0] !== TERM_OF_SERVICE,
+      `serviceTerm.message.agree[1](${serviceTerm.message.agree[1]}) !== PRIVATE_POLICY(${PRIVATE_POLICY})`,
+      serviceTerm.message.agree[1] !== PRIVATE_POLICY,
+      `serviceTerm.message.iat(${serviceTerm.message.iat}) > serviceTerm.message.expired(${serviceTerm.message.expired})`,
+      (serviceTerm.message?.iat ?? 0) > (serviceTerm.message?.expired ?? 0),
+      `getTimestamp()`,
+      getTimestamp(),
+      `serviceTerm.message.iat(${
+        serviceTerm.message?.iat ?? 0
+      }) > getTimestamp()(${getTimestamp()})`,
+      (serviceTerm.message?.iat ?? 0) > getTimestamp(),
+      `serviceTerm.message.expired(${
+        serviceTerm.message?.expired ?? 0
+      }) < getTimestamp()(${getTimestamp()})`,
+      (serviceTerm.message?.expired ?? 0) < getTimestamp(),
+      `getTimestamp()(${getTimestamp()}) - serviceTerm.message.iat(${
+        serviceTerm.message?.iat ?? 0
+      }) > DeWT_VALIDITY_PERIOD(${DeWT_VALIDITY_PERIOD})`,
+      getTimestamp() - (serviceTerm.message?.iat ?? 0) > DeWT_VALIDITY_PERIOD
+    );
+    // Deprecated: (20231130 - tzuhan) [debug]
+    // eslint-disable-next-line no-console
+    console.log(
+      `[common] verifySignedServiceTerm isDeWTLegit: ${isDeWTLegit}, serviceTerm`,
+      serviceTerm
+    );
+  }
   return {isDeWTLegit, serviceTerm};
 };
 
@@ -661,15 +668,15 @@ export const numberFormatted = (n: number | string | undefined, dash = false, si
     !n || n === '0' || !SafeMath.isNumber(number)
       ? zero
       : sign
-      ? signStr +
-        Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )
-      : Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        );
+        ? signStr +
+          Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
+            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+            FRACTION_DIGITS
+          )
+        : Math.abs(roundToDecimalPlaces(+n, 2, RoundCondition.SHRINK)).toLocaleString(
+            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+            FRACTION_DIGITS
+          );
 
   return result;
 };

@@ -53,7 +53,7 @@ export default function HeroDescription() {
           <Cta />
         </div>
 
-        <div className="pt-10 xl:pt-20 pb-10">
+        <div className="py-16">
           <StatisticBlock />
         </div>
 
@@ -77,63 +77,67 @@ export default function HeroDescription() {
         </div> */}
 
         {/* Info: Web3.0 (20231114 - Shirley) */}
-        <HeroReverse
-          heading={t('HOME_PAGE.WEB_3_TITLE')}
-          highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
-          content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
-          img="/elements/2634@2x.png"
-        />
-        <div className="py-20 lg:py-40"></div>
-
-        {/* Info: Easy Trade (20231114 - Shirley) */}
-        <Hero
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>
-              {t('HOME_PAGE.EASY_TRADE_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
-          img="/elements/group_15200@2x.png"
-        />
-        <div className="py-20 lg:py-40"></div>
-
-        {/* Info: Secure System (20231114 - Shirley) */}
-        <HeroReverse1
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">
-                {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
-              </span>
-              {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
-          img="/elements/group_15145@2x.png"
-        />
-        <div className="py-20 lg:py-40"></div>
-
-        {/* Info: Free Online Courses (20231114 - Shirley) */}
-        <Hero1
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">
-                {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
-              </span>
-              {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
-          img={`/elements/group_15201.svg`}
-        />
-        <div className="py-20 lg:py-40"></div>
-
-        {/* Info: App download (20231114 - Shirley) */}
-        <div className="flex w-full justify-center">
-          <AppDowloadContainer />
+        <div className="py-20">
+          <HeroReverse
+            heading={t('HOME_PAGE.WEB_3_TITLE')}
+            highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
+            content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
+            img="/elements/2634@2x.png"
+          />
         </div>
 
-        <div className="py-20 lg:py-40"></div>
+        {/* Info: Easy Trade (20231114 - Shirley) */}
+        <div className="py-20">
+          <Hero
+            heading={
+              <div className="font-bold">
+                <span className="text-tidebitTheme">
+                  {t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}
+                </span>
+                {t('HOME_PAGE.EASY_TRADE_TITLE')}
+              </div>
+            }
+            content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
+            img="/elements/group_15200@2x.png"
+          />
+        </div>
+
+        {/* Info: Secure System (20231114 - Shirley) */}
+        <div className="py-20">
+          <HeroReverse1
+            heading={
+              <div className="font-bold">
+                <span className="text-tidebitTheme">
+                  {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
+                </span>
+                {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
+              </div>
+            }
+            content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
+            img="/elements/group_15145@2x.png"
+          />
+        </div>
+
+        {/* Info: Free Online Courses (20231114 - Shirley) */}
+        <div className="py-20">
+          <Hero1
+            heading={
+              <div className="font-bold">
+                <span className="text-tidebitTheme">
+                  {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
+                </span>
+                {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
+              </div>
+            }
+            content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
+            img={`/elements/group_15201.svg`}
+          />
+        </div>
+
+        {/* Info: App download (20231114 - Shirley) */}
+        <div className="py-20 flex w-full justify-center">
+          <AppDowloadContainer />
+        </div>
       </div>
     </div>
   );

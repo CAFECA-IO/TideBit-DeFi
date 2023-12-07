@@ -85,14 +85,14 @@ const ReserveRatio = () => {
 
         {/* Info: desktop (20230620 - Shirley) */}
         <div
-          className="mt-28 hidden lg:flex"
+          className="mt-10 hidden lg:flex"
           style={{
             backgroundImage: `url(/elements/group_15244.svg)`,
             backgroundSize: '100% 100%',
             backgroundRepeat: 'no-repeat',
           }}
         >
-          <div className="mx-auto flex w-full flex-col items-center justify-center bg-center pb-20 lg:flex-row">
+          <div className="mx-auto flex w-full flex-col items-center justify-center bg-center lg:flex-row">
             <ReserveCard
               name="USDT"
               color="text-lightGreen2"

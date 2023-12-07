@@ -44,12 +44,10 @@ const StatisticBlock = () => {
   ));
 
   return (
-    <section className={`bg-black text-gray-400`}>
-      <div className="mx-10">
-        <div className="flex flex-col flex-wrap justify-center lg:flex-row lg:flex-wrap">
-          {statisticContentList}
-        </div>
-      </div>
+    <section
+      className={`bg-black text-gray-400 flex mx-10 flex-col flex-wrap justify-center lg:flex-row lg:flex-wrap`}
+    >
+      {statisticContentList}
     </section>
   );
 };

@@ -18,17 +18,18 @@ const AuditReport = () => {
   const notificationCtx = useContext(NotificationContext);
   const {financialLinks} = notificationCtx;
 
+  const blockStyle =
+    'flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme lg:h-200px lg:w-200px';
+
   return (
     <section>
-      <div className="mb-5 items-center font-medium text-white lg:mb-10 text-2xl xs:text-3xl sm:text-4xl">
-        <div className="flex items-center justify-center">
-          <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
-          <h1 className="mx-3 text-center">
-            <span className="text-tidebitTheme">{t('HOME_PAGE.SMART')}</span>
-            {t('HOME_PAGE.AUDITING_REPORTS')}
-          </h1>
-          <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
-        </div>
+      <div className="mb-5 flex items-center justify-center font-medium text-white lg:mb-10 text-2xl xs:text-3xl sm:text-4xl">
+        <span className="h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
+        <h1 className="mx-3 text-center">
+          <span className="text-tidebitTheme">{t('HOME_PAGE.SMART')}</span>
+          {t('HOME_PAGE.AUDITING_REPORTS')}
+        </h1>
+        <span className="h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
       </div>
 
       <div className="lg:mx-20">
@@ -44,8 +45,8 @@ const AuditReport = () => {
         </div>
 
         <div className="flex w-full justify-around">
-          <div className="mx-0 grid grid-cols-2 items-center justify-center gap-x-5 gap-y-5 lg:mx-0 lg:flex lg:w-full lg:flex-row lg:items-center lg:justify-center lg:space-x-12 lg:space-y-0">
-            <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+          <div className="grid grid-cols-2 items-center justify-center gap-5 lg:flex lg:w-full lg:flex-row lg:items-center lg:justify-center lg:gap-12">
+            <div className={blockStyle}>
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="IncomeStatementDownload"
@@ -67,7 +68,7 @@ const AuditReport = () => {
               </a>
             </div>
 
-            <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+            <div className={blockStyle}>
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="BalanceSheetDownload"
@@ -87,7 +88,7 @@ const AuditReport = () => {
               </a>
             </div>
 
-            <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+            <div className={blockStyle}>
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="CashFlowStatementDownload"
@@ -111,7 +112,7 @@ const AuditReport = () => {
               </a>
             </div>
 
-            <div className="flex h-130px w-130px sm:h-150px sm:w-150px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
+            <div className={blockStyle}>
               <a
                 // TODO: Report updated from context (20230619 - Shirley)
                 id="RedFlagAnalysisDownload"
@@ -136,7 +137,7 @@ const AuditReport = () => {
         </div>
 
         <div className="flex w-full justify-center pt-10 lg:flex-row flex-col items-center gap-3">
-          <p className=""> {t('HOME_PAGE.POWERED_BY')}</p>
+          <p> {t('HOME_PAGE.POWERED_BY')}</p>
           <a
             id="PoweredByLink"
             href={baifaLink}
@@ -144,8 +145,7 @@ const AuditReport = () => {
             rel="noreferrer"
             className={`flex w-105px items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
           >
-            <p className="">BAIFA</p>
-
+            <p>BAIFA</p>
             <BiLinkAlt size={20} />
           </a>
         </div>

@@ -32,7 +32,6 @@ const CryptoCategory = () => {
           <Link href={`/trade/cfd/${cryptoCard.instId?.toLowerCase()}`}>
             <CryptoCard
               onTheSamePage={false}
-              className="mt-4 ml-4"
               instId={cryptoCard.instId}
               lineGraphProps={cryptoCard.lineGraphProps}
               chain={cryptoCard.name}
@@ -67,25 +66,20 @@ const CryptoCategory = () => {
   });
 
   return (
-    <div className="container mx-auto flex shrink-0 flex-wrap justify-center space-y-1">
-      <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
-        <div className="mb-0 items-center font-medium text-white text-2xl xs:text-3xl sm:text-4xl">
-          <div className="flex items-center justify-center">
-            <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
-            <h1 className="mx-1 text-center xl:w-410px">
-              <span className="text-tidebitTheme">
-                {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE_HIGHLIGHT')}
-              </span>
-              {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE')}
-            </h1>
-            <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
-          </div>
-        </div>
+    <div className="container mx-auto flex flex-wrap justify-center space-y-1">
+      <div className="mb-5 w-full flex items-center justify-center font-medium text-white lg:mb-10 text-2xl xs:text-3xl sm:text-4xl">
+        <span className="h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
+        <h1 className="mx-3 text-center">
+          <span className="text-tidebitTheme">
+            {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE_HIGHLIGHT')}
+          </span>
+          {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE')}
+        </h1>
+        <span className="h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
       </div>
+
       <div className="flex w-full items-center justify-center">
-        <div className="grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
-          {renderCryptoCard}
-        </div>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">{renderCryptoCard}</div>
       </div>
     </div>
   );

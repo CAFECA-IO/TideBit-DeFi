@@ -85,6 +85,7 @@ module.exports = {
       backgroundImage: {
         iSunOneBg: 'url("/elements/isunone_banner_bg@2x.png")',
         iSunOneBgMobile: 'url("/elements/isunone_banner_bg_mobile.svg")',
+        reverseRatio: 'url(/elements/group_15244.svg)',
 
         redLinear: 'linear-gradient(180deg, #E86D6DCC 0%, #E86D6D00 100%)',
         greenLinear: 'linear-gradient(180deg, #1AE2A0CC 0%, #1AE2A000 100%)',
@@ -236,6 +237,7 @@ module.exports = {
         '200px': '200px',
         '210px': '210px',
         '220px': '220px',
+        '230px': '230px',
         '240px': '240px',
         '250px': '250px',
         '254px': '254px',

@@ -67,7 +67,6 @@ const BalanceSection = () => {
   const displayedAvalibleBalance = isBalanceShow ? numberFormatted(availableBalance) : '*****';
   const displayedLockedBalance = isBalanceShow ? numberFormatted(lockedBalance) : '*****';
 
-  const hiddenClickHandler = () => setHidden(!hidden);
   const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
   const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
@@ -90,14 +89,16 @@ const BalanceSection = () => {
           <p className="text-base text-lightGray">
             {t('MY_ASSETS_PAGE.BALANCE_SECTION_TOTAL_BALANCE')}
           </p>
-          <button
-            id="ShowBalanceButton"
-            onClick={hiddenClickHandler}
-            type="button"
-            className="hover:cursor-pointer"
-          >
-            {displayedIcon}
-          </button>
+          <div className="h-30px w-32px flex items-center justify-center">
+            <button
+              id="ShowBalanceButton"
+              onClick={showBalance}
+              type="button"
+              className="hover:cursor-pointer"
+            >
+              {displayedIcon}
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-center text-3xl font-extrabold">

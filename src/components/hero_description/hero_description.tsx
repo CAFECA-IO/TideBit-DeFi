@@ -45,87 +45,85 @@ export default function HeroDescription() {
   }, [isInit, marketCtx.isInit]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
-      <div className="w-full">
-        <div className="">
-          <Cta />
-        </div>
+    <div className="flex w-full min-h-screen flex-col overflow-hidden pt-24">
+      <div className="">
+        <Cta />
+      </div>
 
-        <div className="py-16">
-          <StatisticBlock />
-        </div>
+      <div className="py-16">
+        <StatisticBlock />
+      </div>
 
-        <div id="ReserveRatio" className="py-16">
-          <ReserveRatio />
-        </div>
+      <div id="ReserveRatio" className="py-16">
+        <ReserveRatio />
+      </div>
 
-        <div id="AuditReport" className="py-16">
-          <AuditReport />
-        </div>
+      <div id="AuditReport" className="py-16">
+        <AuditReport />
+      </div>
 
-        <div id="CryptoCategory" className="pt-20 pb-40">
-          <TickerProvider>
-            <CryptoCategory />
-          </TickerProvider>
-        </div>
+      <div id="CryptoCategory" className="pt-20 pb-40">
+        <TickerProvider>
+          <CryptoCategory />
+        </TickerProvider>
+      </div>
 
-        {/* Info: removed for supervision reason (20231115 - Shirley) */}
-        {/* <div className="py-20">
+      {/* Info: removed for supervision reason (20231115 - Shirley) */}
+      {/* <div className="py-20">
           <Banner />
         </div> */}
 
-        {/* Info: Web3.0 (20231114 - Shirley) */}
-        <HeroReverse
-          heading={t('HOME_PAGE.WEB_3_TITLE')}
-          highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
-          content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
-          img="/elements/2634@2x.png"
-        />
+      {/* Info: Web3.0 (20231114 - Shirley) */}
+      <HeroReverse
+        heading={t('HOME_PAGE.WEB_3_TITLE')}
+        highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
+        content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
+        img="/elements/2634@2x.png"
+      />
 
-        {/* Info: Easy Trade (20231114 - Shirley) */}
-        <Hero
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>
-              {t('HOME_PAGE.EASY_TRADE_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
-          img="/elements/group_15200@2x.png"
-        />
+      {/* Info: Easy Trade (20231114 - Shirley) */}
+      <Hero
+        heading={
+          <div className="font-bold">
+            <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>
+            {t('HOME_PAGE.EASY_TRADE_TITLE')}
+          </div>
+        }
+        content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
+        img="/elements/group_15200@2x.png"
+      />
 
-        {/* Info: Secure System (20231114 - Shirley) */}
-        <HeroReverse
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">
-                {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
-              </span>
-              {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
-          img="/elements/group_15145@2x.png"
-        />
+      {/* Info: Secure System (20231114 - Shirley) */}
+      <HeroReverse
+        heading={
+          <div className="font-bold">
+            <span className="text-tidebitTheme">
+              {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
+            </span>
+            {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
+          </div>
+        }
+        content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
+        img="/elements/group_15145@2x.png"
+      />
 
-        {/* Info: Free Online Courses (20231114 - Shirley) */}
-        <Hero
-          heading={
-            <div className="font-bold">
-              <span className="text-tidebitTheme">
-                {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
-              </span>
-              {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
-            </div>
-          }
-          content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
-          img={`/elements/group_15201.svg`}
-        />
+      {/* Info: Free Online Courses (20231114 - Shirley) */}
+      <Hero
+        heading={
+          <div className="font-bold">
+            <span className="text-tidebitTheme">
+              {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
+            </span>
+            {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
+          </div>
+        }
+        content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
+        img={`/elements/group_15201.svg`}
+      />
 
-        {/* Info: App download (20231114 - Shirley) */}
-        <div className="py-20 flex w-full justify-center">
-          <AppDowloadContainer />
-        </div>
+      {/* Info: App download (20231114 - Shirley) */}
+      <div className="py-16">
+        <AppDowloadContainer />
       </div>
     </div>
   );

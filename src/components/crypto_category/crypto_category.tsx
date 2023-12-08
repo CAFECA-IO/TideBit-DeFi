@@ -1,6 +1,5 @@
 import CryptoCard from '../crypto_card/crypto_card';
 import React, {useContext, useEffect, useState} from 'react';
-import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
 import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';

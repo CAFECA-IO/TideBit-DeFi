@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import Image from 'next/image';
 import {useGlobal} from '../../contexts/global_context';
@@ -27,25 +27,7 @@ const BalanceSection = () => {
   const circleSize = '380';
   const eyeIconSize = 30;
   const btnStyle =
-    'mt-4 w-160px rounded border-0 py-2 text-base text-white transition-all duration-300 md:mt-0 enabled:bg-tidebitTheme enabled:hover:bg-cyan-600 disabled:bg-lightGray';
-
-  const depositBtn = (
-    <p className="flex w-full items-center justify-center space-x-3 text-center">
-      {t('MY_ASSETS_PAGE.BALANCE_SECTION_DEPOSIT')}
-      <span className="ml-3">
-        <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
-      </span>
-    </p>
-  );
-
-  const withdrawBtn = (
-    <p className="flex w-full items-center justify-center space-x-3 text-center">
-      {t('MY_ASSETS_PAGE.BALANCE_SECTION_WITHDRAW')}
-      <span className="ml-3">
-        <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
-      </span>
-    </p>
-  );
+    'w-160px rounded py-2 text-base text-white transition-all duration-300 enabled:bg-tidebitTheme enabled:hover:bg-cyan-600 disabled:bg-lightGray';
 
   const displayedIcon = isBalanceShow ? (
     <Image
@@ -70,8 +52,42 @@ const BalanceSection = () => {
   const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
   const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
+  const depositBtn = (
+    <RippleButton
+      id="MyAssetsDeposit"
+      className={`${btnStyle}`}
+      onClick={depositClickHandler}
+      buttonType="button"
+    >
+      <p className="flex w-full items-center justify-center space-x-3 text-center">
+        {t('MY_ASSETS_PAGE.BALANCE_SECTION_DEPOSIT')}
+        <span className="ml-3">
+          <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
+        </span>
+      </p>
+    </RippleButton>
+  );
+
+  const withdrawBtn = (
+    /* Info: (20230530 - Julian) disabled withdraw */
+    <RippleButton
+      id="MyAssetsWithdraw"
+      className={`${btnStyle}`}
+      onClick={withdrawClickHandler}
+      buttonType="button"
+      disabled
+    >
+      <p className="flex w-full items-center justify-center space-x-3 text-center">
+        {t('MY_ASSETS_PAGE.BALANCE_SECTION_WITHDRAW')}
+        <span className="ml-3">
+          <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
+        </span>
+      </p>
+    </RippleButton>
+  );
+
   return (
-    <div className="mb-10">
+    <>
       {/* Info: (20230530 - Julian) balance Circle Container */}
       <div className="relative pt-20 text-center">
         <CircularProgressBar
@@ -114,27 +130,10 @@ const BalanceSection = () => {
       </div>
 
       <div className="flex justify-center space-x-5">
-        <RippleButton
-          id="MyAssetsDeposit"
-          className={`${btnStyle}`}
-          onClick={depositClickHandler}
-          buttonType="button"
-        >
-          {depositBtn}
-        </RippleButton>
-
-        {/* Info: (20230530 - Julian) disabled withdraw */}
-        <RippleButton
-          id="MyAssetsWithdraw"
-          className={`${btnStyle}`}
-          onClick={withdrawClickHandler}
-          buttonType="button"
-          disabled
-        >
-          {withdrawBtn}
-        </RippleButton>
+        {depositBtn}
+        {withdrawBtn}
       </div>
-    </div>
+    </>
   );
 };
 

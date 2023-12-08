@@ -22,6 +22,9 @@ const Home = () => {
       <Head>
         <title>TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
+        <meta name="description" content="TideBit DeFi - 值得信賴的加密貨幣投資模擬平台" />
+        <meta name="author" content="CAFECA" />
+        <meta name="keywords" content="區塊鏈,加密貨幣,模擬投資平台" />
       </Head>
 
       <NavBar />

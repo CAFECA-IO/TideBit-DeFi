@@ -67,7 +67,7 @@ const CanceledModal = ({
         id="CanceledModal"
         className="relative flex h-420px w-296px flex-col rounded-xl py-6 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
       >
-        <div className="flex items-cneter justify-between">
+        <div className="flex items-center justify-between">
           <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
             {modalTitle}
           </h3>

@@ -10,7 +10,7 @@ const AppDowloadContainer = () => {
 
   return (
     <section className={`bg-black flex flex-col items-center w-full px-5 lg:px-20`}>
-      <h1 className="lg:mb-20 mb-10 text-xl font-bold md:text-4xl xl:text-5xl">
+      <h1 className="lg:mb-20 mb-10 text-xl font-bold lg:text-4xl xl:text-5xl">
         {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
         <span className="text-cyan-400">
           {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
@@ -19,10 +19,10 @@ const AppDowloadContainer = () => {
         {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}
       </h1>
 
-      <div className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
+      <div className="flex flex-col-reverse items-center justify-center gap-5 lg:flex-row">
         {/* Info: (20231208 - Julian) QR Code  & App Download Buttons */}
-        <div className="md:w-1/3 flex flex-col items-center">
-          <div className="mb-5 md:mb-10 md:w-200px w-150px">
+        <div className="lg:w-1/3 flex flex-col items-center">
+          <div className="mb-5 lg:mb-10 lg:w-200px w-150px">
             <Image alt="QR Code" src="/elements/tidebit_qrcode.svg" width={200} height={200} />
           </div>
 
@@ -57,7 +57,7 @@ const AppDowloadContainer = () => {
           </div>
         </div>
         {/* Info: (20231208 - Julian) Exchange Image */}
-        <div className="w-300px md:w-2/3">
+        <div className="w-300px lg:w-2/3 max-w-700px">
           <Image
             alt="exchange image"
             src="/elements/group_15202@2x.png"

@@ -9,8 +9,6 @@ import {TIDEBIT_FAVICON} from '../constants/display';
 import Footer from '../components/footer/footer';
 
 const Home = () => {
-  const displayedNavBar = <NavBar />;
-
   const appCtx = useContext(AppContext);
 
   useEffect(() => {
@@ -26,7 +24,7 @@ const Home = () => {
         <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 
-      {displayedNavBar}
+      <NavBar />
       <main className="mx-auto max-w-1920px">
         <HeroDescription />
       </main>

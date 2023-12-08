@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import AppDowloadContainer from '../app_download_container/app_download_container';
 import CryptoCategory from '../crypto_category/crypto_category';
 import Cta from '../cta/cta';
@@ -17,9 +17,9 @@ type TranslateFunction = (s: string) => string;
 
 export default function HeroDescription() {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const [isInit, setIsInit] = React.useState(false);
-  const marketCtx = React.useContext(MarketContext);
-  const notificationCtx = React.useContext(NotificationContext);
+  const [isInit, setIsInit] = useState(false);
+  const marketCtx = useContext(MarketContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const getMarketInfo = async () => {
     try {
@@ -38,7 +38,7 @@ export default function HeroDescription() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (marketCtx.isInit && !isInit) {
       getMarketInfo();
     }

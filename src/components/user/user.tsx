@@ -49,7 +49,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
 
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
-      id="UserAvatarMenu"
+      id="UserMenu"
       className={`avatarMenuShadow absolute -right-2 top-16 z-10 flex w-285px flex-col ${
         userVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
@@ -72,7 +72,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       >
         <li>
           <button
-            id="MyAssetsButton"
+            id="UserMyAssets"
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
             <Link href={TBDURL.MY_ASSETS}>
@@ -85,7 +85,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="DepositButton"
+            id="UserDeposit"
             onClick={depositClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
@@ -97,7 +97,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="WithdrawButton"
+            id="UserWithdraw"
             onClick={withdrawClickHandler}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
@@ -110,7 +110,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="AccountSettingButton"
+            id="UserAccountSetting"
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
@@ -124,7 +124,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
         </li>
         <li>
           <button
-            id="DisconnectButton"
+            id="UserDisconnect"
             onClick={userCtx.disconnect}
             className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
@@ -167,7 +167,10 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       <div className="relative flex basis-full items-center">
         <p className="self-center pl-5">{t('USER.PERSONAL_SETTING')}</p>
 
-        <div className="absolute right-2 top-1 block hover:cursor-pointer lg:hidden">
+        <div
+          id="UserCloseButton"
+          className="absolute right-2 top-1 block hover:cursor-pointer lg:hidden"
+        >
           <ImCross onClick={avatarMobileClickHandler} />
         </div>
       </div>
@@ -181,7 +184,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       } transition-all duration-300`}
     >
       <div
-        id="UserAvatarMenuMobile"
+        id="UserMenuMobile"
         className={`flex h-screen w-screen flex-col ${
           avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray px-9 pt-8`}
@@ -199,7 +202,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
                 {accountTruncate(userCtx.user?.address, 20)}
               </div>
             </div>
-            <button className="p-4">
+            <button id="UserEditMobile" className="p-4">
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />
             </button>
           </div>
@@ -212,7 +215,10 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
             aria-labelledby="avatarButton"
           >
             <li>
-              <button className="block w-full py-4 py-4 pl-8 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5">
+              <button
+                id="UserMyAssetsMobile"
+                className="block w-full py-4 py-4 pl-8 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
+              >
                 <Link href={TBDURL.MY_ASSETS}>
                   <div className="flex flex-row items-center space-x-2">
                     <BiWallet />
@@ -223,6 +229,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
             </li>
             <li>
               <button
+                id="UserDepositMobile"
                 onClick={depositClickHandler}
                 className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
               >
@@ -234,6 +241,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
             </li>
             <li>
               <button
+                id="UserWithdrawMobile"
                 onClick={withdrawClickHandler}
                 className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
                 disabled
@@ -246,6 +254,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
             </li>
             <li>
               <button
+                id="UserAccountSettingMobile"
                 className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
                 disabled
               >
@@ -259,6 +268,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
             </li>
             <li>
               <button
+                id="UserDisconnectMobile"
                 onClick={userCtx.disconnect}
                 className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
               >
@@ -277,7 +287,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
   const isDisplayedUserAvatarMobile = userCtx.enableServiceTerm ? (
     <>
       <button
-        id="UserAvatarButtonMobile"
+        id="UserAvatarMobile"
         onClick={avatarMobileClickHandler}
         className="ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >

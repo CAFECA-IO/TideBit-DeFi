@@ -4,6 +4,7 @@ import {OrderState} from '../../constants/order_state';
 import {CgSearch} from 'react-icons/cg';
 import DatePicker from '../date_picker/date_picker';
 import {useTranslation} from 'next-i18next';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptSearchProps {
@@ -29,9 +30,14 @@ const ReceiptSearch = ({
 }: IReceiptSearchProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
   const [dateStart, setDateStart] = useState(startDate);
   const [dateEnd, setDateEnd] = useState(endDate);
+
+  const {
+    targetRef: typeMenuRef,
+    componentVisible: typeMenuVisible,
+    setComponentVisible: setTypeMenuVisible,
+  } = useOuterClick<HTMLDivElement>(false);
 
   // Info: (20230921 - Julian) Set default date to today
   useEffect(() => {
@@ -54,33 +60,31 @@ const ReceiptSearch = ({
 
   const dropMenuItemStyle = 'inline-block px-5 py-3 w-full text-left hover:cursor-pointer';
 
-  const tradingTypeMenuClickHandler = () => {
-    setTradingTypeMenuOpen(!tradingTypeMenuOpen);
-  };
+  const tradingTypeMenuClickHandler = () => setTypeMenuVisible(!typeMenuVisible);
 
   const depositButtonClickHandler = () => {
     setFilteredTradingType(OrderType.DEPOSIT);
-    setTradingTypeMenuOpen(false);
+    setTypeMenuVisible(false);
   };
 
   const withdrawButtonClickHandler = () => {
     setFilteredTradingType(OrderType.WITHDRAW);
-    setTradingTypeMenuOpen(false);
+    setTypeMenuVisible(false);
   };
 
   const openPositionButtonClickHandler = () => {
     setFilteredTradingType(OrderState.OPENING);
-    setTradingTypeMenuOpen(false);
+    setTypeMenuVisible(false);
   };
 
   const closePositionButtonClickHandler = () => {
     setFilteredTradingType(OrderState.CLOSED);
-    setTradingTypeMenuOpen(false);
+    setTypeMenuVisible(false);
   };
 
   const allButtonClickHandler = () => {
     setFilteredTradingType('');
-    setTradingTypeMenuOpen(false);
+    setTypeMenuVisible(false);
   };
 
   const dateStartUpdateHandler = useCallback(
@@ -126,22 +130,23 @@ const ReceiptSearch = ({
           <button
             id="TradingTypeMenuButton"
             className={`flex w-full items-center justify-between px-5 py-3 text-left text-lightGray4 transition-all duration-200 ease-in-out hover:cursor-pointer ${
-              tradingTypeMenuOpen ? 'bg-darkGray2' : 'bg-darkGray7'
+              typeMenuVisible ? 'bg-darkGray2' : 'bg-darkGray7'
             }`}
             onClick={tradingTypeMenuClickHandler}
           >
             {tradingTypeMenuText}
             <span
               className={`absolute right-4 h-10px w-10px border-b-2 border-r-2 border-lightWhite transition-all duration-200 ease-in-out ${
-                tradingTypeMenuOpen ? '-rotate-45' : 'rotate-45'
+                typeMenuVisible ? '-rotate-45' : 'rotate-45'
               }`}
             ></span>
           </button>
 
           {/* Info: (20230316 - Julian) Dropdown parts */}
           <div
+            ref={typeMenuRef}
             className={`absolute w-full flex-col items-start bg-darkGray2 transition-all duration-200 ease-in-out ${
-              tradingTypeMenuOpen ? 'flex opacity-100' : 'hidden opacity-0'
+              typeMenuVisible ? 'flex opacity-100' : 'hidden opacity-0'
             }`}
           >
             <button
@@ -184,14 +189,14 @@ const ReceiptSearch = ({
         {/* Info: (20230921 - Julian) Date Picker */}
         <div className="mt-2 hidden items-center space-x-2 lg:flex">
           <DatePicker
-            id="DateStart"
+            id="DateStartPicker"
             date={dateStart}
             setDate={dateStartUpdateHandler}
             maxDate={dateEnd}
           />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <DatePicker
-            id="DateEnd"
+            id="DateEndPicker"
             date={dateEnd}
             setDate={dateEndUpdateHandler}
             minDate={dateStart}
@@ -200,18 +205,16 @@ const ReceiptSearch = ({
         {/* Info: (20230921 - Julian) Search Bar */}
         <div className="relative w-full lg:col-span-2 lg:ml-auto lg:w-300px">
           <input
+            id="ReceiptSearchBar"
             type="search"
-            className="block w-full rounded-full bg-darkGray7 p-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+            className="block w-full rounded-full bg-darkGray7 px-5 py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
             placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
             required
             onChange={onSearchChange}
           />
-          <button
-            type="button"
-            className="absolute right-1 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
-          >
+          <div className="absolute right-1 top-0 px-4 py-2 text-white focus:outline-none focus:ring-0">
             <CgSearch size={30} />
-          </button>
+          </div>
         </div>
       </div>
     </div>

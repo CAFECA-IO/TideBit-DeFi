@@ -29,14 +29,14 @@ interface IReceiptItemProps {
   histories: IAcceptedOrder;
 }
 
-const ReceiptItem = (histories: IReceiptItemProps) => {
+const ReceiptItem = ({histories}: IReceiptItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const {createTimestamp, receipt, isClosed} = histories.histories;
+  const {createTimestamp, receipt, isClosed} = histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
 
   const balance = balanceSnapshot.shift();
@@ -64,7 +64,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : +SafeMath.mult((order as IWithdrawOrder).targetAmount, -1);
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
-  const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
+  const cfdType = (histories as IAcceptedCFDOrder).applyData.operation;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -159,15 +159,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         : updateCfdHandler
       : orderType === OrderType.DEPOSIT
       ? () => {
-          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
-          globalCtx.visibleDepositHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedDepositOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : orderType === OrderType.WITHDRAW
       ? () => {
-          globalCtx.dataWithdrawalHistoryModalHandler(
-            histories.histories as IAcceptedWithdrawOrder
-          );
-          globalCtx.visibleWithdrawalHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedWithdrawOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : () => null;
 
@@ -178,7 +176,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       type: ToastTypeAndText.INFO.type,
       message: t('TOAST.COPY_SUCCESS'),
       toastId: ToastId.COPY_SUCCESS,
-      autoClose: 300,
+      autoClose: 500,
       isLoading: false,
       typeText: t(ToastTypeAndText.INFO.text),
     });
@@ -193,7 +191,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       )
     ) : (
-      <button onClick={copyClickHandler}>
+      <button id={`TxIdCopy${order.id}`} onClick={copyClickHandler}>
         <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
       </button>
     );
@@ -221,7 +219,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         className={`inline-flex items-center rounded-full px-3 py-1 ${displayedButtonColor}`}
         onClick={buttonClickHandler}
       >
-        <Image src={displayedButtonImage} width={15} height={15} alt="deposit icon" />
+        <Image src={displayedButtonImage} width={15} height={15} alt="" />
         <p className="ml-2 whitespace-nowrap">{displayedButtonText}</p>
       </button>
     </div>

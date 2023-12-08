@@ -188,7 +188,7 @@ const HistoryPositionModal = ({
             {/* Info: (20231003 - Julian) Price */}
             <p>→ {numberFormatted(closedCfdDetails?.openPrice)}</p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip id="HistoryOpenPriceTip" className="hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -209,7 +209,7 @@ const HistoryPositionModal = ({
             {/* Info: (20231003 - Julian) Price */}
             <p>→ {numberFormatted(closedCfdDetails.closePrice)}</p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip id="HistoryClosePriceTip" className="hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -234,7 +234,7 @@ const HistoryPositionModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="flex">
             <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-            <Tooltip className={``} tooltipPosition="left-2">
+            <Tooltip id="HistoryTpSlTip" tooltipPosition="left-2">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.TP_AND_SL_HINT')}
               </p>
@@ -269,7 +269,7 @@ const HistoryPositionModal = ({
               ) : null}
             </div>
 
-            <Tooltip className="top-px ml-1">
+            <Tooltip id="HistoryGslTip" className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>
@@ -339,8 +339,12 @@ const HistoryPositionModal = ({
               <h3>{closedCfdDetails.instId}</h3>
             </div>
             {/* Info: (20231005 - Julian) Close Button */}
-            <button className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-              <ImCross id="HistoryPositionModalCloseButton" onClick={modalClickHandler} />
+            <button
+              id="HistoryModalCloseButton"
+              onClick={modalClickHandler}
+              className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+            >
+              <ImCross />
             </button>
           </div>
           {/* Info: (20231005 - Julian) Form Content */}

@@ -56,18 +56,18 @@ const PositionTab = ({
       <ul className="mb-2 flex flex-wrap justify-center text-center text-sm font-medium">
         <li className="">
           <button
-            id="OpenTab"
+            id="OpenTabButton"
             onClick={openTabClickHandler}
-            className={`${activeOpenTabStyle} inline-block px-11 py-1`}
+            className={`${activeOpenTabStyle} inline-block px-11 py-1 focus:outline-none outline-none`}
           >
             {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
         </li>
         <li className="">
           <button
-            id="HistoryTab"
+            id="HistoryTabButton"
             onClick={historyTabClickHandler}
-            className={`${activeHistoryTabStyle} inline-block px-11 py-1`}
+            className={`${activeHistoryTabStyle} inline-block px-11 py-1 focus:outline-none outline-none`}
           >
             {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>
@@ -83,7 +83,11 @@ const PositionTab = ({
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
       <div className="mb-3 mr-30px flex self-end sm:pr-30px">
-        <ImCross onClick={subMenuClickHandler} className="cursor-pointer" />
+        <ImCross
+          id="PositionMenuMobileCloseButton"
+          onClick={subMenuClickHandler}
+          className="cursor-pointer"
+        />
       </div>
       {currentSubTab}
     </div>

@@ -36,7 +36,7 @@ import {OrderType} from '../../constants/order_type';
 import {TypeOfValidation} from '../../constants/validation';
 import {IResult, defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
-import {Code, Reason} from '../../constants/code';
+import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import SafeMath from '../../lib/safe_math';
@@ -541,7 +541,7 @@ const UpdateFormModal = ({
     <div className="">
       <div className="flex items-center text-center">
         <input
-          id="UpdateFormGuaranteedStopCheckbox"
+          id="UpdateFormGslCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(availableBalance, guaranteedStopFeeRef.current)}
           checked={guaranteedCheckedRef.current}
@@ -554,7 +554,7 @@ const UpdateFormModal = ({
             ({t('POSITION_MODAL.FEE')}: {numberFormatted(gslFee)} {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
-          <Tooltip className="ml-3">
+          <Tooltip id="UpdateFormGslTip" className="ml-3">
             <p className="w-56 text-left text-sm font-medium text-white">
               {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
             </p>
@@ -975,7 +975,7 @@ const UpdateFormModal = ({
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="hidden lg:block">
+            <Tooltip id="UpdateFormOpenPriceTip" className="hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -993,7 +993,7 @@ const UpdateFormModal = ({
         <div className={`${layoutInsideBorder}`}>
           <div className="flex">
             <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
-            <Tooltip className={``} tooltipPosition="left-2">
+            <Tooltip id="UpdateFormTpSlTip" tooltipPosition="left-2">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.TP_AND_SL_HINT')}
               </p>
@@ -1054,7 +1054,7 @@ const UpdateFormModal = ({
         </div>
 
         <RippleButton
-          id="UpdateFormModalButton"
+          id="UpdateFormButton"
           disabled={submitDisabledRef.current}
           onClick={buttonClickHandler}
           buttonType="button"
@@ -1086,6 +1086,7 @@ const UpdateFormModal = ({
             {/* Info: (20231004 - Julian) Circular Progress Bar */}
             <div className="relative flex h-40px w-40px items-center">
               <div
+                id="UpdateFormPauseSquare"
                 className={`absolute left-9px top-4px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
                 onClick={closedModalClickHandler}
@@ -1106,6 +1107,7 @@ const UpdateFormModal = ({
 
             {/* Info: (20231004 - Julian) Close Button */}
             <button
+              id="UpdateFormCloseButton"
               onClick={modalClickHandler}
               className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none lg:right-5 lg:top-5"
             >

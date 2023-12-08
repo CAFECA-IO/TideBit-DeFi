@@ -93,35 +93,30 @@ const FailedModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      <div className="fixed inset-0 z-90 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          <div
-            id="FailedModal"
-            className="relative flex h-auto min-h-420px w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+    /* Info: (20231019 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+      <div
+        id="FailedModal"
+        className="relative flex h-auto min-h-420px w-300px py-6 flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
+            {modalTitle}
+          </h3>
+          <button
+            id="FailedModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
           >
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
-                {modalTitle}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {failContent}
-
-            <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
+            <ImCross />
+          </button>
         </div>
+        {failContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default FailedModal;

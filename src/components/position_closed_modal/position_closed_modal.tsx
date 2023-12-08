@@ -560,7 +560,7 @@ const PositionClosedModal = ({
             {/* Info: (20231003 - Julian) Price */}
             {<p>→ {numberFormatted(openCfdDetails?.openPrice)}</p>}
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
+            <Tooltip id="CloseOpenPriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -594,7 +594,7 @@ const PositionClosedModal = ({
                 : numberFormatted(gQuotationRef.current.price)}
             </p>
             <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
-            <Tooltip className="top-1 hidden lg:block">
+            <Tooltip id="CloseClosePriceTip" className="top-1 hidden lg:block">
               <p className="w-40 text-sm font-medium text-white">
                 {t('POSITION_MODAL.SPREAD_HINT')}
               </p>
@@ -630,7 +630,7 @@ const PositionClosedModal = ({
                 <span className="text-lightGray text-sm">)</span>
               </span>
             ) : null}
-            <Tooltip className="top-px ml-1">
+            <Tooltip id="CloseGslTip" className="top-px ml-1">
               <p className="w-56 text-left text-sm font-medium text-white">
                 {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
               </p>
@@ -656,33 +656,35 @@ const PositionClosedModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      {/* Info: (20231003 - Julian) Blur Mask */}
-      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
-        <div
-          id="ClosePositionModal"
-          className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
-        >
-          {/* Info: (20231003 - Julian) Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex w-full flex-col items-center">
-              <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
-                {t('POSITION_MODAL.CLOSE_POSITION_TITLE')}
-              </h3>
-              <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
-            </div>
-            <button className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-              <ImCross onClick={modalClickHandler} />
-            </button>
+    /* Info: (20231003 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="ClosePositionModal"
+        className="relative flex h-auto w-90vw flex-col rounded-xl bg-darkGray1 p-6 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
+      >
+        {/* Info: (20231003 - Julian) Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex w-full flex-col items-center">
+            <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
+              {t('POSITION_MODAL.CLOSE_POSITION_TITLE')}
+            </h3>
+            <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
           </div>
-          {/* Info: (20231003 - Julian) Form Content */}
-          {formContent}
+          <button
+            id="CloseModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+          >
+            <ImCross />
+          </button>
         </div>
+        {/* Info: (20231003 - Julian) Form Content */}
+        {formContent}
       </div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default PositionClosedModal;

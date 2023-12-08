@@ -104,80 +104,74 @@ const Footer = () => {
   ));
 
   return (
-    <>
-      <footer className="px-10 py-5 w-screen flex flex-col bg-darkGray text-base justify-center items-center">
-        <div className="flex w-full lg:items-start items-center py-10 flex-col lg:flex-row">
-          <div className="text-center flex-1 flex flex-col items-center">
-            <Link
-              id="FooterTideBitLogo"
-              href="/#"
-              className="flex flex-col items-center justify-center md:justify-start"
-            >
-              <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit_logo" />
-            </Link>
-            <span className="h-1px w-200px bg-white my-3"></span>
-            <div className="inline-flex justify-center">{socialMediaLinksList}</div>
+    <footer className="px-10 py-5 w-full flex flex-col bg-darkGray text-base justify-center items-center">
+      <div className="flex w-full lg:items-start items-center py-10 flex-col lg:flex-row">
+        <div className="text-center flex-1 flex flex-col items-center">
+          <Link
+            id="FooterTideBitLogo"
+            href="/#"
+            className="flex flex-col items-center justify-center md:justify-start"
+          >
+            <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit_logo" />
+          </Link>
+          <span className="h-1px w-200px bg-white my-3"></span>
+          <div className="inline-flex justify-center">{socialMediaLinksList}</div>
+        </div>
+
+        <div className="flex lg:w-3/4 py-10 lg:py-0 lg:px-16 gap-y-16 flex-col items-center lg:flex-row lg:items-start justify-between">
+          <div className="flex flex-col lg:items-start items-center">
+            <h2 className="text-lg font-bold tracking-widest text-white">{t('FOOTER.SERVICES')}</h2>
+            <ul className="list-none flex flex-col lg:items-start items-center">
+              {servicesLinksList}
+            </ul>
           </div>
 
-          <div className="flex lg:w-3/4 py-10 lg:py-0 lg:px-16 gap-y-16 flex-col items-center lg:flex-row lg:items-start justify-between">
-            <div className="flex flex-col lg:items-start items-center">
-              <h2 className="text-lg font-bold tracking-widest text-white">
-                {t('FOOTER.SERVICES')}
-              </h2>
-              <ul className="list-none flex flex-col lg:items-start items-center">
-                {servicesLinksList}
-              </ul>
-            </div>
+          <div className="flex flex-col lg:items-start items-center">
+            <h2 className="text-lg font-bold tracking-widest text-white">{t('FOOTER.TIDEBIT')}</h2>
+            <ul className="list-none flex flex-col lg:items-start items-center">
+              {tideBitLinksList}
+            </ul>
+          </div>
+          <div className="flex flex-col lg:items-start items-center">
+            <h2 className="text-lg font-bold tracking-widest text-white">
+              {t('FOOTER.POLICY_CONDITIONS')}
+            </h2>
+            <ul className="list-none flex flex-col lg:items-start items-center">
+              {policyLinksList}
+            </ul>
+          </div>
 
-            <div className="flex flex-col lg:items-start items-center">
-              <h2 className="text-lg font-bold tracking-widest text-white">
-                {t('FOOTER.TIDEBIT')}
-              </h2>
-              <ul className="list-none flex flex-col lg:items-start items-center">
-                {tideBitLinksList}
-              </ul>
-            </div>
-            <div className="flex flex-col lg:items-start items-center">
-              <h2 className="text-lg font-bold tracking-widest text-white">
-                {t('FOOTER.POLICY_CONDITIONS')}
-              </h2>
-              <ul className="list-none flex flex-col lg:items-start items-center">
-                {policyLinksList}
-              </ul>
-            </div>
+          <div className="flex flex-col lg:items-start items-center">
+            <h2 className="text-lg font-bold tracking-widest text-white">
+              {t('FOOTER.NEWSLETTER')}
+            </h2>
 
-            <div className="flex flex-col lg:items-start items-center">
-              <h2 className="text-lg font-bold tracking-widest text-white">
-                {t('FOOTER.NEWSLETTER')}
-              </h2>
-
-              <div className="flex flex-col lg:items-start items-center max-w-300px">
-                <div className="relative mt-2">
-                  <input
-                    placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
-                    type="text"
-                    id="FooterEmailInput"
-                    name="email"
-                    className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
-                  />
-                </div>
-                <RippleButton
-                  id="FooterSubscribeButton"
-                  buttonType="button"
-                  className={`mt-4 rounded bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none`}
-                >
-                  {t('FOOTER.SUBSCRIBE_BUTTON')}
-                </RippleButton>
+            <div className="flex flex-col lg:items-start items-center max-w-300px">
+              <div className="relative mt-2">
+                <input
+                  placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
+                  type="text"
+                  id="FooterEmailInput"
+                  name="email"
+                  className="block min-w-220px rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
+                />
               </div>
+              <RippleButton
+                id="FooterSubscribeButton"
+                buttonType="button"
+                className={`mt-4 rounded bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none`}
+              >
+                {t('FOOTER.SUBSCRIBE_BUTTON')}
+              </RippleButton>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="w-full lg:text-end text-center lg:px-16">
-          <p className="text-xs text-gray-400">{COPYRIGHT}</p>
-        </div>
-      </footer>
-    </>
+      <div className="w-full lg:text-end text-center lg:px-16">
+        <p className="text-xs text-gray-400">{COPYRIGHT}</p>
+      </div>
+    </footer>
   );
 };
 

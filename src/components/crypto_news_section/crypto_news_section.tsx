@@ -47,6 +47,7 @@ const CryptoNewsSection = (props: ICryptoNewsSectionProps) => {
 
       <div className={`flex justify-center ${overallWidth} mb-20 lg:mb-0`}>
         <Link
+          id="SeeAllNews"
           href="/news"
           className="text-xs text-tidebitTheme underline underline-offset-2 hover:text-tidebitTheme/80"
         >

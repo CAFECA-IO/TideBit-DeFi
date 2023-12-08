@@ -70,7 +70,7 @@ const CryptoSummary = ({
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
                   <Link
-                    id="WhitePaperLink"
+                    id="CryptoWhitePaperLink"
                     href={whitePaperLinkWithI18n}
                     target="_blank"
                     className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
@@ -80,7 +80,7 @@ const CryptoSummary = ({
                   </Link>
 
                   <Link
-                    id="WebsiteLink"
+                    id="CryptoWebsiteLink"
                     href={websiteLinkWithI18n}
                     target="_blank"
                     className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}

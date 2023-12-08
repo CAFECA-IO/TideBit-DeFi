@@ -1092,7 +1092,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
       } flex items-start transition-all duration-150 ease-in-out lg:mb-10 lg:mt-0`}
     >
       <input
-        id="LongGuaranteedStopCheckbox"
+        id="LongGslCheckbox"
         type="checkbox"
         disabled={SafeMath.lt(
           availableBalance,
@@ -1110,7 +1110,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
           {unitAsset})
         </span>
         {/* Info: (20231003 - Julian) Tooltip */}
-        <Tooltip className="ml-1">
+        <Tooltip id="LongGslTip" className="ml-1">
           <p className="w-56 text-left text-sm font-medium text-white">
             {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
           </p>
@@ -1239,7 +1239,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
     >
       <div className="mt-0 flex items-center">
         <input
-          id="ShortGuaranteedStopCheckbox"
+          id="ShortGslCheckbox"
           type="checkbox"
           disabled={SafeMath.lt(
             availableBalance,
@@ -1257,7 +1257,7 @@ const TradeTab = ({rightPosition}: {rightPosition: string}) => {
             {unitAsset})
           </span>
           {/* Info: (20231003 - Julian) Tooltip */}
-          <Tooltip className="ml-1">
+          <Tooltip id="ShortGslTip" className="ml-1">
             <p className="w-56 text-left text-sm font-medium text-white">
               {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
             </p>

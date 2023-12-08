@@ -142,21 +142,25 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Time Span Data */
   const rankingTimeSpan = [
     {
+      id: 'LiveTab',
       text: t('LEADERBOARD_PAGE.LIVE'),
       style: activeLiveTabStyle,
       active: () => setTimeSpan(RankingInterval.LIVE),
     },
     {
+      id: 'DailyTab',
       text: t('LEADERBOARD_PAGE.DAILY'),
       style: activeDailyTabStyle,
       active: () => setTimeSpan(RankingInterval.DAILY),
     },
     {
+      id: 'WeeklyTab',
       text: t('LEADERBOARD_PAGE.WEEKLY'),
       style: activeWeeklyTabStyle,
       active: () => setTimeSpan(RankingInterval.WEEKLY),
     },
     {
+      id: 'MonthlyTab',
       text: t('LEADERBOARD_PAGE.MONTHLY'),
       style: activeMonthlyTabStyle,
       active: () => setTimeSpan(RankingInterval.MONTHLY),
@@ -259,11 +263,11 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     </div>
   );
 
-  const tabList = rankingTimeSpan.map(({text, style, active}) => {
+  const tabList = rankingTimeSpan.map(({id, text, style, active}) => {
     return (
       <div key={text} className="w-full">
         <button
-          id={`${text}Tab`}
+          id={id}
           type="button"
           className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs transition-all duration-300 hover:cursor-pointer md:text-base`}
           onClick={active}

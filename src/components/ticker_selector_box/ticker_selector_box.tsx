@@ -342,7 +342,10 @@ const TickerSelectorBox = ({
         onClick={dropdownMenuClickHandler}
         className="mt-10 flex h-48px flex-col rounded-lg bg-darkGray8 text-base font-medium text-lightWhite"
       >
-        <button className="flex w-full items-center justify-between px-5 py-3 text-left">
+        <button
+          id="TickerTabMenu"
+          className="flex w-full items-center justify-between px-5 py-3 text-left"
+        >
           {dropdownMenuText}
 
           <div
@@ -358,6 +361,7 @@ const TickerSelectorBox = ({
           }`}
         >
           <button
+            id="AllTabMobile"
             type="button"
             className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             onClick={allTabClickHandler}
@@ -367,6 +371,7 @@ const TickerSelectorBox = ({
 
           {userCtx.enableServiceTerm ? (
             <button
+              id="FavoriteTabMobile"
               type="button"
               onClick={favoriteTabClickHandler}
               className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
@@ -400,19 +405,17 @@ const TickerSelectorBox = ({
             <div className="relative mb-5 mr-60px mt-5">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
               <input
+                id="TickerSearchBar"
                 type="search"
                 value={searches}
-                className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-10 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+                className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-6 text-sm text-white focus:outline-none focus:ring-0"
                 placeholder={t('TRADE_PAGE.TICKER_SELECTOR_TAB_SEARCH_PLACEHOLDER')}
                 required
                 onChange={onSearchChange}
               />
-              <button
-                type="button"
-                className="absolute right-0 top-px rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
-              >
+              <div className="absolute right-0 top-px rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white">
                 <CgSearch size={30} />
-              </button>
+              </div>
             </div>
 
             {/* Info: Card section (20230620 - Shirley) */}
@@ -450,12 +453,10 @@ const TickerSelectorBox = ({
           <div className="flex h-95vh w-90vw flex-col items-center rounded-xl border-0 bg-darkGray1 px-4 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/* Info: (20230427 - Julian) header */}
             <button
-              className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
               onClick={tickerSelectorBoxClickHandler}
+              className="absolute right-3 top-3 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
             >
-              <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                <ImCross />
-              </span>
+              <ImCross />
             </button>
 
             {/* Info: (20230427 - Julian) ----- body ----- */}
@@ -465,19 +466,16 @@ const TickerSelectorBox = ({
 
             <div className="relative mt-10 flex w-full">
               <input
+                id="TickerSearchBarMobile"
                 type="search"
                 value={searches}
-                className="block w-full rounded-full bg-darkGray2 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+                className="block w-full rounded-full bg-darkGray2 p-3 pl-4 text-sm text-white focus:outline-none focus:ring-0"
                 placeholder={t('TRADE_PAGE.TICKER_SELECTOR_TAB_SEARCH_PLACEHOLDER')}
-                required
                 onChange={onSearchChange}
               />
-              <button
-                type="button"
-                className="absolute right-0 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
-              >
+              <div className="absolute right-0 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-0">
                 <CgSearch size={30} />
-              </button>
+              </div>
             </div>
 
             {/* Info: (20230427 - Julian) Card section */}

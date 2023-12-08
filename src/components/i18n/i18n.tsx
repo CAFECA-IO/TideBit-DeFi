@@ -115,6 +115,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </div>
       </div>
       <button
+        id="NavLanguageMobile"
         onClick={mobileClickHandler}
         type="button"
         className="inline-flex hover:text-tidebitTheme lg:hidden"

@@ -65,7 +65,7 @@ export const getDummyNotifications = (numbers: number) => {
   const dummyNotificationItems: INotificationItem[] = [];
   for (let i = 0; i < numbers; i++) {
     const dummyNotificationItem: INotificationItem = {
-      id: `public-${Date.now()}-${(Math.random() * (i + 1) * 1000).toFixed(0)}`,
+      id: `public-${Math.floor(new Date('2023-01-01').getTime() / 1000)}-${i}`,
       title: 'Happy Birthday to TideBit',
       content: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
   invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et

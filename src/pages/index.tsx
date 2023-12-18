@@ -9,8 +9,6 @@ import {TIDEBIT_FAVICON} from '../constants/display';
 import Footer from '../components/footer/footer';
 
 const Home = () => {
-  const displayedNavBar = <NavBar />;
-
   const appCtx = useContext(AppContext);
 
   useEffect(() => {
@@ -24,9 +22,12 @@ const Home = () => {
       <Head>
         <title>TideBit DeFi</title>
         <link rel="icon" href={TIDEBIT_FAVICON} />
+        <meta name="description" content="TideBit DeFi - 值得信賴的加密貨幣投資模擬平台" />
+        <meta name="author" content="CAFECA" />
+        <meta name="keywords" content="區塊鏈,加密貨幣,模擬投資平台" />
       </Head>
 
-      {displayedNavBar}
+      <NavBar />
       <main className="mx-auto max-w-1920px">
         <HeroDescription />
       </main>

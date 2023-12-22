@@ -417,6 +417,8 @@ export const UserProvider = ({children}: IUserProvider) => {
                 break;
             }
           }
+          // eslint-disable-next-line no-console
+          console.log('CFDs', CFDs);
           setOpenedCFDs(openCFDs);
           setClosedCFDs(closedCFDs);
         } else {

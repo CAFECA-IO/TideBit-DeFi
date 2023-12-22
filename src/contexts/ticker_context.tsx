@@ -60,14 +60,14 @@ export const TickerProvider = ({children}: ITickerProvider) => {
   );
 
   // // Info: Change the selectedTicker immediately after selectedTickerProperty is changed (20231222 - Shirley)
-  // useEffect(() => {
-  //   if (
-  //     !marketCtx.selectedTickerProperty ||
-  //     selectedTickerRef.current?.instId === marketCtx.selectedTickerProperty.instId
-  //   )
-  //     return;
-  //   setSelectedTicker({...tickerBook.listTickers()[marketCtx.selectedTickerProperty.instId]});
-  // }, [marketCtx.selectedTickerProperty]);
+  useEffect(() => {
+    if (
+      !marketCtx.selectedTickerProperty ||
+      selectedTickerRef.current?.instId === marketCtx.selectedTickerProperty.instId
+    )
+      return;
+    setSelectedTicker({...tickerBook.listTickers()[marketCtx.selectedTickerProperty.instId]});
+  }, [marketCtx.selectedTickerProperty]);
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,

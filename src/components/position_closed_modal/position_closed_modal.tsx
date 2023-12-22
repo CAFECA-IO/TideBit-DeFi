@@ -111,14 +111,14 @@ const PositionClosedModal = ({
     ? (openCfdDetails.pnl as IPnL).value > 0
       ? '+'
       : (openCfdDetails.pnl as IPnL).value < 0
-        ? '-'
-        : ''
+      ? '-'
+      : ''
     : openCfdDetails.pnl !== undefined && Math.abs((openCfdDetails.pnl as IPnL).value) === 0
-      ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
-        openCfdDetails.openPrice !== gQuotationRef.current.price
-        ? '≈'
-        : ''
-      : '';
+    ? openCfdDetails.openPrice !== openCfdDetails.closePrice ||
+      openCfdDetails.openPrice !== gQuotationRef.current.price
+      ? '≈'
+      : ''
+    : '';
 
   const displayedPnLValue = !!tickerCtx.selectedTicker?.price
     ? openCfdDetails?.pnl?.value && numberFormatted(openCfdDetails?.pnl?.value)
@@ -138,16 +138,16 @@ const PositionClosedModal = ({
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-        ? TypeOfPnLColor.LOSS
-        : TypeOfPnLColor.EQUAL
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL
     : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor = !!openCfdDetails.pnl
     ? openCfdDetails?.pnl?.value > 0
       ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl?.value < 0
-        ? TypeOfBorderColor.LOSS
-        : TypeOfBorderColor.EQUAL
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL
     : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
@@ -466,7 +466,10 @@ const PositionClosedModal = ({
         });
         return;
         // TODO: check users' signature in userCtx (20230613 - Shirley)
-      } else if (quotation.instId === openCfdDetails.instId) {
+      } else if (
+        quotation.instId === openCfdDetails.instId &&
+        quotation.targetAsset === openCfdDetails.targetAsset
+      ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
         globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 

@@ -25,7 +25,6 @@ import {
   LogicalRangeChangeEventHandler,
 } from 'lightweight-charts';
 import {LINE_GRAPH_STROKE_COLOR} from '../../constants/display';
-import {MarketContext} from '../../contexts/market_context';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {getTime} from '../../constants/time_span_union';

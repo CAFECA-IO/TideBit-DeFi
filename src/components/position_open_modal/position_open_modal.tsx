@@ -454,7 +454,10 @@ const PositionOpenModal = ({
       setInadequateAvailableBalance(true);
     }
     // TODO: check the unit asset (20230612 - Shirley)
-    if (openCfdRequest.quotation.instId !== openCfdRequest.instId) {
+    if (
+      openCfdRequest.quotation.instId !== openCfdRequest.instId ||
+      openCfdRequest.quotation.targetAsset !== openCfdRequest.targetAsset
+    ) {
       setDataFetchError(true);
       setDataFetchErrorMessage({
         success: false,

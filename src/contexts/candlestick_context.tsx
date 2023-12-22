@@ -5,12 +5,7 @@ import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   SAMPLE_NUMBER,
 } from '../constants/display';
-import {UserContext} from './user_context';
-import {
-  defaultResultFailed,
-  defaultResultSuccess,
-  IResult,
-} from '../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed, IResult} from '../interfaces/tidebit_defi_background/result';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
@@ -62,7 +57,6 @@ export const CandlestickContext = createContext<ICandlestickContext>({
 export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const tradeBook = React.useMemo(() => TradeBookInstance, []);
-  const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);

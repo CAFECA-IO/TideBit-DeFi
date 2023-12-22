@@ -1,9 +1,10 @@
-import React, {useContext, createContext, useCallback} from 'react';
+import React, {useContext, createContext, useEffect} from 'react';
 import useState from 'react-usestateref';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {MarketContext} from './market_context';
 
 export interface ITickerProvider {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export const TickerContext = createContext<ITickerContext>({
 
 export const TickerProvider = ({children}: ITickerProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
+  const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
@@ -56,6 +58,16 @@ export const TickerProvider = ({children}: ITickerProvider) => {
       }),
     []
   );
+
+  // Info: Change the selectedTicker immediately after selectedTickerProperty is changed (20231222 - Shirley)
+  useEffect(() => {
+    if (
+      !marketCtx.selectedTickerProperty ||
+      selectedTickerRef.current?.instId === marketCtx.selectedTickerProperty.instId
+    )
+      return;
+    setSelectedTicker({...tickerBook.listTickers()[marketCtx.selectedTickerProperty.instId]});
+  }, [marketCtx.selectedTickerProperty]);
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,

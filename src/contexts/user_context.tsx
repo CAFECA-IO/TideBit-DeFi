@@ -918,17 +918,16 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   // Deprecated: fee depends on the PNL when closing the position `validateCFD` (20230617 - Shirley)
-  /**
-   *
-   * @param applyCreateCFDOrder
-   * fee: <= margin.amount * 20% && >= 0
-   * amount: >= 0
-   * @returns
-   */
   const _createCFDOrder = useCallback(
     async (applyCreateCFDOrder: IApplyCreateCFDOrder | undefined): Promise<IResult> => {
       let result: IResult;
       try {
+        if (
+          applyCreateCFDOrder?.targetAsset !== applyCreateCFDOrder?.quotation.targetAsset ||
+          applyCreateCFDOrder?.instId !== applyCreateCFDOrder?.quotation.instId
+        ) {
+          throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        }
         const propertiesToCheck = [
           'amount',
           'fee',

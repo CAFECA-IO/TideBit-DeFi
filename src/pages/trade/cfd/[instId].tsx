@@ -8,7 +8,7 @@ import {MarketContext} from '../../../contexts/market_context';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {hasValue, truncateText} from '../../../lib/common';
+import {truncateText} from '../../../lib/common';
 import {NEWS_FOLDER, instIds} from '../../../constants/config';
 import {
   NEWS_AMOUNT_ON_TRADE_PAGE,

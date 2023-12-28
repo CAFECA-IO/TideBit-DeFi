@@ -38,6 +38,7 @@ import {roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
+  getValidatedWebsiteReserve,
   isIWebsiteReserve,
 } from '../interfaces/tidebit_defi_background/website_reserve';
 import {
@@ -50,6 +51,7 @@ import {
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
 import SafeMath from '../lib/safe_math';
+import {get} from 'http';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -886,20 +888,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.addException('getWebsiteReserve', error as Error, Code.INTERNAL_SERVER_ERROR);
     }
     if (result.success) {
-      // TODO: 要檢查 string 中的資料是不是 number 樣子的資料 (用 isNumber) (20230914 - Shirley)
-      const valid = isIWebsiteReserve(result.data as IWebsiteReserve);
-      // console.log('result.data', result.data);
-      if (!valid) {
-        const dummy = {...dummyWebsiteReserve};
-        // console.log('dummy in getWebisteReserve', dummy);
-        setWebsiteReserve(dummy);
-
-        // Deprecate: error handle (Shirley - 20230914)
-        // eslint-disable-next-line no-console
-        console.error(`getWebsiteReserve invalid data interface`);
-      } else {
-        setWebsiteReserve(result.data as IWebsiteReserve);
-      }
+      const validData = getValidatedWebsiteReserve(result.data as IWebsiteReserve);
+      setWebsiteReserve(validData);
     }
     return result;
   }, []);

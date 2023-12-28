@@ -46,3 +46,20 @@ export const isIWebsiteReserve = (data: IWebsiteReserve): data is IWebsiteReserv
   }
   return true;
 };
+
+export const getValidatedWebsiteReserve = (data: IWebsiteReserve): IWebsiteReserve => {
+  const toBeVerified = {...data};
+  for (const key in toBeVerified) {
+    if (
+      typeof toBeVerified[key].currency !== 'string' ||
+      typeof toBeVerified[key].reserveRatio !== 'number' ||
+      typeof toBeVerified[key].usersHolding !== 'string' ||
+      !SafeMath.isNumber(toBeVerified[key].usersHolding) ||
+      typeof toBeVerified[key].tidebitReserve !== 'string' ||
+      !SafeMath.isNumber(toBeVerified[key].tidebitReserve)
+    ) {
+      toBeVerified[key] = dummyWebsiteReserve[key];
+    }
+  }
+  return toBeVerified;
+};

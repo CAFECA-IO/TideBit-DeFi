@@ -27,6 +27,7 @@ import TradeBookInstance from '../lib/books/trade_book';
 import {millisecondsToSeconds} from '../lib/common';
 import {MarketContext} from './market_context';
 import {useGlobal} from './global_context';
+import {useRouter} from 'next/router';
 
 export interface ICandlestickProvider {
   children: React.ReactNode;
@@ -61,6 +62,11 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
   const globalCtx = useGlobal();
+
+  const router = useRouter();
+  const instId = router.query?.instId as string;
+  const ticker = instId?.toUpperCase();
+
   const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -185,6 +191,9 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
           const target = trades[0]?.instId;
           trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
           tradeBook.addTrades(target, trades);
+
+          //  eslint-disable-next-line no-console
+          console.log(`trades from API in ${new Date().toLocaleTimeString()}`, trades);
         }
       } catch (error) {
         // Deprecate: error handle (Tzuhan - 20230321)
@@ -390,25 +399,77 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
-        for (const trade of trades) {
-          if (trade.instId === marketCtx.selectedTickerProperty?.instId) {
-            tradeBook.add(trade.instId, {
-              tradeId: trade.tradeId,
-              targetAsset: trade.baseUnit,
-              unitAsset: trade.quoteUnit,
-              direct: TradeSideText[trade.side],
-              price: trade.price,
-              timestampMs: trade.timestamp,
-              quantity: trade.amount,
-            });
-          }
+  // Deprecated: in observation (20240115 - Shirley)
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log(
+  //         'receive trades',
+  //         trades,
+  //         'selectedTickerProperty',
+  //         marketCtx.selectedTickerProperty
+  //       );
+  //       for (const trade of trades) {
+  //         if (
+  //           trade.instId === marketCtx.selectedTickerProperty?.instId &&
+  //           trade.instId === ticker
+  //         ) {
+  //           // eslint-disable-next-line no-console
+  //           console.log(
+  //             'condition is met',
+  //             trade.instId,
+  //             marketCtx.selectedTickerProperty?.instId,
+  //             ticker
+  //           );
+  //           tradeBook.add(trade.instId, {
+  //             tradeId: trade.tradeId,
+  //             targetAsset: trade.baseUnit,
+  //             unitAsset: trade.quoteUnit,
+  //             direct: TradeSideText[trade.side],
+  //             price: trade.price,
+  //             timestampMs: trade.timestamp,
+  //             quantity: trade.amount,
+  //           });
+  //         }
+  //       }
+  //     }),
+  //   [marketCtx.selectedTickerProperty, ticker]
+  // );
+
+  useEffect(() => {
+    notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+      for (const trade of trades) {
+        if (trade.instId === marketCtx.selectedTickerProperty?.instId) {
+          // console.log('marketCtx.selectedTickerProperty', marketCtx.selectedTickerProperty);
+          // eslint-disable-next-line no-console
+          console.log(
+            'trade',
+            trade,
+            'selectedTickerProperty',
+            marketCtx.selectedTickerProperty.instId,
+            'isEqual',
+            trade.instId === marketCtx.selectedTickerProperty?.instId
+          );
+          tradeBook.add(trade.instId, {
+            tradeId: trade.tradeId,
+            targetAsset: trade.baseUnit,
+            unitAsset: trade.quoteUnit,
+            direct: TradeSideText[trade.side],
+            price: trade.price,
+            timestampMs: trade.timestamp,
+            quantity: trade.amount,
+          });
         }
-      }),
-    []
-  );
+      }
+    });
+
+    return () => {
+      notificationCtx.emitter.off(TideBitEvent.TRADES, () => {
+        return;
+      });
+    };
+  }, [marketCtx.selectedTickerProperty.instId]);
 
   const defaultValue = {
     selectTimeSpanHandler,

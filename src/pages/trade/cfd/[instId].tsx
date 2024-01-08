@@ -17,6 +17,7 @@ import {
 } from '../../../constants/display';
 import {getPost, getSlugs} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
+import {GlobalContext} from '../../../contexts/global_context';
 
 interface IPageProps {
   instId: string;
@@ -28,6 +29,7 @@ const HIDDEN = 'hidden';
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
   const appCtx = useContext(AppContext);
+  const globalCtx = useContext(GlobalContext);
 
   const displayedNavBar = <NavBar />;
 
@@ -38,18 +40,29 @@ const Trading = (props: IPageProps) => {
   const hideTradingView = router.query?.trading_view === HIDDEN;
   const hideOpenLineGraph = router.query?.open_line_graph === HIDDEN;
 
+  const displayedTradePageBody = globalCtx.isInit ? (
+    <TradePageBody
+      briefs={props.briefs}
+      hideTradingView={hideTradingView}
+      hideOpenLineGraph={hideOpenLineGraph}
+    />
+  ) : null;
+
   const redirectToTicker = async () => {
-    if (marketCtx.isInit && ticker) {
+    if (ticker) {
       marketCtx.selectTickerHandler(ticker);
     }
   };
+
+  useEffect(() => {
+    redirectToTicker();
+  }, [ticker]);
 
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
       return;
     }
-    redirectToTicker();
   }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.instId) {
@@ -65,13 +78,7 @@ const Trading = (props: IPageProps) => {
 
       {displayedNavBar}
 
-      <main className="mx-auto max-w-1920px">
-        <TradePageBody
-          briefs={props.briefs}
-          hideTradingView={hideTradingView}
-          hideOpenLineGraph={hideOpenLineGraph}
-        />
-      </main>
+      <main className="mx-auto max-w-1920px">{displayedTradePageBody}</main>
     </>
   );
 };

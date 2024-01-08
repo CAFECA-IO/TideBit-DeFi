@@ -50,7 +50,7 @@ const TradingHeader = () => {
   const tickerHeaderDesktop = (
     <>
       <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
-        {/* Ticker */}
+        {/* INFO: Ticker (20240118 - Shirley) */}
         <div className="flex w-200px items-center space-x-3 text-center">
           <button
             id="TickerSelectorDesktop"
@@ -85,7 +85,7 @@ const TradingHeader = () => {
           } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
 
-        {/* Trading volume */}
+        {/* INFO: Trading volume (20240118 - Shirley) */}
         <div className="relative">
           <div className="absolute -right-48 top-5 w-300px text-sm text-lightWhite/60 lg:left-0">
             {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')}{' '}
@@ -99,7 +99,7 @@ const TradingHeader = () => {
   const tickerHeaderMobile = (
     <>
       <div className="flex w-9/10 flex-col items-center justify-center space-y-5 text-start text-white">
-        {/* Ticker */}
+        {/* INFO: Ticker (20240118 - Shirley) */}
         <div className="flex items-center space-x-3 text-center">
           <button
             id="TickerSelectorMobile"
@@ -124,9 +124,6 @@ const TradingHeader = () => {
           </button>
         </div>
 
-        {/* Price and fluctuation percentage */}
-        {/* border-spacing-1 border-2 border-cyan-400  */}
-        {/*  bg-gradient-to-r from-lightGreen to-purple-800 bg-clip-text text-transparent */}
         <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
           <div className="text-3xl">
             <span className="">₮ {numberFormatted(tickerCtx.selectedTicker?.price)}</span>

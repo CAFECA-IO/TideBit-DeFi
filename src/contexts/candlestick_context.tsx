@@ -27,7 +27,6 @@ import TradeBookInstance from '../lib/books/trade_book';
 import {millisecondsToSeconds} from '../lib/common';
 import {MarketContext} from './market_context';
 import {useGlobal} from './global_context';
-import {useRouter} from 'next/router';
 
 export interface ICandlestickProvider {
   children: React.ReactNode;
@@ -62,10 +61,6 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
   const globalCtx = useGlobal();
-
-  const router = useRouter();
-  const instId = router.query?.instId as string;
-  const ticker = instId?.toUpperCase();
 
   const [candlestickId, setCandlestickId] = useState<string>(''); // Deprecated: stale (20231019 - Shirley)
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
@@ -191,9 +186,6 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
           const target = trades[0]?.instId;
           trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
           tradeBook.addTrades(target, trades);
-
-          //  eslint-disable-next-line no-console
-          console.log(`trades from API in ${new Date().toLocaleTimeString()}`, trades);
         }
       } catch (error) {
         // Deprecate: error handle (Tzuhan - 20230321)
@@ -399,7 +391,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
     []
   );
 
-  // Deprecated: in observation (20240115 - Shirley)
+  /* Deprecated: in observation (20240115 - Shirley)
   // React.useMemo(
   //   () =>
   //     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
@@ -436,21 +428,12 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   //     }),
   //   [marketCtx.selectedTickerProperty, ticker]
   // );
+  */
 
   useEffect(() => {
     notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
       for (const trade of trades) {
         if (trade.instId === marketCtx.selectedTickerProperty?.instId) {
-          // console.log('marketCtx.selectedTickerProperty', marketCtx.selectedTickerProperty);
-          // eslint-disable-next-line no-console
-          console.log(
-            'trade',
-            trade,
-            'selectedTickerProperty',
-            marketCtx.selectedTickerProperty.instId,
-            'isEqual',
-            trade.instId === marketCtx.selectedTickerProperty?.instId
-          );
           tradeBook.add(trade.instId, {
             tradeId: trade.tradeId,
             targetAsset: trade.baseUnit,

@@ -92,20 +92,13 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   };
 
   const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
-    let updatedTimeSpan = timeSpan;
+    tickerBook.timeSpan = timeSpan;
 
-    if (instId) {
-      const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
-      if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
-        updatedTimeSpan = TimeSpanUnion._1s;
-      }
-    }
-
-    tickerBook.timeSpan = updatedTimeSpan;
     setTimeSpan(tickerBook.timeSpan);
+
     syncCandlestickData(
       instId ?? marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
-      updatedTimeSpan
+      timeSpan
     );
   }, []);
 
@@ -381,6 +374,15 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
       setFrequency(100);
     }
   }, [globalCtx.layoutAssertion]);
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, async (tickerData: ITickerData) => {
+        setCandlestickIsLoading(true);
+        selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
+      }),
+    []
+  );
 
   React.useMemo(
     () =>

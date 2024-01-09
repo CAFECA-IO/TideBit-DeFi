@@ -39,7 +39,6 @@ import {
   IWebsiteReserve,
   dummyWebsiteReserve,
   getValidatedWebsiteReserve,
-  isIWebsiteReserve,
 } from '../interfaces/tidebit_defi_background/website_reserve';
 import {
   INews,
@@ -51,7 +50,6 @@ import {
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
 import SafeMath from '../lib/safe_math';
-import {get} from 'http';
 
 export interface IMarketProvider {
   children: React.ReactNode;

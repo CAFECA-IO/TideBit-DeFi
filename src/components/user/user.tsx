@@ -143,7 +143,7 @@ const User = ({notifyOpen, setNotifyOpen}: IUserProps) => {
       <button
         id="UserAvatarButton"
         onClick={avatarClickHandler}
-        className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
+        className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
         <span className="text-2xl font-bold text-lightWhite">{username}</span>
       </button>

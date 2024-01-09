@@ -31,7 +31,7 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
   return (
     <div className="flex flex-col lg:flex-row items-center lg:flex-1 gap-y-3 gap-x-6 w-full">
       <div className="h-30px flex items-center justify-center">
-        <button id="TotalBalanceShowButton" onClick={showBalance} type="button">
+        <button id="TotalBalanceShowButton" onClick={showBalance} type="button" className="w-30px">
           {displayedIcon}
         </button>
       </div>

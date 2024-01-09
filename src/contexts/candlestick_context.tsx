@@ -91,20 +91,31 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   };
 
   const selectTimeSpanHandler = useCallback((timeSpan: ITimeSpanUnion, instId?: string) => {
-    let updatedTimeSpan = timeSpan;
+    // Deprecated: test (20240109 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('selectTimeSpanHandler in candlestickContext', timeSpan, instId);
 
     if (instId) {
       const candlestickDataByInstId = tradeBook.getCandlestickData(instId);
-      if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
-        updatedTimeSpan = TimeSpanUnion._1s;
-      }
+      // Deprecated: test (20240109 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('candlestickDataByInstId in candlestickContext', candlestickDataByInstId);
+      // if (candlestickDataByInstId && candlestickDataByInstId?.[timeSpan]?.length <= 0) {
+      //   updatedTimeSpan = TimeSpanUnion._1s;
+      // }
     }
 
-    tickerBook.timeSpan = updatedTimeSpan;
+    tickerBook.timeSpan = timeSpan;
+    // Deprecated: test (20240109 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('tickerBook.timeSpan in candlestickContext', tickerBook.timeSpan);
     setTimeSpan(tickerBook.timeSpan);
+    // Deprecated: test (20240109 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('timeSpan in candlestickContext', timeSpanRef.current);
     syncCandlestickData(
       instId ?? marketCtx.selectedTickerProperty?.instId ?? DEFAULT_INSTID,
-      updatedTimeSpan
+      timeSpan
     );
   }, []);
 
@@ -288,6 +299,10 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   );
 
   const syncCandlestickData = useCallback(async (instId: string, timeSpan?: ITimeSpanUnion) => {
+    // Deprecated: test (20240109 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('syncCandlestickData in candlestickContext', instId, timeSpan);
+
     if (typeof candlestickIntervalRef.current === 'number') {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
@@ -383,7 +398,22 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
 
   React.useMemo(
     () =>
+      notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, async (tickerData: ITickerData) => {
+        // Deprecated: test (20240109 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('TideBitEvent.CHANGE_TICKER in candlestickContext', tickerData);
+        setCandlestickIsLoading(true);
+        selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (tickerData: ITickerData) => {
+        // Deprecated: test (20240109 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('TideBitEvent.TICKER_CHANGE in candlestickContext', tickerData);
         selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
         await listMarketTrades(tickerData.instId);
       }),

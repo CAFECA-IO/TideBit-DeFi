@@ -9,8 +9,6 @@ import {TimeSpanUnion} from '../../constants/time_span_union';
 import useStateRef from 'react-usestateref';
 import {CandlestickContext} from '../../contexts/candlestick_context';
 import {useRouter} from 'next/router';
-import {NotificationContext} from '../../contexts/notification_context';
-import {TideBitEvent} from '../../constants/tidebit_event';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -31,7 +29,6 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const marketCtx = useContext(MarketContext);
   const candlestickCtx = useContext(CandlestickContext);
-  const notificationCtx = useContext(NotificationContext);
   const [activeButton, setActiveButton] = useState(TimeSpanUnion._1s);
   const [candlestickOn, setCandlestickOn] = useState(true);
   const [lineGraphOn, setLineGraphOn] = useState(true);

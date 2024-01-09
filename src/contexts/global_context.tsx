@@ -214,6 +214,7 @@ export interface IGlobalProvider {
 export type ColorModeUnion = 'light' | 'dark';
 
 export interface IGlobalContext {
+  isInit: boolean;
   width: number;
   height: number;
   layoutAssertion: ILayoutAssertion;
@@ -343,6 +344,7 @@ export interface IGlobalContext {
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
+  isInit: false,
   width: 0,
   height: 0,
   layoutAssertion: '' as ILayoutAssertion,
@@ -582,6 +584,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
+  const [isInit, setIsInit] = useState(false);
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
@@ -589,6 +592,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const layoutAssertion = useMemo(() => {
     return width < LAYOUT_BREAKPOINT ? LayoutAssertion.MOBILE : LayoutAssertion.DESKTOP;
   }, [width]);
+
+  useEffect(() => {
+    setIsInit(true);
+  }, []);
 
   const toggleColorMode = useCallback(() => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
@@ -1024,6 +1031,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   }, []);
 
   const defaultValue = {
+    isInit,
     width,
     height,
     layoutAssertion,
@@ -1295,10 +1303,10 @@ export const useGlobal = () => {
     typeof globalThis === 'object'
       ? globalThis
       : typeof window === 'object'
-        ? window
-        : typeof global === 'object'
-          ? global
-          : null; // Info: Causes an error on the next line
+      ? window
+      : typeof global === 'object'
+      ? global
+      : null; // Info: Causes an error on the next line
 
   g.globalContext = context;
 

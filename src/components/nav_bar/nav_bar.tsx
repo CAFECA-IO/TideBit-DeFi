@@ -81,13 +81,11 @@ const NavBar = () => {
   const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <div className="w-350px">
-      <UserOverview
-        depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
-        marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
-        profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
-      />
-    </div>
+    <UserOverview
+      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
+    />
   ) : null;
 
   const isDisplayedUser = userCtx.enableServiceTerm ? (
@@ -140,7 +138,7 @@ const NavBar = () => {
       <div className="fixed inset-x-0 top-0 z-40 bg-black">
         <nav className="container mx-auto px-5 text-white max-w-1920px">
           {/* Info: 將 NavBar 內容限制在 1920px 的寬度範圍內 (20231115 -  Shirley) */}
-          <div className="mx-auto max-w-full px-5">
+          <div className="mx-auto max-w-full">
             <div className="flex h-16 items-center justify-between bg-black">
               <div className="flex items-center">
                 {/* Info: (20230327 - Julian) logo */}
@@ -176,21 +174,21 @@ const NavBar = () => {
                     <Link
                       id="NavTradeDesktop"
                       href={tradeLink}
-                      className="hover:cursor-pointer hover:text-tidebitTheme"
+                      className="hover:cursor-pointer hover:text-tidebitTheme whitespace-nowrap"
                     >
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
                       id="NavLeaderboardDesktop"
                       href={TBDURL.LEADERBOARD}
-                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme whitespace-nowrap"
                     >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
                     <Link
                       id="NavSupportDesktop"
                       href={TBDURL.COMING_SOON}
-                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme whitespace-nowrap"
                     >
                       {t('NAV_BAR.SUPPORT')}
                     </Link>

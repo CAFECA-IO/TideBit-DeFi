@@ -35,12 +35,12 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
           {displayedIcon}
         </button>
       </div>
-      <div className="flex justify-between w-full space-x-1 flex-1">
+      <div className="flex justify-between w-full space-x-3 flex-1">
         <div className="flex flex-col items-center lg:items-start w-1/3">
           <h3 className="whitespace-nowrap text-sm text-lightGray4">
             {t('USER.OVERVIEW_AVAILABLE')}
           </h3>
-          <p className="whitespace-nowrap text-sm lg:text-base">
+          <p className="whitespace-nowrap text-sm xl:text-base">
             {deposit}
             <span className="text-xs"> {unitAsset}</span>
           </p>
@@ -50,14 +50,14 @@ const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUse
           <h3 className="whitespace-nowrap text-sm text-lightGray4">
             {t('USER.OVERVIEW_M_MARGIN')}
           </h3>
-          <p className="whitespace-nowrap text-sm lg:text-base">
+          <p className="whitespace-nowrap text-sm xl:text-base">
             {locked} <span className="text-xs"> {unitAsset}</span>
           </p>
         </div>
 
         <div className="flex flex-col items-center lg:items-start w-1/3">
           <h3 className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</h3>
-          <p className="whitespace-nowrap text-sm lg:text-base">
+          <p className="whitespace-nowrap text-sm xl:text-base">
             {pnl}
             <span className="text-xs"> {unitAsset}</span>
           </p>

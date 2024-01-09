@@ -73,7 +73,7 @@ const MarketSection = (props: IMarketSectionProps) => {
       <div className="mt-5 lg:mt-8 lg:pl-5">
         <CryptoSummary
           icon={icon ?? marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
-          label={label ?? DEFAULT_CRYPTO}
+          label={label ?? marketCtx.selectedTickerProperty?.name ?? DEFAULT_CRYPTO}
           introduction={introduction ?? ''}
           whitePaperLink={whitePaperLink ?? ''}
           websiteLink={websiteLink ?? ''}

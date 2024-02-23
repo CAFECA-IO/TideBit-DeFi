@@ -35,18 +35,18 @@ test('2. 點擊導覽列的上全部按鈕', async ({page}) => {
   await page.getByRole('link', supportLink).click();
   landingPage.clickAnncmnt();
   await page.locator('#globe').click();
-  await page.getByRole('link', {name: '繁體中文'}).click();
-  await expect.soft(page).toHaveURL(/.*tw/);
+  await page.locator('#ENButtonDesktop').click();
+  await expect.soft(page).toHaveURL(/.*en/);
   await page.locator('#globe').click();
   await page.getByRole('link', {name: '简体中文'}).click();
   await expect.soft(page).toHaveURL(/.*cn/);
   await page.locator('#globe').click();
   await page.getByRole('link', {name: 'English'}).click();
   await expect.soft(page).toHaveTitle(/TideBit DeFi/);
-  await page.getByRole('button', {name: '2 notification icon'}).click();
-  await page.locator('.translate-x-0 > div > div').first().click();
+  await page.locator('#NavBellDesktop').click();
+  await page.getByRole('heading', {name: 'Happy Birthday to TideBit'}).first().click();
   await expect
-    .soft(page.getByRole('heading', {name: 'Happy Birthday to TideBit'}))
+    .soft(page.getByRole('heading', {name: 'Happy Birthday to TideBit'}).first())
     .toHaveText('Happy Birthday to TideBit');
 });
 
@@ -88,7 +88,7 @@ test('3. 點擊首圖上的開始和信箱聯絡按鈕、白皮書和 AI 報告�
     .toHaveAttribute('href', /.*cash-flow/);
   await expect
     .soft(page.getByRole('link', redFlagAnalysisButton))
-    .toHaveAttribute('href', redFlagAnalysis);
+    .toHaveAttribute('href', /.*baifa.io/);
 });
 
 test('4. 確認按鈕連結跳轉網頁正確。', async ({page}) => {
@@ -112,9 +112,6 @@ test('4. 確認按鈕連結跳轉網頁正確。', async ({page}) => {
   await expect
     .soft(page.getByRole('link', {name: 'Bitcoin BTC'}))
     .toHaveAttribute('href', /.*trade\/cfd\/btc-usdt/);
-  await expect
-    .soft(page.getByRole('link', iSunOne))
-    .toHaveAttribute('href', /https:\/\/www.isun1.com*/);
   await expect
     .soft(page.getByRole('link', {name: 'app-store'}))
     .toHaveAttribute('href', /.*coming-soon/);

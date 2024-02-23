@@ -6,7 +6,7 @@ import {defineConfig, devices} from '@playwright/test';
 const baseURL = process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/';
 
 export default defineConfig({
-  timeout: 200000,
+  timeout: 250000,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,

@@ -89,47 +89,32 @@ export class WalletConnect {
     const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
     const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     const viewOnButton = {name: i18next.t('POSITION_MODAL.VIEW_ON_BUTTON')};
+    await this.page.locator('#TotalBalanceShowButton').click();
     const navAvailable = await this.page
       .locator(
-        '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(1) > div:nth-child(2)'
+        '#__next > div > div.fixed.inset-x-0.top-0.z-40.bg-black > nav > div > div > div.flex.items-center > div > div > div > div.flex.justify-between.w-full.space-x-3.flex-1 > div:nth-child(1) > p'
       )
       .textContent();
     const navAvailableNum = (navAvailable as string).substring(
       0,
       (navAvailable as string).length - 4
     );
-    await this.page
-      .locator(
-        '#__next > div > div.w-full.text-center> nav > div > div > div> div.mr-5.inline-flex > div > button'
-      )
-      .click();
-    await this.page.locator('#userDropdown > ul > li:nth-child(2) > button').click();
+    await this.page.locator('#UserAvatarButton').click();
+    await this.page.locator('#UserDeposit').click();
     await this.page.getByRole('button', maxButton).click();
-    await this.page
-      .locator(
-        '#depositModal > div.relative.flex-auto.pt-0 > div > div > div:nth-child(4) > div > button'
-      )
-      .click();
+    await this.page.locator('#DepositButton').click();
     const hasDeposit = await this.page.getByRole('button', viewOnButton).isVisible();
     if (hasDeposit) {
       this.page.reload();
       this.page.getByRole('button', okButton).click();
       // profile button
-      await this.page
-        .locator(
-          '#__next > div > div.w-full.text-center> nav > div > div > div> div.mr-5.inline-flex > div > button'
-        )
-        .click();
-      await this.page.locator('#userDropdown > ul > li:nth-child(1) > button > a').click();
+      await this.page.locator('#UserAvatarButton').click();
+      await this.page.locator('#UserMyAssets').click();
       await this.page.getByRole('button', okButton).click();
-      await this.page
-        .locator(
-          '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div > div.flex.items-center.justify-center.space-x-2.text-center > button'
-        )
-        .click();
+      await this.page.locator('#ShowBalanceButton').click();
       const assetsAvailable = await this.page
         .locator(
-          '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(3) > div > span:nth-child(1)'
+          '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div:nth-child(2) > div:nth-child(3) > span:nth-child(1)'
         )
         .textContent();
       let expectedNavAvailable = Number(assetsAvailable);

@@ -47,7 +47,7 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   await page.getByRole('button', sendRequestButton).click();
   await expect(
     page.locator(
-      '#connectModal > div.flex.flex-auto.flex-col.items-center.py-5 > div > div > div.space-y-12.flex.flex-col.px-4.pt-16 > div:nth-child(2) > div.-mb-5.mt-7.w-271px.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
+      '#SignatureProcessModal > div.flex.flex-col.items-center.text-lg.leading-relaxed.text-lightWhite > div.space-y-12.flex.flex-col.pt-16.pb-4.items-start > div:nth-child(2) > div.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
     )
   ).toContainText(errorMessage);
 });

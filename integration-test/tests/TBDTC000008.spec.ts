@@ -32,25 +32,19 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await myAssetsPage.checkBalance();
+  await page.locator('#TotalBalanceShowButton').click();
   const headerPNL = await page
     .locator(
-      '#__next > div > div:nth-child(17) > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(3) > div.whitespace-nowrap.text-sm > span'
+      '#__next > div > div:nth-child(6) > div.fixed.inset-x-0.top-0.z-40.bg-black > nav > div > div > div.flex.items-center > div > div > div > div.flex.justify-between.w-full.space-x-3.flex-1 > div:nth-child(1) > p'
     )
     .textContent();
   const myAssetsPNL = await page
     .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(2) > section > div.mx-auto > div > div:nth-child(3) > div > h2'
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div:nth-child(2) > div:nth-child(3) > span:nth-child(1)'
     )
     .textContent();
-  await expect
-    .soft(myAssetsPNL.replace(',', ''))
-    .toContain(headerPNL.replace(',', '').replace(/ /g, ''));
-  await page
-    .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(1) > div > div:nth-child(3) > div:nth-child(1) > button'
-    )
-    .click();
+  await expect.soft(headerPNL as string).toContain(myAssetsPNL as string);
+  await page.locator('#MyAssetsDeposit').click();
   await expect(page.getByRole('button', maxButton)).toContainText(max);
 });
 
@@ -78,22 +72,12 @@ test('4. 查看現有交易紀錄與日期區間', async ({page, context}) => {
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
   const todayDate = new Date().getUTCDate();
-  await page.waitForTimeout(15000);
-  await expect
-    .soft(
-      page.locator(
-        '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-child(1)'
-      )
+  const logDate = await page
+    .locator(
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div.w-70px > div > p'
     )
-    .toContainText(String(todayDate));
-  // Todo (20231013 - Jacky) This expect should be finished after existing a button show all logs.
-  // await expect
-  //   .soft(
-  //     page.locator(
-  //       '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
-  //     )
-  //   )
-  //   .toContainText(String(todayDate - 7));
+    .textContent();
+  expect.soft(logDate).toContain(String(todayDate));
 });
 
 test('5. 設定日期區間篩選交易紀錄', async ({page, context}) => {
@@ -105,29 +89,20 @@ test('5. 設定日期區間篩選交易紀錄', async ({page, context}) => {
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
   const todayDate = new Date().getUTCDate();
-  await page
-    .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center > div > div.mt-2.hidden.items-center.space-x-2 > div:nth-child(1) > button'
-    )
-    .click();
-  await page
-    .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.mt-2.hidden.items-center.space-x-2 > div.relative.flex.h-48px.flex-col.items-start.justify-center.transition-all.duration-200.ease-in-out.bg-darkGray8 > div > div:nth-child(3)'
-    )
-    .getByText('01')
-    .click();
+  await page.locator('#DateStartPicker').click();
+  await page.locator('#DateStartPicker01').click();
   const firstLogDate = await page
     .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-child(1)'
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-last-child(1) > div > div.w-70px > div > p'
     )
     .textContent();
-  const lastLogdate = await page
+  const lastLogDate = await page
     .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div:nth-child(2) > div > div > div > div:nth-last-child(1)'
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div.w-70px > div > p'
     )
     .textContent();
-  expect(Number(firstLogDate.substring(0, 2))).toBeGreaterThanOrEqual(Number(todayDate));
-  expect(Number(lastLogdate.substring(0, 2))).toBeGreaterThanOrEqual(1);
+  expect(Number(lastLogDate)).toBeLessThanOrEqual(Number(todayDate));
+  expect(Number(firstLogDate)).toBeGreaterThanOrEqual(1);
 });
 test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按鈕，再關閉紀錄。', async ({
   page,
@@ -142,21 +117,21 @@ test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await page.getByRole('button', titleButton).click();
+  await page.locator('#TradingTypeMenuButton').click();
+  await page.locator('#TypeDepositButton').click();
   await page
     .locator(
-      '#__next > div > div:nth-child(17) > main > div > div > div.pt-10 > div:nth-child(4) > div > div.flex.flex-col.items-center> div > div.relative.mt-2.hidden.w-160px> div > button:nth-child(2)'
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div > div > div:nth-child(2) > div:nth-child(1) > button'
     )
     .click();
-  await page.getByRole('button', depositButton).nth(3).click();
-  await expect(page.locator('#depositHistoryModal')).toBeVisible();
+  await expect.soft(page.locator('#DWHistoryModal')).toBeVisible();
+  await page.locator('#HistoryCloseButton').click();
 });
 
 test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按鈕後，點擊分享至FB，再關閉紀錄。', async ({
   page,
   context,
 }) => {
-  const closeButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_CLOSE_BUTTON')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -164,9 +139,15 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await page.getByRole('button', closeButton).first().click();
+  await page.locator('#TradingTypeMenuButton').click();
+  await page.locator('#TypeCloseButton').click();
+  await page
+    .locator(
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > button'
+    )
+    .click();
   const pagePromise = context.waitForEvent('page');
-  await page.getByRole('img', {name: 'FACEBOOK'}).first().click();
+  await page.locator('#ShareHistoryToFACEBOOK').click();
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await expect.soft(newPage).toHaveURL(/facebook.com/);

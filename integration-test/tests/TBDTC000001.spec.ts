@@ -23,12 +23,15 @@ test('1. 進入 TideBit-DeFi 首頁，確認網站為英文後，將錢包連接
   await landingPage.clickAnncmnt();
   const navAvailable = await page
     .locator(
-      '#__next > div > div.w-full.text-center > nav > div > div > div.flex.items-center > div > div > div > div:nth-child(1) > div:nth-child(2)'
+      '#__next > div > div.fixed.inset-x-0.top-0.z-40.bg-black > nav > div > div > div.flex.items-center > div > div > div > div.flex.justify-between.w-full.space-x-3.flex-1 > div:nth-child(1) > p'
     )
     .textContent();
-  const navAvailableNum = Number(navAvailable.substring(0, navAvailable.length - 4));
+  const navAvailableNum = (navAvailable as string).substring(
+    0,
+    (navAvailable as string).length - 4
+  );
   // Info: (20231013 - Jacky) make sure navAvailable is bigger than 100
-  if (navAvailableNum < 100) {
+  if (Number(navAvailableNum) < 100) {
     walletConnect.deposit();
   }
 });
@@ -38,8 +41,6 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
   page,
   context,
 }) => {
-  const favoriteTabButton = {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')};
-  const allTabButton = {name: i18next.t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -48,42 +49,22 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
   const tradePage = new TradePage(page, context);
   await tradePage.goto();
   await tradePage.clickAnncmnt();
-  await page.getByRole('button', {name: 'ETH'}).click();
-  await page
-    .locator(
-      '#tickerSelectorModal > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(3) > div > div > div:nth-child(3) > button'
-    )
-    .click();
-  await page.getByRole('button', favoriteTabButton).click();
-  await expect
-    .soft(
-      page.locator(
-        '#tickerSelectorModal > div:nth-child(2) > div.flex.flex-auto.flex-col.items-center.pt-10 > div > div > div > div > div:nth-child(3) > div > div.flex.items-center > div.ml-3.items-center > p.text-lg.leading-6.text-lightWhite'
-      )
-    )
-    .toBeHidden();
-  await page.getByRole('button', allTabButton).click();
-  await page
-    .locator(
-      '#tickerSelectorModal > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(3) > div > div > div:nth-child(3) > button'
-    )
-    .click();
-  await page
-    .locator(
-      '#tickerSelectorModal > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(3)'
-    )
-    .click();
+  await page.locator('#TickerSelectorDesktop').click();
+  await page.locator('#FavoriteTab').click();
+  await page.locator('#StarETH').click();
+  await page.locator('#AllTab').click();
+  await page.locator('#FavoriteTab').click();
+  await expect.soft(page.locator('#CryptoCardETH')).toBeHidden();
+  await page.locator('#CryptoCardBTC').click();
   await expect(page).toHaveURL(/.*btc-usdt/);
 });
 
 test('3. 至ETH交易頁面，下滑點擊白皮書與官方網站。', async ({page, context}) => {
-  const whitePaper = {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WHITE_PAPER')};
-  const website = {name: i18next.t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE')};
   const tradePage = new TradePage(page, context);
   await tradePage.goto();
-  await expect.soft(page.getByRole('link', whitePaper)).toHaveAttribute('href', /.*whitepaper/);
+  await expect.soft(page.locator('#CryptoWhitePaperLink')).toHaveAttribute('href', /.*whitepaper/);
   await expect
-    .soft(page.getByRole('link', website))
+    .soft(page.locator('#CryptoWebsiteLink'))
     .toHaveAttribute('href', /https:\/\/ethereum.org/);
 });
 
@@ -97,7 +78,7 @@ test('4. 點擊任一篇ETH新聞後，下滑至最下面點擊分享至FB', asy
   await expect.soft(page).toHaveURL(/.*\/news\/.*/);
   await tradePage.clickAnncmnt();
   const pagePromise = context.waitForEvent('page');
-  await page.getByRole('img', {name: 'FACEBOOK', exact: true}).click();
+  await page.locator('#ShareNewsToFACEBOOK').click();
   const newPage = await pagePromise;
   await expect.soft(newPage).toHaveTitle(/Facebook/);
 });
@@ -118,25 +99,30 @@ test('5. 回到「交易」頁面後，在「看漲」和「看跌」各開一�
   await tradePage.openLongPosition(walletConnect.extensionId);
   await tradePage.inputAmount();
   await tradePage.openShortPosition(walletConnect.extensionId);
-  // Todo (20231013 - Jacky) This test should be finished after the efficiency improvement of CFD trade
-  // await page.getByRole('button', {name: i18next.t('TRADE_PAGE.POSITION_TAB') as string}).click();
-  // await expect
-  //   .soft(
-  //     page.locator(
-  //       '#__next > div > main > div > div.pointer-events-none.fixed.right-0.top-82px.z-10.flex.overflow-x-hidden.overflow-y-hidden.outline-none > div > div > div > div > div:nth-child(1) > div.relative.my-2.min-h-140px > div.mt-2.flex.justify-between > div.inline-flex.items-center.text-sm > div'
-  //     )
-  //   )
-  //   .toContainText('Up');
-  // await expect
-  //   .soft(
-  //     page.locator(
-  //       '#__next > div > main > div > div.pointer-events-none.fixed.right-0.top-82px.z-10.flex.overflow-x-hidden.overflow-y-hidden.outline-none > div > div > div > div > div:nth-child(1) > div.relative.my-2.min-h-140px > div.mt-2.flex.justify-between > div.inline-flex.items-center.text-sm > div'
-  //     )
-  //   )
-  //   .toContainText('Down');
+  await page.locator('#PositionTabButton').click();
+  await page
+    .locator(
+      '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(1) '
+    )
+    .click();
+  await page.locator('#UpdateFormCloseButton').click();
+  await expect
+    .soft(
+      page.locator(
+        '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div '
+      )
+    )
+    .toContainText('Up');
+  await expect
+    .soft(
+      page.locator(
+        '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div '
+      )
+    )
+    .toContainText('Down');
 });
 
-// Info (20231013 - Jacky) This test should pass after the efficiency improvement of CFD trade
+// Info (20231013 - Jacky) This test still fails by invalid ethereum address for no reason
 test('6. 點擊其中一個持倉，設定止盈點與止損點後，點擊更新持倉。', async ({page, context}) => {
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
@@ -154,7 +140,6 @@ test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀�
   page,
   context,
 }) => {
-  const HistoryTabButton = {name: i18next.t('TRADE_PAGE.POSITION_TAB_HISTORY')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -164,11 +149,10 @@ test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀�
   await tradePage.goto();
   await tradePage.clickAnncmnt();
   await tradePage.closePosition(walletConnect.extensionId);
-  await tradePage.closePosition(walletConnect.extensionId);
-  await page.getByRole('button', HistoryTabButton).click();
+  await page.locator('#HistoryTabButton').click();
   const minutetext = await page
     .locator(
-      '#__next > div > main > div > div.pointer-events-none.fixed.right-0.top-82px.z-10.flex.overflow-x-hidden.overflow-y-hidden.outline-none > div > div > div > div > div:nth-child(1) > div.mt-3.text-xs > div > div.w-48px > div:nth-child(2)'
+      '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(1) > div:nth-child(1) > div > div.w-48px > div:nth-child(2)'
     )
     .textContent();
   const minute = Number(minutetext.substring(3));

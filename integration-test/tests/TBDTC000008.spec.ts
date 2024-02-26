@@ -23,8 +23,7 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   page,
   context,
 }) => {
-  const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
-  const max = i18next.t('D_W_MODAL.MAX');
+  // const max = i18next.t('D_W_MODAL.MAX');
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -32,7 +31,7 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  await page.locator('#TotalBalanceShowButton').click();
+  await page.locator('#ShowBalanceButton').click();
   const headerPNL = await page
     .locator(
       '#__next > div > div:nth-child(6) > div.fixed.inset-x-0.top-0.z-40.bg-black > nav > div > div > div.flex.items-center > div > div > div > div.flex.justify-between.w-full.space-x-3.flex-1 > div:nth-child(1) > p'
@@ -43,9 +42,9 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
       '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div:nth-child(2) > div:nth-child(3) > span:nth-child(1)'
     )
     .textContent();
-  await expect.soft(headerPNL as string).toContain(myAssetsPNL as string);
+  expect.soft(headerPNL as string).toContain(myAssetsPNL as string);
   await page.locator('#MyAssetsDeposit').click();
-  await expect(page.getByRole('button', maxButton)).toContainText(max);
+  await expect(page.locator('#DepositMaxButton')).toBeVisible();
 });
 
 test('3. 若缺乏從入金 ➡️ 建倉 ➡️ 更新持倉 ➡️ 關倉 ➡️ 出金的完整交易紀錄，則先完成上述流程，否則跳到下一步。', async ({
@@ -108,8 +107,6 @@ test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按�
   page,
   context,
 }) => {
-  const titleButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')};
-  const depositButton = {name: i18next.t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')};
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -121,7 +118,7 @@ test('6. 點選交易類型切換至入金並點選第一筆紀錄的入金按�
   await page.locator('#TypeDepositButton').click();
   await page
     .locator(
-      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div > div > div:nth-child(2) > div:nth-child(1) > button'
+      '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > button'
     )
     .click();
   await expect.soft(page.locator('#DWHistoryModal')).toBeVisible();

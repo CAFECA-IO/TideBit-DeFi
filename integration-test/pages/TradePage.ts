@@ -64,8 +64,8 @@ export class TradePage {
 
   // Info: (20231013 - Jacky) number="1" means the last position
   async updatePosition(extensionId: string, number = '1') {
-    const positionTab = {name: t('TRADE_PAGE.POSITION_TAB')};
-    await this.page.getByRole('button', positionTab).click();
+    await this.page.waitForTimeout(10000);
+    await this.page.locator('#PositionTabButton').click();
     await this.page
       .locator(
         '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(' +
@@ -73,6 +73,7 @@ export class TradePage {
           ')'
       )
       .click();
+    const pagePromise = this.context.newPage();
     await this.page.locator('#UpdateFormTpToggle').click();
     await this.page.locator('#UpdateFormSlToggle').click();
     await this.page.locator('#UpdateFormGslCheckbox').check();
@@ -81,7 +82,6 @@ export class TradePage {
     }
     await this.page.locator('#UpdateFormButton').click();
     await this.page.locator('#UpdateSubmitButton').click();
-    const pagePromise = this.context.newPage();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();
@@ -92,9 +92,7 @@ export class TradePage {
 
   // Info: (20231013 - Jacky) number="1" means the last position
   async closePosition(extensionId: string, number = '1') {
-    const POSITION_TAB = {name: t('TRADE_PAGE.POSITION_TAB')};
-    const CLOSE_POSITION_TITLE = {name: t('POSITION_MODAL.CONFIRM_BUTTON')};
-    await this.page.getByRole('button', POSITION_TAB).click();
+    await this.page.locator('#PositionTabButton').click();
     await this.page
       .locator(
         '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(' +
@@ -103,7 +101,7 @@ export class TradePage {
       )
       .click();
     const pagePromise = this.context.newPage();
-    await this.page.getByRole('button', CLOSE_POSITION_TITLE).click();
+    await this.page.locator('#ClosePositionButton').click();
     // await this.page.waitForTimeout(2000);
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');

@@ -44,12 +44,24 @@ export class MyAssetsPage {
   }
 
   async checkTradeLog() {
+    await this.page
+      .locator(
+        '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > button'
+      )
+      .isVisible();
+
     await this.page.locator('#TradingTypeMenuButton').click();
     await this.page.locator('#TypeDepositButton').click();
+    await this.page
+      .locator(
+        '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1)> div > div:nth-child(2) > div:nth-child(1) > button'
+      )
+      .click();
+    await this.page.locator('#HistoryCloseButton').click();
     await expect
       .soft(
         this.page.locator(
-          '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div > div > div:nth-child(2) > div:nth-child(1) > button'
+          '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > button'
         )
       )
       .toBeVisible();

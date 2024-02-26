@@ -88,7 +88,6 @@ export class WalletConnect {
   async deposit() {
     const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
     const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
-    const viewOnButton = {name: i18next.t('POSITION_MODAL.VIEW_ON_BUTTON')};
     await this.page.locator('#TotalBalanceShowButton').click();
     const navAvailable = await this.page
       .locator(
@@ -103,11 +102,12 @@ export class WalletConnect {
     await this.page.locator('#UserDeposit').click();
     await this.page.getByRole('button', maxButton).click();
     await this.page.locator('#DepositButton').click();
-    const hasDeposit = await this.page.getByRole('button', viewOnButton).isVisible();
+    // Info: (20240226 - Jacky) wait for the depositModal element shows up
+    await this.page.waitForTimeout(3000);
+    const hasDeposit = await this.page.locator('#SuccessfulModalCloseButton').isVisible();
     if (hasDeposit) {
       this.page.reload();
       this.page.getByRole('button', okButton).click();
-      // profile button
       await this.page.locator('#UserAvatarButton').click();
       await this.page.locator('#UserMyAssets').click();
       await this.page.getByRole('button', okButton).click();

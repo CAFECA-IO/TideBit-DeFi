@@ -37,6 +37,9 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   const pagePromise1 = context.newPage();
   const newPage1 = await pagePromise1;
   await newPage1.goto('chrome-extension://' + walletConnect.extensionId + '/home.html');
+  if (process.env.CI) {
+    await newPage1.getByRole('button', {name: 'GOT IT'}).click();
+  }
   await newPage1.getByTestId('network-display').click();
   await newPage1
     .locator(

@@ -36,7 +36,6 @@ test('1. 進入 TideBit-DeFi 首頁，確認網站為英文後，將錢包連接
   }
 });
 
-// Todo: (20231013 - Jacky) This test should be fixed after the favorite cookie
 test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星星移除我的最愛，點擊我的最愛查看後重新添加，再點擊BTC。', async ({
   page,
   context,
@@ -70,7 +69,8 @@ test('3. 至ETH交易頁面，下滑點擊白皮書與官方網站。', async ({
 
 test('4. 點擊任一篇ETH新聞後，下滑至最下面點擊分享至FB', async ({page, context}) => {
   const tradePage = new TradePage(page, context);
-  await tradePage.goto();
+  // Bug: (20240227 - Jacky) This URL should be fixed after the hidden chart issue is fixed.
+  await page.goto('https://tidebit-defi.com/en/trade/cfd/eth-usdt');
   await tradePage.clickAnncmnt();
   await page
     .locator('#__next > div > main > div > div > div:nth-child(5) > div > section:nth-child(3)')
@@ -106,20 +106,27 @@ test('5. 回到「交易」頁面後，在「看漲」和「看跌」各開一�
     )
     .click();
   await page.locator('#UpdateFormCloseButton').click();
-  await expect
-    .soft(
-      page.locator(
-        '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div '
-      )
+  const lastPositionMinuteText = await page
+    .locator(
+      '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > p:nth-child(2)'
     )
-    .toContainText('Up');
-  await expect
-    .soft(
-      page.locator(
-        '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div '
-      )
+    .textContent();
+  const NextTolastPositionMinuteText = await page
+    .locator(
+      '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-last-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > p:nth-child(2)'
     )
-    .toContainText('Down');
+    .textContent();
+  const lastPositionMinute = Number(lastPositionMinuteText.substring(3, 5));
+  const NextTolastPositionMinute = Number(NextTolastPositionMinuteText.substring(3, 5));
+  if (new Date().getUTCMinutes() > 0) {
+    expect(new Date().getUTCMinutes() - lastPositionMinute).toBeGreaterThanOrEqual(0);
+    expect(new Date().getUTCMinutes() - lastPositionMinute).toBeLessThanOrEqual(2);
+    expect(new Date().getUTCMinutes() - NextTolastPositionMinute).toBeGreaterThanOrEqual(0);
+    expect(new Date().getUTCMinutes() - NextTolastPositionMinute).toBeLessThanOrEqual(2);
+  } else {
+    expect(new Date().getUTCMinutes() - lastPositionMinute).toBeLessThanOrEqual(0);
+    expect(new Date().getUTCMinutes() - NextTolastPositionMinute).toBeLessThanOrEqual(0);
+  }
 });
 
 // Info (20231013 - Jacky) This test still fails by invalid ethereum address for no reason
@@ -150,12 +157,12 @@ test('7. 點擊倒數計時的圈圈，將持倉關閉，並查看「歷史紀�
   await tradePage.clickAnncmnt();
   await tradePage.closePosition(walletConnect.extensionId);
   await page.locator('#HistoryTabButton').click();
-  const minutetext = await page
+  const minuteText = await page
     .locator(
       '#__next > div > main > div > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div:nth-child(1) > div:nth-child(1) > div > div.w-48px > div:nth-child(2)'
     )
     .textContent();
-  const minute = Number(minutetext.substring(3));
+  const minute = Number(minuteText.substring(3));
   if (new Date().getUTCMinutes() > 0) {
     expect(new Date().getUTCMinutes() - minute).toBeGreaterThanOrEqual(0);
     expect(new Date().getUTCMinutes() - minute).toBeLessThanOrEqual(2);

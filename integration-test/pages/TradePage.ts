@@ -102,7 +102,6 @@ export class TradePage {
       .click();
     const pagePromise = this.context.newPage();
     await this.page.locator('#ClosePositionButton').click();
-    // await this.page.waitForTimeout(2000);
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();

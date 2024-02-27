@@ -59,8 +59,11 @@ test('2. 進入「交易」頁面，點擊左上方ETH後，點擊ETH上的星�
 });
 
 test('3. 至ETH交易頁面，下滑點擊白皮書與官方網站。', async ({page, context}) => {
+  // Bug: (20240227 - Jacky) This URL should be fixed after the hidden chart issue is fixed.
   const tradePage = new TradePage(page, context);
-  await tradePage.goto();
+  // await tradePage.goto();
+  await page.goto('https://tidebit-defi.com/en/trade/cfd/eth-usdt');
+  await tradePage.clickAnncmnt();
   await expect.soft(page.locator('#CryptoWhitePaperLink')).toHaveAttribute('href', /.*whitepaper/);
   await expect
     .soft(page.locator('#CryptoWebsiteLink'))
@@ -69,8 +72,7 @@ test('3. 至ETH交易頁面，下滑點擊白皮書與官方網站。', async ({
 
 test('4. 點擊任一篇ETH新聞後，下滑至最下面點擊分享至FB', async ({page, context}) => {
   const tradePage = new TradePage(page, context);
-  // Bug: (20240227 - Jacky) This URL should be fixed after the hidden chart issue is fixed.
-  await page.goto('https://tidebit-defi.com/en/trade/cfd/eth-usdt');
+  await tradePage.goto();
   await tradePage.clickAnncmnt();
   await page
     .locator('#__next > div > main > div > div > div:nth-child(5) > div > section:nth-child(3)')

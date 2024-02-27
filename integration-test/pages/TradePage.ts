@@ -77,7 +77,7 @@ export class TradePage {
     await this.page.locator('#UpdateFormTpToggle').click();
     await this.page.locator('#UpdateFormSlToggle').click();
     await this.page.locator('#UpdateFormGslCheckbox').check();
-    if (await this.page.locator('body > vercel-live-feedback').isVisible()) {
+    if (await this.page.locator('vercel-live-feedback').isEnabled()) {
       await this.page.$eval('vercel-live-feedback', el => el.remove());
     }
     await this.page.locator('#UpdateFormButton').click();

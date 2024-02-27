@@ -54,7 +54,6 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
   ];
   await expect.soft(await page.locator('#LiveRemainingTime')).toBeVisible();
   await page.locator('#DailyTab').click();
-  // cant locate the text
   await expect
     .soft(await page.locator('#DailyTimePeriod > span'))
     .toContainText(today.toISOString().slice(0, 10));

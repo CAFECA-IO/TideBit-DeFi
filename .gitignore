@@ -98,7 +98,7 @@ package-lock.json
 
 # Playwright output
 /test-results/
-/playwright-report/
+/playwright-report*
 /playwright/.cache/
 metamask-chrome-11.0.0
 
@@ -133,7 +133,3 @@ src/constants/walletconnect.js
 .DS_Store
 
 .vscode
-
-integration-test/metamask-chrome-11.0.0/
-playwright-report/
-test-results/

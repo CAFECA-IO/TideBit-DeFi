@@ -136,6 +136,9 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
+  if (await page.locator('vercel-live-feedback').isEnabled()) {
+    await page.$eval('vercel-live-feedback', el => el.remove());
+  }
   await page.locator('#TradingTypeMenuButton').click();
   await page.locator('#TypeCloseButton').click();
   await page
@@ -144,6 +147,9 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
     )
     .click();
   const pagePromise = context.waitForEvent('page');
+  // if (await page.locator('vercel-live-feedback').isEnabled()) {
+  //   await page.$eval('vercel-live-feedback', el => el.remove());
+  // }
   await page.locator('#ShareHistoryToFACEBOOK').click();
   const newPage = await pagePromise;
   await newPage.waitForLoadState();

@@ -55,7 +55,7 @@ jobs:
     - name: Download blob reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
-        path: ./integration-test/all-blob-reports
+        path: ./all-blob-reports
         pattern: blob-report-*
         merge-multiple: true
 
@@ -65,7 +65,7 @@ jobs:
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       with:
-        name: Playwright-Report-${{ github.run_id}}
+        name: playwright-report-${{ github.run_id}}
         path: ./playwright-report
         retention-days: 14
 

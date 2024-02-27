@@ -6,7 +6,7 @@ import {defineConfig, devices} from '@playwright/test';
 const baseURL = process.env.CI ? `${process.env.BASE_URL}` : 'https://tidebit-defi.com/';
 
 export default defineConfig({
-  timeout: 250000,
+  timeout: 200000,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -17,7 +17,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 3 : undefined,
   // Limit the number of failures on CI to save resources
-  maxFailures: process.env.CI ? 10 : undefined,
+  maxFailures: process.env.CI ? 25 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'blob' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

@@ -23,7 +23,6 @@ test('2. 點擊右上角profile的icon，再點擊我的資產，點擊總餘額
   page,
   context,
 }) => {
-  // const max = i18next.t('D_W_MODAL.MAX');
   const walletConnect = new WalletConnect(page, context);
   await walletConnect.getMetamaskId();
   await walletConnect.connectMetamask();
@@ -136,7 +135,8 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  if (await page.locator('vercel-live-feedback').isEnabled()) {
+  const flag = await page.locator('vercel-live-feedback').isEnabled();
+  if (flag) {
     await page.$eval('vercel-live-feedback', el => el.remove());
   }
   await page.locator('#TradingTypeMenuButton').click();

@@ -8,8 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # tests-name: [TBDTC000001, TBDTC000003, TBDTC000005, TBDTC000008, TBDTC000010, TradeExample]
-        tests-name: [TBDTC000003, TBDTC000010]
+        tests-name: [TBDTC000001, TBDTC000003, TBDTC000005, TBDTC000008, TBDTC000010, TradeExample]
     defaults:
       run:
         working-directory: ./integration-test

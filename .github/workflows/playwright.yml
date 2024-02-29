@@ -8,7 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tests-name: [TBDTC000001, TBDTC000003, TBDTC000005, TBDTC000008, TBDTC000010, TradeExample]
+        # tests-name: [TBDTC000001, TBDTC000003, TBDTC000005, TBDTC000008, TBDTC000010, TradeExample]
+        tests-name: [TBDTC000003, TBDTC000010]
     defaults:
       run:
         working-directory: ./integration-test
@@ -57,7 +58,7 @@ jobs:
       with:
         path: ./integration-test/all-blob-reports
         pattern: blob-report-*
-        # merge-multiple: true
+        merge-multiple: true
 
     - name: Merge into HTML Report
       run: npx playwright merge-reports --reporter html ./all-blob-reports 

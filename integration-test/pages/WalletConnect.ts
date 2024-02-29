@@ -37,7 +37,7 @@ export class WalletConnect {
         '#app-content > div > div.mm-box.main-container-wrapper > div > div > div > ul > li:nth-child(3) > button'
       )
       .click();
-    await this.page.getByRole('button', {name: 'I agree'}).click();
+    await this.page.getByTestId('metametrics-i-agree').click();
     for (let i = 0; i < 12; i++) {
       await this.page.locator('#import-srp__srp-word-' + i).fill(metamask['srp-word'][i]);
     }
@@ -45,24 +45,21 @@ export class WalletConnect {
     await this.page.getByTestId('create-password-new').fill(metamask['new-password']);
     await this.page.getByTestId('create-password-confirm').fill(metamask['new-password']);
     await this.page.getByTestId('create-password-terms').click();
-    await this.page.getByRole('button', {name: 'Import My wallet'}).click();
-    await this.page.getByRole('button', {name: 'Got it'}).click();
+    await this.page.getByTestId('create-password-import').click();
+    await this.page.getByTestId('onboarding-complete-done').click();
     await this.page.getByTestId('pin-extension-next').click();
     await this.page.getByTestId('pin-extension-done').click();
     await this.page.getByTestId('popover-close').click();
   }
   async connectWallet() {
-    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
-    const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
     await this.page.goto('./');
-    this.page.getByRole('button', okButton).click();
+    await this.page.locator('#AnnouncementModalOkButton').click();
     const pagePromise = this.context.newPage();
-    await this.page.getByRole('button', walletConnectButton).click();
+    await this.page.locator('#NavWalletButtonDesktop').click();
     await this.page.waitForTimeout(2000);
     await this.page
-      .locator('div')
-      .filter({hasText: /^MetaMask$/})
-      .nth(1)
+      .locator('#MetaMaskButton')
+
       .click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + this.extensionId + '/popup.html');
@@ -71,22 +68,16 @@ export class WalletConnect {
     await newPage.close();
   }
   async sendRequest() {
-    const requestsButton = {
-      name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON'),
-    };
-    const doneButton = {name: i18next.t('WALLET_PANEL.DONE_BUTTON')};
     const pagePromise = this.context.newPage();
-    await this.page.getByRole('button', requestsButton).click();
+    await this.page.locator('#SendRequestButton').click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + this.extensionId + '/popup.html');
     await newPage.getByTestId('signature-request-scroll-button').click();
     await newPage.getByTestId('page-container-footer-next').click();
-    await this.page.getByRole('button', doneButton).click();
+    await this.page.locator('#HelloModalDone').click();
     await newPage.close();
   }
   async deposit() {
-    const maxButton = {name: i18next.t('D_W_MODAL.MAX')};
-    const okButton = {name: i18next.t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     await this.page.locator('#TotalBalanceShowButton').click();
     const navAvailable = await this.page
       .locator(
@@ -99,18 +90,16 @@ export class WalletConnect {
     );
     await this.page.locator('#UserAvatarButton').click();
     await this.page.locator('#UserDeposit').click();
-    await this.page.getByRole('button', maxButton).click();
+    await this.page.locator('#DepositMaxButton').click();
     await this.page.locator('#DepositButton').click();
     // Info: (20240226 - Jacky) wait for the depositModal element shows up
     await this.page.waitForTimeout(3000);
-    const hasDeposit = await this.page.locator('#SuccessfulModalCloseButton').isVisible();
-    if (hasDeposit) {
+    if ((await this.page.locator('#SuccessfulModalCloseButton').count()) > 0) {
       this.page.reload();
-      this.page.getByRole('button', okButton).click();
+      await this.page.locator('#AnnouncementModalOkButton').click();
       await this.page.locator('#UserAvatarButton').click();
       await this.page.locator('#UserMyAssets').click();
-      await this.page.getByRole('button', okButton).click();
-      await this.page.locator('#ShowBalanceButton').click();
+      await this.page.locator('#AnnouncementModalOkButton').click();
       const assetsAvailable = await this.page
         .locator(
           '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div:nth-child(2) > div:nth-child(3) > span:nth-child(1)'

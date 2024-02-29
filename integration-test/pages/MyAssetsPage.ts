@@ -6,15 +6,14 @@ export class MyAssetsPage {
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
-    const okButton = {name: t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', okButton);
+    this.getAnncmnt = page.locator('#AnnouncementModalOkButton');
   }
 
   // Info: (20231013 - Jacky) Use profile button to go to My Assets page
   async goto() {
     await this.page.goto('./');
-    if (this.getAnncmnt) {
+    if ((await this.getAnncmnt.count()) > 0) {
       await this.getAnncmnt.click();
     }
     await this.page.locator('#UserAvatarButton').click();

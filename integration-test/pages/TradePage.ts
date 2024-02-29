@@ -7,11 +7,8 @@ export class TradePage {
   readonly context: BrowserContext;
 
   constructor(page: Page, context: BrowserContext) {
-    const ANNOUCEMENT_MODAL_OK_BUTTON = t('ANNOUNCEMENT_MODAL.OK_BUTTON');
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', {
-      name: ANNOUCEMENT_MODAL_OK_BUTTON,
-    });
+    this.getAnncmnt = page.locator('#AnnouncementModalOkButton');
     this.context = context;
   }
 
@@ -77,7 +74,7 @@ export class TradePage {
     await this.page.locator('#UpdateFormTpToggle').click();
     await this.page.locator('#UpdateFormSlToggle').click();
     await this.page.locator('#UpdateFormGslCheckbox').check();
-    if (await this.page.locator('vercel-live-feedback').isEnabled()) {
+    if ((await this.page.locator('vercel-live-feedback').count()) > 0) {
       await this.page.$eval('vercel-live-feedback', el => el.remove());
     }
     await this.page.locator('#UpdateFormButton').click();

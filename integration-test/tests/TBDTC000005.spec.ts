@@ -34,8 +34,8 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   const pagePromise1 = context.newPage();
   const newPage1 = await pagePromise1;
   await newPage1.goto('chrome-extension://' + walletConnect.extensionId + '/home.html');
-  if (newPage1.getByTestId('popover-close').isEnabled()) {
-    await newPage1.getByTestId('popover-close').click();
+  if ((await newPage1.getByTestId('popover-close').count()) > 0) {
+    newPage1.getByTestId('popover-close').click();
   }
   await newPage1.getByTestId('network-display').click();
   await newPage1
@@ -43,7 +43,7 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
       'body > div.mm-modal > div:nth-child(3) > div > section > div.mm-box.multichain-network-list-menu > div.mm-box.multichain-network-list-item.mm-box--padding-4.mm-box--display-flex.mm-box--gap-2.mm-box--justify-content-space-between.mm-box--align-items-center.mm-box--width-full.mm-box--background-color-transparent > div.mm-box.multichain-network-list-item__network-name > button'
     )
     .click();
-  await newPage1.getByRole('button', {name: 'GO IT'}).click();
+  await newPage1.getByRole('button', {name: 'GOT IT'}).click();
   await page.locator('#SendRequestButton').click();
   await expect(
     page.locator(

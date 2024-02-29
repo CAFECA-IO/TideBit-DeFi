@@ -135,24 +135,19 @@ test('7. 點選交易類型切換至關倉並點選第一筆紀錄的關倉按�
   await walletConnect.sendRequest();
   const myAssetsPage = new MyAssetsPage(page);
   await myAssetsPage.goto();
-  const flag = await page.locator('vercel-live-feedback').isEnabled();
-  if (flag) {
-    await page.$eval('vercel-live-feedback', el => el.remove());
-  }
   await page.locator('#TradingTypeMenuButton').click();
   await page.locator('#TypeCloseButton').click();
+  if ((await page.locator('vercel-live-feedback').count()) > 0) {
+    await page.$eval('vercel-live-feedback', el => el.remove());
+  }
   await page
     .locator(
       '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div.p-4 > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > button'
     )
     .click();
-  const pagePromise = context.waitForEvent('page');
-  // if (await page.locator('vercel-live-feedback').isEnabled()) {
-  //   await page.$eval('vercel-live-feedback', el => el.remove());
-  // }
   await page.locator('#ShareHistoryToFACEBOOK').click();
-  const newPage = await pagePromise;
-  await newPage.waitForLoadState();
-  await expect.soft(newPage).toHaveURL(/facebook.com/);
-  await expect.soft(newPage).toHaveTitle(/Facebook/);
+  const flag = await page.waitForRequest(
+    /https:\/\/api.tidebit-defi.com\/api\/v1\/public\/shared\/cfd*/
+  );
+  await expect.soft(flag).toBeTruthy();
 });

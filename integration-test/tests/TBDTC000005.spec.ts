@@ -35,6 +35,7 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   const newPage1 = await pagePromise1;
   await newPage1.goto('chrome-extension://' + walletConnect.extensionId + '/home.html');
   // Info (20240229 - Jacky) This loop only needed in CI, not in local
+  await newPage1.getByTestId('network-display').isVisible();
   while ((await newPage1.getByTestId('popover-close').count()) > 0) {
     await newPage1.getByTestId('popover-close').click();
   }

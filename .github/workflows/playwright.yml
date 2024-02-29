@@ -28,6 +28,7 @@ jobs:
       run: npx playwright test tests/${{ matrix.tests-name}}.spec.ts 
       env: 
         BASE_URL: ${{ github.event.deployment_status.environment_url }}
+        TEST_NAME: ${{ matrix.tests-name}}
     - name: Upload blob report to GitHub Actions Artifacts
       if: always()
       uses: actions/upload-artifact@v4
@@ -66,7 +67,7 @@ jobs:
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-report-${{ github.run_id}}
+        name: playwright-report-${{github.run_id}}
         path: ./playwright-report
         retention-days: 14
 

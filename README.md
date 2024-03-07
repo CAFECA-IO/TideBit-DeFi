@@ -114,7 +114,7 @@ TideBit Decentralize Finance Version
     ```
     
 
-## Demo
+## Set up for demo
 
 ### Backend & Database
 

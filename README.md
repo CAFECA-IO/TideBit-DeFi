@@ -3,16 +3,121 @@
 TideBit Decentralize Finance Version
 
 ## Mockup
+
 - [Mobile](https://xd.adobe.com/view/b4bc1f81-78f4-4de9-979f-20cb0d457d70-e1ef/)
 - [Desktop](https://xd.adobe.com/view/920d36bd-2d1a-4edd-8a2a-824445f1d3b0-c75e/?fullscreen&hints=off)
 
-# How to containerize TideBit DeFi with Docker
+# Containerize TideBit DeFi with Docker
 
 - Download Docker from the [official website](https://www.docker.com/).
 
-## Backend & Database
+## Production-ready set-up
 
-- [repo](https://github.com/CAFECA-IO/tbd-backend)
+### Backend & Database
+
+- Check out [repo](https://github.com/CAFECA-IO/tbd-backend) for detailed settings
+
+### Frontend
+
+- add `Dockerfile`
+    
+    ```tsx
+    FROM node:18-alpine AS base
+    
+    # Install dependencies only when needed
+    FROM base AS deps
+    # Check <https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine> to understand why libc6-compat might be needed.
+    RUN apk add --no-cache libc6-compat
+    WORKDIR /app
+    
+    # Install dependencies based on the preferred package manager
+    COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+    RUN \\
+      if [ -f yarn.lock ]; then yarn --frozen-lockfile; \\
+      elif [ -f package-lock.json ]; then npm ci; \\
+      elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \\
+      else echo "Lockfile not found." && exit 1; \\
+      fi
+    
+    # Rebuild the source code only when needed
+    FROM base AS builder
+    WORKDIR /app
+    COPY --from=deps /app/node_modules ./node_modules
+    COPY . .
+    
+    # Next.js collects completely anonymous telemetry data about general usage.
+    # Learn more here: <https://nextjs.org/telemetry>
+    # Uncomment the following line in case you want to disable telemetry during the build.
+    # ENV NEXT_TELEMETRY_DISABLED 1
+    
+    RUN npm run build
+    
+    # If using npm comment out above and use below instead
+    # RUN npm run build
+    
+    # Production image, copy all the files and run next
+    FROM base AS runner
+    WORKDIR /app
+    
+    ENV NODE_ENV production
+    # Uncomment the following line in case you want to disable telemetry during runtime.
+    # ENV NEXT_TELEMETRY_DISABLED 1
+    
+    RUN addgroup --system --gid 1001 nodejs
+    RUN adduser --system --uid 1001 nextjs
+    
+    COPY --from=builder /app/public ./public
+    
+    # Set the correct permission for prerender cache
+    RUN mkdir .next
+    RUN chown nextjs:nodejs .next
+    
+    # Automatically leverage output traces to reduce image size
+    # <https://nextjs.org/docs/advanced-features/output-file-tracing>
+    COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+    COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+    
+    USER nextjs
+    
+    EXPOSE 3000
+    
+    ENV PORT 3000
+    # set hostname to localhost
+    ENV HOSTNAME "0.0.0.0"
+    
+    # server.js is created by next build from the standalone output
+    # <https://nextjs.org/docs/pages/api-reference/next-config-js/output>
+    CMD ["node", "server.js"]
+    
+    ```
+    
+- add some code to the `docker-compose.yml` in the root directory of `tbd-backend`
+    
+    ```tsx
+    version: '3.8'
+    services:
+    ...
+      nextjs-app:
+        build:
+          context: ../TideBit-DeFi
+          dockerfile: Dockerfile
+        ports:
+          - '3000:3000'
+        environment:
+          - API_URL=http://nestjs-app:3001
+        depends_on:
+          - nestjs-app
+    
+    networks:
+    ...
+    
+    ```
+    
+
+## Demo
+
+### Backend & Database
+
 1. `mkdir tidebit-defi-project`
 2. `cd tidebit-defi-project`
 3. `git clone https://github.com/CAFECA-IO/tbd-backend.git`
@@ -49,9 +154,10 @@ TideBit Decentralize Finance Version
     
     # Start the server using the production build
     CMD ["npm", "run", "start:prod"]
+    
     ```
     
-9. add docker-compose.yml
+9. add `docker-compose.yml`
     
     ```yaml
     version: '3.8'
@@ -84,6 +190,7 @@ TideBit Decentralize Finance Version
     
     volumes:
       mongodb-data:
+    
     ```
     
 10. change `.env`
@@ -96,12 +203,13 @@ TideBit Decentralize Finance Version
     MONGO_DATABASE=nestjs
     MONGO_PORT=27017
     MONGO_URI=mongodb://mongodb:27017/nestjs?replicaSet=rs0
+    
     ```
     
-11. demo 用的 mongo db 沒有 username 跟 password，所以需要對應調整 code 才能連上
+11. There's no username and password in Mongo DB we use for demo, so we change the code for connection
     1. mongo.config.ts
         
-        ```yaml
+        ```tsx
         import { registerAs } from '@nestjs/config';
         
         export default registerAs('mongo', () => {
@@ -124,11 +232,12 @@ TideBit Decentralize Finance Version
             useUnifiedTopology: true,
           };
         });
+        
         ```
         
     2. common.module.ts
         
-        ```yaml
+        ```tsx
          MongooseModule.forRootAsync({
               imports: [ConfigModule],
               inject: [ConfigService],
@@ -137,19 +246,20 @@ TideBit Decentralize Finance Version
                 uri: config.get<string>('mongo.uri'),
               }),
             }),
+        
         ```
         
-12. 更改完以下檔案後，依序執行指令
+12. run the commands in order
     - `docker-compose down -v`
-        - 清除之前的 volume
+        - clear the previous volume
     - `docker-compose build`
     - `docker-compose up -d`
     - `docker ps`
     - `docker exec -it <CONTAINER_ID> bin/bash`
     - `mongosh`
     - `rs.status()`
-        - 檢查 replica set 狀態
-    - 為了讓容器之間可以互相連線，host 需設定為 docker-compose.yml 裡面的 service 名稱
+        - check the status of replica set
+    - To ensure the connection between containers, revise the host of `service` in docker-compose.yml
     
     ```bash
     rs.initiate({
@@ -160,13 +270,13 @@ TideBit Decentralize Finance Version
     ```
     
     - `rs.status()`
-    - 其餘指令
+    - Other commands
         - `docker network inspect mongodb-net`
-            - 檢查 mongodb-net 網路
+            - Check the network of mongodb-net
         - `docker network ls`
-            - 列出所有網路
+            - list all networks
 
-## Frontend
+### Frontend
 
 1. `cd ../`
     1. `move to tidebit-defi-project directory`
@@ -182,17 +292,17 @@ TideBit Decentralize Finance Version
     
     # Install dependencies only when needed
     FROM base AS deps
-    # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+    # Check <https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine> to understand why libc6-compat might be needed.
     RUN apk add --no-cache libc6-compat
     WORKDIR /app
     
     # Install dependencies based on the preferred package manager
     COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-    RUN \
-      if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-      elif [ -f package-lock.json ]; then npm ci; \
-      elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-      else echo "Lockfile not found." && exit 1; \
+    RUN \\
+      if [ -f yarn.lock ]; then yarn --frozen-lockfile; \\
+      elif [ -f package-lock.json ]; then npm ci; \\
+      elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \\
+      else echo "Lockfile not found." && exit 1; \\
       fi
     
     # Rebuild the source code only when needed
@@ -202,7 +312,7 @@ TideBit Decentralize Finance Version
     COPY . .
     
     # Next.js collects completely anonymous telemetry data about general usage.
-    # Learn more here: https://nextjs.org/telemetry
+    # Learn more here: <https://nextjs.org/telemetry>
     # Uncomment the following line in case you want to disable telemetry during the build.
     # ENV NEXT_TELEMETRY_DISABLED 1
     
@@ -229,7 +339,7 @@ TideBit Decentralize Finance Version
     RUN chown nextjs:nodejs .next
     
     # Automatically leverage output traces to reduce image size
-    # https://nextjs.org/docs/advanced-features/output-file-tracing
+    # <https://nextjs.org/docs/advanced-features/output-file-tracing>
     COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
     COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
     
@@ -242,14 +352,16 @@ TideBit Decentralize Finance Version
     ENV HOSTNAME "0.0.0.0"
     
     # server.js is created by next build from the standalone output
-    # https://nextjs.org/docs/pages/api-reference/next-config-js/output
+    # <https://nextjs.org/docs/pages/api-reference/next-config-js/output>
     CMD ["node", "server.js"]
+    
     ```
     
 8. revise the code in `src/constants/config.ts`
     
     ```yaml
-    export const API_URL = 'http://192.168.1.111';
+    export const API_URL = '<http://192.168.1.111>';
+    
     ```
     
 9. revise the `docker-compose.yml` in `tbd-backend`
@@ -298,9 +410,9 @@ TideBit Decentralize Finance Version
         
         volumes:
           mongodb-data:
+        
         ```
         
 10. run the command in the root directory of `tbd-backend`
     - `docker-compose build`
     - `docker-compose up -d`
-

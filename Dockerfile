@@ -1,5 +1,11 @@
 FROM node:18-alpine AS base
 
+# 定義一個建構階段的參數 API_URL
+ARG API_URL
+
+# 將建構階段的參數設置為環境變數，以便在應用運行時使用
+ENV API_URL=${API_URL}
+
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.

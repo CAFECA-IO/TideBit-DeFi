@@ -27,11 +27,11 @@ export class MyAssetsPage {
   // Info: (20231013 - Jacky) Check balance higher than 20
   async checkBalance() {
     await this.page.locator('#ShowBalanceButton').click();
-    const assetsAvailable = await this.page
+    const assetsAvailable = (await this.page
       .locator(
         '#__next > div > div:nth-child(6) > main > div > div > div.pt-10 > div:nth-child(2) > div:nth-child(3) > span:nth-child(1)'
       )
-      .textContent();
+      .textContent()) as string;
     expect(
       Number(
         (assetsAvailable as string)

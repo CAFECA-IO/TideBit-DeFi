@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  nextjs-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - API_URL=http://nestjs-app:3001
+    # depends_on:
+    #   - nestjs-app
+    networks:
+      - mongodb-net
+
+networks:
+  mongodb-net:
+    external: true
+
+volumes:
+  mongodb-data:

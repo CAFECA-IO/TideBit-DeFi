@@ -1,17 +1,25 @@
-import {useState, Dispatch, SetStateAction, useEffect, useRef, useCallback} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useCallback} from 'react';
 import {
-  DELAYED_HIDDEN_SECONDS,
   INPUT_VALIDATION_DELAY,
   TRADING_INPUT_STEP,
+  TYPING_KEYUP_DELAY,
 } from '../../constants/display';
 import useStateRef from 'react-usestateref';
+import SafeMath from '../../lib/safe_math';
+import {validateNumberFormat} from '../../lib/common';
 
 interface ITradingInputProps {
   inputInitialValue: number;
   getInputValue?: (props: number) => void;
+  getIsValueValid?: (props: boolean) => void;
+  onTypingStatusChange?: (props: boolean) => void;
 
   inputValueFromParent?: number;
   setInputValueFromParent?: Dispatch<SetStateAction<number>>;
+
+  inputId: string;
+  decrementBtnId: string;
+  incrementBtnId: string;
 
   inputName: string;
   decrementBtnSize: string;
@@ -44,31 +52,50 @@ const TradingInput = ({
   setInputValueFromParent,
   inputPlaceholder,
   getInputValue,
+  getIsValueValid,
+
+  inputId,
+  decrementBtnId,
+  incrementBtnId,
 
   lowerLimit,
   upperLimit,
 
   reachOppositeLimit,
   disabled,
-
-  ...otherProps
+  onTypingStatusChange,
 }: ITradingInputProps) => {
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
-  const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
+  const [inputValue, setInputValue, inputValueRef] = useStateRef<number | string>(
+    inputInitialValue
+  );
 
-  const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
+  const [validationTimeout, setValidationTimeout] = useStateRef<ReturnType<
     typeof setTimeout
   > | null>(null);
+
+  const [typingTimeout, setTypingTimeout] = useStateRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef<boolean>(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
   const passValueHandler = useCallback(
-    (data: number) => {
-      getInputValue && getInputValue(data);
+    (data: number | string) => {
+      getInputValue && getInputValue(+data);
+
+      if (validateNumberFormat(data)) {
+        getIsValueValid && getIsValueValid(true);
+      } else {
+        getIsValueValid && getIsValueValid(false);
+      }
     },
     [getInputValue]
   );
 
+  // Info: [TradeTab] 透過 isTyping 跟 checkTpSlWithinBounds 來檢查 input 是否正當 (20230927 - Shirley)
   const validateInput = (value: number) => {
     if (upperLimit && value >= upperLimit) {
       setInputValue(upperLimit);
@@ -86,7 +113,7 @@ const TradingInput = ({
       passValueHandler(lowerLimit);
       return;
     } else if (upperLimit && lowerLimit === upperLimit) {
-      // Do nothing
+      // Info: Do nothing (20230617 - Shirley)
       return;
     } else {
       setInputValue(value);
@@ -95,38 +122,60 @@ const TradingInput = ({
     }
   };
 
-  const debounceValidation = (value: number) => {
+  const debounceValidation = (value: number | string) => {
     if (validationTimeout) {
       clearTimeout(validationTimeout);
     }
 
     const newTimeout = setTimeout(() => {
-      validateInput(value);
+      if (regex.test(value.toString())) {
+        const numberValue = +value;
+        if (numberValue === upperLimit && numberValue === lowerLimit) {
+          return;
+        }
+
+        if (SafeMath.isNumber(value)) {
+          validateInput(+value);
+        } else {
+          passValueHandler(value);
+        }
+      }
     }, INPUT_VALIDATION_DELAY);
 
     setValidationTimeout(newTimeout);
   };
 
+  const onKeyDown = () => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    setIsTyping(true);
+  };
+
+  const onKeyUp = () => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      setIsTyping(false);
+    }, TYPING_KEYUP_DELAY);
+
+    setTypingTimeout(newTimeout);
+  };
+
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
-    if (regex.test(value)) {
-      const numberValue = Number(value);
-      if (numberValue === upperLimit && numberValue === lowerLimit) {
-        return;
-      }
+    setInputValue(value);
+    passValueHandler(value);
 
-      setInputValue(numberValue);
-      passValueHandler(numberValue);
-
-      debounceValidation(numberValue);
-    } else {
-      setInputValue(0);
-    }
+    debounceValidation(value);
   };
 
   const incrementClickHandler = () => {
-    const change = inputValue + TRADING_INPUT_STEP;
+    const change = +inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     if (upperLimit && changeRounded >= upperLimit) {
@@ -137,16 +186,17 @@ const TradingInput = ({
       passValueHandler(lowerLimit);
       return;
     }
+
     setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };
 
   const decrementClickHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
+    const change = +inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    // minimum margin is 0.01
-    if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
+    // Info: minimum margin is 0.01 (20230714 - Shirley)
+    if (+inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
       return;
     }
     setInputValue(changeRounded);
@@ -162,21 +212,26 @@ const TradingInput = ({
   }, [inputValueFromParent, setInputValueFromParent, disabled]);
 
   useEffect(() => {
-    // Info: Clean up validation timeout on unmount (20230424 - Shirley)
+    // Info: Clean up validation timeout when unmount (20230424 - Shirley)
     return () => {
       if (validationTimeout) {
         clearTimeout(validationTimeout);
       }
+
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     };
-  }, [validationTimeout]);
+  }, [validationTimeout, typingTimeout]);
+
+  useEffect(() => {
+    onTypingStatusChange && onTypingStatusChange(isTypingRef.current);
+  }, [isTypingRef.current]);
 
   return (
     <>
-      {' '}
-      {/* ---margin input area--- */}
       <div className="flex items-center justify-center">
-        {/* '-.svg' symbol */}
-        <button type="button" onClick={decrementClickHandler}>
+        <button id={decrementBtnId} type="button" onClick={decrementClickHandler}>
           <svg
             id="Group_15147"
             data-name="Group 15147"
@@ -206,8 +261,9 @@ const TradingInput = ({
 
         <div className="">
           <input
+            id={inputId}
             type="number"
-            className={`${inputSize} bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
+            className={`${inputSize} rounded-none bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
             disabled={
               disabledStateRef.current ||
               (Number(inputValueRef.current) === upperLimit &&
@@ -217,11 +273,12 @@ const TradingInput = ({
             name={inputName}
             onChange={inputChangeHandler}
             placeholder={inputPlaceholder}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
           />
         </div>
 
-        {/* '+.svg' symbol */}
-        <button type="button" onClick={incrementClickHandler} className="">
+        <button id={incrementBtnId} type="button" onClick={incrementClickHandler} className="">
           <svg
             id="Group_15149"
             data-name="Group 15149"

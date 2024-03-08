@@ -35,7 +35,7 @@ export interface ILineGraphProps {
 export interface ITicker {
   instId: string;
   currency: ICurrency;
-  chain: string;
+  name: string;
 }
 
 export interface ITickerProperty extends ITicker {
@@ -70,7 +70,7 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
     Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
   const ticker: ITickerData = {
     ...data,
-    instId: `${data.currency}-${unitAsset}`,
+    instId: data.instId,
     price,
     priceChange,
     fluctuating,
@@ -83,19 +83,19 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   return ticker;
 });
 
-export const toDummyTickers: {[currency in ICurrency]: ITickerData} = dummyTickers.reduce(
+export const toDummyTickers: {[instId: string]: ITickerData} = dummyTickers.reduce(
   (acc, ticker) => {
-    acc[ticker.currency] = ticker;
+    acc[ticker.instId] = ticker;
     return acc;
   },
-  {} as {[currency in ICurrency]: ITickerData}
+  {} as {[instId: string]: ITickerData}
 );
 
 export const dummyTicker: ITickerData = dummyTickers[0];
 
-export const getDummyTicker = (currency: ICurrency) => {
+export const getDummyTicker = (instId: string) => {
   const data =
-    TRADING_CRYPTO_DATA.find(ticker => ticker.currency === currency) || TRADING_CRYPTO_DATA[0];
+    TRADING_CRYPTO_DATA.find(ticker => ticker.instId === instId) || TRADING_CRYPTO_DATA[0];
   const dataArray = randomArray(1100, 1200, 10);
   // const strokeColor = strokeColorDisplayed(dataArray);
   const price = parseFloat((Math.random() * 1000).toFixed(2));
@@ -106,7 +106,7 @@ export const getDummyTicker = (currency: ICurrency) => {
   const tradingVolume = (Math.random() * 1000).toFixed(2);
   const dummyTicker: ITickerData = {
     ...data,
-    instId: `${data.currency}-${unitAsset}`,
+    instId: data.instId,
     price,
     priceChange,
     fluctuating,
@@ -173,9 +173,9 @@ export interface ISortedTrade {
 
 export const convertToTickerMartket = (tickerProperty: ITickerProperty, marketData: ITBETicker) => {
   const ticker: ITickerMarket = {
-    instId: `${tickerProperty.currency}-${unitAsset}`,
+    instId: tickerProperty.instId,
     currency: tickerProperty.currency,
-    chain: tickerProperty.chain,
+    name: tickerProperty.name,
     tradingVolume: marketData.volume,
     price: parseFloat(marketData.last),
     upOrDown:
@@ -195,7 +195,7 @@ export const convertToTickerMartketData = (marketData: ITBETicker) => {
   let ticker: ITickerMarket | null = null;
   if (marketData.quoteUnit.toUpperCase() === unitAsset) {
     const tickerData: ITickerProperty | undefined = TRADING_CRYPTO_DATA.find(
-      ticker => ticker.currency === marketData.baseUnit.toUpperCase()
+      ticker => ticker.instId === marketData.instId
     );
     if (tickerData) {
       ticker = convertToTickerMartket(tickerData, marketData);

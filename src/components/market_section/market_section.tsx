@@ -1,17 +1,22 @@
-import {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
-import {GlobalContext, useGlobal} from '../../contexts/global_context';
-import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
-import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {DEFAULT_ICON} from '../../constants/display';
+import {DEFAULT_CRYPTO} from '../../constants/config';
+import {TickerProvider} from '../../contexts/ticker_context';
 
-const MarketSection = () => {
+interface IMarketSectionProps {
+  briefs: IRecommendedNews[];
+  hideTradingView?: boolean;
+}
+
+const MarketSection = (props: IMarketSectionProps) => {
   const marketCtx = useContext(MarketContext);
-  const {layoutAssertion} = useGlobal();
 
   const {
     icon,
@@ -28,22 +33,21 @@ const MarketSection = () => {
     tradingValue,
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
-  const displayedTickerHeader =
-    layoutAssertion === 'mobile' ? <TradingHeaderMobile /> : <TradingHeader />;
+  const tradeStatisticsStyle = props?.hideTradingView
+    ? 'mt-5 lg:mt-20 lg:pl-5'
+    : 'mt-5 lg:mt-8 lg:pl-5';
 
-  const displayedTradingView =
-    layoutAssertion === 'mobile' ? <TradingViewMobile /> : <TradingView />;
+  const displayedTradingView = props?.hideTradingView ? null : <TradingView />;
 
   return (
     <div className="ml-5 py-100px">
-      <div className="ml-5">{displayedTickerHeader}</div>
-
-      <div>
-        {displayedTradingView}
-        {/* <TradingView /> */}
-      </div>
-
-      <div className="mt-5 lg:mt-8 lg:pl-5">
+      <TickerProvider>
+        <div className="ml-5">
+          <TradingHeader />
+        </div>
+        <div className="mx-auto max-w-1920px container">{displayedTradingView}</div>
+      </TickerProvider>
+      <div className={tradeStatisticsStyle}>
         <TradeStatistics
           fiveMin={{
             low: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.low ?? 0,
@@ -68,8 +72,8 @@ const MarketSection = () => {
 
       <div className="mt-5 lg:mt-8 lg:pl-5">
         <CryptoSummary
-          icon={icon ?? ''}
-          label={label ?? ''}
+          icon={icon ?? marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
+          label={label ?? marketCtx.selectedTickerProperty?.name ?? DEFAULT_CRYPTO}
           introduction={introduction ?? ''}
           whitePaperLink={whitePaperLink ?? ''}
           websiteLink={websiteLink ?? ''}
@@ -84,7 +88,7 @@ const MarketSection = () => {
       </div>
 
       <div className="mb-10 mt-5 lg:mt-8 lg:pl-5">
-        <CryptoNewsSection />
+        <CryptoNewsSection briefs={props.briefs} />
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export interface IUserAssets {
   };
 }
 
-export const getDummyUserAssets = (currency: string) => {
+export const getDummyUserAssets = () => {
   const avbl = parseFloat((Math.random() * 1000).toFixed(2));
   const locked = parseFloat((Math.random() * 1000).toFixed(2));
 

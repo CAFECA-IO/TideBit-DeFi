@@ -94,7 +94,7 @@ test('sign CFDOrderCreate high level function', () => {
   };
 
   const message = {
-    ticker: 'ETH',
+    ticker: 'ETH-USDT',
     typeOfPosition: 'BUY',
     price: 21023,
     amount: 2,
@@ -110,7 +110,7 @@ test('sign CFDOrderCreate high level function', () => {
     createTimestamp: Math.ceil(Date.now()),
     fee: 0,
     quotation: {
-      ticker: 'ETH',
+      ticker: 'ETH-USDT',
       targetAsset: 'ETH',
       uniAsset: 'USDT',
       price: 21023,

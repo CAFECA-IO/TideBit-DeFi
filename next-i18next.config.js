@@ -2,8 +2,9 @@ const path = require('path');
 
 const i18nConfig = {
   i18n: {
-    defaultLocale: 'en',
+    defaultLocale: 'tw',
     locales: ['tw', 'en', 'cn'],
+    localeDetection: false,
   },
   localePath: path.resolve('./src/locales'),
 };

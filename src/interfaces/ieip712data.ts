@@ -61,25 +61,18 @@ interface IEIP712Data {
   types: ITypes;
 }
 
-interface IDomain {
+export interface IDomain {
   chainId: string;
   name: string;
   verifyingContract: string;
   version: string;
 }
 
-interface IMessage {
-  title: string;
-  content: string;
-  from: string;
-  to: string;
-}
-
-interface ITypes {
+export interface ITypes {
   [key: string]: IType[];
 }
 
-interface IType {
+export interface IType {
   name: string;
   type: string;
   optional?: boolean;

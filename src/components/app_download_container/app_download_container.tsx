@@ -1,145 +1,72 @@
 import Image from 'next/image';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
+import Link from 'next/link';
 
 type TranslateFunction = (s: string) => string;
 
 const AppDowloadContainer = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  // const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
-  const desktopVersionBreakpoint = 'hidden lg:flex';
-  const mobileVersionBreakpoint = 'flex lg:hidden';
-
   return (
-    <>
-      {/* Desktop */}
-      <div className={`${desktopVersionBreakpoint}`}>
-        <section className={`bg-black py-24`}>
-          <h1 className="flex shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
-            {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
-            <span className="text-cyan-400">
-              {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
-            </span>
-            &nbsp;
-            {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}
-          </h1>
+    <section className={`bg-black flex flex-col items-center w-full px-5 lg:px-20`}>
+      <h1 className="lg:mb-20 mb-10 text-xl font-bold lg:text-4xl xl:text-5xl">
+        {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
+        <span className="text-cyan-400">
+          {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
+        </span>
+        &nbsp;
+        {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}
+      </h1>
 
-          <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
-            <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
-              <div className="flex justify-center">
-                <Image
-                  className="rounded object-cover object-center"
-                  alt="QR Code"
-                  src="/elements/tidebit_qrcode.svg"
-                  width={200}
-                  height={200}
-                />
-              </div>
+      <div className="flex flex-col-reverse items-center justify-center gap-5 lg:flex-row">
+        {/* Info: (20231208 - Julian) QR Code  & App Download Buttons */}
+        <div className="lg:w-1/3 flex flex-col items-center">
+          <div className="mb-5 lg:mb-10 lg:w-200px w-150px">
+            <Image alt="QR Code" src="/elements/tidebit_qrcode.svg" width={200} height={200} />
+          </div>
 
-              <div className="mx-auto mt-10 flex shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
-                <button type="button" className="hover:opacity-80">
-                  <Image
-                    src="/elements/app_store_badge@2x.png"
-                    width={120}
-                    height={40}
-                    alt="app-store"
-                  />
-                </button>
-
-                <button type="button" className="hover:opacity-80">
-                  <Image
-                    src={'/elements/google_play_badge@2x.png'}
-                    width={155}
-                    height={40}
-                    alt="google play"
-                  />
-                </button>
-              </div>
-            </div>
-            <div className="mx-auto flex w-full flex-col flex-wrap items-center justify-center pt-20 pl-1/10 md:w-3/5 lg:pl-0 lg:pt-0">
+          <div className="flex items-center justify-center space-x-4">
+            <Link
+              id="AppStoreLink"
+              target="_blank"
+              href="/coming-soon"
+              className="hover:opacity-80"
+            >
               <Image
-                className="flex justify-center rounded object-contain"
-                alt="hero"
-                src="/elements/group_15202@2x.png"
-                width={1364}
-                height={792}
+                src="/elements/app_store_badge@2x.png"
+                width={120}
+                height={40}
+                alt="app-store"
               />
-            </div>
-          </div>
-        </section>
-      </div>
+            </Link>
 
-      {/* Mobile */}
-      <div className={`${mobileVersionBreakpoint}`}>
-        <section className={`bg-black`}>
-          <div className="flex shrink-0 flex-col items-center justify-center space-y-2 px-2 pt-0 pb-10 text-2xl font-bold text-white sm:space-y-5 sm:text-3xl md:px-20 md:pb-20 md:text-4xl">
-            <div>
-              {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
-              <span className="text-cyan-400">
-                {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
-              </span>
-            </div>
-            <div>{t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}</div>
-          </div>
-
-          <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
-            <div className="mx-auto flex w-4/5 flex-col flex-wrap items-center justify-center py-5 pl-1/10 md:w-4/5">
+            <Link
+              id="GooglePlayLink"
+              target="_blank"
+              href="/coming-soon"
+              className="hover:opacity-80"
+            >
               <Image
-                className="flex justify-center rounded object-contain"
-                alt="hero"
-                src="/elements/group_15202@2x.png"
-                width={1364}
-                height={792}
+                src={'/elements/google_play_badge@2x.png'}
+                width={155}
+                height={40}
+                alt="google play"
               />
-            </div>
-
-            <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
-              {/* QR Code Size Automatic Toggle */}
-              <div className="hidden justify-center md:flex">
-                <Image
-                  className="rounded object-cover object-center"
-                  alt="QR Code"
-                  src="/elements/tidebit_qrcode.png"
-                  width={150}
-                  height={150}
-                />
-              </div>
-
-              <div className="flex justify-center md:hidden">
-                <Image
-                  className="rounded object-cover object-center"
-                  alt="QR Code"
-                  src="/elements/tidebit_qrcode.png"
-                  width={100}
-                  height={100}
-                />
-              </div>
-
-              <div className="mx-auto mt-5 flex shrink-0 flex-wrap items-center justify-center space-x-3 sm:mt-10 sm:space-x-4 md:ml-auto md:mr-0">
-                <button type="button" className="hover:opacity-80">
-                  <Image
-                    src="/elements/group_15225@2x.png"
-                    width={134}
-                    height={40}
-                    alt="app-store"
-                  />
-                </button>
-
-                <button type="button" className="hover:opacity-80">
-                  <Image
-                    src={'/elements/group_15232@2x.png'}
-                    width={135}
-                    height={40}
-                    alt="google play"
-                  />
-                </button>
-              </div>
-            </div>
+            </Link>
           </div>
-        </section>
+        </div>
+        {/* Info: (20231208 - Julian) Exchange Image */}
+        <div className="w-300px lg:w-2/3 max-w-700px">
+          <Image
+            alt="exchange image"
+            src="/elements/group_15202@2x.png"
+            width={1364}
+            height={792}
+          />
+        </div>
       </div>
-    </>
+    </section>
   );
 };
 

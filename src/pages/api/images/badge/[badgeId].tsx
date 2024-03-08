@@ -1,6 +1,6 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {ImageResponse} from 'next/server';
-import {timestampToString, adjustTimestamp} from '../../../../lib/common';
+/*eslint-disable @next/next/no-img-element*/
+import {NextApiRequest} from 'next';
+import {ImageResponse} from 'next/og';
 import {IBadge} from '../../../../interfaces/tidebit_defi_background/badge';
 import {
   BADGE_LIST,
@@ -8,55 +8,51 @@ import {
   BG_WIDTH_OF_SHARING_RECORD,
   BG_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
-import {DOMAIN, API_URL} from '../../../../constants/config';
+import {DOMAIN, API_URL, API_VERSION} from '../../../../constants/config';
+import React from 'react';
+import {accountTruncate, adjustTimestamp, timestampToString} from '../../../../lib/common';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
-import {Buffer} from 'buffer';
 
 export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // ToDo:(20230525 - Julian) send to API
+export default async function handler(req: NextApiRequest) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const badgeId = params.pop();
-  const apiUrl = `${API_URL}/public/shared/badge/${badgeId}`;
+  const apiUrl = `${API_URL}/api/${API_VERSION}/badges/${badgeId}`;
   const tz = Number(url.searchParams.get('tz'));
 
-  const dummySharingBadge = {
-    badgeId: 'BADGE0001',
-    badgeName: 'Monthly_Top_20',
-    userId: '0x553687656C04b',
-    receiveTime: 1636789600,
+  const dummySharingBadge: IBadge = {
+    badgeId: 'BADGE_ID',
+    badgeName: '',
+    userId: 'X',
+    receiveTime: 0,
   };
 
   let sharingBadge: IBadge = dummySharingBadge;
 
-  // ToDo:(20230525 - Julian) get Data from API
-  // const fetchBagde = async () => {
-  //   try {
-  //     const badgeResponse = await fetch(apiUrl, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     });
-  //     const badge = await badgeResponse.json();
+  // ToDo:(20230525 - Julian) get Data from context
+  const fetchBagde = async () => {
+    try {
+      const badgeResponse = await fetch(apiUrl, {
+        method: 'GET',
+      });
+      const badge = await badgeResponse.json();
 
-  //     if (badge?.success) {
-  //       if (isSharingOrder(order?.data)) {
-  //         sharingOrder = order?.data;
-  //       }
-  //     }
-  //   } catch (e) {
-  //     // TODO: error handling
-  //   }
+      if (badge?.success) {
+        sharingBadge = badge?.data;
+      }
+    } catch (e) {
+      // TODO: error handling (20230713 - Julian)
+    }
 
-  //   return sharingOrder;
-  // };
+    return sharingBadge;
+  };
 
   try {
-    // ToDo:(20230526 - Julian) API data
-    //await fetchBagde();
+    await fetchBagde();
 
     const offset = new Date().getTimezoneOffset() / 60;
     const adReceiveTimestamp = adjustTimestamp(offset, sharingBadge.receiveTime ?? 0, tz);
@@ -74,18 +70,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Info:(20230526 - Julian) adjustTimestamp
   const {date: receiveDate} = timestampToString(receiveTime);
 
-  // ToDo: (20230525 - Julian) QRCode
+  // Info: (20230525 - Julian) QRCode
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const displayedUser = userId.slice(-1).toUpperCase();
-  const displayedUserName = userId;
+  const displayedUserName = accountTruncate(userId, 16);
   const displayedBadgeName = badgeName.replaceAll('_', ' ');
 
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
   const badgeImageUrl = DOMAIN + badgeImage;
   const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png';
 
-  const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  // Info:(20230714 - Julian) Page Link icon
+  const marketIconUrl = DOMAIN + '/elements/market_icon@2x.png';
+  const leaderboardIconUrl = DOMAIN + '/elements/leaderboard_icon@2x.png';
+
+  const BarlowBuffer = new Uint8Array(
+    atob(BARLOW_BASE64)
+      .split('')
+      .map(char => char.charCodeAt(0))
+  ).buffer;
 
   const imageResponse = new ImageResponse(
     (
@@ -127,7 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 justifyContent: 'space-between',
               }}
             >
@@ -135,7 +139,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                 }}
               >
                 <div
@@ -156,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <span
                     style={{
                       position: 'absolute',
-                      fontSize: 40,
+                      fontSize: 30,
                       fontWeight: 'extrabold',
                       color: '#F2F2F2',
                     }}
@@ -176,51 +180,73 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   {displayedUserName}
                 </p>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#F2F2F2',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#8B8E91',
-                  }}
-                >
-                  Date :
-                </span>
-                {receiveDate}
+              <div style={{display: 'flex'}}>
+                <img src={`${qrcodeUrl}`} width={70} height={70} alt="qr_code" />
               </div>
             </div>
             <div
               style={{
                 width: '100%',
-                marginTop: '30px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
               }}
             >
-              <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde" />
-              <p
+              <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde_image" />
+
+              <div
                 style={{
-                  marginTop: '10px',
-                  fontSize: '36px',
-                  color: `#F2F2F2`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginTop: '-20px',
                 }}
               >
-                {displayedBadgeName}
-              </p>
+                <p
+                  style={{
+                    fontSize: '40px',
+                    fontWeight: 'bold',
+                    color: `#F2F2F2`,
+                  }}
+                >
+                  {displayedBadgeName}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: '18px',
+                    marginTop: '-20px',
+                  }}
+                >
+                  <span style={{color: '#8B8E91'}}>Date : </span>
+                  <p style={{color: '#F2F2F2'}}>{receiveDate}</p>
+                </div>
+              </div>
             </div>
             <div
               style={{
                 display: 'flex',
                 justifySelf: 'end',
+                marginTop: 'auto',
                 marginLeft: 'auto',
               }}
             >
-              <img src={`${qrcodeUrl}`} width={100} height={100} alt="qr_code" />
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <img src={`${marketIconUrl}`} width={70} height={70} alt="market_icon" />
+                <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Market</p>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginLeft: '30px',
+                }}
+              >
+                <img src={`${leaderboardIconUrl}`} width={70} height={70} alt="market_icon" />
+                <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Leaderboard</p>
+              </div>
             </div>
           </div>
         </div>

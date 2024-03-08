@@ -1,27 +1,33 @@
 import {ImCross} from 'react-icons/im';
-import {
-  DELAYED_HIDDEN_SECONDS,
-  TypeOfBorderColor,
-  TypeOfPnLColor,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, TypeOfBorderColor} from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {findCodeByReason, locker, timestampToString, wait} from '../../lib/common';
-import {useContext, useEffect, useState} from 'react';
+import {
+  findCodeByReason,
+  getValueByProp,
+  locker,
+  numberFormatted,
+  roundToDecimalPlaces,
+  timestampToString,
+  validateNumberFormat,
+  wait,
+} from '../../lib/common';
+import React, {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {useTranslation} from 'react-i18next';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
-import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {useTranslation} from 'next-i18next';
+import {unitAsset} from '../../constants/config';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
-import {CustomError, isCustomError} from '../../lib/custom_error';
+import {isCustomError} from '../../lib/custom_error';
+import SafeMath from '../../lib/safe_math';
+import Tooltip from '../tooltip/tooltip';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -36,10 +42,10 @@ const PositionUpdatedModal = ({
   modalClickHandler,
   openCfdDetails,
   updatedProps,
-  ...otherProps
 }: IPositionUpdatedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const notificationCtx = useContext(NotificationContext);
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -47,11 +53,17 @@ const PositionUpdatedModal = ({
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
+  const [disabled, setDisabled] = useState(false);
+
+  const displayedPositionColor = 'text-tidebitTheme';
+  const displayedBorderColor = TypeOfBorderColor.EQUAL;
+  const layoutInsideBorder = 'flex justify-between w-full';
+  const spreadSymbol = openCfdDetails.openSpreadFee > 0 ? '+' : '-';
 
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
     const gslFee = updatedProps?.guaranteedStop
-      ? Number((Number(gsl) * position.openValue).toFixed(2))
+      ? roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, position.openValue), 2)
       : 0;
     const request: IApplyUpdateCFDOrder = {
       operation: CFDOperation.UPDATE,
@@ -164,7 +176,12 @@ const PositionUpdatedModal = ({
 
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler position_updated_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
@@ -204,19 +221,47 @@ const PositionUpdatedModal = ({
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    (updatedProps.takeProfit === 0 && openCfdDetails.takeProfit === undefined) ||
+    // Info: 如果原本是0、undefined，updatedProps也是０、undefined，則不顯示 (20231103 - Shirley)
+    (!openCfdDetails.takeProfit && !!updatedProps.takeProfit === !!openCfdDetails.takeProfit) ||
     updatedProps.takeProfit === openCfdDetails?.takeProfit
       ? setTpTextStyle('text-lightWhite')
       : setTpTextStyle('text-lightYellow2');
 
-    (updatedProps.stopLoss === 0 && openCfdDetails.stopLoss === undefined) ||
+    (!openCfdDetails.stopLoss && !!updatedProps.stopLoss === !!openCfdDetails.stopLoss) ||
     updatedProps.stopLoss === openCfdDetails?.stopLoss
       ? setSlTextStyle('text-lightWhite')
       : setSlTextStyle('text-lightYellow2');
   };
 
+  const validateRequest = (request: IUpdatedCFDInputProps) => {
+    const propertiesToCheck = ['stopLoss', 'takeProfit'];
+
+    const isValidFormat = propertiesToCheck.every(prop => {
+      const value = getValueByProp(request, prop);
+
+      if (value === undefined && (prop === 'stopLoss' || prop === 'takeProfit')) {
+        return true;
+      }
+
+      const each = validateNumberFormat(value);
+      return each;
+    });
+
+    if (!isValidFormat) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  };
+
   useEffect(() => {
     renewDataStyle();
+
+    if (updatedProps) {
+      validateRequest(updatedProps);
+    } else {
+      setDisabled(true);
+    }
   }, [globalCtx.visiblePositionUpdatedModal]);
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
@@ -225,39 +270,22 @@ const PositionUpdatedModal = ({
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
-  const displayedTakeProfit =
-    updatedProps?.takeProfit !== undefined
-      ? updatedProps.takeProfit === 0
-        ? '-'
-        : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
-        : undefined
-      : openCfdDetails?.takeProfit
-      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
-      : '-';
+  // Info: updatedProps 都會有值，故判斷：若為0或undefined，則無論跟original是否有出入，都顯示'-'；若不為0或undefined，則判斷跟original是否有出入，有出入就顯示 updatedProps，值相同就顯示 openCfdDetails (20230802 - Shirley)
+  const displayedTakeProfit = !!updatedProps?.takeProfit
+    ? openCfdDetails.takeProfit !== updatedProps.takeProfit
+      ? `${numberFormatted(updatedProps.takeProfit)}`
+      : `${numberFormatted(openCfdDetails.takeProfit)}`
+    : !!openCfdDetails.takeProfit !== !!updatedProps?.takeProfit
+    ? '-'
+    : '-';
 
-  const displayedStopLoss =
-    updatedProps?.stopLoss !== undefined
-      ? updatedProps.stopLoss === 0
-        ? '-'
-        : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
-        : undefined
-      : openCfdDetails?.stopLoss
-      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
-      : '-';
+  const displayedStopLoss = !!updatedProps?.stopLoss
+    ? openCfdDetails.stopLoss !== updatedProps.stopLoss
+      ? `${numberFormatted(updatedProps.stopLoss)}`
+      : `${numberFormatted(openCfdDetails.stopLoss)}`
+    : !!openCfdDetails.stopLoss !== !!updatedProps?.stopLoss
+    ? '-'
+    : '-';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -269,81 +297,109 @@ const PositionUpdatedModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  const displayedPositionColor = 'text-tidebitTheme';
-
-  const displayedBorderColor = TypeOfBorderColor.EQUAL;
-
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
-
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const formContent = (
-    <div className="mt-8 flex flex-col px-6 pb-2">
+    <div className="mt-4 flex flex-col px-2 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={marketCtx.selectedTicker?.tokenImg ?? ''}
+          src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.instId}</div>
       </div>
 
-      <div className="relative flex flex-col items-center pt-1">
+      <div className="relative flex flex-col items-center">
         <div
-          className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-3 w-full flex flex-col justify-center text-center border-1px space-y-3 p-4 text-xs lg:text-sm leading-relaxed text-lightWhite`}
         >
-          <div className="flex flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-              {/* TODO: color variable */}
-              <div className={`${displayedPositionColor}`}>
-                {displayedTypeOfPosition}
-                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
-              </div>
+            <div className={`${displayedPositionColor}`}>
+              {displayedTypeOfPosition}
+              <span className="ml-1 text-lightWhite">{displayedBuyOrSell}</span>
+            </div>
+          </div>
+
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+            <div className="flex items-baseline space-x-1">
+              {/* Info: (20231019 - Julian) Spot Price */}
+              {numberFormatted(openCfdDetails?.openSpotPrice)}
+              {/* Info: (20231019 - Julian) Spread */}
+              <span className={`ml-1 whitespace-nowrap text-xs text-lightGray`}>
+                {spreadSymbol}
+                {numberFormatted(openCfdDetails?.openSpreadFee)}
+              </span>
+              {/* Info: (20231019 - Julian) Price */}
+              <p>
+                → {numberFormatted(openCfdDetails.openPrice)}
+                <span className="ml-1 text-xs text-lightGray">{unitAsset}</span>
+              </p>
+            </div>
+          </div>
+
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
+            <div className="">
+              {displayedTime.date} {displayedTime.time}
+            </div>
+          </div>
+          <div className={`${layoutInsideBorder} items-center`}>
+            <div className="flex">
+              <div className="text-lightGray mr-1">{t('POSITION_MODAL.TP_AND_SL')}</div>
+              <Tooltip id="UpdateTpSlTip" tooltipPosition="left-2">
+                <p className="w-56 text-left text-sm font-medium text-white">
+                  {t('POSITION_MODAL.TP_AND_SL_HINT')}
+                </p>
+              </Tooltip>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-              <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
-                <span className="ml-1 text-lightGray">{unitAsset}</span>
-                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
-              </div>
+            <div className="">
+              <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
+              <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
+              <span className={`ml-1 text-lightGray text-xs`}>{unitAsset}</span>
             </div>
+          </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div>
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
-              <div className="">
-                <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
-                <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
-              </div>
-            </div>
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
+            <div className="flex">
+              <div className={`${gtslTextStyle} flex`}>
+                {displayedGuaranteedStopSetting}
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
-              <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
+                {updatedProps?.guaranteedStop || openCfdDetails?.guaranteedStop ? (
+                  <span className="flex items-baseline">
+                    <span className="text-lightGray mx-1">({t('POSITION_MODAL.FEE')}:</span>
+                    <span className="">{`${numberFormatted(
+                      (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0
+                    )}`}</span>
+                    <span className="text-lightGray ml-1 text-xs">{unitAsset}</span>
+                    <span className="text-lightGray text-sm">)</span>
+                  </span>
+                ) : null}
+              </div>
+
+              <Tooltip id="UpdateGslTip" className="top-px ml-1">
+                <p className="w-56 text-left text-sm font-medium text-white">
+                  {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                </p>
+              </Tooltip>
             </div>
           </div>
         </div>
 
-        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-5 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
+          id="UpdateSubmitButton"
+          disabled={disabled}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+          className={`whitespace-nowrap rounded border-0 bg-tidebitTheme w-9/10 sm:w-300px py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -352,39 +408,34 @@ const PositionUpdatedModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          {/*content & panel*/}
-          <div
-            // ref={modalRef}
-            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-          >
-            {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
-                {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {/*body*/}
-            {formContent}
-            {/*footer*/}
-            <div className="flex items-center justify-end rounded-b p-2"></div>
+    /* Info: (20231019 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 bg-black/25 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+      <div
+        id="UpdatePositionModal"
+        className="relative flex h-auto w-90vw flex-col p-4 rounded-xl bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-420px sm:p-8"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex w-full flex-col items-center">
+            <h3 className="w-full text-center text-xl font-normal text-lightWhite lg:text-3xl">
+              {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
+            </h3>
+            <p className="text-base text-lightGray">{t('POSITION_MODAL.CFD_TRADE')}</p>
           </div>
+
+          <button
+            id="UpdateModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+          >
+            <ImCross />
+          </button>
         </div>
+        {formContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default PositionUpdatedModal;

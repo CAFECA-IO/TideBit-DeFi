@@ -1,37 +1,15 @@
-import React, {useState, useEffect, useRef, forwardRef} from 'react';
-
-// interface UseOuterClickProps { // initialVisibleState: boolean; // componentVisible: boolean; //
-// setComponentVisible?: React.Dispatch<React.SetStateAction<boolean>>; // }
-
-// ClassAttributes<HTMLDivElement>.ref?: LegacyRef<HTMLDivElement>
+import {useEffect, useRef} from 'react';
+import useStateRef from 'react-usestateref';
 
 function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
-  const [componentVisible, setComponentVisible] = useState<boolean>(initialVisibleState);
-
-  // const ref = useRef<HTMLDivElement>(null); // forwardRef(otherProps?.refP) ?? // const ref =
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [componentVisible, setComponentVisible, componentVisibleRef] =
+    useStateRef<boolean>(initialVisibleState);
 
   const targetRef = useRef<T>(null);
 
-  // function assertIsNode(e: EventTarget | null): asserts e is Node {
-  //   if (!e || !('nodeType' in e)) {
-  //     throw new Error(`Node expected, got ${e}`);
-  //   }
-  // }
-
-  // const handleClickOutside = (this: Document, event: {target: MouseEvent}): void => {
-  //   // if (!componentVisible) return;
-  //   // assertIsNode(event.target);
-
-  //   // HTMLElement
-  //   if (event.target instanceof Node && !ref.current?.contains(event.target)) {
-  //     setComponentVisible(false);
-  //   }
-  // };
-
   function handleClickOutside(this: Document, event: MouseEvent): void {
-    // event.target instanceof HTMLElement
-    // event.target instanceof Node
-    // assertIsNode(event.target);
     if (event.target instanceof HTMLElement && !targetRef.current?.contains(event.target)) {
       setComponentVisible(false);
     }
@@ -44,7 +22,7 @@ function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
     };
   }, []);
 
-  return {targetRef: targetRef, componentVisible, setComponentVisible};
+  return {targetRef: targetRef, componentVisible: componentVisibleRef.current, setComponentVisible};
 }
 
 export default useOuterClick;

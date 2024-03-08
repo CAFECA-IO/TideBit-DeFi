@@ -1,8 +1,8 @@
 import Lottie from 'lottie-react';
 import canceledAnimation from '../../../public/animation/lf30_editor_frrs7znj.json';
 import RippleButton from '../ripple_button/ripple_button';
-import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
+import React from 'react';
 
 export interface IFailedModal {
   modalRef?: React.RefObject<HTMLDivElement>;
@@ -15,14 +15,12 @@ export interface IFailedModal {
 }
 
 const CanceledModal = ({
-  modalRef: modalRef,
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
   modalContent,
   btnMsg,
   btnUrl,
-  ...otherProps
 }: IFailedModal) => {
   const cancellationContent = (
     <div className="relative flex-auto pt-1">
@@ -36,8 +34,9 @@ const CanceledModal = ({
           <div className="mt-10 text-base text-lightWhite">{modalContent}</div>
           <div className="mt-5">
             {btnUrl && btnMsg ? (
-              <a href={btnUrl} target="_blank">
+              <a href={btnUrl} target="_blank" rel="noreferrer">
                 <RippleButton
+                  id="CanceledModalButton"
                   className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"
                   onClick={modalClickHandler}
@@ -47,6 +46,7 @@ const CanceledModal = ({
               </a>
             ) : btnMsg ? (
               <RippleButton
+                id="CanceledModalButton"
                 className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                 buttonType="button"
                 onClick={modalClickHandler}
@@ -61,41 +61,27 @@ const CanceledModal = ({
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
-      <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
-          {' '}
-          {/*content & panel*/}
-          <div
-            id="canceledModal"
-            // ref={modalRef}
-            className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+    /* Info: (20231204 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="CanceledModal"
+        className="relative flex h-420px w-296px flex-col rounded-xl py-6 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
+            {modalTitle}
+          </h3>
+          <button
+            id="CanceledModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
           >
-            {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
-                {modalTitle}
-                {/* {(transferProcessStep = 'deposit-' ? 'Deposit' : 'Withdraw')} */}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {/*body*/}
-            {cancellationContent}
-            {/*footer*/}
-            <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
+            <ImCross />
+          </button>
         </div>
+        {cancellationContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
   return <div>{isDisplayedModal}</div>;

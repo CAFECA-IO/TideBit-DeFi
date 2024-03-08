@@ -1,20 +1,21 @@
 import OrderSection from '../order_section/order_section';
 import MarketSection from '../market_section/market_section';
-import {useGlobal} from '../../contexts/global_context';
-import OrderSectionMobile from '../order_section_mobile/order_section_mobile';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import React from 'react';
 
-const TradePageBody = () => {
-  const {layoutAssertion} = useGlobal();
+interface ITradePageBodyProps {
+  briefs: IRecommendedNews[];
+  hideTradingView?: boolean;
+  hideOpenLineGraph?: boolean;
+}
 
-  const displayedOrdersection =
-    layoutAssertion === 'mobile' ? <OrderSectionMobile /> : <OrderSection />;
-
+const TradePageBody = (props: ITradePageBodyProps) => {
   return (
     <>
       <div className="flex min-h-screen flex-col overflow-hidden">
-        <MarketSection />
+        <MarketSection briefs={props.briefs} hideTradingView={props?.hideTradingView} />
 
-        {displayedOrdersection}
+        <OrderSection hideOpenLineGraph={props?.hideOpenLineGraph} />
       </div>
     </>
   );

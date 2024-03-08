@@ -6,87 +6,173 @@ import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
-import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {FiChevronDown} from 'react-icons/fi';
+import {SKELETON_DISPLAY_TIME, DEFAULT_RECEIPTS_SHOW_ROW} from '../../constants/display';
 import Skeleton from 'react-loading-skeleton';
 import {
   ICFDOrder,
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {useTranslation} from 'next-i18next';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
 const ReceiptSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext);
 
-  const listHistories = userCtx.histories;
+  const listHistories: IAcceptedOrder[] = userCtx.histories.map(v => {
+    return {
+      ...v,
+      isClosed: false,
+    };
+  });
+
+  /* Info: (20230605 - Julian) 用於 isClosed 的判斷 */
+  const [receipts, setReceipts] = useState<IAcceptedOrder[]>(listHistories);
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
-  const [filteredDate, setFilteredDate] = useState<string[]>([]);
+  const [filteredDate, setFilteredDate] = useState({
+    startTimeStamp: 0,
+    endTimeStamp: 0,
+  });
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Info: (20230829 - Julian) 用於顯示的 receipts
+  const [sliceReceipts, setSliceReceipts] = useState<IAcceptedOrder[]>([]);
+  // Info: (20230829 - Julian) receipts 顯示行數
+  const [showRow, setShowRow] = useState(DEFAULT_RECEIPTS_SHOW_ROW);
+  // Info: (20230829 - Julian) 是否顯示 See more 按鈕
+  const [isShowMore, setIsShowMore] = useState(true);
+
+  // Info: (20230829 - Julian) 增加顯示行數
+  const seeMoreHandler = () => setShowRow(showRow + DEFAULT_RECEIPTS_SHOW_ROW);
+
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    clearTimeout(timer);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    /* Todo: (20230412 - Julian)
-     * filter receipts by filteredDate #289 */
-    if (searches !== '') {
-      const searchResult = listHistories.filter(v => {
-        const orderType = v.receipt.orderSnapshot.orderType;
-        const targetAsset =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
-        const targetAmount =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
-        const result =
-          orderType.includes(searches || '') ||
-          targetAsset.toLocaleLowerCase().includes(searches || '') ||
-          targetAmount.toString().includes(searches || '');
-        return result;
-      });
-      setFilteredReceipts(searchResult);
-    } else if (filteredTradingType === '' && searches === '') {
-      setFilteredReceipts(listHistories);
-    } else if (filteredTradingType === OrderType.DEPOSIT) {
-      setFilteredReceipts(
-        listHistories.filter(v => {
-          const orderType = v.receipt.orderSnapshot.orderType;
-          return orderType === OrderType.DEPOSIT;
-        })
+    /* Info: (20230605 - Julian)
+     * 1. 先將已關閉的 CFD 訂單列出來
+     * 2. 再去找出 txhash 一樣的訂單，並將 isClosed 設為 true */
+    const closedReceipts = listHistories.filter(v => {
+      return (
+        v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+        (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
       );
-    } else if (filteredTradingType === OrderType.WITHDRAW) {
-      setFilteredReceipts(
-        listHistories.filter(v => v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW)
-      );
-    } else if (filteredTradingType === OrderState.OPENING) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
-        )
-      );
-    } else if (filteredTradingType === OrderState.CLOSED) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
-        )
-      );
-    }
-  }, [filteredTradingType, searches]);
+    });
 
-  const dataMonthList = filteredReceipts
+    const result = listHistories.map(v => {
+      const isClosed = closedReceipts.some(closed => {
+        return closed.receipt.orderSnapshot.id === v.receipt.orderSnapshot.id;
+      });
+      const d = {
+        ...v,
+        isClosed,
+      };
+      return d;
+    });
+
+    setReceipts(result);
+  }, [userCtx.histories]);
+
+  useEffect(() => {
+    // Info: (20230829 - Julian) 每次搜尋都重置 showRow
+    setShowRow(DEFAULT_RECEIPTS_SHOW_ROW);
+
+    const searchResult = receipts
+      .filter(v => {
+        /* Info: (20230605 - Julian) Search by trading type
+         * if filteredTradingType is empty, return all */
+        if (filteredTradingType !== '') {
+          switch (filteredTradingType) {
+            case OrderType.DEPOSIT:
+              return v.receipt.orderSnapshot.orderType === OrderType.DEPOSIT;
+            case OrderType.WITHDRAW:
+              return v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW;
+            case OrderState.OPENING:
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
+              );
+            case OrderState.CLOSED:
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
+              );
+            default:
+              return true;
+          }
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        /* Info: (20230605 - Julian) search by keyword
+         * include orderType, targetAsset, targetAmount, if searches is empty, return all */
+        if (searches.length > 0) {
+          const orderType = v.receipt.orderSnapshot.orderType;
+          const targetAsset =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
+          const targetAmount =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
+
+          const result =
+            orderType.toLocaleLowerCase().includes(searches) ||
+            targetAsset.toLocaleLowerCase().includes(searches) ||
+            targetAmount.toString().includes(searches);
+          return result;
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        if (filteredDate.startTimeStamp > 0 && filteredDate.endTimeStamp > 0) {
+          /* Info: (20230602 - Julian) search by date
+           * from startTimeStamp 00:00:00 to endTimeStamp 23:59:59, if filteredDate is empty, return all */
+          const startTime = filteredDate.startTimeStamp;
+          const endTime = filteredDate.endTimeStamp + 86399;
+
+          return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
+        } else {
+          return true;
+        }
+      });
+
+    setFilteredReceipts(searchResult);
+  }, [filteredTradingType, searches, filteredDate, receipts]);
+
+  useEffect(() => {
+    /* Info: (20230829 - Julian) 如果 showRow 大於等於 filteredReceipts 長度，就顯示全部
+     * 如果不是，就從最後面取出 showRow 個 */
+    const sliceReceipts =
+      showRow >= filteredReceipts.length ? filteredReceipts : filteredReceipts.slice(-showRow);
+    setSliceReceipts(sliceReceipts);
+
+    // Info: (20230829 - Julian) 如果 showRow 已經大於等於 filteredReceipts 長度，就不顯示 See more 按鈕
+    if (showRow >= filteredReceipts.length) {
+      setIsShowMore(false);
+    } else {
+      setIsShowMore(true);
+    }
+  }, [filteredReceipts, showRow]);
+
+  const dataMonthList = sliceReceipts
     /* Info: (20230322 - Julian) sort by desc */
     .sort((a, b) => b.createTimestamp - a.createTimestamp)
     .map(history => {
@@ -97,7 +183,6 @@ const ReceiptSection = () => {
     if (!prev.includes(curr)) {
       prev.push(curr);
     }
-
     return prev;
   }, []);
 
@@ -128,7 +213,7 @@ const ReceiptSection = () => {
             </div>
           </div>
         ) : (
-          <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
+          <ReceiptList monthData={v} sliceReceipts={sliceReceipts} />
         )}
       </div>
     );
@@ -162,7 +247,21 @@ const ReceiptSection = () => {
           setFilteredDate={setFilteredDate}
         />
       )}
-      <div>{listCluster}</div>
+
+      <div className="flex flex-col">
+        {listCluster}
+        {/* Info: (20230829 - Julian) See more button */}
+        <button
+          id="SeeMoreReceiptsButton"
+          onClick={seeMoreHandler}
+          className={`${
+            isShowMore ? 'flex' : 'hidden'
+          } mb-2 items-center justify-center text-base uppercase text-tidebitTheme`}
+        >
+          <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEE_MORE')}</p>
+          <FiChevronDown size={20} />
+        </button>
+      </div>
     </div>
   );
 };

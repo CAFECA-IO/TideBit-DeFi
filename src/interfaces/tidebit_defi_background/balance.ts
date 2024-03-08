@@ -45,8 +45,8 @@ export function isIBalance(obj: IBalance): obj is IBalance {
     'currency' in obj &&
     typeof obj.currency === 'string' &&
     'available' in obj &&
-    typeof obj.available === 'number' &&
+    (typeof obj.available === 'number' || typeof obj.available === 'string') &&
     'locked' in obj &&
-    typeof obj.locked === 'number'
+    (typeof obj.locked === 'number' || typeof obj.locked === 'string')
   );
 }

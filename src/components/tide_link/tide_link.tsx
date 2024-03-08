@@ -21,6 +21,7 @@ import Link from 'next/link';
 // };
 
 interface TideLinkProps {
+  id: string;
   content?: JSX.Element | string;
   target?: string;
   htmlref?: string;
@@ -28,9 +29,10 @@ interface TideLinkProps {
   className?: string;
 }
 
-const TideLink = ({content = '', ...otherProps}: TideLinkProps): JSX.Element => {
+const TideLink = ({id, content = '', ...otherProps}: TideLinkProps): JSX.Element => {
   return (
     <Link
+      id={id}
       href={`${otherProps.href}`}
       className={`${otherProps?.className} hover:cursor-pointer hover:text-tidebitTheme`}
       {...otherProps}

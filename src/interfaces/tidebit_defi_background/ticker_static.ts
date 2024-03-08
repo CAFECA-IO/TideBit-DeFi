@@ -1,8 +1,6 @@
 import {ICurrency} from '../../constants/currency';
 import {IBriefNewsItem} from './brief_news_item';
 import {ICryptoSummary} from './crypto_summary';
-import {IFluctuating} from './fluctuating';
-import {IPriceStatistics} from './price_statistics';
 import {getDummyTicker, ITickerData} from './ticker_data';
 
 export interface ITickerStatic {
@@ -18,7 +16,6 @@ export interface ITickerStatic {
   cryptoSummary: ICryptoSummary; // 相關資訊
   // getCryptoSummary: () => ICryptoSummary;
 }
-
 export const dummyTickerStatic: ITickerStatic = {
   id: 'ETH',
   label: 'ETH',
@@ -71,6 +68,7 @@ of ETH.`,
 
 export const getDummyTickerStatic = (currency: ICurrency) => {
   const ticker: ITickerData = getDummyTicker(currency);
+
   const tickerStatic: ITickerStatic = {
     id: `${currency}`,
     label: `${currency}`,
@@ -84,7 +82,7 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         content:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
         // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-        img: '/elements/rectangle_715@2x.png',
+        img: '/news/rectangle_715@2x.png',
       },
       {
         id: 'NEWS20230210002',
@@ -92,7 +90,7 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         title: `Add news title here(${currency})`,
         content:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-        img: '/elements/rectangle_716@2x.png',
+        img: '/news/rectangle_716@2x.png',
       },
       {
         id: 'NEWS20230210003',
@@ -100,9 +98,10 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         title: `Add news title here(${currency})`,
         content:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-        img: '/elements/rectangle_717@2x.png',
+        img: '/news/rectangle_717@2x.png',
       },
     ],
+
     cryptoSummary: {
       icon: ticker.tokenImg,
       id: `${currency}`,

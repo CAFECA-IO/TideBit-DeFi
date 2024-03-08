@@ -2,97 +2,89 @@ import React, {useContext, useState, useEffect} from 'react';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
-import {MarketContext} from '../../contexts/market_context';
-import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
+import {TickerContext} from '../../contexts/ticker_context';
+import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {TypeOfPosition} from '../../constants/type_of_position';
-import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD, SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {useGlobal} from '../../contexts/global_context';
+import {LayoutAssertion} from '../../constants/layout_assertion';
 
-const OpenSubTab = () => {
-  const {openCFDs} = useContext(UserContext);
-  const marketCtx = useContext(MarketContext);
+interface IOpenSubTab {
+  hideOpenLineGraph?: boolean;
+}
 
-  const initState = {
-    longPrice: 0,
-    shortPrice: 0,
-  };
-  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
+const OpenSubTab = (props: IOpenSubTab) => {
+  const userCtx = useContext(UserContext);
+  const tickerCtx = useContext(TickerContext);
+  const globalCtx = useGlobal();
+
   const [isLoading, setIsLoading] = useState(true);
+  const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
   useEffect(() => {
-    const buyPrice = !!marketCtx.selectedTicker?.price
-      ? roundToDecimalPlaces(
-          marketCtx.selectedTicker.price *
-            (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-          2
-        )
-      : 0;
+    const cfdList = userCtx.openCFDs
+      .map(cfd => {
+        const tickerPrice = tickerCtx.selectedTicker?.price ?? 0;
+        const displayCFD: IDisplayCFDOrder = {
+          ...toDisplayCFDOrder(cfd),
+          stateCode: getStateCode(cfd, tickerPrice),
+        };
 
-    const sellPrice = !!marketCtx.selectedTicker?.price
-      ? roundToDecimalPlaces(
-          marketCtx.selectedTicker.price *
-            (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-          2
-        )
-      : 0;
-
-    setCaledPrice({
-      longPrice: buyPrice,
-      shortPrice: sellPrice,
-    });
-  }, [marketCtx.selectedTicker?.price]);
-
-  const cfds = openCFDs
-    .map(cfd => {
-      const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
-        begin: cfd.createTimestamp,
+        return displayCFD;
+      })
+      .sort((a, b) => {
+        return a.createTimestamp - b.createTimestamp;
+      })
+      .sort((a, b) => {
+        return (a.stateCode ?? 0) - (b.stateCode ?? 0);
       });
 
-      /**
-       * Info: (20230428 - Shirley)
-       * without `positionLineGraph`, use market price to calculate
-       * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
-       * (OpenPositionItem & UpdateFormModal)
-       */
-      const currentPrice =
-        positionLineGraph.length > 0
-          ? positionLineGraph[positionLineGraph.length - 1]
-          : (!!marketCtx.selectedTicker?.price &&
-              ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.shortPrice) ||
-                (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.longPrice))) ||
-            0;
+    setCfds(cfdList);
+  }, [userCtx.openCFDs]);
 
-      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
-
-      return displayCFD;
-    })
-    .sort((a, b) => {
-      return a.createTimestamp - b.createTimestamp;
-    })
-    .sort((a, b) => {
-      return b.stateCode - a.stateCode;
-    });
+  let timer: NodeJS.Timeout;
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [cfds]);
+    clearTimeout(timer);
+    if (userCtx.isLoadingCFDs) {
+      setIsLoading(true);
+      return;
+    }
 
-  const openPositionList = cfds.map(cfd => {
-    return (
-      <div key={cfd.id}>
-        {isLoading ? <Skeleton count={5} height={30} /> : <OpenPositionItem openCfdDetails={cfd} />}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
-      </div>
-    );
-  });
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
+  }, [userCtx.openCFDs, userCtx.isLoadingCFDs]);
+
+  const openPositionList = isLoading ? (
+    <Skeleton count={5} height={150} />
+  ) : (
+    cfds.map(cfd => {
+      return (
+        <div key={cfd.id}>
+          {<OpenPositionItem openCfdDetails={cfd} hideOpenLineGraph={props?.hideOpenLineGraph} />}
+          <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        </div>
+      );
+    })
+  );
+
+  const desktopLayout = (
+    <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{openPositionList}</div>
+  );
+
+  const mobileLayout = (
+    <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-400px">
+      <div className="h-80vh overflow-y-auto px-4">{openPositionList}</div>
+    </div>
+  );
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? mobileLayout : desktopLayout;
 
   return (
-    <>
-      <SkeletonTheme baseColor="#202020" highlightColor="#444">
-        <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{openPositionList}</div>
-      </SkeletonTheme>
-    </>
+    <SkeletonTheme baseColor="#202020" highlightColor="#444">
+      {displayedLayout}{' '}
+    </SkeletonTheme>
   );
 };
 

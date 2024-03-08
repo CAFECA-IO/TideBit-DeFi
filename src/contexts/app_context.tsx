@@ -24,15 +24,17 @@ export const AppProvider = ({children}: IAppProvider) => {
   const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const init = async () => {
     if (!isInitRef.current) {
-      setIsInit(true);
       workerCtx.init();
       await notificationCtx.init();
       await userCtx.init();
       await marketCtx.init();
+      setIsInit(true);
     }
     return;
   };

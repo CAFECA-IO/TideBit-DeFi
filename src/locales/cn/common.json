@@ -12,6 +12,7 @@
     "NOTIFICATION_READ_ALL": "全部已读"
   },
   "FOOTER": {
+    "TRADE": "模拟交易",
     "SERVICES": "服务",
     "TIDEBIT": "TideBit",
     "HIRING": "人才招募",
@@ -35,11 +36,11 @@
   },
   "HOME_PAGE": {
     "CTA_HIGHLIGHT_TITLE": "值得信赖的",
-    "CTA_REST_TITLE": "加密货币投资平台",
-    "CTA_DESCRIPTION": "现在就开始投资 在 TideBit ，您可以免费学习以及买卖最优质的加密货币资产。",
+    "CTA_REST_TITLE": "加密货币投资模拟平台",
+    "CTA_DESCRIPTION": "现在就开始投资。 在 TideBit ，您可以免费学习最优质的买卖加密货币资产知识。",
     "CTA_BUTTON": "开始交易",
     "WHITEPAPER": "白皮书",
-    "WHITEPAPER_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_CN.pdf",
+    "WHITEPAPER_LINK": "/whitepaper/tidebit_tech_whitepaper_v2.0.4_cn.pdf",
     "STATISTIC_BLOCK_TITLE_1": "24h 交易量",
     "STATISTIC_BLOCK_TITLE_2": "累积的用户",
     "STATISTIC_BLOCK_TITLE_3": "累积成交量",
@@ -57,10 +58,10 @@
     "BANNER_BUTTON": "立即试用",
     "WEB_3_TITLE": "Web",
     "WEB_3_TITLE_HIGHLIGHT": "3.0",
-    "WEB_3_DESCRIPTION": "为了因应新世代，TideBit 采用了 Web 3.0 技术，透过去中心化的身份验证与去中心式监管，让加密货币的购买和出售更加便捷。",
+    "WEB_3_DESCRIPTION": "为了因应新世代，TideBit 采用了 Web 3.0 技术，透过去中心化的身份验证与去中心式监管，让系统的用户验证更快速便捷。",
     "EASY_TRADE_TITLE_HIGHLIGHT": "轻松",
-    "EASY_TRADE_TITLE": "交易",
-    "EASY_TRADE_DESCRIPTION": "TideBit 的交易介面轻巧好用，让您可以轻松快速地进行交易和查询。经过本团队专业的 UI/ UX 设计，使介面的操作更加直观，使用者能够顺畅地完成每一笔交易，带给您最佳的操作体验！",
+    "EASY_TRADE_TITLE": "操作",
+    "EASY_TRADE_DESCRIPTION": "TideBit 的模拟交易介面轻巧好用，让您可以轻松快速地进行交易和查询。经过本团队专业的UI/ UX 设计，使介面的操作更加直观，使用者能够顺畅地完成每一笔交易，带给您最佳的操作体验！",
     "SECURE_SYSTEM_TITLE_HIGHLIGHT": "安全",
     "SECURE_SYSTEM_TITLE": "系统",
     "SECURE_SYSTEM_DESCRIPTION": "TideBit 交易平台采用多层级的安全系统，包括 SSL 加密技术、多重签署、去中心化身份认证等，保障客户交易和资产的安全。我们致力于提供最优质的安全保障，让客户在交易中更加放心。",
@@ -69,7 +70,20 @@
     "FREE_ONLINE_COURSES_DESCRIPTION": "TideBit 大学提供免费的线上课程，内容涵盖区块链原理、交易所使用和安全储存、加密货币与投资标的介绍等多个方面，帮助初学者深入了解金融相关知识。完成所有课程后，我们将会颁发一份结业证书给您，欢迎加入学习，开启加密货币之旅！",
     "APP_DOWLOAD_CONTAINER_TITLE": "随时随地在",
     "APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT": "TideBit",
-    "APP_DOWLOAD_CONTAINER_TITLE_2": "进行交易。"
+    "APP_DOWLOAD_CONTAINER_TITLE_2": "进行模拟交易。",
+    "DOWNLOAD_REPORT": "下载报告",
+    "REPORTS_LINK": "/balance",
+    "SMART": "人工智能",
+    "AUDITING_REPORTS": "监管报告",
+    "LAST_UPDATED": "最后更新",
+    "COMPREHENSIVE_INCOME_STATEMENT": "综合损益表",
+    "BALANCE_SHEET": "资产负债表",
+    "CASH_FLOW_STATEMENT": "现金流量表",
+    "RED_FLAG_ANALYSIS": "风险分析",
+    "POWERED_BY": "技术支持",
+    "ISUNONE_PROMOTION_TITLE_1": "使用",
+    "ISUNONE_PROMOTION_TITLE_2": "支付",
+    "ISUNONE_PROMOTION_DESCRIPTION": "iSunOne Visa 金融卡"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "连接钱包",
@@ -102,6 +116,7 @@
     "CRYPTO_NEWS_SECTION_TITLE": "最新消息",
     "CRYPTO_NEWS_SECTION_SEE_ALL": "查看全部",
     "TRADE_TAB": "CFD 交易",
+    "TRADE_TAB_INPUT_REMINDER": "输入前请先切换输入法",
     "TRADE_TAB_NOT_ENOUGH_MARGIN": "余额不足",
     "TRADE_TAB_EXPECTED_PROFIT": "预期利润",
     "TRADE_TAB_EXPECTED_LOSS": "预期损失",
@@ -161,6 +176,7 @@
     "OPEN_POSITION_TITLE": "建仓",
     "CLOSE_POSITION_TITLE": "关仓",
     "UPDATE_POSITION_TITLE": "更新持仓",
+    "CFD_TRADE": "CFD 交易",
     "CONFIRM_CONTENT": "请确认您的交易",
     "TRANSACTION_BROADCAST": "交易已广播",
     "TRANSACTION_SUCCEED": "交易成功",
@@ -207,11 +223,12 @@
     "EXPECTED_PROFIT": "预期利润",
     "EXPECTED_LOSS": "预期损失",
     "GUARANTEED_STOP": "保證止损",
+    "GUARANTEED_STOP_FEE": "保證止损手续费",
     "GUARANTEED_STOP_HINT": "保证止损可强制关仓于您选定的价格，即使市场价格超过此价格也一样。",
-    "GUARANTEED_STOP_YES": "是",
-    "GUARANTEED_STOP_NO": "否",
+    "GUARANTEED_STOP_YES": "开启",
+    "GUARANTEED_STOP_NO": "关闭",
     "EXPIRATION_TIME": "到期时间",
-    "LIQUIDATION_TIME": "24h 后到期",
+    "LIQUIDATION_TIME": "7 日后到期",
     "LIQUIDATION_PRICE": "清算价格",
     "PNL": "损益",
     "FEE": "手续费",
@@ -231,7 +248,9 @@
     "SHARING": "分享",
     "SHARING_CANCELLED_TITLE": "您已取消分享",
     "SHARING_LOADING": "正在载入...",
-    "SHARING_FAILED_CONTENT": "分享失败"
+    "SHARING_FAILED_CONTENT": "分享失败",
+    "SPREAD_HINT": "市场价格 + 点差 = 建仓/关仓价格",
+    "TP_AND_SL_HINT": "止盈 (TP) 是一种一旦达到特定利润水平就会关闭您的持仓的订单。止损 (SL) 是设计成一种退出订单策略，以限制持仓的损失额度。"
   },
   "D_W_MODAL": {
     "DEPOSIT": "入金",
@@ -289,7 +308,8 @@
     "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "处理中",
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "失败",
     "RECEIPT_SECTION_FEE": "手续费",
-    "RECEIPT_SECTION_AVAILABLE": "可用余额"
+    "RECEIPT_SECTION_AVAILABLE": "可用余额",
+    "RECEIPT_SECTION_SEE_MORE": "查看更多"
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "糟糕！您要找的页面不存在。"
@@ -307,7 +327,8 @@
     "SUCCESS": "成功",
     "WARNING": "警告",
     "INFO": "信息",
-    "PROGRESSING_MESSAGE": "处理中，请稍候..."
+    "PROGRESSING_MESSAGE": "处理中，请稍候...",
+    "COPY_SUCCESS": "已复制到剪贴簿！"
   },
   "SHARING_BOX": {
     "TYPE_UP": "看涨",
@@ -339,7 +360,26 @@
     "INTERNAL_SERVER_ERROR": "内部伺服器错误",
     "THIRD_PARTY_LIBRARY_ERROR": "第三方函式库错误",
     "DEPOSIT_INTERVAL_TOO_SHORT": "24hrs 內只能入金一次, 下次可入金时间为： {{nextAvailableTime}}",
-    "INVALID_CFD_OPEN_REQUEST": "CFD 信息无效"
+    "INVALID_CFD_OPEN_REQUEST": "CFD 信息无效",
+    "INADEQUATE_AVAILABLE_BALANCE": "可用余额不足",
+    "BALANCE_IS_NOT_ENOUGH_TO_UPDATE_ORDER": "余额不足以更新订单",
+    "WARNING_ALERT_TITLE": "警告",
+    "ERROR_ALERT_TITLE": "错误",
+    "SHARE_ENABLE_FUNCTION_REQUIRED": "需要与ShareEnable相关的功能",
+    "INCONSISTENT_QUOTATION_TICKER": "报价的股票代码不一致",
+    "CHAIN_NAME_NOT_EXIST": "链名不存在",
+    "INSUFFICIENT_PREDICTED_TRADES": "预测交易不足",
+    "CFD_ORDER_STATE_ERROR": "CFD订单状态错误",
+    "CFD_ORDER_NOT_FOUND": "找不到CFD订单",
+    "CFD_ORDER_REQUIRED_FOR_COMPARISON": "分享CFD比较时需要CFD订单",
+    "UNABLE_TO_RETRIEVE_SHARE_URL": "无法获取分享网址",
+    "WITHDRAWAL_BLOCKED_BY_POLICY": "由于政策原因无法提取资金",
+    "FAILED_TO_VERIFY_REQUEST_SIGNATURE": "验证请求签名失败",
+    "INVALID_TRADE_FORMAT": "交易格式无效",
+    "UNABLE_TO_FETCH_IMAGE_URL": "无法从Next API路径获取图片网址",
+    "CFD_ORDER_INCONSISTENT_WITH_API": "CFD订单与API数据不一致",
+    "INVALID_CFD_INFORMATION": "CFD信息无效",
+    "HTML_TO_IMAGE_CONVERSION_FAILED": "无法将HTML转换为图片"
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "排行榜",
@@ -388,8 +428,10 @@
     "CLOSE_BUTTON": "关闭"
   },
   "ANNOUNCEMENT_MODAL": {
-    "CHECKBOX_DESCRIPTION": "不再显示此公告",
-    "OK_BUTTON": "好的"
+    "CHECKBOX_DESCRIPTION": "七天內不再显示此公告",
+    "OK_BUTTON": "好的",
+    "ANTI_FRAUD_TITLE": "【重要公告】反诈骗提醒",
+    "ANTI_FRAUD_CONTENT": "TideBit-DeFi 用户您好：\n\n近来诈骗手段层出不穷，提醒您：TideBit-DeFi 仅为一个“模拟交易”平台，旨在提供给用户学习和研究用途，并不涉及任何实质金流。\nTideBit 绝不会提供任何形式的“理财建议”、“基金投资”或“代客操盘”等服务，也不提供保管以及管理虚拟通货和交易业务，更不会向用户拟定任何投资契约。若您收到任何通讯、简讯、电话或社群软体邀请您加入投资群组，并保证“高获利、低风险”等投资回报，请您立即拨打 165 反诈骗专线进行查证。切勿向对方透露任何金融资料或个人资讯，以确保您的权益不受损害。\n\nTideBit-DeFi 为本公司 AI 即时会计审计系统展示平台，下方“人工智慧监管报告”区块可下载四份文件，分别为：\n1. 资产负债表\n2. 综合损益表\n3. 现金流量表\n4. 通报事件表\n提供用户与监管机构了解交易所之财务状况。\n\nTideBit-DeFi 团队敬上"
   },
   "CANDLESTICK_CHART": {
     "LONG": "买在",

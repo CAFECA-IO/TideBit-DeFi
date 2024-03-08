@@ -1,5 +1,8 @@
 import {toQuery} from '../lib/common';
-import {API_URL} from './config';
+import {API_URL, API_VERSION} from './config';
+
+const apiUrl = process.env.API_URL ?? API_URL;
+const apiVersion = process.env.API_VERSION ?? API_VERSION;
 
 export type IAPIName =
   // general
@@ -18,8 +21,9 @@ export type IAPIName =
   // public
   | 'GET_TIDEBIT_PROMOTION'
   | 'GET_WEBSITE_RESERVE'
-  | 'GET_PERSONAL_RANKING'
+  | 'GET_RANKING'
   | 'GET_PERSONAL_ACHIEVEMENT'
+  | 'GET_LEADERBOARD'
   // market
   | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
@@ -33,6 +37,7 @@ export type IAPIName =
   | 'GET_TICKER_STATIC'
   | 'GET_TICKER_LIVE_STATISTICS'
   | 'LIST_MARKET_TRADES'
+  | 'LIST_CANDLESTICKS'
   // trades
   | 'LIST_CFD_TRADES'
   | 'GET_CFD_TRADE'
@@ -83,8 +88,9 @@ export interface IAPINameConstant {
   // public
   GET_TIDEBIT_PROMOTION: IAPIName;
   GET_WEBSITE_RESERVE: IAPIName;
-  GET_PERSONAL_RANKING: IAPIName;
+  GET_RANKING: IAPIName;
   GET_PERSONAL_ACHIEVEMENT: IAPIName;
+  GET_LEADERBOARD: IAPIName;
   // market
   LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
@@ -98,6 +104,7 @@ export interface IAPINameConstant {
   GET_TICKER_STATIC: IAPIName;
   GET_TICKER_LIVE_STATISTICS: IAPIName;
   LIST_MARKET_TRADES: IAPIName;
+  LIST_CANDLESTICKS: IAPIName;
   // trades
   LIST_CFD_TRADES: IAPIName;
   GET_CFD_TRADE: IAPIName;
@@ -149,8 +156,9 @@ export const APIName: IAPINameConstant = {
   // public
   GET_TIDEBIT_PROMOTION: 'GET_TIDEBIT_PROMOTION',
   GET_WEBSITE_RESERVE: 'GET_WEBSITE_RESERVE',
-  GET_PERSONAL_RANKING: 'GET_PERSONAL_RANKING',
+  GET_RANKING: 'GET_RANKING',
   GET_PERSONAL_ACHIEVEMENT: 'GET_PERSONAL_ACHIEVEMENT',
+  GET_LEADERBOARD: 'GET_LEADERBOARD',
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
@@ -164,6 +172,7 @@ export const APIName: IAPINameConstant = {
   GET_TICKER_STATIC: 'GET_TICKER_STATIC',
   GET_TICKER_LIVE_STATISTICS: 'GET_TICKER_LIVE_STATISTICS',
   LIST_MARKET_TRADES: 'LIST_MARKET_TRADES',
+  LIST_CANDLESTICKS: 'LIST_CANDLESTICKS',
   // trades
   LIST_CFD_TRADES: 'LIST_CFD_TRADES',
   GET_CFD_TRADE: 'GET_CFD_TRADE',
@@ -214,42 +223,44 @@ export const APIURL = {
   GET_JOB: '/api/general/jobs',
   APPLY_JOB: '/api/general/jobs',
   // public
-  GET_TIDEBIT_PROMOTION: `${API_URL}/public/promotion`,
-  GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
-  GET_PERSONAL_RANKING: `${API_URL}/public/ranking`,
-  GET_PERSONAL_ACHIEVEMENT: `${API_URL}/public/achievement`,
+  GET_TIDEBIT_PROMOTION: `${apiUrl}/api/${apiVersion}/public/promotion`,
+  GET_WEBSITE_RESERVE: `${apiUrl}/api/${apiVersion}/public/reserve`,
+  GET_RANKING: `${apiUrl}/api/${apiVersion}/public/ranking`,
+  GET_PERSONAL_ACHIEVEMENT: `${apiUrl}/api/${apiVersion}/public/achievement`,
+  GET_LEADERBOARD: `${apiUrl}/api/${apiVersion}/public/leaderboard`,
   // market
-  LIST_CURRENCIES: `${API_URL}/currencies`,
-  LIST_TICKERS: `${API_URL}/market/tickers`,
+  LIST_CURRENCIES: `${apiUrl}/api/${apiVersion}/currencies`,
+  LIST_TICKERS: `${apiUrl}/api/${apiVersion}/market/tickers`,
   // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
   // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
-  GET_CANDLESTICK_DATA: `${API_URL}/market/candlesticks`,
-  GET_CFD_QUOTATION: `${API_URL}/market/qutation`,
-  GET_CFD_SUGGESTION: `${API_URL}/market/suggestion`,
+  GET_CANDLESTICK_DATA: `${apiUrl}/api/${apiVersion}/market/candlesticks`,
+  GET_CFD_QUOTATION: `${apiUrl}/api/${apiVersion}/market/quotation`,
+  GET_CFD_SUGGESTION: `${apiUrl}/api/${apiVersion}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
-  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${API_URL}/market/guaranteed-stop-fee`,
-  GET_TICKER_STATIC: `${API_URL}/market/ticker-static`,
-  GET_TICKER_LIVE_STATISTICS: `${API_URL}/market/ticker-live-statistics`,
-  LIST_MARKET_TRADES: `${API_URL}/market/trades`,
+  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${apiUrl}/api/${apiVersion}/market/guaranteed-stop-fee`,
+  GET_TICKER_STATIC: `${apiUrl}/api/${apiVersion}/market/ticker-static`,
+  GET_TICKER_LIVE_STATISTICS: `${apiUrl}/api/${apiVersion}/market/ticker-live-statistics`,
+  LIST_MARKET_TRADES: `${apiUrl}/api/${apiVersion}/market/trades`,
+  LIST_CANDLESTICKS: `${apiUrl}/api/${apiVersion}/candlesticks`,
   // trades
-  LIST_CFD_TRADES: `${API_URL}/trade/cfds`,
-  LIST_HISTORIES: `${API_URL}/trade/history`,
-  GET_CFD_TRADE: '/api/trades/cfds',
-  CREATE_CFD_TRADE: `${API_URL}/trade/cfds`,
-  UPDATE_CFD_TRADE: `${API_URL}/trade/cfds/update`,
-  CLOSE_CFD_TRADE: `${API_URL}/trade/cfds/close`,
-  CREATE_DEPOSIT_TRADE: `${API_URL}/deposit`,
+  LIST_CFD_TRADES: `${apiUrl}/api/${apiVersion}/cfds`,
+  LIST_HISTORIES: `${apiUrl}/api/${apiVersion}/bolt-transactions/history`,
+  GET_CFD_TRADE: '/api/cfds',
+  CREATE_CFD_TRADE: `${apiUrl}/api/${apiVersion}/users/cfds/create`,
+  UPDATE_CFD_TRADE: `${apiUrl}/api/${apiVersion}/cfds/update`,
+  CLOSE_CFD_TRADE: `${apiUrl}/api/${apiVersion}/users/cfds/close`,
+  CREATE_DEPOSIT_TRADE: `${apiUrl}/api/${apiVersion}/users/deposit`,
   LIST_DEPOSIT_TRADES: '/api/trades/deposits',
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',
   CREATE_WITHDRAW_TRADE: '/api/trades/withdraws',
   // user
-  POST_DEWT: `${API_URL}/dewt`,
-  LIST_BALANCES: `${API_URL}/balances`,
-  GET_USER_ASSETS: `${API_URL}/users/assets`,
-  GET_USER_PNL: `${API_URL}/users/pnl`,
-  GET_USER_INTEREST: `${API_URL}/users/interest`,
-  GET_BADGE: `${API_URL}/badges`,
-  // GET_TOTAL_BALANCE: `${API_URL}/balances/sum`,
+  POST_DEWT: `${apiUrl}/api/${apiVersion}/dewt`,
+  LIST_BALANCES: `${apiUrl}/api/${apiVersion}/balances`,
+  GET_USER_ASSETS: `${apiUrl}/api/${apiVersion}/users/assets`,
+  GET_USER_PNL: `${apiUrl}/api/${apiVersion}/users/pnl`,
+  GET_USER_INTEREST: `${apiUrl}/api/${apiVersion}/users/interest`,
+  GET_BADGE: `${apiUrl}/api/${apiVersion}/badges`,
+  // GET_TOTAL_BALANCE: `${apiUrl}/api/${apiVersion}/balances/sum`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',
   REMOVE_FAVORITE_TICKERS: '/api/user/tickers',
@@ -262,8 +273,8 @@ export const APIURL = {
   SUBSCRIBE_NEWS_LETTERS: '/api/user/subscrible',
   LIST_READ_NOTIFICATIONS: '/api/user/notifications',
   READ_NOTIFICATIONS: '/api/user/notifications',
-  ENABLE_CFD_SHARE: `${API_URL}/trade/cfds/share`,
-  SHARE_CFD: `${API_URL}/public/shared/cfd`,
+  ENABLE_CFD_SHARE: `${apiUrl}/api/${apiVersion}/cfds/share`,
+  SHARE_CFD: `${apiUrl}/api/${apiVersion}/public/shared/cfd`,
 };
 
 export const TBEURL = {
@@ -274,7 +285,7 @@ export const TBEURL = {
 
 export const TBDURL = {
   COMING_SOON: '/coming-soon',
-  TRADE: '/trade/cfd/ethusdt',
+  TRADE: '/trade/cfd/eth-usdt',
   MY_ASSETS: '/my-assets',
   LEADERBOARD: '/leaderboard',
 };

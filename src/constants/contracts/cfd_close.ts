@@ -23,7 +23,7 @@ const CFDOrderClose: IEIP712Data = {
       {name: 'closeTimestamp', type: 'uint256'},
     ],
     Quotation: [
-      {name: 'ticker', type: 'string'},
+      {name: 'instId', type: 'string'},
       {name: 'targetAsset', type: 'string'},
       {name: 'unitAsset', type: 'string'},
       {name: 'price', type: 'uint256'},
@@ -41,7 +41,7 @@ const CFDOrderClose: IEIP712Data = {
     */
     referenceId: `TB202303020001ETH`,
     quotation: {
-      ticker: 'ETH',
+      instId: 'ETH-USDT',
       targetAsset: 'ETH',
       unitAsset: 'USDT',
       price: 21023,

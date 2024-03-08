@@ -19,10 +19,12 @@ export interface IOrder {
 }
 
 export interface ICFDOrder extends IOrder {
-  ticker: string;
+  instId: string;
   // fee: number;
   state: IOrderState;
   openPrice: number;
+  openSpotPrice: number;
+  openSpreadFee: number;
   typeOfPosition: ITypeOfPosition;
   targetAsset: ICurrency;
   unitAsset: string;
@@ -36,6 +38,8 @@ export interface ICFDOrder extends IOrder {
   stopLoss?: number;
   guaranteedStopFee?: number;
   closePrice?: number;
+  closeSpotPrice?: number;
+  closeSpreadFee?: number;
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;

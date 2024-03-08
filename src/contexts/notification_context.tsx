@@ -7,6 +7,17 @@ import {
   dummyNotifications,
   dummyUnReadNotifications,
 } from '../interfaces/tidebit_defi_background/notification_item';
+import {COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT} from '../constants/config';
+import {addDaysToDate, getCookieByName, isCookieExpired, setCookie} from '../lib/common';
+import ExceptionCollectorInstance from '../lib/exception_collector';
+import {CustomError, isCustomError} from '../lib/custom_error';
+import {ICode, Reason} from '../constants/code';
+import {IErrorSearchProps, IException} from '../constants/exception';
+import {SEVEREST_EXCEPTION_LEVEL} from '../constants/display';
+import {
+  IFinancialLinks,
+  dummyFinancialLinks,
+} from '../interfaces/tidebit_defi_background/financial_links';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -20,6 +31,17 @@ export interface INotificationContext {
   readAll: () => Promise<void>;
   init: () => Promise<void>;
   reset: () => void;
+  addException: (
+    from: string,
+    error: Error | CustomError,
+    alternativeCode: ICode,
+    severity?: string
+  ) => void;
+  clearException: () => void;
+  removeException: (props: IErrorSearchProps, searchBy: string) => void;
+  getSeverestException: () => IException[];
+  isInit: boolean;
+  financialLinks: IFinancialLinks;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -30,16 +52,88 @@ export const NotificationContext = createContext<INotificationContext>({
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
   reset: () => null,
+  addException: () => null,
+  clearException: () => null,
+  removeException: () => null,
+  getSeverestException: () => [],
+  isInit: false,
+  financialLinks: dummyFinancialLinks,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
-  // const marketCtx = useContext(MarketContext);
-
   const emitter = React.useMemo(() => new EventEmitter(), []);
+  const exceptionCollector = React.useMemo(() => ExceptionCollectorInstance, []);
+  const baifaProjectId = process.env.BAIFA_PROJECT_ID ?? '';
+  const financialLinks: IFinancialLinks = {
+    balance: `https://baifa.io/reports/${baifaProjectId}/balance`,
+    comprehensiveIncome: `https://baifa.io/reports/${baifaProjectId}/comprehensive-income`,
+    cashFlow: `https://baifa.io/reports/${baifaProjectId}/cash-flow`,
+    redFlags: `https://baifa.io/reports/${baifaProjectId}/red-flags`,
+  };
+
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [notifications, setNotifications, notificationsRef] =
     useState<INotificationItem[]>(dummyNotifications);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+
+  const getSeverestException = (): IException[] => {
+    return exceptionCollector.getSeverest();
+  };
+
+  const addException = (
+    from: string,
+    error: Error | CustomError,
+    alternativeCode: ICode,
+    severity?: string
+  ) => {
+    const code = isCustomError(error) ? error.code : alternativeCode;
+    const reason = isCustomError(error) ? Reason[error.code] : Reason[alternativeCode];
+    const level =
+      severity ||
+      (!isCustomError(error) || (isCustomError(error) && error.code === alternativeCode)
+        ? SEVEREST_EXCEPTION_LEVEL
+        : undefined);
+
+    const rs = exceptionCollector.add(
+      {
+        code: code,
+        reason: reason,
+        where: from,
+        when: new Date().getTime(),
+        message: (error as Error)?.message,
+      },
+      level
+    );
+
+    if (rs) {
+      const exception = exceptionCollector.getSeverest();
+      if (exception?.length > 0) {
+        emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
+      }
+    }
+  };
+
+  const removeException = (props: IErrorSearchProps, searchBy: string) => {
+    const rs = exceptionCollector.remove(props, searchBy);
+    if (rs) {
+      const exception = exceptionCollector.getSeverest();
+      if (exception?.length > 0) {
+        emitter.emit(TideBitEvent.EXCEPTION_UPDATE, exception);
+      } else {
+        emitter.emit(TideBitEvent.EXCEPTION_CLEARED, undefined);
+      }
+    }
+  };
+
+  const clearException = () => {
+    exceptionCollector.reset();
+    emitter.emit(TideBitEvent.EXCEPTION_CLEARED, undefined);
+  };
 
   const isRead = async (id: string) => {
     const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
@@ -49,10 +143,36 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         ...updatedNotifications[index],
         isRead: true,
       };
+
+      const expirationTimestamp = addDaysToDate(COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT);
+      setCookie(`notificationRead_${id}`, expirationTimestamp, expirationTimestamp);
     }
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
     updateNotifications(updatedNotifications);
+
     return;
+  };
+
+  const checkAndResetNotifications = async (): Promise<void> => {
+    const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
+    let isUpdated = false;
+
+    updatedNotifications.forEach(notification => {
+      const cookieValue = getCookieByName(`notificationRead_${notification.id}`);
+
+      if (cookieValue) {
+        if (!isCookieExpired(cookieValue)) {
+          notification.isRead = true;
+        } else {
+          notification.isRead = false;
+        }
+        isUpdated = true;
+      }
+    });
+
+    if (isUpdated) {
+      updateNotifications(updatedNotifications);
+    }
   };
 
   const readAll = async () => {
@@ -74,6 +194,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const init = async () => {
+    checkAndResetNotifications();
+    setIsInit(true);
     return await Promise.resolve();
   };
 
@@ -110,6 +232,12 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     readAll,
     init,
     reset,
+    addException,
+    clearException,
+    removeException,
+    getSeverestException,
+    isInit: isInitRef.current,
+    financialLinks,
   };
 
   return (

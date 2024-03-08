@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TradeSuspendedTab = () => {
+const TradeSuspendedTab = ({rightPosition}: {rightPosition: string}) => {
   const tabBodyWidth = 'w-320px';
 
   const conesSvg = (
@@ -74,6 +74,7 @@ const TradeSuspendedTab = () => {
         {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
         <div
           className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+          style={{right: rightPosition}}
         >
           <div className="relative my-6 mx-auto w-auto max-w-xl">
             {' '}

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Image from 'next/image';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useGlobal} from '../../contexts/global_context';
@@ -6,20 +6,33 @@ import {INotificationItem} from '../../interfaces/tidebit_defi_background/notifi
 import {timestampToString} from '../../lib/common';
 import {MessageType} from '../../constants/message_type';
 import {NotificationLevel} from '../../constants/notification_level';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 export default function NotificationItem(notificationItem: INotificationItem) {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const {id, title, content, timestamp, notificationLevel} = notificationItem;
   const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
 
   const [itemStyle, setItemStyle] = useState('h-160px translate-x-0 opacity-100');
+  const [displayedTime, setDisplayedTime] = useState<{date: string; time: string}>({
+    date: '',
+    time: '',
+  });
+
+  useEffect(() => {
+    const str = timestampToString(timestamp);
+
+    setDisplayedTime({date: str.date, time: str.time});
+  }, [notificationItem.timestamp]);
 
   const messageType =
     notificationLevel === NotificationLevel.CRITICAL
       ? MessageType.ANNOUNCEMENT
       : MessageType.NOTIFICATION;
-
-  const displayTime = timestampToString(timestamp);
 
   const itemClickHandler = () => {
     globalCtx.dataAnnouncementModalHandler({
@@ -46,46 +59,41 @@ export default function NotificationItem(notificationItem: INotificationItem) {
 
   return (
     <div
-      className={`relative cursor-pointer ${itemStyle} transition-all duration-500 ease-in-out`}
+      className={`cursor-pointer overflow-hidden ${itemStyle} w-full transition-all duration-100 ease-in-out lg:duration-500`}
       onClick={itemClickHandler}
     >
-      <div className="flex">
+      <div id={notificationItem.id} className="flex">
         {/* Info: (20230420 - Julian) Vertical line */}
-        <span className={`mx-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
+        <span className={`ml-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
 
         {/* Info: (20230420 - Julian) contain divider */}
-        <div>
-          {/* Info: (20230420 - Julian) Speaker & Heading & Date */}
-          <div className="flex items-start">
-            <Image
-              className="sm:ml-8px"
-              src="/elements/megaphone.svg"
-              width={30}
-              height={26}
-              alt="megaphone icon"
-            />
-
-            <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
-              <div className="flex pr-2">
-                <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
-                  {title}
-                </div>
-                <div className="ml-auto whitespace-nowrap text-end text-xs text-lightGray">
-                  <div>{displayTime.date}</div>
-                  <div>{displayTime.time}</div>
-                </div>
-              </div>
+        <div className="flex items-start space-x-2 border-b border-lightGray">
+          {/* Info: (20231019 - Julian) Speaker */}
+          <Image
+            className="ml-2"
+            src="/elements/megaphone.svg"
+            width={30}
+            height={26}
+            alt="megaphone icon"
+          />
+          {/* Info: (20231019 - Julian) Heading & Content */}
+          <div className="flex flex-col items-start">
+            {/* Info: (20231019 - Julian) Heading */}
+            <div className="text-xl text-lightWhite sm:text-2xl">
+              <h2 className="">{t(title)}</h2>
+            </div>
+            {/* Info: (20230420 - Julian) Content */}
+            <div className="h-full w-full py-4 text-xs text-lightGray">
+              <p className="">{t(content)}</p>
             </div>
           </div>
-
-          {/* Info: (20230420 - Julian) Content */}
-          <div className="mb-5 mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
-            {content}
+          {/* Info: (20231019 - Julian) Date */}
+          <div className="whitespace-nowrap text-end text-xs text-lightGray">
+            <p>{displayedTime.date}</p>
+            <p>{displayedTime.time}</p>
           </div>
         </div>
       </div>
-
-      <span className="absolute ml-2 inline-block h-1px w-438px shrink-0 bg-lightGray"></span>
     </div>
   );
 }

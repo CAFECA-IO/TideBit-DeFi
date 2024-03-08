@@ -7,49 +7,51 @@ import Skeleton from 'react-loading-skeleton';
 import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
+import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {ProfitState} from '../../constants/profit_state';
-import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
-import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
-import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
+import {ImArrowUp} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
+  rankingData: IRanking[];
 }
 
-const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
+const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
 
+  const {
+    targetRef: shareListRef,
+    componentVisible: shareListVisible,
+    setComponentVisible: setShareListVisible,
+  } = useOuterClick<HTMLDivElement>(false);
+
+  /* Info: (20230626 - Julian) 找到當前使用者的排行資料 */
+  const myRanking = rankingData.find(data => data.userId === userCtx.user?.id) ?? defaultRanking;
+  const userId = userCtx.user?.id ?? '';
+
   const [isLoading, setIsLoading] = useState(true);
-  const [showShareList, setShowShareList] = useState(false);
-  const [userRankData, setUserRankData] = useState(defaultPersonalRanking);
+
+  let timer: NodeJS.Timeout;
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
-
-  useEffect(() => {
-    setUserRankData(
-      // userCtx.getPersonalRanking(timeSpan) ?? // TODO: using async/await (20230526 - tzuhan)
-      defaultPersonalRanking
-    );
+    clearTimeout(timer);
+    setIsLoading(true);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
-  const userAchievement =
-    // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-    defaultPersonalAchievement;
+  const rankingNumber = myRanking.rank;
+  const pnl = myRanking.cumulativePnl;
 
-  const rankingNumber = userRankData.rank;
-  const pnl = userRankData.pnl;
-  const cumulativePnl = userRankData.cumulativePnl;
-
-  const shareClickHandler = () => setShowShareList(!showShareList);
+  const shareClickHandler = () => setShareListVisible(!shareListVisible);
 
   const personalInfoClickHandler = () => {
-    globalCtx.dataPersonalAchievementModalHandler(userAchievement);
+    globalCtx.dataPersonalAchievementModalHandler(userId);
     globalCtx.visiblePersonalAchievementModalHandler();
   };
 
@@ -67,40 +69,44 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
     );
 
-  const displayedCumulativePnl =
-    rankingNumber <= 0 ? (
-      '-'
-    ) : cumulativePnl.type === ProfitState.PROFIT ? (
-      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl.value)}</div>
-    ) : cumulativePnl.type === ProfitState.LOSS ? (
-      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl.value)}</div>
-    ) : (
-      <div className="text-lightYellow2">{numberFormatted(cumulativePnl.value)}</div>
-    );
+  const displayedGapPnl = () => {
+    const previousPnl = (myRanking.rank > 1
+      ? rankingData[myRanking.rank - 2]?.cumulativePnl
+      : rankingData[0]?.cumulativePnl) ?? {
+      type: ProfitState.EQUAL,
+      value: 0,
+    };
+    const myPnl = myRanking.cumulativePnl;
 
-  const displayedArrow =
-    cumulativePnl.type === ProfitState.PROFIT ? (
-      <ImArrowUp width={20} height={26} />
-    ) : cumulativePnl.type === ProfitState.LOSS ? (
-      <ImArrowDown width={20} height={26} />
-    ) : (
-      <ImArrowRight width={20} height={26} />
-    );
+    const gapPnl =
+      // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向一樣，則相減後取絕對值
+      previousPnl.type === myPnl.type
+        ? Math.abs(+previousPnl.value - +myPnl.value)
+        : // Info: (20230809 - Julian) 如果前一名和我的 PNL 方向相反，則相加後取絕對值
+          Math.abs(+previousPnl.value + +myPnl.value);
+
+    const gapPnlFormatted = numberFormatted(gapPnl);
+
+    return gapPnl !== 0 ? `+ ${gapPnlFormatted}` : '-';
+  };
+
+  const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;
 
   /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
     <div
+      ref={shareListRef}
       className={`absolute bottom-10 right-0 inline-flex md:-right-28 md:bottom-16 ${
-        showShareList ? 'visible opacity-100' : 'invisible opacity-0'
+        shareListVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
-      <a>
+      <a id="ShareRankingToFacebook">
         <BsFacebook className="hover:text-lightGray2" />
       </a>
-      <a>
+      <a id="ShareRankingToTwitter">
         <BsTwitter className="hover:text-lightGray2" />
       </a>
-      <a>
+      <a id="ShareRankingToReddit">
         <BsReddit className="hover:text-lightGray2" />
       </a>
     </div>
@@ -110,22 +116,27 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     timeSpan === RankingInterval.LIVE ? null : (
       <div className="relative text-2xl text-lightWhite hover:cursor-pointer hover:text-lightGray2 md:text-4xl">
         {socialMediaList}
-        <RiShareForwardFill onClick={shareClickHandler} />
+        <div id="RankingShareButton" onClick={shareClickHandler}>
+          <RiShareForwardFill />
+        </div>
       </div>
     );
 
   const isDisplayedLiveRank =
-    timeSpan === RankingInterval.LIVE ? (
+    /* Info: (20230818 - Julian) 第一名不用顯示 */
+    timeSpan === RankingInterval.LIVE && rankingNumber > 1 ? (
       <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-        <div className="hidden sm:block">{displayedCumulativePnl}</div>
-        <div>{displayedArrow}</div>
-        <div>{displayedRankingNumber}</div>
+        <div>{displayedGapPnl()}</div>
+        <div>
+          <ImArrowUp width={20} height={26} />
+        </div>
+        <div className="hidden sm:block">{displayedPreviousRankingNumber}</div>
       </div>
     ) : null;
 
   const personalRanking = userCtx.user?.address ? (
     isLoading ? (
-      <div className="flex items-center bg-darkGray3 px-4 py-2 md:px-8">
+      <div className="flex h-90px items-center bg-darkGray3 px-4 py-2 md:px-8">
         <div className="flex flex-1 items-center space-x-4">
           <Skeleton width={60} height={25} />
           <Skeleton width={60} height={60} circle />
@@ -136,6 +147,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     ) : (
       <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-2 shadow-top md:px-8">
         <div
+          id="UserPersonalRanking"
           className="flex flex-1 items-center space-x-2 md:space-x-3"
           onClick={personalInfoClickHandler}
         >
@@ -150,7 +162,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
           </div>
           {/* Info: (20230510 - Julian) User Name */}
           <div className="truncate text-sm sm:text-xl">
-            {accountTruncate(userCtx.user?.address)}
+            {accountTruncate(userCtx.user?.address, 20)}
           </div>
         </div>
         <div className="flex items-center space-x-3 text-base md:text-xl">
@@ -165,7 +177,11 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     )
   ) : null;
 
-  return <div className="sticky bottom-0 z-30 hover:cursor-pointer">{personalRanking}</div>;
+  return (
+    <div id="MyRanking" className="sticky bottom-0 z-30 hover:cursor-pointer">
+      {personalRanking}
+    </div>
+  );
 };
 
 export default UserPersonalRanking;

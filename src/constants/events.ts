@@ -5,6 +5,7 @@ export type IEvents =
   | 'subscribe'
   | 'unsubscribe'
   | 'error'
+  | 'assets'
   | 'cfd'
   | 'bolt_transaction'
   | 'balance';
@@ -19,6 +20,7 @@ export interface IEventsConstant {
   BOLT_TRANSACTION: IEvents;
   CFD: IEvents;
   BALANCE: IEvents;
+  ASSETS: IEvents;
 }
 
 export const Events: IEventsConstant = {
@@ -31,4 +33,5 @@ export const Events: IEventsConstant = {
   BOLT_TRANSACTION: 'bolt_transaction',
   CFD: 'cfd',
   BALANCE: 'balance',
+  ASSETS: 'assets',
 };

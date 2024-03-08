@@ -1,16 +1,17 @@
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
-import {
-  DEFAULT_FLUCTUATION,
-  DEFAULT_PRICE_CHANGE,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {DEFAULT_FLUCTUATION, DEFAULT_ICON, DEFAULT_PRICE_CHANGE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import {useTranslation} from 'next-i18next';
-import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {DEFAULT_CRYPTO, unitAsset} from '../../constants/config';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import {useGlobal} from '../../contexts/global_context';
+import {numberFormatted} from '../../lib/common';
+import Image from 'next/image';
+import {TickerContext} from '../../contexts/ticker_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -18,6 +19,8 @@ const TradingHeader = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext(MarketContext);
+  const tickerCtx = useContext(TickerContext);
+  const globalCtx = useGlobal();
 
   const {
     targetRef: tickerBoxRef,
@@ -30,34 +33,37 @@ const TradingHeader = () => {
   };
 
   const priceShadowColor =
-    marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
+    tickerCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
-  const priceChange = Math.abs(
-    marketCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE
-  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-
-  const priceChangePercentage = Math.abs(
-    marketCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION
-  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-
-  const tickerTitle = (
-    <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
+  const priceChange = numberFormatted(
+    Math.abs(tickerCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE)
   );
 
-  const tickerHeader = (
+  const priceChangePercentage = numberFormatted(
+    Math.abs(tickerCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION)
+  );
+
+  const tickerTitle = (
+    <h1 className="text-3xl font-medium">{marketCtx.selectedTickerProperty?.currency}</h1>
+  );
+
+  const tickerHeaderDesktop = (
     <>
       <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
-        {/* Ticker */}
+        {/* INFO: Ticker (20240118 - Shirley) */}
         <div className="flex w-200px items-center space-x-3 text-center">
           <button
+            id="TickerSelectorDesktop"
             type="button"
             className="flex items-center space-x-3 text-center hover:cursor-pointer"
             onClick={tickerBoxClickHandler}
           >
             <span className="relative h-40px w-40px">
-              <img
-                src={marketCtx.selectedTicker?.tokenImg}
-                alt={marketCtx.selectedTicker?.currency}
+              <Image
+                src={marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
+                alt={marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CRYPTO}
+                width={40}
+                height={40}
               />
             </span>
             {tickerTitle}
@@ -72,37 +78,70 @@ const TradingHeader = () => {
           className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >
           <div className="text-3xl">
-            <span className="">
-              ₮{' '}
-              {marketCtx.selectedTicker?.price.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
-            </span>
+            <span className="">₮ {numberFormatted(tickerCtx.selectedTicker?.price)}</span>
           </div>
           <div className="text-lg">{`${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
+            tickerCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
           } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
 
-        {/* Trading volume */}
+        {/* INFO: Trading volume (20240118 - Shirley) */}
         <div className="relative">
-          <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
+          <div className="absolute -right-48 top-5 w-300px text-sm text-lightWhite/60 lg:left-0">
             {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')}{' '}
-            {Number(marketCtx.selectedTicker?.tradingVolume).toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}{' '}
-            {unitAsset}
+            {numberFormatted(tickerCtx.selectedTicker?.tradingVolume)} {unitAsset}
           </div>
         </div>
       </div>
     </>
   );
 
+  const tickerHeaderMobile = (
+    <>
+      <div className="flex w-9/10 flex-col items-center justify-center space-y-5 text-start text-white">
+        {/* INFO: Ticker (20240118 - Shirley) */}
+        <div className="flex items-center space-x-3 text-center">
+          <button
+            id="TickerSelectorMobile"
+            type="button"
+            className="flex items-center space-x-3 text-center hover:cursor-pointer"
+            onClick={tickerBoxClickHandler}
+          >
+            <span className="relative h-40px w-40px">
+              {/* ToDo (20230419 - Julian) default currency icon */}
+              <Image
+                src={marketCtx.selectedTickerProperty?.tokenImg ?? DEFAULT_ICON}
+                alt={marketCtx.selectedTickerProperty?.currency ?? DEFAULT_CRYPTO}
+                width={40}
+                height={40}
+              />
+            </span>
+            {tickerTitle}
+
+            <div className="pl-0 hover:cursor-pointer">
+              <CgSearchLoading size={35} />
+            </div>
+          </button>
+        </div>
+
+        <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
+          <div className="text-3xl">
+            <span className="">₮ {numberFormatted(tickerCtx.selectedTicker?.price)}</span>
+          </div>
+          <div className="text-lg">{`${
+            tickerCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
+          } ${priceChange} (${priceChangePercentage}%)`}</div>
+        </div>
+      </div>
+    </>
+  );
+
+  const displayedLayout =
+    globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? tickerHeaderMobile : tickerHeaderDesktop;
+
   return (
     <div>
-      {tickerHeader}
+      {displayedLayout}
       <TickerSelectorBox
         tickerSelectorBoxRef={tickerBoxRef}
         tickerSelectorBoxVisible={tickerBoxVisible}

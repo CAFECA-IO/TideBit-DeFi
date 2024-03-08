@@ -1,24 +1,21 @@
 import {BsStar, BsStarFill} from 'react-icons/bs';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {TypeOfPnLColorHex} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
-import {useTranslation} from 'react-i18next';
-import {FRACTION_DIGITS} from '../../constants/config';
+import {useTranslation} from 'next-i18next';
+import {LayoutAssertion} from '../../constants/layout_assertion';
+import {numberFormatted} from '../../lib/common';
+import useStateRef from 'react-usestateref';
+import useWindowSize from '../../lib/hooks/use_window_size';
 
 type TranslateFunction = (s: string) => string;
-/**
- * @dev used when it needs the star functionality
- * @param {star} empty star
- * @param {starred} filled star or not
- *
- */
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
@@ -32,6 +29,7 @@ export interface ILineGraphProps {
 export interface ICardProps {
   tokenImg: string;
   chain: string;
+  instId: string;
   currency: ICurrency;
   price: number;
   fluctuating: number;
@@ -42,15 +40,24 @@ export interface ICardProps {
   starColor?: string;
   starred?: boolean;
   getStarredState?: (props: boolean) => void;
+  getStarredInstId?: (props: string) => void;
 
   className?: string;
   cardClickHandler?: () => void;
+  onTheSamePage?: boolean;
 }
 
+/** Info: (20230628 - Shirley)
+ * @dev used when it needs the star functionality
+ * @param {boolean} star blank star
+ * @param {boolean} starred fill star or not
+ *
+ */
 const CryptoCard = ({
   gradientColor,
   tokenImg,
   chain,
+  instId,
   currency,
   price = 0,
   fluctuating = -1,
@@ -59,23 +66,35 @@ const CryptoCard = ({
   starColor,
   lineGraphProps,
   cardClickHandler,
+  onTheSamePage = true,
+  getStarredState,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
+  const globalCtx = useGlobal();
+  // Info: for the use of useStateRef (20231106 - Shirley)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [starredState, setStarredState, starredStateRef] = useStateRef<boolean>(!!starred);
+  const {width} = useWindowSize();
+
   fluctuating = Number(fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingAbs = Math.abs(fluctuating);
   const fluctuatingRate = priceRise
-    ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
-    : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;
-  // TODO: input the data and price color change as props
+    ? `▴ ${numberFormatted(fluctuatingAbs)}%`
+    : `▾ ${numberFormatted(fluctuatingAbs)}%`;
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
+  const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
-  const globalCtx = useGlobal();
+  const passStarredState = (props: boolean) => {
+    getStarredState && getStarredState(props);
+  };
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the div click handler from firing
+
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
@@ -84,57 +103,23 @@ const CryptoCard = ({
         autoClose: 3000,
         isLoading: false,
       });
+      return;
     }
 
-    event.stopPropagation(); // Prevent the div click handler from firing
-
-    if (!starred) {
-      userCtx.addFavorites(currency);
-    } else {
-      userCtx.removeFavorites(currency);
-    }
+    setStarredState(!starredStateRef.current);
+    passStarredState(starredStateRef.current);
   };
 
-  const showStar = starred ? (
-    <button type="button" onClick={starClickHandler} className="absolute top-2 right-3">
-      <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
-    </button>
+  const starIcon = starredStateRef.current ? (
+    <BsStarFill className={`${starColor}`} />
   ) : star ? (
-    <button
-      type="button"
-      onClick={starClickHandler}
-      className="absolute top-2 right-3 hover:cursor-pointer"
-    >
-      <BsStar size={20} className={`${starColor}`} />
-    </button>
+    <BsStar className={`${starColor}`} />
   ) : null;
-
-  const showStarMobile = starred ? (
-    <button
-      type="button"
-      onClick={starClickHandler}
-      className="absolute top-1 right-1 hover:cursor-pointer"
-    >
-      <BsStarFill size={13} className={`${starColor}`} />
-    </button>
-  ) : star ? (
-    <button
-      type="button"
-      onClick={starClickHandler}
-      className="absolute top-1 right-1 hover:cursor-pointer"
-    >
-      <BsStar size={13} className={`${starColor}`} />
-    </button>
-  ) : null;
-
-  const desktopVersionBreakpoint = 'xs:flex';
-  const mobileVersionBreakpoint = 'xs:hidden';
 
   function lineGraph({
     strokeColor = ['#3CC8C8'],
     dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
     lineGraphWidth,
-    ...otherProps
   }: ILineGraphProps) {
     const chartOptions: ApexOptions = {
       chart: {
@@ -146,6 +131,7 @@ const CryptoCard = ({
         toolbar: {
           show: false,
         },
+        sparkline: {enabled: true},
       },
 
       dataLabels: {
@@ -178,7 +164,7 @@ const CryptoCard = ({
         enabled: false,
       },
     };
-    const [dataSample, setDataSample] = useState({
+    const dataSample = {
       options: chartOptions,
       toolbar: {
         show: false,
@@ -190,15 +176,16 @@ const CryptoCard = ({
           data: [...dataArray],
         },
       ],
-    });
+    };
 
     return (
-      <div>
+      <div className="h-40px pt-8">
         <Chart
           options={dataSample.options}
           series={dataSample.series}
           type="line"
           width={lineGraphWidth}
+          height={`${globalCtx.layoutAssertion === LayoutAssertion.MOBILE ? '20px' : '40px'}`}
         />
       </div>
     );
@@ -227,113 +214,65 @@ const CryptoCard = ({
   };
   const thisRandomColor = fakeDataColor();
 
+  const lineGraphWidthRwd =
+    width < 500
+      ? lineGraphProps?.lineGraphWidthMobile ?? '120'
+      : lineGraphProps?.lineGraphWidth ?? '170';
+
   return (
     <>
-      {/* -----Desktop (width > 500px) version (Card 200x120)----- */}
+      {/* -----Info: Desktop (width > 500px) version (Card 200x120) (20230628 - Shirley)----- */}
+      {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
-        // type="button"
-        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        id={`CryptoCard${currency}`}
+        className={`${otherProps?.className} relative flex xs:h-120px xs:w-200px xs:rounded-2xl h-81px w-134px rounded-10px border-0.5px hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(currency);
+          onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >
         <div className="px-2 py-1">
-          {/* token icon & chain & coin name */}
-          <div className="flex items-center">
-            <Image src={tokenImg} alt={currency} height={40} width={40} />
+          <div className="flex items-center mb-1 xs:mb-0">
+            {/* Info:(20231129 - Julian) Desktop Icon 40x40 & Mobile Icon 28x28 */}
+            <div className="xs:w-10 xs:h-10 w-7 h-7 relative">
+              <Image style={{objectFit: 'contain'}} fill src={tokenImg} alt={currency} />
+            </div>
 
             <div className="ml-3 items-center">
-              <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
-              <p className="text-sm text-lightWhite opacity-60">{currency}</p>
+              <p className="xs:text-lg text-sm leading-none xs:leading-6 text-lightWhite">
+                {chain}
+              </p>
+              <p className="xs:text-sm text-xs text-lightWhite opacity-60">{currency}</p>
             </div>
-            <div
-              className=""
-              // No execution to the below function actually
-              // onClick={() => {
-              //   console.log('start clicked');
-              // }}
+
+            {/* Info: (20231129 - Julian) Desktop Star 20x20 & Mobile Star 13x13 */}
+            <button
+              id={`Star${currency}`}
+              type="button"
+              onClick={starClickHandler}
+              className="absolute xs:right-3 xs:top-2 right-2 top-1 xs:w-5 xs:h-5 w-3 h-3 hover:cursor-pointer"
             >
-              {showStar}
-            </div>
+              {starIcon}
+            </button>
           </div>
 
-          {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
+            <div className="pointer-events-none absolute right-2 top-1 xs:top-4 z-100 xs:h-60px bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
+                strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
+                lineGraphWidth: lineGraphWidthRwd,
               })}
-              {/* <LineGraph
-                sampleArray={sampleArray}
-                strokeColor={thisRandomColor}
-                lineGraphWidth="170"
-              /> */}
-
-              {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
             </div>
-            {/**@note no default text color, otherwise it will make actual text color not work */}
-            <div className="absolute bottom-0 flex w-200px justify-between">
+            <div className="absolute bottom-0 flex w-134px xs:w-200px justify-between">
               <span
-                className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
+                className={`flex items-center justify-between text-xs xs:text-sm ${priceColor} mt-3 align-middle`}
               >
-                <p className="mx-1 text-left text-xl font-normal tracking-wide">₮ {price}</p>
-                <div className="absolute right-4 flex">
-                  <span className="text-sm"> {fluctuatingRate}</span>
-                </div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* -----Mobile (width < 500px) version (Card 134x81)----- */}
-      <div
-        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
-        onClick={() => {
-          marketCtx.selectTickerHandler(currency);
-          cardClickHandler && cardClickHandler();
-        }}
-      >
-        <div className="px-2 py-1">
-          {/* token icon & chain & coin name */}
-          <div className="mb-1 flex items-center">
-            <Image src={tokenImg} alt={currency} width={28} height={28} />
-
-            <div className="ml-3 items-center">
-              <p className="text-sm leading-none text-lightWhite"> {chain}</p>
-              <p className="text-xs text-lightWhite opacity-60">{currency}</p>
-            </div>
-            <div className="">{showStarMobile}</div>
-          </div>
-
-          {/* line graph & price & fluctuating rate */}
-          <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
-              {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
-              {lineGraph({
-                dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
-              })}
-              {/* <LineGraph
-                sampleArray={sampleArray}
-                strokeColor={thisRandomColor}
-                lineGraphWidth="140"
-              /> */}
-            </div>
-            {/**@note no default text color, otherwise it will make actual text color not work */}
-            <div className="absolute bottom-0 flex w-134px justify-between">
-              <span
-                className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
-              >
-                <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">
-                  ₮ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                <p className="mb-1 xs:mb-0 xs:mx-1 text-left text-xs xs:text-xl font-normal tracking-wide">
+                  ₮ {price}
                 </p>
-                <div className="absolute bottom-5px right-4 flex">
-                  <span className="text-xxs"> {fluctuatingRate}</span>
+                <div className="absolute bottom-5px xs:bottom-0 right-4 flex">
+                  <span className="xs:text-sm text-xxs"> {fluctuatingRate}</span>
                 </div>
               </span>
             </div>

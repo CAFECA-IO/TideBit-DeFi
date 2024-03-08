@@ -2,11 +2,12 @@ import {Code, ICode, Reason} from '../../constants/code';
 import {IAcceptedOrder} from './accepted_order';
 import {IBadge} from './badge';
 import {IBalance} from './balance';
-import {ICandlestickData, ITrade} from './candlestickData';
+import {ICandlestick} from './candlestick';
+import {ICandlestickData, IInstCandlestick, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
+import {ILeaderboard, IRanking} from './leaderboard';
 import {IDepositOrder, IOrder} from './order';
 import {IPersonalAchievement} from './personal_achievement';
-import {IPersonalRanking} from './personal_ranking';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
@@ -25,6 +26,7 @@ export interface IResult {
     | IBalance[]
     | IOrder[]
     | ICandlestickData[]
+    | ICandlestick
     | ITickerData[]
     | ICryptocurrency[]
     | IAcceptedOrder
@@ -44,12 +46,14 @@ export interface IResult {
     | ITickerStatic
     | ITickerLiveStatistics
     | ITrade[]
+    | IInstCandlestick
     | ITideBitPromotion
     | IWebsiteReserve
     | IUserAssets
-    | IPersonalRanking
     | IPersonalAchievement
     | IBadge
+    | IRanking[]
+    | ILeaderboard
     | null;
   code: ICode;
   reason?: string;

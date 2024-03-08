@@ -1,4 +1,5 @@
 export type ITideBitEvent =
+  | 'IS_INITIALIZE'
   | 'CONNECTED'
   | 'DISCONNECTED'
   | 'ACCOUNT_CHANGED'
@@ -9,6 +10,7 @@ export type ITideBitEvent =
   | 'BALANCE'
   | 'BALANCES'
   | 'FAVORITE_TICKER'
+  | 'CHANGE_TICKER'
   | 'TICKER_CHANGE'
   | 'TICKER'
   | 'TICKER_STATISTIC'
@@ -20,8 +22,12 @@ export type ITideBitEvent =
   // | 'DEPOSIT'
   // | 'WITHDRAW'
   | 'ORDER'
-  | 'IS_CFD_TRADEBLE';
+  | 'IS_CFD_TRADEBLE'
+  | 'EXCEPTION_UPDATE'
+  | 'EXCEPTION_CLEARED';
+
 export interface ITideBitEventConstant {
+  IS_INITIALIZE: ITideBitEvent;
   CONNECTED: ITideBitEvent;
   DISCONNECTED: ITideBitEvent;
   ACCOUNT_CHANGED: ITideBitEvent;
@@ -33,6 +39,7 @@ export interface ITideBitEventConstant {
   BALANCES: ITideBitEvent;
   FAVORITE_TICKER: ITideBitEvent;
   TICKER: ITideBitEvent;
+  CHANGE_TICKER: ITideBitEvent;
   TICKER_CHANGE: ITideBitEvent;
   TICKER_STATISTIC: ITideBitEvent;
   TICKER_LIVE_STATISTIC: ITideBitEvent;
@@ -44,8 +51,11 @@ export interface ITideBitEventConstant {
   // WITHDRAW: ITideBitEvent;
   ORDER: ITideBitEvent;
   IS_CFD_TRADEBLE: ITideBitEvent;
+  EXCEPTION_UPDATE: ITideBitEvent;
+  EXCEPTION_CLEARED: ITideBitEvent;
 }
 export const TideBitEvent: ITideBitEventConstant = {
+  IS_INITIALIZE: 'IS_INITIALIZE',
   CONNECTED: 'CONNECTED',
   DISCONNECTED: 'DISCONNECTED',
   ACCOUNT_CHANGED: 'ACCOUNT_CHANGED',
@@ -57,6 +67,7 @@ export const TideBitEvent: ITideBitEventConstant = {
   BALANCES: 'BALANCES',
   FAVORITE_TICKER: 'FAVORITE_TICKER',
   TICKER: 'TICKER',
+  CHANGE_TICKER: 'CHANGE_TICKER',
   TICKER_CHANGE: 'TICKER_CHANGE',
   TICKER_STATISTIC: 'TICKER_STATISTIC',
   TICKER_LIVE_STATISTIC: 'TICKER_LIVE_STATISTIC',
@@ -68,6 +79,8 @@ export const TideBitEvent: ITideBitEventConstant = {
   // WITHDRAW: 'WITHDRAW',
   ORDER: 'ORDER',
   IS_CFD_TRADEBLE: 'IS_CFD_TRADEBLE',
+  EXCEPTION_UPDATE: 'EXCEPTION_UPDATE',
+  EXCEPTION_CLEARED: 'EXCEPTION_CLEARED',
 };
 
 export type IClickEvent = 'TICKER_CHANGED';

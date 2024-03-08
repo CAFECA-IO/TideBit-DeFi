@@ -8,44 +8,38 @@ import {
   defaultCryptocurrency,
 } from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import Image from 'next/image';
-import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
-import {useTranslation} from 'react-i18next';
-import {findCodeByReason, locker, randomHex, wait} from '../../lib/common';
+import {useTranslation} from 'next-i18next';
+import {findCodeByReason, locker, numberFormatted, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code, Reason} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
-import {FRACTION_DIGITS} from '../../constants/config';
-import {CustomError, isCustomError} from '../../lib/custom_error';
+import {isCustomError} from '../../lib/custom_error';
+import {useRouter} from 'next/router';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
-const DepositModal = ({
-  modalVisible,
-  modalClickHandler,
-  getSubmissionState, // [process]
-  getTransferData, // pass data to parent component
-  submitHandler, // submit information from parent component
-  ...otherProps
-}: IDepositModal) => {
+const DepositModal = ({modalVisible, modalClickHandler, getTransferData}: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {t: _t} = useTranslation();
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
+  const {locale} = useRouter();
 
-  const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
-  const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
+  const [showCryptoMenu, setShowCryptoMenu] = useStateRef(false);
+  const [selectedCrypto, setSelectedCrypto] = useStateRef(
     depositCryptocurrencies[0] ?? defaultCryptocurrency
   );
   const [amountInput, setAmountInput] = useState<number | undefined>();
@@ -63,10 +57,6 @@ const DepositModal = ({
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
   };
 
-  const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
-    getSubmissionState(props);
-  };
-
   const submitClickHandler = async () => {
     if (globalCtx.displayedToast(ToastId.DEPOSIT) || globalCtx.visibleLoadingModal) {
       globalCtx.dataWarningModalHandler({
@@ -82,7 +72,6 @@ const DepositModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto, amount: amountInput});
     const [lock, unlock] = locker('deposit_modal.submitClickHandler');
 
     if (!lock()) return;
@@ -160,7 +149,7 @@ const DepositModal = ({
             {
               nextAvailableTime: new Date(
                 (result.data as {nextAvailableTime: number}).nextAvailableTime * 1000
-              ).toLocaleString(),
+              ).toLocaleString(locale),
             }
           )})`,
         });
@@ -180,7 +169,13 @@ const DepositModal = ({
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error: any) {
+    } catch (error) {
+      notificationCtx.addException(
+        'submitClickHandler deposit_modal',
+        error as Error,
+        Code.UNKNOWN_ERROR
+      );
+
       globalCtx.eliminateAllModals();
 
       // ToDo: Report error to backend (20230413 - Shirley)
@@ -256,12 +251,11 @@ const DepositModal = ({
   const avaliableCryptoMenu = depositCryptocurrencies.map(item => {
     return (
       <li
+        id={`DepositAsset${item.name}`}
         key={item.symbol}
-        onClick={() => {
-          cryptoItemClickHandler(item);
-        }}
+        onClick={() => cryptoItemClickHandler(item)}
       >
-        <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
+        <p className="block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
           {item.name}
         </p>
       </li>
@@ -277,155 +271,121 @@ const DepositModal = ({
   };
 
   const formContent = (
-    <div className="relative flex-auto pt-0">
-      <div className="text-lg leading-relaxed text-lightWhite">
-        <div className="flex-col justify-center text-center">
-          {/* ----------Type input---------- */}
-          <div className="mx-6 pt-8 text-start">
-            <p className="text-sm text-lightGray4">{t('D_W_MODAL.ASSET')}</p>
-            <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
-              <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
-                <div className={`z-50 flex items-center space-x-2 pl-2`}>
-                  {/* Targeted Crypto icon */}
-                  {selectedCrypto.icon === '' ? (
-                    <></>
-                  ) : (
-                    <Image src={selectedCrypto.icon} width={20} height={20} alt="crypto icon" />
-                  )}
-
-                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.symbol}</p>
-                </div>
-                {/* TODO: input search */}
-                <input
-                  className="w-150px rounded-md bg-darkGray8 py-2 pl-0 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
-                  type="text"
-                  placeholder={selectedCrypto.name}
-                  disabled
-                  onFocus={() => {
-                    // console.log('focusing');
-                  }}
-                  value={selectedCrypto?.name}
-                />
-
-                <button
-                  type="button"
-                  className="absolute right-36px top-55px animate-openMenu"
-                  onClick={cryptoMenuClickHandler}
-                >
-                  <MdKeyboardArrowDown
-                    className={`transition-all duration-300 ${rotationStyle}`}
-                    size={30}
-                  />
-                </button>
-              </div>
-            </div>
+    <div className="relative text-lg leading-relaxed text-lightWhite flex-col justify-center text-center">
+      {/* Info: (20231204 - Julian) ---------- Asset ---------- */}
+      <div className="mx-6 pt-8 text-start">
+        <p className="text-sm text-lightGray4">{t('D_W_MODAL.ASSET')}</p>
+        <button
+          id="DepositAssetMenuButton"
+          className={`${formStyle} w-full p-1 flex items-center rounded-md bg-darkGray8 focus:ring-0 focus:outline-none`}
+          onClick={cryptoMenuClickHandler}
+        >
+          <div className={`z-50 flex items-center space-x-2 pl-2 flex-1`}>
+            {/* Info: (20231204 - Julian) Targeted Crypto icon */}
+            {selectedCrypto.icon === '' ? (
+              <></>
+            ) : (
+              <Image src={selectedCrypto.icon} width={20} height={20} alt="crypto icon" />
+            )}
+            <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.symbol}</p>
+            <p className="text-sm text-lightGray">{selectedCrypto.name}</p>
           </div>
+          {/* Info: (20231204 - Julian) Arrow animation */}
+          <div className="animate-openMenu">
+            <MdKeyboardArrowDown
+              className={`transition-all duration-300 ${rotationStyle}`}
+              size={30}
+            />
+          </div>
+        </button>
+      </div>
 
-          {/* ----------Crypto Menu---------- */}
-          <div
-            id="dropdownIcon"
-            className={`absolute right-6 top-90px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
+      {/* Info: (20231204 - Julian) ----------Crypto Menu---------- */}
+      <div
+        className={`absolute right-6 top-95px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
+      >
+        <ul
+          className="h-auto overflow-y-scroll text-start text-sm text-gray-200 no-scrollbar"
+          aria-labelledby="dropdownMenuIconButton"
+        >
+          {avaliableCryptoMenu}
+        </ul>
+      </div>
+
+      {/* Info: (20231204 - Julian) ----------Amount input---------- */}
+      <div className="mx-6 pt-12 text-start">
+        <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
+        <div className="flex items-center rounded-md bg-darkGray8">
+          <input
+            id="DepositAmountInput"
+            className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
+            type="number"
+            value={amountInput === undefined ? '' : amountInput}
+            onChange={amountOnChangeHandler}
+          />
+          {/* Info: (20231204 - Julian) Amount unit */}
+          <p className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default">
+            {selectedCrypto.symbol}
+          </p>
+          {/* Info: (20231204 - Julian) Max button */}
+          <button
+            id="DepositMaxButton"
+            type="button"
+            onClick={maxClickHandler}
+            className="mx-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 py-1 text-xs text-white hover:bg-lightGray3/80"
           >
-            <ul
-              className="h-auto overflow-y-scroll py-1 text-start text-sm text-gray-200"
-              aria-labelledby="dropdownMenuIconButton"
-            >
-              {avaliableCryptoMenu}
-            </ul>
-          </div>
-
-          {/* ----------Amount input---------- */}
-          <div className="mx-6 pt-12 text-start">
-            <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
-            <div className="flex rounded-md bg-darkGray8">
-              <input
-                className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
-                type="number"
-                placeholder=""
-                value={amountInput === undefined ? '' : amountInput}
-                onChange={amountOnChangeHandler}
-              />
-
-              <button
-                type="button"
-                className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default"
-              >
-                {selectedCrypto.symbol}
-              </button>
-              <button
-                type="button"
-                onClick={maxClickHandler}
-                className="mx-1 my-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
-              >
-                {t('D_W_MODAL.MAX')}
-              </button>
-            </div>
-
-            <div className="flex justify-end">
-              <p className="pt-3 text-end text-xs tracking-wide">
-                {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
-                <span className="text-tidebitTheme">
-                  {userAvailableBalance.toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}
-                </span>{' '}
-                {selectedCrypto.symbol}
-              </p>
-            </div>
-          </div>
-
-          <div className={``}>
-            <RippleButton
-              // Use the logic directly in the `disabled` attribute instead of `setSubmitDisabled`
-              disabled={amountInput === 0 || amountInput === undefined}
-              onClick={submitClickHandler}
-              buttonType="button"
-              className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
-            >
-              {formButton}
-            </RippleButton>
-          </div>
+            {t('D_W_MODAL.MAX')}
+          </button>
+        </div>
+        {/* Info: (20231204 - Julian) Available balance */}
+        <div className="flex justify-end">
+          <p className="pt-3 text-end text-xs tracking-wide">
+            {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
+            <span className="text-tidebitTheme">{numberFormatted(userAvailableBalance)}</span>{' '}
+            {selectedCrypto.symbol}
+          </p>
         </div>
       </div>
+
+      {/* Info: (20231204 - Julian) ---------- Deposit button ---------- */}
+      <RippleButton
+        id="DepositButton"
+        // Use the logic directly in the `disabled` attribute instead of `setSubmitDisabled`
+        disabled={amountInput === 0 || amountInput === undefined}
+        onClick={submitClickHandler}
+        buttonType="button"
+        className={`absolute -bottom-14 rounded bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+      >
+        {formButton}
+      </RippleButton>
     </div>
   );
 
   const isDisplayedModal = modalVisible ? (
-    <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {' '}
-          {/*content & panel*/}
-          <div
-            id="depositModal"
-            // ref={modalRef}
-            className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+    /* Info: (20231204 - Julian) Blur Mask */
+    <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/25 outline-none backdrop-blur-sm focus:outline-none">
+      <div
+        id="DepositModal"
+        className="relative flex h-420px w-296px py-6 flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
+            {t('D_W_MODAL.DEPOSIT')}
+          </h3>
+          <button
+            id="DepositModalCloseButton"
+            onClick={modalClickHandler}
+            className="absolute right-5 top-5 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
           >
-            {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
-                {t('D_W_MODAL.DEPOSIT')}
-              </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
-            </div>
-            {/*body*/}
-            {formContent}
-            {/*footer*/}
-            <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
+            <ImCross />
+          </button>
         </div>
+        {formContent}
       </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
-  return <div>{isDisplayedModal}</div>;
+  return <>{isDisplayedModal}</>;
 };
 
 export default DepositModal;

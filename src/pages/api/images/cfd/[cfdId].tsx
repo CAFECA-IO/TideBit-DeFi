@@ -1,51 +1,45 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {ImageResponse} from 'next/server';
-import {
-  adjustTimestamp,
-  getTimestamp,
-  getTimestampInMilliseconds,
-  randomIntFromInterval,
-  roundToDecimalPlaces,
-  timestampToString,
-} from '../../../../lib/common';
+/*eslint-disable @next/next/no-img-element*/
+import {NextApiRequest} from 'next';
+import {ImageResponse} from 'next/og';
 import {
   BG_HEIGHT_OF_SHARING_RECORD,
   BG_WIDTH_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
   TypeOfPnLColorHex,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
   WIDTH_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {
   API_URL,
+  API_VERSION,
   DOMAIN,
-  FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
   unitAsset,
 } from '../../../../constants/config';
-import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
-import {Currency} from '../../../../constants/currency';
 import {
   ISharingOrder,
-  getDummySharingOrder,
   getInvalidSharingOrder,
-  isDummySharingOrder,
   isSharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
-import {useRouter} from 'next/router';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
-import {Buffer} from 'buffer';
+import SafeMath from '../../../../lib/safe_math';
+import React from 'react';
+import {
+  adjustTimestamp,
+  numberFormatted,
+  roundToDecimalPlaces,
+  timestampToString,
+} from '../../../../lib/common';
 
 export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const cfdId = params.pop();
-  const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
+  const apiUrl = `${API_URL}/api/${API_VERSION}/public/shared/cfd/${cfdId}`;
   const tz = Number(url.searchParams.get('tz'));
 
   let sharingOrder: ISharingOrder = getInvalidSharingOrder();
@@ -59,6 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const order = await orderResponse.json();
 
       if (order?.success) {
+        if (order?.data.openPrice) order.data.openPrice = order.data.openPrice.toString();
+        if (order?.data.closePrice) order.data.closePrice = order.data.closePrice.toString();
         if (isSharingOrder(order?.data)) {
           sharingOrder = order?.data;
         }
@@ -74,46 +70,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await fetchOrder();
 
     const offset = new Date().getTimezoneOffset() / 60;
-    const adCreateTimstamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
-    const adCloseTimstamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
+    const adCreateTimestamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
+    const adCloseTimestamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
 
     sharingOrder = {
       ...sharingOrder,
-      createTimestamp: adCreateTimstamp,
-      closeTimestamp: adCloseTimstamp,
+      createTimestamp: adCreateTimestamp,
+      closeTimestamp: adCloseTimestamp,
     };
   } catch (e) {
     // Info: show the invalid dummy order img (20230523 - Shirley)
   }
-  // TODO: Data from API (20230508 - Shirley)
+  // TODO: Show the `instId` when data has the property (20230724 - Shirley)
   const {
-    ticker: tickerId,
     userName,
+    targetAsset,
     targetAssetName,
     typeOfPosition,
     openPrice,
     closePrice,
-    leverage,
     createTimestamp,
     closeTimestamp,
   } = sharingOrder;
 
-  // TODO: Timestamp 要改成用戶時區 (20230523 - Shirley)
   const {date: openDate, time: openTimeString} = timestampToString(createTimestamp);
   const {date: closeDate, time: closeTimeString} = timestampToString(closeTimestamp);
 
   const displayedUser = userName.slice(-1).toUpperCase();
 
   const logoUrl = DOMAIN + `/elements/group_15944.svg`;
-  const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
+  const iconUrl = DOMAIN + `/asset_icon/${targetAsset.toLowerCase()}.svg`;
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
+  const marketIconUrl = DOMAIN + '/elements/market_icon@2x.png';
+  const leaderboardIconUrl = DOMAIN + '/elements/leaderboard_icon@2x.png';
 
   const pnlPercent =
     !!!openPrice || !!!closePrice
       ? 0
       : typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
-      : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(SafeMath.div(SafeMath.minus(closePrice, openPrice), openPrice), 100),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(SafeMath.div(SafeMath.minus(openPrice, closePrice), openPrice), 100),
+          2
+        );
 
   const bg =
     pnlPercent > 0
@@ -128,21 +130,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const backgroundImageUrl = DOMAIN + '/elements/' + bg + '.png';
 
-  const displayedPnlPercent = Math.abs(pnlPercent).toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
-
-  const profitState = pnlPercent > 0 ? ProfitState.PROFIT : ProfitState.LOSS;
+  const displayedPnlPercent = numberFormatted(Math.abs(pnlPercent));
 
   const displayedTypeOfPosition =
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
-  const displayedTextColor =
-    profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
+
+  const displayedTextColor = pnlPercent > 0 ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
 
   const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC${tz}`;
 
-  const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
+  const BarlowBuffer = new Uint8Array(
+    atob(BARLOW_BASE64)
+      .split('')
+      .map(char => char.charCodeAt(0))
+  ).buffer;
 
   const upArrow = (
     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 28.125 36">
@@ -164,7 +165,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </svg>
   );
 
-  const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
+  const displayedArrow = pnlPercent > 0 ? upArrow : downArrow;
 
   const imageResponse = new ImageResponse(
     (
@@ -243,18 +244,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   </h1>
                 </div>
               </div>
-              {/* Info: QR Code (20230509 - Shirley) */}
-              <img
+              <div
                 style={{
                   position: 'absolute',
                   top: '370px',
-                  left: '730px',
+                  left: '650px',
+
+                  display: 'flex',
+                  justifySelf: 'end',
+                  marginTop: 'auto',
+                  marginLeft: 'auto',
                 }}
-                src={`${qrcodeUrl}`}
-                width={80}
-                height={80}
-                alt="qrcode"
-              />
+              >
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <img src={`${marketIconUrl}`} width={70} height={70} alt="market_icon" />
+                  <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Market</p>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginLeft: '30px',
+                  }}
+                >
+                  <img src={`${leaderboardIconUrl}`} width={70} height={70} alt="market_icon" />
+                  <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Leaderboard</p>
+                </div>
+              </div>
 
               <div
                 style={{
@@ -316,16 +333,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         display: 'flex',
                         width: '100%',
                         justifyContent: 'center',
-                        marginBottom: '40px',
+                        marginTop: '-20px',
                       }}
                     >
-                      <span style={{marginTop: '15px', marginRight: '8px'}}>{displayedArrow}</span>{' '}
+                      <span style={{marginTop: '45px', marginRight: '8px'}}>{displayedArrow}</span>{' '}
                       <p
                         style={{
                           fontSize: '60px',
                           fontWeight: 'bold',
                           color: `${displayedTextColor}`,
-                          marginTop: '30px',
                         }}
                       >
                         {displayedPnlPercent}%
@@ -337,6 +353,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         flexDirection: 'column',
                         gap: '0px',
                         width: '330px',
+
+                        position: 'relative',
+                        top: '30px',
+                        // height: '100px',
+                        // marginTop: '100px',
                       }}
                     >
                       <div
@@ -349,14 +370,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontSize: '16px',
                             fontWeight: 'bold',
                             color: '#8B8E91',
-
                             width: '260px',
                             marginLeft: '20px',
                           }}
                         >
                           Open Price
                         </p>
-                        <div style={{width: '50px'}}></div>
+                        <div style={{width: '90px'}}></div>
 
                         <p
                           style={{
@@ -367,10 +387,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '35px',
                           }}
                         >
-                          {openPrice?.toLocaleString(
-                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                            FRACTION_DIGITS
-                          )}
+                          {numberFormatted(openPrice)}
                           <span
                             style={{
                               marginTop: '2px',
@@ -386,7 +403,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         </p>
                       </div>
 
-                      <div style={{display: 'flex'}}>
+                      <div style={{display: 'flex', marginTop: '-20px'}}>
                         <p
                           style={{
                             fontSize: '16px',
@@ -399,7 +416,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         >
                           Close Price
                         </p>
-                        <div style={{width: '50px'}}></div>
+                        <div style={{width: '90px'}}></div>
 
                         <p
                           style={{
@@ -410,10 +427,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '35px',
                           }}
                         >
-                          {closePrice?.toLocaleString(
-                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                            FRACTION_DIGITS
-                          )}
+                          {numberFormatted(closePrice)}
                           <span
                             style={{
                               marginTop: '2px',
@@ -429,7 +443,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         </p>
                       </div>
 
-                      <div style={{display: 'flex'}}>
+                      <div style={{display: 'flex', marginTop: '-20px'}}>
                         <p
                           style={{
                             fontSize: '16px',
@@ -450,14 +464,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontWeight: 'bold',
                             color: '#fff',
 
-                            marginRight: '70px',
+                            marginRight: '120px',
                           }}
                         >
                           {openDate} {openTimeString} ({displayedTz})
                         </p>
                       </div>
 
-                      <div style={{display: 'flex'}}>
+                      <div style={{display: 'flex', marginTop: '-65px'}}>
                         <p
                           style={{
                             fontSize: '16px',
@@ -478,7 +492,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontWeight: 'bold',
                             color: '#fff',
 
-                            marginRight: '70px',
+                            marginRight: '120px',
                           }}
                         >
                           {closeDate} {closeTimeString} ({displayedTz})
@@ -496,7 +510,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             {/* Info: User (20230516 - Shirley) */}
             <div
               style={{
-                marginTop: '35px',
+                marginTop: '20px',
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',
@@ -507,7 +521,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 style={{
                   position: 'relative',
                   top: '0',
-                  left: '75px',
+                  left: '60px',
                   display: 'flex',
                   height: '60px',
                   width: '60px',
@@ -531,7 +545,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               </div>{' '}
               <p
                 style={{
-                  marginLeft: '90px',
+                  marginLeft: '80px',
                   fontSize: 18,
                   fontWeight: 'bolder',
                   color: 'rgba(229, 231, 235, 1)',
@@ -539,6 +553,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               >
                 {userName}
               </p>
+              {/* Info: QR Code (20230509 - Shirley) */}
+              <img
+                style={{display: 'flex', justifySelf: 'end', marginTop: 'auto', marginLeft: '1rem'}}
+                src={`${qrcodeUrl}`}
+                width={80}
+                height={80}
+                alt="qrcode"
+              />
             </div>
           </div>
         </div>

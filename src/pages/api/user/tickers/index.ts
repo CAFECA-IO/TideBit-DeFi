@@ -1,16 +1,40 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-let favoriteTickers = ['ETH', 'BTC'];
+import {Ticker} from '../../../../constants/ticker';
+import cookie from 'cookie';
+import {COOKIE_PERIOD_FAVORITES} from '../../../../constants/config';
+
+const defaultFavoriteTickers = Object.values(Ticker) as string[];
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const cookies = cookie.parse(req.headers.cookie || '');
+
+  let favoriteTickers = cookies.favoriteTickers
+    ? JSON.parse(cookies.favoriteTickers)
+    : defaultFavoriteTickers;
+
   if (req.method === 'GET') {
     res.status(200).json(favoriteTickers);
   } else if (req.method === 'PUT') {
+    const success = Math.random() > 0.3 ? true : false;
     if (req.body.starred === true) {
-      favoriteTickers = favoriteTickers.filter(t => t === req.body.ticker).concat(req.body.ticker);
-      res.status(200).json(favoriteTickers);
+      favoriteTickers = favoriteTickers.concat(req.body.instId);
     } else if (req.body.starred === false) {
-      favoriteTickers = favoriteTickers.filter(t => t === req.body.ticker);
-      res.status(200).json(favoriteTickers);
+      favoriteTickers = favoriteTickers.filter((t: string) => !req.body.instId?.includes(t));
     } else res.status(500).json({error: 'Internal Server Error'});
-    res.status(200).json({success: Math.random() > 0.3 ? true : false});
+
+    const expiration = new Date();
+    expiration.setDate(expiration.getDate() + COOKIE_PERIOD_FAVORITES);
+
+    res.setHeader(
+      'Set-Cookie',
+      cookie.serialize('favoriteTickers', JSON.stringify(favoriteTickers), {
+        httpOnly: true,
+        path: '/',
+        expires: expiration,
+        sameSite: 'strict',
+      })
+    );
+
+    res.status(200).json({favoriteTickers, success});
   }
 }

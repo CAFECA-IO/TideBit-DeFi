@@ -1,7 +1,3 @@
-// export const delayedProcessModalDisappear = ({setProcessModalVisible = () => {}}) => {
-//   setTimeout(() => setProcessModalVisible(false), 1000);
-// };
-
 import {Badges} from './badges';
 
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
@@ -26,6 +22,7 @@ export const TRANSFER_OPTIONS = [
 
 export const BADGE_LIST = [
   {
+    id: 'DailyTop20',
     name: Badges.DAILY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_DESCRIPTION',
@@ -33,6 +30,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/daily_20.svg',
   },
   {
+    id: 'WeeklyTop20',
     name: Badges.WEEKLY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_DESCRIPTION',
@@ -40,6 +38,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/weekly_20.svg',
   },
   {
+    id: 'MonthlyTop20',
     name: Badges.MONTHLY_TOP_20,
     title: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_DESCRIPTION',
@@ -47,6 +46,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/monthly_20.svg',
   },
   {
+    id: 'Sharing',
     name: Badges.SHARING,
     title: 'LEADERBOARD_PAGE.BADGE_SHARING_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_SHARING_DESCRIPTION',
@@ -54,6 +54,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/sharing_badge.svg',
   },
   {
+    id: 'Linked',
     name: Badges.LINKED,
     title: 'LEADERBOARD_PAGE.BADGE_LINKED_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_LINKED_DESCRIPTION',
@@ -61,6 +62,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/linked_badge.svg',
   },
   {
+    id: 'Deposit',
     name: Badges.DEPOSIT,
     title: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_DESCRIPTION',
@@ -68,6 +70,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/deposit_badge.svg',
   },
   {
+    id: 'Bachelor',
     name: Badges.BACHELOR,
     title: 'LEADERBOARD_PAGE.BADGE_BACHELOR_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_BACHELOR_DESCRIPTION',
@@ -75,6 +78,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/bachelor_badge.svg',
   },
   {
+    id: 'Master',
     name: Badges.MASTER,
     title: 'LEADERBOARD_PAGE.BADGE_MASTER_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_MASTER_DESCRIPTION',
@@ -82,6 +86,7 @@ export const BADGE_LIST = [
     iconSkeleton: '/badges/master_badge.svg',
   },
   {
+    id: 'Doctor',
     name: Badges.DOCTOR,
     title: 'LEADERBOARD_PAGE.BADGE_DOCTOR_TITLE',
     description: 'LEADERBOARD_PAGE.BADGE_DOCTOR_DESCRIPTION',
@@ -104,82 +109,82 @@ export const CRYPTO_CARD_COLORS = [
   {
     label: 'ETH',
     starColor: 'text-bluePurple',
-    gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
+    gradientColor: 'border-bluePurple/50 bg-transparent from-bluePurple/50 to-black/0',
   },
   {
     label: 'BTC',
     starColor: 'text-lightOrange',
-    gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
+    gradientColor: 'border-lightOrange/50 bg-transparent from-lightOrange/50 to-black/0',
   },
   {
     label: 'LTC',
     starColor: 'text-lightGray2',
-    gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
+    gradientColor: 'border-lightGray2/50 bg-transparent from-lightGray2/50 to-black/0',
   },
   {
     label: 'MATIC',
     starColor: 'text-lightPurple',
-    gradientColor: 'border-lightPurple/50 bg-black from-lightPurple/50 to-black',
+    gradientColor: 'border-lightPurple/50 bg-transparent from-lightPurple/50 to-black/0',
   },
   {
     label: 'BNB',
     starColor: 'text-lightYellow',
-    gradientColor: 'border-lightYellow/50 bg-black from-lightYellow/50 to-black',
+    gradientColor: 'border-lightYellow/50 bg-transparent from-lightYellow/50 to-black/0',
   },
   {
     label: 'SOL',
     starColor: 'text-lightPurple2',
-    gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black',
+    gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black/0',
   },
   {
     label: 'SHIB',
     starColor: 'text-lightRed1',
-    gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
+    gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black/0',
   },
   {
     label: 'DOT',
     starColor: 'text-lightPink',
-    gradientColor: 'border-lightPink/50 from-lightPink/50 to-black',
+    gradientColor: 'border-lightPink/50 from-lightPink/50 to-black/0',
   },
   {
     label: 'ADA',
     starColor: 'text-lightGreen1',
-    gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black',
+    gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black/0',
   },
   {
     label: 'AVAX',
     starColor: 'text-lightRed2',
-    gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
+    gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black/0',
   },
   {
     label: 'Dai',
     starColor: 'text-lightOrange1',
-    gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
+    gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black/0',
   },
   {
     label: 'MKR',
     starColor: 'text-lightGreen3',
-    gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
+    gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black/0',
   },
   {
     label: 'XRP',
     starColor: 'text-lightGray4',
-    gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
+    gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black/0',
   },
   {
     label: 'DOGE',
     starColor: 'text-lightYellow1',
-    gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
+    gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black/0',
   },
   {
     label: 'UNI',
     starColor: 'text-lightPink1',
-    gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
+    gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black/0',
   },
   {
     label: 'Flow',
     starColor: 'text-lightGreen4',
-    gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
+    gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black/0',
   },
 ];
 
@@ -188,7 +193,7 @@ export const TIDEBIT_BUTTON_CONFIG =
 
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
-export const INPUT_VALIDATION_DELAY = 500;
+export const INPUT_VALIDATION_DELAY = 5000;
 
 export const TRADING_INPUT_STEP = 0.01;
 
@@ -196,13 +201,14 @@ export const TypeOfPnLColorHex = {
   PROFIT: '#17BF88',
   LOSS: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',
-  EQUAL: '#8B8E91',
+  EQUAL: '#F2F2F2',
   LIQUIDATION: '#F8E71C',
 };
 
 export const TypeOfPnLColor = {
   PROFIT: 'text-lightGreen5',
   LOSS: 'text-lightRed',
+  // EQUAL: 'text-lightGreen5',
   EQUAL: 'text-lightWhite',
 };
 
@@ -230,7 +236,7 @@ export const InvisibleStrokeColor = {
   TRANSPARENT: '#A16171900',
 };
 
-export const SKELETON_DISPLAY_TIME = 1000;
+export const SKELETON_DISPLAY_TIME = 500;
 
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;
 
@@ -264,7 +270,7 @@ export const DEFAULT_USER_AVATAR = '/leaderboard/default_avatar.svg';
 export const DEFAULT_FEE = 0;
 export const DEFAULT_SELL_PRICE = 0;
 export const DEFAULT_BUY_PRICE = 9999999999;
-export const DEFAULT_LEVERAGE = 1;
+export const DEFAULT_LEVERAGE = 5;
 export const DEFAULT_USER_BALANCE = 0;
 export const DEFAULT_SPREAD = 0.001;
 export const DEFAULT_EXPIRY_DATE = 1;
@@ -278,5 +284,20 @@ export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = {available: 0, locked: 0};
 export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
-export const CANDLESTICK_SIZE = 30;
+export const CANDLESTICK_SIZE = 50;
 export const MOBILE_WIDTH = 768;
+export const ITEMS_PER_PAGE = 10;
+export const NEWS_IMG_WIDTH = 1440;
+export const NEWS_IMG_HEIGHT = 753;
+export const NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH = 200;
+export const NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH = 400;
+export const TYPING_KEYUP_DELAY = 5000;
+export const NEWS_AMOUNT_ON_TRADE_PAGE = 3;
+export const DEFAULT_ICON = '/asset_icon/eth.svg';
+export const DEFAULT_RECEIPTS_SHOW_ROW = 10;
+export const ONE_DAY_IN_SECONDS = 86400;
+export const SAMPLE_NUMBER = 3;
+export const TOAST_DURATION_SECONDS = 3000;
+export const CHINESE_CHARACTER_LENGTH_FOR_ALERT = 80;
+export const ENGLISH_CHARACTER_LENGTH_FOR_ALERT = 150;
+export const SEVEREST_EXCEPTION_LEVEL = '0';

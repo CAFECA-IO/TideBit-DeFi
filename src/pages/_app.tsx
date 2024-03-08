@@ -13,7 +13,7 @@ import {AppProvider} from '../contexts/app_context';
 import {WorkerProvider} from '../contexts/worker_context';
 import React from 'react';
 
-function App({Component, pageProps}: AppProps) {
+function MyApp({Component, pageProps}: AppProps) {
   return (
     <>
       <div className="selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
@@ -35,4 +35,4 @@ function App({Component, pageProps}: AppProps) {
   );
 }
 
-export default appWithTranslation(App);
+export default appWithTranslation(MyApp);

@@ -1,5 +1,5 @@
-import {useState} from 'react';
 import {ImCross} from 'react-icons/im';
+import React from 'react';
 
 interface IToastProps {
   title?: string;
@@ -18,18 +18,18 @@ const DevToast = ({
   const {toastHandler, showToast} = otherProps;
 
   const isDisplayedToast = showToast && (
-    <div className="pointer-events-none fixed top-10 right-2 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-transparent outline-none focus:outline-none">
-      <div className="relative my-6 mx-auto w-auto max-w-xl">
+    <div className="pointer-events-none fixed right-2 top-10 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-transparent outline-none focus:outline-none">
+      <div className="relative mx-auto my-6 w-auto max-w-xl">
         <div className="flex justify-center space-x-2">
           <div
-            className="pointer-events-auto z-50 mx-auto mr-5 mt-2 block w-72 max-w-full rounded-lg bg-white bg-clip-padding text-sm shadow-md shadow-cuteBlue/70 outline-none focus:outline-none"
-            id="delicious toast"
+            className="pointer-events-auto z-80 mx-auto mr-5 mt-2 block w-72 max-w-full rounded-lg bg-white bg-clip-padding text-sm shadow-md shadow-cuteBlue/70 outline-none focus:outline-none"
+            id="DeliciousToast"
             role="alert"
             aria-live="assertive"
             aria-atomic="true"
             data-mdb-autohide="false"
           >
-            <div className="flex items-center justify-between rounded-t-lg border-b border-gray-200 bg-clip-padding py-2 px-3">
+            <div className="flex items-center justify-between rounded-t-lg border-b border-gray-200 bg-clip-padding px-3 py-2">
               <p className="text-lg font-bold text-gray-500">{title}</p>
               <div className="flex items-center">
                 <p className="mr-2 text-xs text-gray-600">{mins} mins ago</p>

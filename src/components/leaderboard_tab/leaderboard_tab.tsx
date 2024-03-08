@@ -8,20 +8,17 @@ import {UserContext} from '../../contexts/user_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
-import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
-import {numberFormatted} from '../../lib/common';
+import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
-import {ProfitState} from '../../constants/profit_state';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 
-type TranslateFunction = (s: string) => string;
-
-type LeaderboardTabProps = {
+interface LeaderboardTabProps {
   timeSpan: IRankingTimeSpan;
   setTimeSpan: Dispatch<SetStateAction<IRankingTimeSpan>>;
   rankings: IRanking[];
-};
+}
 
 const MIN_SCREEN_WIDTH = 1024;
 const DEFAULT_PODIUM_WIDTH = 960;
@@ -67,9 +64,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
-    rankings.sort((a, b) => {
-      return b.cumulativePnl.value - a.cumulativePnl.value;
-    }) ?? defaultLeaderboard;
+    rankings.sort((a, b) => b.cumulativePnl.value - a.cumulativePnl.value) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
     timeSpan == RankingInterval.LIVE
@@ -91,17 +86,22 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
+    clearTimeout(timer);
+    setIsLoading(true);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
+  }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>
-    pnl.type === ProfitState.PROFIT ? (
+    pnl?.value > 0 ? (
       <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl.type === ProfitState.LOSS ? (
+    ) : pnl?.value < 0 ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value ?? 0)}</div>
     );
 
   const defaultTop3Data = {
@@ -116,7 +116,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 0,
       rank: 2,
-      marginTop: 'mt-28 md:mt-24',
+      marginTop: 'mt-24',
       crown: '/leaderboard/silver_crown@2x.png',
       star: '/leaderboard/silver_star.svg',
       medalist: '/leaderboard/silver_medalist.svg',
@@ -124,7 +124,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 1,
       rank: 1,
-      marginTop: 'mt-20 md:mt-8',
+      marginTop: 'mt-20 md:mt-12',
       crown: '/leaderboard/gold_crown@2x.png',
       star: '/leaderboard/gold_star.svg',
       medalist: '/leaderboard/gold_medalist.svg',
@@ -132,7 +132,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 2,
       rank: 3,
-      marginTop: 'mt-32',
+      marginTop: 'mt-28 md:mt-32',
       crown: '/leaderboard/bronze_crown@2x.png',
       star: '/leaderboard/bronze_star.svg',
       medalist: '/leaderboard/bronze_medalist.svg',
@@ -142,21 +142,25 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Time Span Data */
   const rankingTimeSpan = [
     {
+      id: 'LiveTab',
       text: t('LEADERBOARD_PAGE.LIVE'),
       style: activeLiveTabStyle,
       active: () => setTimeSpan(RankingInterval.LIVE),
     },
     {
+      id: 'DailyTab',
       text: t('LEADERBOARD_PAGE.DAILY'),
       style: activeDailyTabStyle,
       active: () => setTimeSpan(RankingInterval.DAILY),
     },
     {
+      id: 'WeeklyTab',
       text: t('LEADERBOARD_PAGE.WEEKLY'),
       style: activeWeeklyTabStyle,
       active: () => setTimeSpan(RankingInterval.WEEKLY),
     },
     {
+      id: 'MonthlyTab',
       text: t('LEADERBOARD_PAGE.MONTHLY'),
       style: activeMonthlyTabStyle,
       active: () => setTimeSpan(RankingInterval.MONTHLY),
@@ -169,21 +173,20 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       rank <= 0
         ? defaultTop3Data
         : {
-            name: rankingData[rank - 1].userName,
-            id: rankingData[rank - 1].userId,
-            avatar: rankingData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
-            displayedPnl: displayPnl(rankingData[rank - 1].cumulativePnl),
+            /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
+            name: accountTruncate(rankingData[rank - 1]?.userName, 20),
+            id: rankingData[rank - 1]?.userId,
+            avatar: rankingData[rank - 1]?.userAvatar ?? DEFAULT_USER_AVATAR,
+            displayedPnl: displayPnl(rankingData[rank - 1]?.cumulativePnl),
           };
     return {...top3[sorted], userData};
   });
 
   const displayedTop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
     const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
-    const achievementData =
-      // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-      defaultPersonalAchievement;
+
     const clickHandler = () => {
-      globalCtx.dataPersonalAchievementModalHandler(achievementData);
+      globalCtx.dataPersonalAchievementModalHandler(userData.id);
       globalCtx.visiblePersonalAchievementModalHandler();
     };
 
@@ -197,7 +200,12 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         </div>
       </div>
     ) : (
-      <div key={rank} className={`${marginTop} hover:cursor-pointer`} onClick={clickHandler}>
+      <div
+        id={`Ranking${rank}`}
+        key={rank}
+        className={`${marginTop} hover:cursor-pointer`}
+        onClick={clickHandler}
+      >
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
           <div
@@ -243,7 +251,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   const displayedTop3 = (
     <div className="relative w-screen md:w-8/10">
-      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-56 md:px-16">
+      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-60 md:px-16">
         {displayedTop3List}
       </div>
       <Image
@@ -255,10 +263,11 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     </div>
   );
 
-  const tabList = rankingTimeSpan.map(({text, style, active}) => {
+  const tabList = rankingTimeSpan.map(({id, text, style, active}) => {
     return (
       <div key={text} className="w-full">
         <button
+          id={id}
           type="button"
           className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs transition-all duration-300 hover:cursor-pointer md:text-base`}
           onClick={active}
@@ -269,62 +278,84 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     );
   });
 
-  /* Info: (20230511 - Julian) Leaderboard List (4th ~) */
-  const displayedleaderboardList = rankingData
-    .slice(3)
-    .map(({rank, userName, userAvatar, cumulativePnl}) => {
-      const achievementData =
-        // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-        defaultPersonalAchievement;
-      const clickHandler = () => {
-        globalCtx.dataPersonalAchievementModalHandler(achievementData);
-        globalCtx.visiblePersonalAchievementModalHandler();
-      };
+  /* Info: (20230814 - Julian) Ranking row  */
+  const rankingItem = ({rank, userName, userAvatar, cumulativePnl, userId}: IRanking) => {
+    const displayedRank = rank <= 0 ? '-' : rank;
+    const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
+    const displayedName = rank <= 0 ? 'N/A' : accountTruncate(userName, 20);
+    const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
+    const clickHandler = () => {
+      globalCtx.dataPersonalAchievementModalHandler(userId);
+      globalCtx.visiblePersonalAchievementModalHandler();
+    };
 
-      const displayedRank = rank <= 0 ? '-' : rank;
-      const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
-      const displayedName = rank <= 0 ? 'N/A' : userName;
-      const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
-      return isLoading ? (
-        <div key={rank} className="flex items-center justify-between px-4 py-6">
-          <div className="flex items-center space-x-5">
-            <Skeleton width={60} height={25} />
-            <Skeleton width={leaderboardUserAvatarSize} height={leaderboardUserAvatarSize} circle />
-            <Skeleton width={80} height={25} />
-          </div>
-          <Skeleton width={100} height={30} />
+    return isLoading ? (
+      <div className="flex h-90px items-center justify-between px-8 py-3">
+        <div className="flex items-center space-x-6">
+          <Skeleton width={60} height={25} />
+          <Skeleton width={leaderboardUserAvatarSize} height={leaderboardUserAvatarSize} circle />
+          <Skeleton width={80} height={25} />
         </div>
-      ) : (
-        <div
-          key={rank}
-          className="flex w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
-          onClick={clickHandler}
-        >
-          <div className="flex flex-1 items-center space-x-2 md:space-x-3">
-            <div className="inline-flex items-center sm:w-70px">
-              <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
+        <Skeleton width={100} height={30} />
+      </div>
+    ) : (
+      <div
+        id={`Ranking${rank}`}
+        className="flex h-90px w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
+        onClick={clickHandler}
+      >
+        <div className="flex flex-1 items-center space-x-2 md:space-x-3">
+          <div className="inline-flex items-center sm:w-70px">
+            <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
-              <div className="ml-2 text-sm sm:text-lg">{displayedRank}</div>
-            </div>
-            {/* Info: (20230510 - Julian) User Avatar */}
-            <Image
-              src={displayedAvatar ?? DEFAULT_USER_AVATAR}
-              width={leaderboardUserAvatarSize}
-              height={leaderboardUserAvatarSize}
-              alt="user_avatar"
-            />
-            {/* Info: (20230510 - Julian) User Name */}
-            <div className="truncate text-sm sm:text-xl">{displayedName}</div>
+            <div className="ml-2 text-sm sm:text-lg">{displayedRank}</div>
           </div>
-          <div className="flex items-center space-x-3 text-base md:text-xl">
-            <div className="inline-flex items-end">
-              {displayedPnl}
-              <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
-            </div>
+          {/* Info: (20230510 - Julian) User Avatar */}
+          <Image
+            src={displayedAvatar ?? DEFAULT_USER_AVATAR}
+            width={leaderboardUserAvatarSize}
+            height={leaderboardUserAvatarSize}
+            alt="user_avatar"
+          />
+          {/* Info: (20230510 - Julian) User Name */}
+          <div className="truncate text-sm sm:text-xl">{displayedName}</div>
+        </div>
+        <div className="flex items-center space-x-3 text-base md:text-xl">
+          <div className="inline-flex items-end">
+            {displayedPnl}
+            <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
           </div>
         </div>
-      );
-    });
+      </div>
+    );
+  };
+
+  /* Info: (20230814 - Julian) 找到當前使用者的排名，未登入則 0  */
+  const userRankingNumber = rankingData.find(data => data.userId === userCtx.user?.id)?.rank ?? 0;
+  /* Info: (20231006 - Julian) 排除了前三名的名單 */
+  const rankingWithoutTop3 = rankingData.filter(item => item.rank > 3);
+
+  /* Info: (20231006 - Julian)
+   * 有登入且排名存在：排除前三名，名次在當前使用者前面的名單
+   * 未登入或排名不存在：排除前三名的名單 */
+  const rankingDataBeforeUser =
+    userCtx.user?.address && userRankingNumber > 0
+      ? rankingWithoutTop3.filter(item => item.rank < userRankingNumber)
+      : rankingWithoutTop3;
+  const displayedListBeforeUser = rankingDataBeforeUser.map((item, index) => (
+    <div key={index}>{rankingItem(item)}</div>
+  ));
+
+  /* Info: (20231006 - Julian)
+   * 有登入且排名存在：排除前三名，名次在當前使用者後面的名單
+   * 未登入或排名不存在：null */
+  const rankingDataAfterUser =
+    userCtx.user?.address && userRankingNumber > 0
+      ? rankingWithoutTop3.filter(item => item.rank > userRankingNumber)
+      : null;
+  const displayedListAfterUser = rankingDataAfterUser
+    ? rankingDataAfterUser.map((item, index) => <div key={index}>{rankingItem(item)}</div>)
+    : null;
 
   return (
     <div className="flex flex-col items-center">
@@ -332,9 +363,10 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       {/* Info: (20230509 - Julian) Leaderboard */}
       <div className="my-10 w-screen md:w-8/10">
         <div className="inline-flex w-full text-center font-medium md:space-x-3px">{tabList}</div>
-        <div className="relative flex w-full flex-col bg-darkGray7 pt-2">
-          {displayedleaderboardList}
-          <UserPersonalRanking timeSpan={timeSpan} />
+        <div className="flex w-full flex-col bg-darkGray7 pt-2">
+          {displayedListBeforeUser}
+          <UserPersonalRanking timeSpan={timeSpan} rankingData={rankingData} />
+          {displayedListAfterUser}
         </div>
       </div>
     </div>

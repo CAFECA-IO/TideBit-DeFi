@@ -1,15 +1,15 @@
 import {findCodeByReason, locker} from '../common';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
-import {API_URL, DOMAIN} from '../../constants/config';
+import {API_URL, API_VERSION, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-import {MOBILE_WIDTH} from '../../constants/display';
+import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -27,8 +27,14 @@ interface IShareToSocialMedia {
   size: string;
 }
 
+interface IShare {
+  socialMedia: ISocialMedia;
+  text?: string;
+  size?: string;
+}
+
 /**
- * @param lockerName: unique name `'filename_functionname'` `e.g.'history_position_modal.shareHandler'`
+ * @param lockerName: unique name `'file_name.function_name'` `e.g.'history_position_modal.shareHandler'`
  * @param cfd: for checking if the order from API is consistent with the order in the page
  */
 const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
@@ -45,12 +51,15 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.RANK:
         // TODO: Share rank (20230524 - Shirley)
-        // TODO: Test (20230531 - Shirley)
-        shareUrl = `https://www.tidebit-defi.com/share/cfd/0x07d793fa5860c9435583c6dbf07b00a6`;
+        shareUrl = ``;
         return shareUrl;
 
       case ShareType.BADGE:
         shareUrl = DOMAIN + `/share/badge/${shareId}`;
+        return shareUrl;
+
+      case ShareType.ARTICLE:
+        shareUrl = DOMAIN + `/news/${shareId}`;
         return shareUrl;
 
       default:
@@ -60,7 +69,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
   };
 
   const getCFDOrder = async (): Promise<ISharingOrder | undefined> => {
-    const apiUrl = `${API_URL}/public/shared/cfd/${shareId}`;
+    const apiUrl = `${API_URL}/api/${API_VERSION}/public/shared/cfd/${shareId}`;
     try {
       const res = await fetch(apiUrl);
       const data = await res.json();
@@ -84,26 +93,41 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
-    const shareUrl = getPageUrl();
-    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+  const share = async ({socialMedia, text, size}: IShare) => {
+    switch (socialMedia) {
+      case SocialMediaConstant.FACEBOOK:
+        await shareTo({
+          url: ShareSettings.FACEBOOK.URL,
+          appUrl: ShareSettings.FACEBOOK.APP_URL,
+          type: ShareSettings.FACEBOOK.TYPE,
+          text,
+          size: size ? size : ShareSettings.FACEBOOK.SIZE,
+        });
+        break;
 
-    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-      // TODO: Share to FB on mobile (20230531 - Shirley)
-      // if (url.includes('facebook')) {
-      // }
-      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
-      window.location.href = appShareUrl;
-    } else {
-      window.open(
-        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-        `${type}`,
-        `${size}`
-      );
+      case SocialMediaConstant.TWITTER:
+        await shareTo({
+          url: ShareSettings.TWITTER.URL,
+          appUrl: ShareSettings.TWITTER.APP_URL,
+          type: ShareSettings.TWITTER.TYPE,
+          text,
+          size: size ? size : ShareSettings.TWITTER.SIZE,
+        });
+        break;
+
+      case SocialMediaConstant.REDDIT:
+        await shareTo({
+          url: ShareSettings.REDDIT.URL,
+          appUrl: ShareSettings.REDDIT.APP_URL,
+          type: ShareSettings.REDDIT.TYPE,
+          text,
+          size: size ? size : ShareSettings.REDDIT.SIZE,
+        });
+        break;
     }
   };
 
-  const shareTo = async ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+  const shareTo = async ({url, appUrl, type, text, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
@@ -126,8 +150,19 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const order = await getCFDOrder();
             if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
+            // eslint-disable-next-line no-console
+            console.log('order', order);
+
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+
+            // eslint-disable-next-line no-console
+            console.log('isOrderMatched', isOrderMatched);
+
+            // use fetch to access our image api
+            const res = await fetch(`${DOMAIN}/api/images/cfd/${shareId}?tz=0`);
+            // eslint-disable-next-line no-console
+            console.log('res (tz=0 img)', res);
 
             shareOn({url, appUrl, text, type, size});
 
@@ -156,10 +191,16 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           shareOn({url, appUrl, text, type, size});
           break;
 
+        case ShareType.ARTICLE:
+          shareOn({url, appUrl, text, type, size});
+          break;
+
         default:
           break;
       }
-    } catch (e: any) {
+    } catch (e) {
+      globalCtx.eliminateAllProcessModals();
+
       if (isCustomError(e)) {
         const str = e.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
@@ -191,7 +232,26 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     }
   };
 
-  return {shareTo};
+  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+    const shareUrl = getPageUrl();
+    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+      // TODO: Share to FB on mobile (20230531 - Shirley)
+      // if (url.includes('facebook')) {
+      // }
+      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+      window.location.href = appShareUrl;
+    } else {
+      window.open(
+        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+        `${type}`,
+        `${size}`
+      );
+    }
+  };
+
+  return {share};
 };
 
 export default useShareProcess;

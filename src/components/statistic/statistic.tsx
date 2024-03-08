@@ -1,9 +1,8 @@
 import React, {useContext} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -13,11 +12,11 @@ const StatisticBlock = () => {
   const {tidebitPromotion} = useContext(MarketContext);
 
   const displayedVolume = SafeMath.isNumber(tidebitPromotion.volume)
-    ? tidebitPromotion.volume.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    ? numberFormatted(tidebitPromotion.volume)
     : tidebitPromotion.volume;
   const displayedUsers = tidebitPromotion.users;
   const displayedVa = SafeMath.isNumber(tidebitPromotion.va)
-    ? tidebitPromotion.va.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    ? numberFormatted(tidebitPromotion.va)
     : tidebitPromotion.va;
 
   const statisticContent = [
@@ -45,10 +44,10 @@ const StatisticBlock = () => {
   ));
 
   return (
-    <section className={`bg-black text-gray-400`}>
-      <div className="mx-10">
-        <div className="flex flex-wrap justify-center">{statisticContentList}</div>
-      </div>
+    <section
+      className={`bg-black text-gray-400 flex mx-10 flex-col flex-wrap justify-center lg:flex-row lg:flex-wrap`}
+    >
+      {statisticContentList}
     </section>
   );
 };

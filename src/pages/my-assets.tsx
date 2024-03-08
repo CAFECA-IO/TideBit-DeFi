@@ -2,16 +2,13 @@ import React, {useContext, useEffect} from 'react';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
-import {useGlobal} from '../contexts/global_context';
-import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {TIDEBIT_FAVICON} from '../constants/display';
 
 const MyAssets = () => {
-  const {layoutAssertion} = useGlobal();
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const displayedNavBar = <NavBar />;
 
   const appCtx = useContext(AppContext);
 
@@ -23,26 +20,20 @@ const MyAssets = () => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            <title>My Assets - TideBit DeFi</title>
-            <link rel="icon" href={TIDEBIT_FAVICON} />
-          </Head>
+      <Head>
+        <title>My Assets - TideBit DeFi</title>
+        <link rel="icon" href={TIDEBIT_FAVICON} />
+      </Head>
 
+      <div>
+        {displayedNavBar}
+
+        <main>
           <div>
-            {displayedNavBar}
-
-            <main>
-              <div>
-                <AssetsPageBody />
-              </div>
-            </main>
+            <AssetsPageBody />
           </div>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+        </main>
+      </div>
     </>
   );
 

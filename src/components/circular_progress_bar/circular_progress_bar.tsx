@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 
@@ -7,7 +7,6 @@ const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 interface ICircularProgressBarProps {
   label?: string[];
   showLabel?: boolean;
-  // percentage?: number[];
   progressBarColor: string[];
   numerator: number;
   denominator: number;
@@ -36,17 +35,6 @@ const CircularProgressBar = ({
     chart: {
       height: 0,
       type: 'radialBar',
-      // Till: (20230330 - Shirley)
-      // events: {
-      //   mouseMove: function (event, chartContext, config) {
-      //     console.log('mouse move in');
-      //     label = [`100 H`];
-      //   },
-      //   mouseLeave: function (event, chartContext, config) {
-      //     console.log('mouse leave');
-      //     chartOptions.labels = label;
-      //   },
-      // },
     },
     plotOptions: {
       radialBar: {
@@ -85,6 +73,18 @@ const CircularProgressBar = ({
       axisTicks: {show: false},
       labels: {
         show: false,
+      },
+    },
+    states: {
+      hover: {
+        filter: {
+          type: 'none',
+        },
+      },
+      active: {
+        filter: {
+          type: 'none',
+        },
       },
     },
   };

@@ -5,11 +5,10 @@ import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
+import {numberFormatted, timestampToString, toDisplayCFDOrder, toPnl} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
@@ -20,23 +19,24 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
-import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
-import {FRACTION_DIGITS} from '../../constants/config';
+import {ToastId} from '../../constants/toast_id';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
   histories: IAcceptedOrder;
 }
 
-const ReceiptItem = (histories: IReceiptItemProps) => {
+const ReceiptItem = ({histories}: IReceiptItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const {createTimestamp, receipt} = histories.histories;
+  const {createTimestamp, receipt, isClosed} = histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
 
   const balance = balanceSnapshot.shift();
@@ -52,18 +52,19 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0) > 0
-          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0)
+        ? +SafeMath.gt(
+            SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0),
+            0
+          )
+          ? +SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0)
           : 0
-        : (order as ICFDOrder).margin.amount * -1
+        : +SafeMath.mult((order as ICFDOrder).margin.amount, -1)
       : orderType === OrderType.DEPOSIT
-      ? (order as IDepositOrder).targetAmount
-      : (order as IWithdrawOrder).targetAmount * -1;
+      ? +(order as IDepositOrder).targetAmount
+      : +SafeMath.mult((order as IWithdrawOrder).targetAmount, -1);
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
-  const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
-  /* Info: (20230524 - Julian) if can't get CFD by id, it means CFD is closed */
-  const isClosed = userCtx.getCFD(order.id) ? false : true;
+  const cfdType = (histories as IAcceptedCFDOrder).applyData.operation;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -95,8 +96,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     cfdType === CFDOperation.UPDATE
       ? '+0'
       : targetAmount >= 0
-      ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-      : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      ? '+' + numberFormatted(targetAmount)
+      : '-' + numberFormatted(targetAmount);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -122,36 +123,64 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  /* Info: (20230523 - Julian) CFD Data */
-  const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
-    begin: createTimestamp,
-  });
-  const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
+  /* Info: (20230713 - Julian) show history modal */
+  const closedCfdHandler = () => {
+    const closedOrder = userCtx.getCFD(order.id) ?? (order as ICFDOrder);
+    const cfdData = toDisplayCFDOrder(closedOrder);
+    globalCtx.dataHistoryPositionModalHandler(cfdData);
+    globalCtx.visibleHistoryPositionModalHandler();
+  };
 
+  /* Info: (20230713 - Julian) show update CFD modal */
+  const updateCfdHandler = () => {
+    const updateCfd = order as ICFDOrder;
+    const cfdData = toDisplayCFDOrder(updateCfd);
+    const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
+    const closePrice = marketCtx.predictCFDClosePrice(cfdData.instId, cfdData.typeOfPosition);
+    marketCtx.selectTickerHandler(cfdData.instId);
+
+    const pnl = toPnl({
+      openPrice: cfdData.openPrice,
+      closePrice: cfdData?.closePrice ?? closePrice,
+      typeOfPosition: cfdData.typeOfPosition,
+      amount: cfdData.amount,
+      spread,
+    });
+
+    globalCtx.dataUpdateFormModalHandler({...cfdData, pnl});
+    globalCtx.visibleUpdateFormModalHandler();
+  };
+
+  // Info: (20230713 - Julian) when click position or d/w history button
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? isClosed
-        ? () => {
-            globalCtx.dataHistoryPositionModalHandler(cfdData);
-            globalCtx.visibleHistoryPositionModalHandler();
-          }
-        : () => {
-            globalCtx.dataUpdateFormModalHandler(cfdData);
-            globalCtx.visibleUpdateFormModalHandler();
-          }
+        ? closedCfdHandler
+        : updateCfdHandler
       : orderType === OrderType.DEPOSIT
       ? () => {
-          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
-          globalCtx.visibleDepositHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedDepositOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : orderType === OrderType.WITHDRAW
       ? () => {
-          globalCtx.dataWithdrawalHistoryModalHandler(
-            histories.histories as IAcceptedWithdrawOrder
-          );
-          globalCtx.visibleWithdrawalHistoryModalHandler();
+          globalCtx.dataDWHistoryModalHandler(histories as IAcceptedWithdrawOrder);
+          globalCtx.visibleDWHistoryModalHandler();
         }
       : () => null;
+
+  const copyClickHandler = () => {
+    navigator.clipboard.writeText(displayedReceiptTxId);
+
+    globalCtx.toast({
+      type: ToastTypeAndText.INFO.type,
+      message: t('TOAST.COPY_SUCCESS'),
+      toastId: ToastId.COPY_SUCCESS,
+      autoClose: 500,
+      isLoading: false,
+      typeText: t(ToastTypeAndText.INFO.text),
+    });
+  };
 
   const displayedReceiptStateIcon =
     orderStatus === OrderStatusUnion.PROCESSING ||
@@ -162,19 +191,18 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       )
     ) : (
-      <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+      <button id={`TxIdCopy${order.id}`} onClick={copyClickHandler}>
+        <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+      </button>
     );
 
-  const displayedReceiptFeeText =
-    order.fee === 0
-      ? order.fee
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedReceiptFeeText = order.fee === 0 ? order.fee : numberFormatted(order.fee);
 
   const displayedReceiptAvailableText =
-    orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? '-'
+      numberFormatted(balance?.available, true)
     );
 
   const displayedReceiptTime = (
@@ -187,10 +215,11 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptButton = (
     <div className="flex items-center lg:w-48">
       <button
+        id={`Receipt${order.orderType}${order.id}`}
         className={`inline-flex items-center rounded-full px-3 py-1 ${displayedButtonColor}`}
         onClick={buttonClickHandler}
       >
-        <Image src={displayedButtonImage} width={15} height={15} alt="deposit icon" />
+        <Image src={displayedButtonImage} width={15} height={15} alt="" />
         <p className="ml-2 whitespace-nowrap">{displayedButtonText}</p>
       </button>
     </div>
@@ -198,7 +227,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedReceiptIncome = (
     <div className="flex items-end lg:w-48">
-      <div className="text-2xl">{displayedReceiptAmount}</div>
+      <div className="text-xl lg:text-2xl">{displayedReceiptAmount}</div>
       <span className="ml-1 text-sm text-lightGray">{targetAsset}</span>
     </div>
   );
@@ -235,10 +264,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   );
 
   return (
-    <div className="flex h-70px w-full items-center">
-      {displayedReceiptTime}
+    <div className="flex h-76px w-full items-center">
+      <div className="w-70px">{displayedReceiptTime}</div>
 
-      <div className="flex h-full w-full items-center justify-between border-b-2 border-dashed border-lightGray4 pl-6">
+      <div className="flex h-full flex-1 items-center justify-between border-b-2 border-dashed border-lightGray4 pl-3">
         {displayedReceiptButton}
         {displayedReceiptIncome}
         {displayedReceiptDetail}

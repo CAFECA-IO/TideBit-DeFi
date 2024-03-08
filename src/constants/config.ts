@@ -9,7 +9,7 @@ export const DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS =
 
 export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
 
-export const COPYRIGHT = 'TideBit © 2016 - 2023';
+export const COPYRIGHT = 'TideBit © 2016 - 2024';
 
 export const CONTACT_EMAIL = 'contact@tidebit-defi.com';
 
@@ -30,6 +30,21 @@ export const MONTH_FULL_NAME_LIST = [
   'October',
   'November',
   'December',
+];
+
+export const MONTH_SHORT_NAME_LIST = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 export const WEEK_LIST = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -62,8 +77,9 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
-// export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
+export const API_URL = process.env.API_URL || 'https://api.tidebit-defi.com';
+
+export const API_VERSION = 'v1';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 
@@ -74,32 +90,32 @@ export const TRADING_CHART_PRICE_LIMIT_ONE_SEC = 0.1;
 export const SUGGEST_TP = 0.2;
 export const SUGGEST_SL = 0.1;
 
-export const LIQUIDATION_FIVE_LEVERAGE = 0.2;
+export const LIQUIDATION_PERCENTAGE = 0.1;
 
-export const tickerIds = [
-  'ethusdt',
-  'btcusdt',
-  'ltcusdt',
-  'maticusdt',
-  'bnbusdt',
-  'solusdt',
-  'shibusdt',
-  'dotusdt',
-  'adausdt',
-  'avaxusdt',
-  'daiusdt',
-  'mkrusdt',
-  'xrpusdt',
-  'dogeusdt',
-  'uniusdt',
-  'flowusdt',
+export const instIds = [
+  'eth-usdt',
+  'btc-usdt',
+  // 'ltc-usdt',
+  // 'matic-usdt',
+  // 'bnb-usdt',
+  // 'sol-usdt',
+  // 'shi-busdt',
+  // 'dot-usdt',
+  // 'ada-usdt',
+  // 'avax-usdt',
+  // 'dai-usdt',
+  // 'mkr-usdt',
+  // 'xrp-usdt',
+  // 'doge-usdt',
+  // 'uni-usdt',
+  // 'flow-usdt',
 ];
 
 export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.ETH}-${unitAsset}`,
     currency: Currency.ETH,
-    chain: 'Ethereum',
+    name: 'Ethereum',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -110,7 +126,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.BTC}-${unitAsset}`,
     currency: Currency.BTC,
-    chain: 'Bitcoin',
+    name: 'Bitcoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -121,7 +137,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.LTC}-${unitAsset}`,
     currency: Currency.LTC,
-    chain: 'Litecoin',
+    name: 'Litecoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -132,7 +148,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.MATIC}-${unitAsset}`,
     currency: Currency.MATIC,
-    chain: 'Polygon',
+    name: 'Polygon',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -143,7 +159,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.BNB}-${unitAsset}`,
     currency: Currency.BNB,
-    chain: 'BNB',
+    name: 'BNB',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -154,7 +170,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.SOL}-${unitAsset}`,
     currency: Currency.SOL,
-    chain: 'Solana',
+    name: 'Solana',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -165,7 +181,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.SHIB}-${unitAsset}`,
     currency: Currency.SHIB,
-    chain: 'Shiba Inu',
+    name: 'Shiba Inu',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -176,7 +192,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DOT}-${unitAsset}`,
     currency: Currency.DOT,
-    chain: 'Polkadot',
+    name: 'Polkadot',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -187,7 +203,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.ADA}-${unitAsset}`,
     currency: Currency.ADA,
-    chain: 'Cardano',
+    name: 'Cardano',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -198,7 +214,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.AVAX}-${unitAsset}`,
     currency: Currency.AVAX,
-    chain: 'Avalanche',
+    name: 'Avalanche',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -209,7 +225,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DAI}-${unitAsset}`,
     currency: Currency.DAI,
-    chain: 'Dai',
+    name: 'Dai',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -220,7 +236,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.MKR}-${unitAsset}`,
     currency: Currency.MKR,
-    chain: 'Maker',
+    name: 'Maker',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -231,7 +247,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.XRP}-${unitAsset}`,
     currency: Currency.XRP,
-    chain: 'XRP',
+    name: 'XRP',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -242,7 +258,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DOGE}-${unitAsset}`,
     currency: Currency.DOGE,
-    chain: 'Dogecoin',
+    name: 'Dogecoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -253,7 +269,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.UNI}-${unitAsset}`,
     currency: Currency.UNI,
-    chain: 'Uniswap',
+    name: 'Uniswap',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -264,7 +280,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.FLOW}-${unitAsset}`,
     currency: Currency.FLOW,
-    chain: 'Flow',
+    name: 'Flow',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -274,15 +290,27 @@ export const TRADING_CRYPTO_DATA = [
   },
 ];
 export const SERVICE_TERM_TITLE = 'ServiceTerm';
-export const DOMAIN = 'https://www.tidebit-defi.com';
+export const DOMAIN = 'https://tidebit-defi.com';
 export const TERM_OF_SERVICE = DOMAIN + '{hash}';
 export const PRIVATE_POLICY = DOMAIN + '{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
-export const CFD_LIQUIDATION_TIME = 86400;
-export const TP_SL_LIMIT_PERCENT = 0.01;
-export const DEFAULT_TICKER = 'ETH';
+export const CFD_LIQUIDATION_TIME = 604800;
+export const TP_SL_LIMIT_RATIO = 0;
+export const DEFAULT_CRYPTO = 'ETH';
+export const DEFAULT_INSTID = 'ETH-USDT';
+export const DEFAULT_CURRENCY = Currency.ETH;
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
 export const MIN_FEE_RATE = 0;
 export const MAX_FEE_RATE = 0.2;
-export const INITIAL_TRADES_INTERVAL = 30 * 1000; // Info: 30 seconds in milliseconds (ms) (20230530 - tzuhhan)
+export const INITIAL_TRADES_INTERVAL = 1000 * 60 * 1; // Info: 1 minutes in milliseconds (ms) (20231004 - Shirley)
 export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)
+export const ETH_NEWS_FOLDER = 'src/news/eth';
+export const BTC_NEWS_FOLDER = 'src/news/btc';
+export const USDC_NEWS_FOLDER = 'src/news/usdc';
+export const NEWS_FOLDER = './src/news';
+export const BAIFA_LINK = 'https://baifa.io';
+export const I_SUN_ONE_LINK = 'https://www.isun1.com';
+export const COOKIE_PERIOD_FAVORITES = 365; // Info: days (20231013 - Shirley)
+export const COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT = 7; // Info: days (20231101 - Shirley)
+export const DEFAULT_GUARANTEED_STOP_FEE = 0.002; // Info: 0.2% (20231110 - Shirley)
+export const INTERVAL_FOR_CLEARING_BINDING = 1000 * 60 * 2; // Info: 2 min in milliseconds (20231110 - Shirley)

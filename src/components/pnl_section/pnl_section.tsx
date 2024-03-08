@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {numberFormatted} from '../../lib/common';
+import {ratioToPercentage, numberFormatted} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
@@ -13,7 +13,7 @@ const PnlSection = () => {
 
   const userCtx = useContext(UserContext);
   const {userAssets} = userCtx;
-  /* ToDo: (20230420 - Julian) getUserAssets by currency */
+
   const pnlToday = userAssets?.pnl.today ?? DEFAULT_PNL_DATA;
   const pnl30Days = userAssets?.pnl.monthly ?? DEFAULT_PNL_DATA;
   const cumulativePnl = userAssets?.pnl.cumulative ?? DEFAULT_PNL_DATA;
@@ -23,22 +23,27 @@ const PnlSection = () => {
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
+    const amountValue = numberFormatted(amount.value);
+    const percent = ratioToPercentage(percentage.value);
+
     const result = {
       content:
         amount.type === ProfitState.PROFIT
-          ? `+${numberFormatted(amount.value)} ${unitAsset}`
+          ? `+${amountValue} ${unitAsset}`
           : amount.type === ProfitState.LOSS
-          ? `-${numberFormatted(amount.value)} ${unitAsset}`
+          ? `-${amountValue} ${unitAsset}`
           : amount.type === ProfitState.EQUAL
-          ? `${numberFormatted(amount.value)} ${unitAsset}`
+          ? `${amountValue} ${unitAsset}`
           : '-',
       remarks:
+        /* Info: (20230602 - Julian) 調整 format (e.g. 0.012 -> 1.2%)  */
         percentage.type === ProfitState.PROFIT
-          ? `▴ ${numberFormatted(percentage.value)} %`
-          : percentage.type === ProfitState.LOSS
-          ? `▾ ${numberFormatted(percentage.value)} %`
+          ? `▴ ${percent} %`
+          : // ? `▴ ${numberFormatted(SafeMath.mult(percentage.value, 100))} %`
+          percentage.type === ProfitState.LOSS
+          ? `▾ ${percent} %`
           : percentage.type === ProfitState.EQUAL
-          ? `${numberFormatted(percentage.value)} %`
+          ? `${percent} %`
           : '-',
       textColor:
         percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT
@@ -48,14 +53,14 @@ const PnlSection = () => {
           : TypeOfPnLColor.EQUAL,
       ...rest,
     };
+
     return result;
   });
 
   const statisticContentList = statisticContent.map(({title, content, remarks, textColor}) => (
     <div
       key={title}
-      style={{marginTop: '10px'}}
-      className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
+      className="mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mb-0 lg:w-1/3 lg:border-b-0"
     >
       <div className="h-full space-y-3 text-center lg:text-start">
         <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
@@ -66,12 +71,8 @@ const PnlSection = () => {
   ));
 
   return (
-    <section className={`mt-10 bg-black text-lightGray lg:mt-0`}>
-      <div className="mx-20 mt-10 hidden border-t border-lightGray/50 lg:flex"></div>
-      <div className="mx-auto">
-        <div className="flex flex-wrap">{statisticContentList}</div>
-      </div>
-      <div className="mx-20 mt-5 hidden border-b border-lightGray/50 lg:flex"></div>
+    <section className="my-10 lg:mx-20 bg-black text-lightGray lg:border-t lg:border-b border-lightGray/50 flex flex-wrap py-4 lg:divide-x divide-lightGray/50">
+      {statisticContentList}
     </section>
   );
 };

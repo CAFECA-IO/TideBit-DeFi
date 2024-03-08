@@ -1,4 +1,3 @@
-import {ICurrency} from '../../constants/currency';
 import {CFDClosedType, ICFDClosedType} from '../../constants/cfd_closed_type';
 import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
@@ -20,7 +19,7 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyApplyCloseCFDOrder = (currency: ICurrency, id?: string) => {
+export const getDummyApplyCloseCFDOrder = (instId: string, id?: string) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
   const date = new Date();
   const dummyApplyCloseCFDOrder: IApplyCloseCFDOrder = {
@@ -30,10 +29,10 @@ export const getDummyApplyCloseCFDOrder = (currency: ICurrency, id?: string) => 
       ? id
       : `TB${date.getFullYear()}${
           date.getMonth() + 1
-        }${date.getDate()}${date.getSeconds()}${currency}`,
+        }${date.getDate()}${date.getSeconds()}${instId}`,
     closePrice: randomIntFromInterval(1000, 10000),
     closedType: CFDClosedType.BY_USER,
-    quotation: getDummyQuotation(currency, typeOfPosition),
+    quotation: getDummyQuotation(instId, typeOfPosition),
     closeTimestamp: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
   };
   return dummyApplyCloseCFDOrder;

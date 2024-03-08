@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -12,17 +12,22 @@ interface II18nParams {
 
 const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const [openMenu, setOpenMenu] =
     typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
 
-  const {locale, locales, defaultLocale, asPath} = useRouter();
+  const {asPath} = useRouter();
   const {
     targetRef: globalRef,
-    componentVisible,
-    setComponentVisible,
+    componentVisible: globalVisible,
+    setComponentVisible: setGlobalVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const clickHandler = () => {
+  /* Info: (20230621 - Julian) 用 globalVisible 當作電腦版的選單開關，因為手機版則由 openMenu 控制 */
+  const desktopClickHandler = () => {
+    setGlobalVisible(!globalVisible);
+  };
+  const mobileClickHandler = () => {
     setOpenMenu(!openMenu);
   };
 
@@ -32,16 +37,20 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
     {label: '简体中文', value: 'cn'},
   ];
 
-  const displayedDesktopMenu = openMenu ? (
-    <div className="hidden lg:flex">
+  const displayedDesktopMenu = (
+    <div className="hidden lg:flex relative mx-auto max-w-1920px">
       <div
-        id="i18nDropdown"
-        className="absolute top-16 right-40 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        id="I18nMenuDesktop"
+        className={`absolute -right-5 top-5 z-20 w-150px ${
+          globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
+        } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
         <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
-            <li key={index} onClick={clickHandler}>
+            <li key={index} onClick={desktopClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonDesktop`}
+                scroll={false}
                 locale={item.value}
                 href={asPath}
                 className="block rounded-none py-2 text-center hover:bg-darkGray5"
@@ -53,18 +62,24 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </ul>
       </div>
     </div>
-  ) : null;
+  );
 
-  const displayedMobileMenu = openMenu ? (
-    <div className="opacity-100 transition-opacity lg:hidden">
+  const displayedMobileMenu = (
+    <div
+      className={`transition-all duration-300 ${
+        openMenu ? 'visible opacity-100' : 'invisible opacity-0'
+      } lg:hidden`}
+    >
       <div
-        id="i18nDropdown"
-        className="absolute top-28 left-0 z-10 h-full w-screen bg-darkGray shadow"
+        id="I18nMenuMobile"
+        className="absolute left-0 top-28 z-10 h-full w-screen bg-darkGray shadow"
       >
         <ul className="text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
-            <li key={index} onClick={clickHandler}>
+            <li key={index} onClick={mobileClickHandler}>
               <Link
+                id={`${item.value.toUpperCase()}ButtonMobile`}
+                scroll={false}
                 locale={item.value}
                 href={asPath}
                 className="block rounded-none px-3 py-7 font-medium hover:cursor-pointer hover:text-tidebitTheme"
@@ -76,18 +91,12 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </ul>
       </div>
     </div>
-  ) : (
-    <div className="invisible opacity-0 transition-opacity"></div>
   );
 
   const displayedI18n = (
     <>
       <div className="hidden lg:flex">
-        <div
-          ref={globalRef}
-          onClick={clickHandler}
-          className="hover:cursor-pointer hover:text-cyan-300"
-        >
+        <div onClick={desktopClickHandler} className="hover:cursor-pointer hover:text-cyan-300">
           <svg
             id="globe"
             xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +115,8 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </div>
       </div>
       <button
-        onClick={clickHandler}
+        id="NavLanguageMobile"
+        onClick={mobileClickHandler}
         type="button"
         className="inline-flex hover:text-tidebitTheme lg:hidden"
       >
@@ -116,7 +126,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   );
 
   return (
-    <div>
+    <div ref={globalRef} className="">
       {displayedI18n}
       {displayedDesktopMenu}
       {displayedMobileMenu}

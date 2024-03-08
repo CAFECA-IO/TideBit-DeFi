@@ -1,31 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* .btnSuccess {
-  @apply rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700;
-} */
-
 @layer utilities {
-  @variants responsive {
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-    }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }
 
 @layer base {
   html {
     font-family: barlow;
+    scroll-behavior: smooth;
   }
 }
 
@@ -53,5 +46,19 @@
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --sidebar-width: 479px; /* Info: 調整側邊欄的寬度 (20231117 - Shirley) */
+    --extra-space: calc((50vw));
+    --left-margin: calc(var(--extra-space) + var(--sidebar-width));
+  }
+
+  .fixedSidebar {
+    left: var(--left-margin);
+    max-width: 1920px;
+    width: var(--sidebar-width);
   }
 }

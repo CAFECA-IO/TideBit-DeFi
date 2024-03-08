@@ -1,89 +1,69 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import Image from 'next/image';
+import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
-import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
 interface IUserOverviewProps {
   depositAvailable: number;
   marginLocked: number;
-  // profitOrLoss: string;
   profitOrLossAmount: number;
 }
 
-const UserOverview = ({
-  depositAvailable,
-  marginLocked,
-  // profitOrLoss,
-  profitOrLossAmount,
-}: IUserOverviewProps) => {
+const UserOverview = ({depositAvailable, marginLocked, profitOrLossAmount}: IUserOverviewProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const deposit = depositAvailable.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-  const locked = marginLocked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-  const pnl = profitOrLossAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+
+  const {isBalanceShow, showBalance} = useContext(UserContext);
+
+  const deposit = isBalanceShow ? numberFormatted(depositAvailable) : '*****';
+  const locked = isBalanceShow ? numberFormatted(marginLocked) : '*****';
+  const pnl = isBalanceShow ? numberFormatted(profitOrLossAmount, false, true) : '*****';
+
+  const displayedIcon = isBalanceShow ? (
+    <Image src="/elements/group_15205.svg" width={30} height={30} alt="eye open icon" />
+  ) : (
+    <Image src="/elements/group_152051.svg" width={30} height={30} alt="eye close icon" />
+  );
 
   return (
-    <>
-      {/* ----------Desktop version---------- */}
-      <div className="">
-        <div className="hidden space-x-5 lg:flex xl:space-x-20">
-          <div className="">
-            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_AVAILABLE')}</div>
-            <div className="text-sm xl:text-base">
-              {deposit} {unitAsset}
-            </div>
-          </div>
+    <div className="flex flex-col lg:flex-row items-center lg:flex-1 gap-y-3 gap-x-6 w-full">
+      <div className="h-30px flex items-center justify-center">
+        <button id="TotalBalanceShowButton" onClick={showBalance} type="button" className="w-30px">
+          {displayedIcon}
+        </button>
+      </div>
+      <div className="flex justify-between w-full space-x-3 flex-1">
+        <div className="flex flex-col items-center lg:items-start w-1/3">
+          <h3 className="whitespace-nowrap text-sm text-lightGray4">
+            {t('USER.OVERVIEW_AVAILABLE')}
+          </h3>
+          <p className="whitespace-nowrap text-sm xl:text-base">
+            {deposit}
+            <span className="text-xs"> {unitAsset}</span>
+          </p>
+        </div>
 
-          <div className="">
-            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_M_MARGIN')}</div>
-            <div className="text-sm xl:text-base">
-              {locked} {unitAsset}
-            </div>
-          </div>
+        <div className="flex flex-col items-center lg:items-start w-1/3">
+          <h3 className="whitespace-nowrap text-sm text-lightGray4">
+            {t('USER.OVERVIEW_M_MARGIN')}
+          </h3>
+          <p className="whitespace-nowrap text-sm xl:text-base">
+            {locked} <span className="text-xs"> {unitAsset}</span>
+          </p>
+        </div>
 
-          <div className="">
-            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
-            <div className="text-sm xl:text-base">
-              {pnl} {unitAsset}
-            </div>
-          </div>
+        <div className="flex flex-col items-center lg:items-start w-1/3">
+          <h3 className="whitespace-nowrap text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</h3>
+          <p className="whitespace-nowrap text-sm xl:text-base">
+            {pnl}
+            <span className="text-xs"> {unitAsset}</span>
+          </p>
         </div>
       </div>
-
-      {/* ----------Mobile version---------- */}
-
-      <div className="mt-5">
-        <div className="flex justify-center space-x-10 text-center lg:hidden">
-          <div className="">
-            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
-              {t('USER.OVERVIEW_AVAILABLE')}
-            </div>
-            <div className="whitespace-nowrap p-1 text-xs">
-              {deposit} {unitAsset}
-            </div>
-          </div>
-
-          <div className="">
-            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
-              {t('USER.OVERVIEW_M_MARGIN')}
-            </div>
-            <div className="whitespace-nowrap p-1 text-xs">
-              {locked} {unitAsset}
-            </div>
-          </div>
-
-          <div className="">
-            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
-              {t('USER.OVERVIEW_PNL')}
-            </div>
-            <div className="whitespace-nowrap p-1 text-xs">
-              {pnl} {unitAsset}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 };
 

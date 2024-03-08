@@ -9,7 +9,7 @@ export const DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS =
 
 export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
 
-export const COPYRIGHT = 'TideBit © 2016 - 2023';
+export const COPYRIGHT = 'TideBit © 2016 - 2024';
 
 export const CONTACT_EMAIL = 'contact@tidebit-defi.com';
 
@@ -77,8 +77,8 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
-// export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
+export const API_URL = process.env.API_URL || 'https://api.tidebit-defi.com';
+
 export const API_VERSION = 'v1';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005

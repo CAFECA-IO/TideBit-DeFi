@@ -15,15 +15,14 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 3 : undefined,
   // Limit the number of failures on CI to save resources
-  maxFailures: process.env.CI ? 30 : undefined,
+  maxFailures: process.env.CI ? 25 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'blob' : 'html',
+  reporter: process.env.CI ? [['blob', {fileName: `report-${process.env.TEST_NAME}.zip`}]] : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
+    timezoneId: 'Asia/Taipei',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -36,7 +35,7 @@ export default defineConfig({
       use: {
         locale: 'en',
         ...devices['Desktop Chrome'],
-        baseURL: baseURL,
+        baseURL: baseURL + '/en/',
       },
     },
     {
@@ -44,7 +43,7 @@ export default defineConfig({
       use: {
         locale: 'tw',
         ...devices['Desktop Chrome'],
-        baseURL: baseURL + '/tw/',
+        baseURL: baseURL,
       },
     },
     {

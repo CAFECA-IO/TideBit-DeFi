@@ -9,11 +9,10 @@ test.beforeEach(async ({page}) => {
 });
 
 test('1. 進入 TideBit-DeFi 首頁，確定語言為英文，點擊錢包連接', async ({page}) => {
-  const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await landingPage.clickAnncmnt();
-  await page.getByRole('button', walletConnectButton).click();
+  await page.locator('#NavWalletButtonDesktop').click();
   await expect(page.getByRole('img', {name: 'MetaMask'})).toHaveAttribute('alt', 'MetaMask');
 });
 
@@ -21,8 +20,6 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   page,
   context,
 }) => {
-  const walletConnectButton = {name: i18next.t('NAV_BAR.WALLET_CONNECT')};
-  const sendRequestButton = {name: i18next.t('WALLET_PANEL.SEND_REQUESTS_BUTTON')};
   const walletConnect = new WalletConnect(page, context);
   const errorMessage = i18next.t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE');
   await walletConnect.getMetamaskId();
@@ -31,12 +28,17 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await landingPage.clickAnncmnt();
-  await page.getByRole('button', walletConnectButton).click();
+  await page.locator('#NavWalletButtonDesktop').click();
   await expect(page.getByRole('img', {name: 'MetaMask'})).toHaveAttribute('alt', 'MetaMask');
-  await page.getByRole('img', {name: 'MetaMask'}).click();
+  await page.locator('#MetaMaskButton').click();
   const pagePromise1 = context.newPage();
   const newPage1 = await pagePromise1;
   await newPage1.goto('chrome-extension://' + walletConnect.extensionId + '/home.html');
+  // Info (20240229 - Jacky) This loop only needed in CI, not in local
+  await newPage1.getByTestId('network-display').isVisible();
+  while ((await newPage1.getByTestId('popover-close').count()) > 0) {
+    await newPage1.getByTestId('popover-close').click();
+  }
   await newPage1.getByTestId('network-display').click();
   await newPage1
     .locator(
@@ -44,10 +46,10 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
     )
     .click();
   await newPage1.getByRole('button', {name: 'GOT IT'}).click();
-  await page.getByRole('button', sendRequestButton).click();
+  await page.locator('#SendRequestButton').click();
   await expect(
     page.locator(
-      '#connectModal > div.flex.flex-auto.flex-col.items-center.py-5 > div > div > div.space-y-12.flex.flex-col.px-4.pt-16 > div:nth-child(2) > div.-mb-5.mt-7.w-271px.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
+      '#SignatureProcessModal > div.flex.flex-col.items-center.text-lg.leading-relaxed.text-lightWhite > div.space-y-12.flex.flex-col.pt-16.pb-4.items-start > div:nth-child(2) > div.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
     )
   ).toContainText(errorMessage);
 });

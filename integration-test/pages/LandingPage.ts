@@ -6,9 +6,8 @@ export class LandingPage {
   readonly getAnncmnt: Locator;
 
   constructor(page: Page) {
-    const okButton = {name: t('ANNOUNCEMENT_MODAL.OK_BUTTON')};
     this.page = page;
-    this.getAnncmnt = page.getByRole('button', okButton);
+    this.getAnncmnt = page.locator('#AnnouncementModalOkButton');
   }
 
   async goto() {

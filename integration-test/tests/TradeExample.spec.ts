@@ -25,6 +25,8 @@ test('Trade example', async ({page, context}) => {
   await tradePage.inputAmount();
   // open long position
   await tradePage.openLongPosition(walletConnect.extensionId);
+  // update position default value is 1 means the last position
+  await tradePage.updatePosition(walletConnect.extensionId);
   //close position default value is 1 means the last position
   await tradePage.closePosition(walletConnect.extensionId);
   // go to BTC trade page
@@ -34,6 +36,4 @@ test('Trade example', async ({page, context}) => {
   // open short position
   await tradePage.openShortPosition(walletConnect.extensionId);
   await tradePage.closePosition(walletConnect.extensionId);
-  // update position default value is 1 means the last position
-  await tradePage.updatePosition(walletConnect.extensionId);
 });

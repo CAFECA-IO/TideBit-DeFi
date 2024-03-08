@@ -8,13 +8,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1/6, 2/6, 3/6, 4/6, 5/6, 6/6]
+        tests-name: [TBDTC000001, TBDTC000003, TBDTC000005, TBDTC000008, TBDTC000010, TradeExample]
     defaults:
       run:
         working-directory: ./integration-test
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 18
     - name: Install Metamask 11.0.0
@@ -24,14 +24,15 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
     - name: Run Playwright tests
-      run: npx playwright test --shard ${{ matrix.shard }} 
+      run: npx playwright test tests/${{ matrix.tests-name}}.spec.ts 
       env: 
         BASE_URL: ${{ github.event.deployment_status.environment_url }}
+        TEST_NAME: ${{ matrix.tests-name}}
     - name: Upload blob report to GitHub Actions Artifacts
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: all-blob-reports
+        name: blob-report-${{ matrix.tests-name}}
         path: ./blob-report
         retention-days: 1
         
@@ -45,26 +46,27 @@ jobs:
       run:
         working-directory: ./integration-test
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 18
     - name: Install dependencies
       run: npm i
 
     - name: Download blob reports from GitHub Actions Artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
-        name: all-blob-reports
         path: ./integration-test/all-blob-reports
+        pattern: blob-report-*
+        merge-multiple: true
 
     - name: Merge into HTML Report
       run: npx playwright merge-reports --reporter html ./all-blob-reports 
 
     - name: Upload HTML report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: Playwright-Report-${{ github.run_id}}
+        name: playwright-report-${{github.run_id}}
         path: ./playwright-report
         retention-days: 14
 

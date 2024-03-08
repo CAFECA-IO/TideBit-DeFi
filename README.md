@@ -105,8 +105,8 @@ TideBit Decentralize Finance Version
           - '3000:3000'
         environment:
           - API_URL=http://nestjs-app:3001
-        depends_on:
-          - nestjs-app
+        networks:
+          - mongodb-net
     
     networks:
     ...

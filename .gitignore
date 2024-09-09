@@ -97,7 +97,7 @@ src/.next
 /test-results/
 /playwright-report*
 /playwright/.cache/
-metamask-chrome-11.0.0
+metamask-chrome-*
 
 # Serverless directories
 .serverless/

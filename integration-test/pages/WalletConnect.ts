@@ -49,7 +49,6 @@ export class WalletConnect {
     await this.page.getByTestId('onboarding-complete-done').click();
     await this.page.getByTestId('pin-extension-next').click();
     await this.page.getByTestId('pin-extension-done').click();
-    await this.page.getByTestId('popover-close').click();
   }
   async connectWallet() {
     await this.page.goto('./');
@@ -57,10 +56,7 @@ export class WalletConnect {
     const pagePromise = this.context.newPage();
     await this.page.locator('#NavWalletButtonDesktop').click();
     await this.page.waitForTimeout(2000);
-    await this.page
-      .locator('#MetaMaskButton')
-
-      .click();
+    await this.page.locator('#MetaMaskButton').click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + this.extensionId + '/popup.html');
     await newPage.getByTestId('page-container-footer-next').click();
@@ -72,8 +68,7 @@ export class WalletConnect {
     await this.page.locator('#SendRequestButton').click();
     const newPage = await pagePromise;
     await newPage.goto('chrome-extension://' + this.extensionId + '/popup.html');
-    await newPage.getByTestId('signature-request-scroll-button').click();
-    await newPage.getByTestId('page-container-footer-next').click();
+    await newPage.getByTestId('confirm-footer-button').click();
     await this.page.locator('#HelloModalDone').click();
     await newPage.close();
   }

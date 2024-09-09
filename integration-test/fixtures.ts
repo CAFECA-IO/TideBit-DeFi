@@ -6,7 +6,7 @@ export const test = base.extend<{
   extensionId: string;
 }>({
   context: async ({}, use) => {
-    const pathToExtension = path.join(__dirname, 'metamask-chrome-11.0.0');
+    const pathToExtension = path.join(__dirname, 'metamask-chrome-12.0.0');
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [

@@ -83,6 +83,14 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frequency, setFrequency, frequencyRef] = useState<number>(100);
 
+  /**
+   * Info: (20250428 - Shirley) Track last update time to prevent excessive updates
+   * This helps avoid performance issues when frequent updates are requested
+   */
+  const [lastUpdateTime, setLastUpdateTime] = useState<number>(0);
+  const [updateCount, setUpdateCount] = useState<number>(0);
+  const MAX_UPDATES_PER_SECOND = 20; // 限制每秒最大更新次數
+
   const candlestickChartIdHandler = (id: string) => {
     setCandlestickId(id);
   };
@@ -303,8 +311,35 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
 
     setCandlestickChartData(candlesticks);
 
+    /**
+     * Info: (20250428 - Shirley) Reset update counters when starting new interval
+     * This helps track and limit updates within each second
+     */
+    setLastUpdateTime(Date.now());
+    setUpdateCount(0);
+
     // Info: update the candlestick chart data every 0.1 seconds (20231018 - Shirley)
     const candlestickInterval = window.setInterval(() => {
+      /**
+       * Info: (20250428 - Shirley) Implement update throttling mechanism
+       * This prevents too many updates in a short period which could cause browser crashes
+       */
+      const now = Date.now();
+      const elapsedSinceLastCount = now - lastUpdateTime;
+
+      // 如果過去1秒內更新次數超過限制，則跳過此次更新
+      if (elapsedSinceLastCount < 1000 && updateCount >= MAX_UPDATES_PER_SECOND) {
+        return;
+      }
+
+      // 重置計數器（如果已經過了1秒）
+      if (elapsedSinceLastCount >= 1000) {
+        setLastUpdateTime(now);
+        setUpdateCount(1);
+      } else {
+        setUpdateCount(prev => prev + 1);
+      }
+
       const interval = millisecondsToSeconds(getTime(ts));
 
       if (ts === TimeSpanUnion._1s) {
@@ -368,30 +403,52 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   }, []);
 
   useEffect(() => {
+    /**
+     * Info: (20250428 - Shirley) Set frequency based on device type and limit updates
+     * Mobile devices use slower updates (1000ms) to conserve resources
+     * Desktop uses faster updates (100ms = 10 times per second) but with safety mechanisms
+     */
     if (globalCtx.layoutAssertion === 'MOBILE') {
-      setFrequency(1000);
+      setFrequency(1000); // 移動設備每秒更新1次
     } else {
-      setFrequency(100);
+      setFrequency(100); // 桌面設備每秒更新10次
     }
   }, [globalCtx.layoutAssertion]);
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, async (tickerData: ITickerData) => {
-        setCandlestickIsLoading(true);
-        selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
-      }),
-    []
-  );
+  // 修改使用useMemo註冊事件監聽器的方式，改用useEffect並提供清理函數
+  useEffect(() => {
+    /**
+     * Info: (20250428 - Shirley) Set up event listener for CHANGE_TICKER event
+     * Using useEffect with cleanup to prevent memory leaks
+     */
+    const changeTicker = async (tickerData: ITickerData) => {
+      setCandlestickIsLoading(true);
+      selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
+    };
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (tickerData: ITickerData) => {
-        selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
-        await listMarketTrades(tickerData.instId);
-      }),
-    []
-  );
+    notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, changeTicker);
+
+    return () => {
+      notificationCtx.emitter.off(TideBitEvent.CHANGE_TICKER, changeTicker);
+    };
+  }, []);
+
+  useEffect(() => {
+    /**
+     * Info: (20250428 - Shirley) Set up event listener for TICKER_CHANGE event
+     * Using useEffect with cleanup to prevent memory leaks
+     */
+    const tickerChange = async (tickerData: ITickerData) => {
+      selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
+      await listMarketTrades(tickerData.instId);
+    };
+
+    notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, tickerChange);
+
+    return () => {
+      notificationCtx.emitter.off(TideBitEvent.TICKER_CHANGE, tickerChange);
+    };
+  }, []);
 
   /* Deprecated: in observation (20240115 - Shirley)
   // React.useMemo(
@@ -433,7 +490,12 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
   */
 
   useEffect(() => {
-    notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+    /**
+     * Info: (20250428 - Shirley) Set up event listener for TRADES event
+     * Using dependency array with selectedTickerProperty.instId to ensure
+     * listener is re-attached when selected ticker changes
+     */
+    const tradesListener = (trades: ITrade[]) => {
       for (const trade of trades) {
         if (trade.instId === marketCtx.selectedTickerProperty?.instId) {
           tradeBook.add(trade.instId, {
@@ -447,12 +509,12 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
           });
         }
       }
-    });
+    };
+
+    notificationCtx.emitter.on(TideBitEvent.TRADES, tradesListener);
 
     return () => {
-      notificationCtx.emitter.off(TideBitEvent.TRADES, () => {
-        return;
-      });
+      notificationCtx.emitter.off(TideBitEvent.TRADES, tradesListener);
     };
   }, [marketCtx.selectedTickerProperty.instId]);
 

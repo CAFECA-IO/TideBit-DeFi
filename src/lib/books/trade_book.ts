@@ -74,6 +74,61 @@ function ensureTickerExistsDecorator<T extends TradeBookLike>(
   return descriptor;
 }
 
+/**
+ * Info: (20250428 - Shirley) Throttle decorator to limit how often a function can be called
+ * This prevents excessive CPU usage by ensuring methods are not called too frequently
+ * @param delay Minimum time between executions in milliseconds
+ */
+function throttleDecorator(delay: number) {
+  return function <T extends TradeBookLike>(
+    target: T,
+    key: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+    const lastExecutionTime = new Map<string, number>();
+
+    /**
+     * Info: (20250428 - Shirley) Add execution count tracking to further limit high-frequency operations
+     * This adds another layer of protection against excessive CPU usage
+     */
+    const executionCount = new Map<string, number>();
+    const lastCountResetTime = new Map<string, number>();
+    const MAX_EXECUTIONS_PER_SECOND = 20;
+
+    descriptor.value = function (this: T, instId: string, ...args: unknown[]) {
+      const now = Date.now();
+      const lastTime = lastExecutionTime.get(instId) || 0;
+
+      // 限制執行頻率
+      if (now - lastTime < delay) {
+        return undefined; // Skip execution if called too frequently
+      }
+
+      // 檢查每秒執行次數限制
+      const lastReset = lastCountResetTime.get(instId) || 0;
+      const currentCount = executionCount.get(instId) || 0;
+
+      // 重置計數器（如果已經過了1秒）
+      if (now - lastReset >= 1000) {
+        lastCountResetTime.set(instId, now);
+        executionCount.set(instId, 1);
+      } else if (currentCount >= MAX_EXECUTIONS_PER_SECOND) {
+        // 如果執行次數已達到上限，跳過本次執行
+        return undefined;
+      } else {
+        // 增加執行次數計數
+        executionCount.set(instId, currentCount + 1);
+      }
+
+      lastExecutionTime.set(instId, now);
+      return originalMethod.apply(this, [instId, ...args]);
+    };
+
+    return descriptor;
+  };
+}
+
 class TradeBook {
   private trades: Map<string, ITradeInTradeBook[]>;
   private predictedTrades: Map<string, ITradeInTradeBook[]>;
@@ -82,6 +137,7 @@ class TradeBook {
   private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
   private model: string;
+  private lastPredictionTime: Map<string, number>; // To track last prediction time for each instId
 
   constructor(config: ITradeBookConfig) {
     this.config = config;
@@ -91,9 +147,15 @@ class TradeBook {
     this.isPredicting = new Map();
     this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
+    this.lastPredictionTime = new Map();
   }
 
+  /**
+   * Info: (20250428 - Shirley) Add throttling to addTrades method to prevent excessive calls
+   * This helps reduce CPU usage by limiting how often trades are processed
+   */
   @ensureTickerExistsDecorator
+  @throttleDecorator(100) // 調整為100ms限制，配合每秒10次的更新頻率
   addTrades(instId: string, trades: ITradeInTradeBook[]) {
     const validTrades = trades.filter(trade => this.isValidTrade(trade));
 
@@ -152,7 +214,11 @@ class TradeBook {
   private _add(instId: string, trade: ITradeInTradeBook): void {
     let newTrade: ITradeInTradeBook = {...trade};
 
-    const isPredictedData = newTrade.tradeId.includes('-');
+    /**
+     * Info: (20250428 - Shirley) Add null check for tradeId to prevent runtime errors
+     * Using optional chaining operator to safely check if tradeId includes '-'
+     */
+    const isPredictedData = newTrade.tradeId?.includes('-') || false;
     const trades = this.getTrades(instId);
     const predictedTrades = this.getPredictedTrades(instId);
 
@@ -163,12 +229,12 @@ class TradeBook {
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
-      const lastTradeId = this.getLastPredictedTrade(instId).tradeId.split('-');
+      const lastTradeId = this.getLastPredictedTrade(instId).tradeId?.split('-') || [];
 
       const tradeId = `${
         lastTradeId.length > 1
           ? `${lastTradeId[0]}-${Number(lastTradeId[1]) + 1}`
-          : `${lastTradeId[0]}-1`
+          : `${lastTradeId[0] || ''}-1`
       }`;
 
       newTrade = {...trade, tradeId};
@@ -254,19 +320,44 @@ class TradeBook {
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
     const predictedTrades = this.getPredictedTrades(instId);
 
+    /**
+     * Info: (20250428 - Shirley) Increase the interval between predictions
+     * This reduces CPU load by making predictions less frequently
+     * Original interval was config.intervalMs, now use at least 200ms
+     */
+    const predictionInterval = Math.max(this.config.intervalMs, 200);
+
     this.predictionTimers.set(
       instId,
       setTimeout(() => {
         if (this.isPredicting.get(instId)) {
-          this.predictNextTrade(instId, predictedTrades, this.config.intervalMs, 1);
+          // Check if enough time has passed since last prediction to reduce CPU load
+          const now = Date.now();
+          const lastTime = this.lastPredictionTime.get(instId) || 0;
+
+          if (now - lastTime >= 500) {
+            // Only predict at most once every 500ms
+            this.predictNextTrade(instId, predictedTrades, this.config.intervalMs, 1);
+            this.lastPredictionTime.set(instId, now);
+          }
+
           this._trim(instId);
           this.startPredictionLoop(instId);
         }
-      }, this.config.intervalMs)
+      }, predictionInterval)
     );
   }
 
+  /**
+   * Info: (20250428 - Shirley) Optimize prediction to reduce computational load
+   * Added check to avoid unnecessary predictions when there's not enough data
+   */
+  @throttleDecorator(300) // 調整為300ms限制，減少預測頻率以降低CPU負載
   predictNextTrade(instId: string, trades: ITradeInTradeBook[], periodMs: number, length: number) {
+    if (trades.length < this.config.minLengthForLinearRegression) {
+      return; // Skip prediction if not enough data
+    }
+
     let prediction: ITradeInTradeBook[] | undefined;
 
     switch (this.model) {
@@ -474,6 +565,7 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
+  @throttleDecorator(300) // 調整為300ms限制，減少預測數據填充頻率
   fillPredictedData(instId: string, trades: ITradeInTradeBook[], targetTimestampMs: number) {
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 
@@ -481,20 +573,33 @@ class TradeBook {
       const timestampDifference = targetTimestampMs - lastTradeTimestamp;
 
       if (timestampDifference > this.config.intervalMs) {
-        const counts = Math.floor(timestampDifference / 100) - 1;
-
-        const predictedTrades = this.predictNextTrade(
-          instId,
-          trades,
-          this.config.intervalMs,
-          counts
+        /**
+         * Info: (20250428 - Shirley) Limit the amount of predicted data points
+         * The original calculation could create too many prediction points in some cases
+         */
+        const counts = Math.min(
+          Math.floor(timestampDifference / 100) - 1,
+          10 // Cap at maximum 10 predictions at once
         );
 
-        if (predictedTrades !== undefined) this.predictedTrades.set(instId, predictedTrades);
+        if (counts > 0) {
+          const predictedTrades = this.predictNextTrade(
+            instId,
+            trades,
+            this.config.intervalMs,
+            counts
+          );
+
+          if (predictedTrades !== undefined) this.predictedTrades.set(instId, predictedTrades);
+        }
       }
     }
   }
 
+  /**
+   * Info: (20250428 - Shirley) Optimize linear regression algorithm
+   * Added early returns and optimized calculations to reduce CPU usage
+   */
   linearRegression(
     trades: ITradeInTradeBook[],
     periodMs: number,
@@ -508,6 +613,9 @@ class TradeBook {
     const recentTrades = trades.filter(
       t => t.timestampMs > cutoffTimeMs && !t.tradeId.includes('-')
     );
+
+    // Early return if not enough recent trades
+    if (recentTrades.length < this.config.minLengthForLinearRegression) return;
 
     // Info: Average prices with same timestamp (20230522 - Shirley)
     const timestampMap = new Map();
@@ -530,7 +638,10 @@ class TradeBook {
     // Info: (20230522 - Shirley) Step 2: Prepare data for regression
     const {m, b} = this.getLinearRegressionVariables(averagedTrades);
 
-    for (let i = 0; i < length; i++) {
+    // Cap the length of predictions to prevent excessive calculations
+    const predictionLength = Math.min(length, 5);
+
+    for (let i = 0; i < predictionLength; i++) {
       // Info: (20230522 - Shirley) Step 3: Predict price for the next period
       const lastTrade = trades[trades.length - 1];
       const nextTime = lastTrade.timestampMs + periodMs * (i + 1);
@@ -550,7 +661,7 @@ class TradeBook {
       newTrades.push(newTrade);
     }
 
-    const prediction = newTrades.slice(-length);
+    const prediction = newTrades.slice(-predictionLength);
 
     return prediction;
   }

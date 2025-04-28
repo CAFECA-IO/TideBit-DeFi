@@ -156,7 +156,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
         asc?: boolean;
         limit?: number;
       },
-      suppressError?: boolean // 添加 suppressError 參數，默認為 false
+      suppressError?: boolean // Info: (20250428 - Shirley) 添加 suppressError 參數，默認為 false
     ) => {
       let result: IResult = {...defaultResultFailed};
       if (!options) {
@@ -334,12 +334,12 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
       const now = Date.now();
       const elapsedSinceLastCount = now - lastUpdateTime;
 
-      // 如果過去1秒內更新次數超過限制，則跳過此次更新
+      //  Info: (20250428 - Shirley) 如果過去1秒內更新次數超過限制，則跳過此次更新
       if (elapsedSinceLastCount < 1000 && updateCount >= MAX_UPDATES_PER_SECOND) {
         return;
       }
 
-      // 重置計數器（如果已經過了1秒）
+      //  Info: (20250428 - Shirley) 重置計數器（如果已經過了1秒）
       if (elapsedSinceLastCount >= 1000) {
         setLastUpdateTime(now);
         setUpdateCount(1);
@@ -416,13 +416,13 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
      * Desktop uses faster updates (100ms = 10 times per second) but with safety mechanisms
      */
     if (globalCtx.layoutAssertion === 'MOBILE') {
-      setFrequency(1000); // 移動設備每秒更新1次
+      setFrequency(1000); // Info: (20250428 - Shirley) 移動設備每秒更新1次
     } else {
-      setFrequency(100); // 桌面設備每秒更新10次
+      setFrequency(100); // Info: (20250428 - Shirley) 桌面設備每秒更新10次
     }
   }, [globalCtx.layoutAssertion]);
 
-  // 修改使用useMemo註冊事件監聽器的方式，改用useEffect並提供清理函數
+  // Info: (20250428 - Shirley) 修改使用useMemo註冊事件監聽器的方式，改用useEffect並提供清理函數
   useEffect(() => {
     /**
      * Info: (20250428 - Shirley) Set up event listener for CHANGE_TICKER event

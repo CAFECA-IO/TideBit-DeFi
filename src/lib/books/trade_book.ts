@@ -17,6 +17,11 @@ import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candles
 import {Model} from '../../constants/model';
 import {ITimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {millisecondsToSeconds} from '../common';
+import {
+  MAX_EXECUTIONS_PER_SECOND,
+  DEFAULT_TRADEBOOK_ADDTRADES_THROTTLE,
+  DEFAULT_TRADEBOOK_PREDICT_THROTTLE,
+} from '../../constants/config';
 
 interface ITradeInTradeBook {
   tradeId: string;
@@ -94,7 +99,6 @@ function throttleDecorator(delay: number) {
      */
     const executionCount = new Map<string, number>();
     const lastCountResetTime = new Map<string, number>();
-    const MAX_EXECUTIONS_PER_SECOND = 20;
 
     descriptor.value = function (this: T, instId: string, ...args: unknown[]) {
       const now = Date.now();
@@ -155,7 +159,7 @@ class TradeBook {
    * This helps reduce CPU usage by limiting how often trades are processed
    */
   @ensureTickerExistsDecorator
-  @throttleDecorator(100) // Info: (20250428 - Shirley) 調整為100ms限制，配合每秒10次的更新頻率
+  @throttleDecorator(DEFAULT_TRADEBOOK_ADDTRADES_THROTTLE) // 使用 config 常數
   addTrades(instId: string, trades: ITradeInTradeBook[]) {
     const validTrades = trades.filter(trade => this.isValidTrade(trade));
 
@@ -352,7 +356,7 @@ class TradeBook {
    * Info: (20250428 - Shirley) Optimize prediction to reduce computational load
    * Added check to avoid unnecessary predictions when there's not enough data
    */
-  @throttleDecorator(300) // Info: (20250428 - Shirley) 調整為300ms限制，減少預測頻率以降低CPU負載
+  @throttleDecorator(DEFAULT_TRADEBOOK_PREDICT_THROTTLE) // 使用 config 常數
   predictNextTrade(instId: string, trades: ITradeInTradeBook[], periodMs: number, length: number) {
     if (trades.length < this.config.minLengthForLinearRegression) {
       return; // Info: (20250428 - Shirley) Skip prediction if not enough data
@@ -565,7 +569,7 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  @throttleDecorator(300) // Info: (20250428 - Shirley) 調整為300ms限制，減少預測數據填充頻率
+  @throttleDecorator(DEFAULT_TRADEBOOK_PREDICT_THROTTLE) // 使用 config 常數
   fillPredictedData(instId: string, trades: ITradeInTradeBook[], targetTimestampMs: number) {
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 

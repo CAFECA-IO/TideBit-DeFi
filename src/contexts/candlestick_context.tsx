@@ -20,7 +20,12 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {DEFAULT_INSTID, INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL} from '../constants/config';
+import {
+  DEFAULT_INSTID,
+  INITIAL_TRADES_BUFFER,
+  INITIAL_TRADES_INTERVAL,
+  MAX_UPDATES_PER_SECOND,
+} from '../constants/config';
 import {isCustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import TradeBookInstance from '../lib/books/trade_book';
@@ -89,7 +94,6 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
    */
   const [lastUpdateTime, setLastUpdateTime] = useState<number>(0);
   const [updateCount, setUpdateCount] = useState<number>(0);
-  const MAX_UPDATES_PER_SECOND = 20; // 限制每秒最大更新次數
 
   const candlestickChartIdHandler = (id: string) => {
     setCandlestickId(id);

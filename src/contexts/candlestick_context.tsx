@@ -155,7 +155,8 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
         end?: number; // Info: in milliseconds (20230530 - tzuhan)
         asc?: boolean;
         limit?: number;
-      }
+      },
+      suppressError?: boolean // 添加 suppressError 參數，默認為 false
     ) => {
       let result: IResult = {...defaultResultFailed};
       if (!options) {
@@ -200,11 +201,17 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
             : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
         };
 
-        notificationCtx.addException(
-          'listMarketTrades',
-          error as Error,
-          Code.INTERNAL_SERVER_ERROR
-        );
+        /**
+         * Info: (20250428 - Shirley) Only show error notification if suppressError is false
+         * This allows silently handling errors for initial API calls on trade page load
+         */
+        if (!suppressError) {
+          notificationCtx.addException(
+            'listMarketTrades',
+            error as Error,
+            Code.INTERNAL_SERVER_ERROR
+          );
+        }
       }
       return result;
     },
@@ -440,7 +447,7 @@ export const CandlestickProvider = ({children}: ICandlestickProvider) => {
      */
     const tickerChange = async (tickerData: ITickerData) => {
       selectTimeSpanHandler(timeSpanRef.current, tickerData.instId);
-      await listMarketTrades(tickerData.instId);
+      await listMarketTrades(tickerData.instId, undefined, true);
     };
 
     notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, tickerChange);

@@ -1,6 +1,6 @@
 {
-  "name": "src",
-  "version": "0.8.2+3",
+  "name": "tidebit-defi",
+  "version": "0.8.3",
   "private": true,
   "scripts": {
     "dev": "next dev",

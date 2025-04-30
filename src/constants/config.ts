@@ -314,3 +314,9 @@ export const COOKIE_PERIOD_FAVORITES = 365; // Info: days (20231013 - Shirley)
 export const COOKIE_PERIOD_CRITICAL_ANNOUNCEMENT = 7; // Info: days (20231101 - Shirley)
 export const DEFAULT_GUARANTEED_STOP_FEE = 0.002; // Info: 0.2% (20231110 - Shirley)
 export const INTERVAL_FOR_CLEARING_BINDING = 1000 * 60 * 2; // Info: 2 min in milliseconds (20231110 - Shirley)
+
+// Info: (20250428 - Shirley) Candlestick/TradeBook performance and safety constants
+export const MAX_UPDATES_PER_SECOND = 20; // For UI update throttling (20250428 - Shirley)
+export const MAX_EXECUTIONS_PER_SECOND = 20; // For method throttling in trade_book (20250428 - Shirley)
+export const DEFAULT_TRADEBOOK_ADDTRADES_THROTTLE = 100; // ms, for addTrades (20250428 - Shirley)
+export const DEFAULT_TRADEBOOK_PREDICT_THROTTLE = 300; // ms, for predictNextTrade/fillPredictedData (20250428 - Shirley)

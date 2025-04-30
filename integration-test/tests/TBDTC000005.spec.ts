@@ -40,18 +40,11 @@ test('2. 至metamask切換到ETH以外的鏈上後，發送確認身份與API授
     await newPage1.getByTestId('popover-close').click();
   }
   await newPage1.getByTestId('network-display').click();
-  await newPage1
-    .locator(
-      'body > div.mm-modal > div:nth-child(3) > div > section > div.mm-box.multichain-network-list-menu > div.mm-box.multichain-network-list-item.mm-box--padding-4.mm-box--display-flex.mm-box--gap-2.mm-box--justify-content-space-between.mm-box--align-items-center.mm-box--width-full.mm-box--background-color-transparent > div.mm-box.multichain-network-list-item__network-name > button'
-    )
-    .click();
+  await newPage1.getByTestId('Linea Mainnet').click();
   await newPage1.getByRole('button', {name: 'GOT IT'}).click();
+  await expect(newPage1.getByLabel('Network Menu Linea Mainnet')).toBeVisible();
   await page.locator('#SendRequestButton').click();
-  await expect(
-    page.locator(
-      '#SignatureProcessModal > div.flex.flex-col.items-center.text-lg.leading-relaxed.text-lightWhite > div.space-y-12.flex.flex-col.pt-16.pb-4.items-start > div:nth-child(2) > div.space-y-1.text-lightWhite > div.text-sm.text-lightRed3'
-    )
-  ).toContainText(errorMessage);
+  await expect(newPage1.getByLabel('Network Menu Ethereum Mainnet')).toBeVisible();
 });
 
 test('3. 至metamask切換到ETH主鏈上，重新發送請求。', async ({page, context}) => {

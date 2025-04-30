@@ -52,21 +52,23 @@ test('3. 切換日、週、月排名，停留在日排名。', async ({page}) =>
     'November',
     'December',
   ];
-  await expect.soft(await page.locator('#LiveRemainingTime')).toBeVisible();
+  await page.waitForTimeout(3000);
+  await expect.soft(page.locator('#LiveRemainingTime')).toBeVisible();
   await page.locator('#DailyTab').click();
   await expect
-    .soft(await page.locator('#DailyTimePeriod > span'))
+    .soft(page.locator('#DailyTimePeriod > span'))
     .toContainText(today.toISOString().slice(0, 10));
   await page.locator('#WeeklyTab').click();
   await expect
-    .soft(await page.locator('#WeeklyTimePeriod > span:nth-child(1)'))
+    .soft(page.locator('#WeeklyTimePeriod > span:nth-child(1)'))
     .toContainText(lastWeekStart.toISOString().slice(0, 10));
   await expect
-    .soft(await page.locator('#WeeklyTimePeriod > span:nth-child(2)'))
+    .soft(page.locator('#WeeklyTimePeriod > span:nth-child(2)'))
     .toContainText(lastWeekEnd.toISOString().slice(0, 10));
   await page.locator('#MonthlyTab').click();
+  await page.waitForTimeout(10000);
   await expect
-    .soft(await page.locator('#MonthlyTimePeriod > span'))
+    .soft(page.locator('#MonthlyTimePeriod > span'))
     .toContainText(monthNames[today.getUTCMonth() - 1] + ' ' + today.getFullYear());
 });
 

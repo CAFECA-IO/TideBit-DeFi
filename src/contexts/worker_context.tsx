@@ -54,6 +54,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const pusherKey = process.env.PUSHER_APP_KEY ?? '';
   const pusherHost = process.env.PUSHER_HOST ?? '';
   const pusherPort = +(process.env.PUSHER_PORT ?? '0');
+  const pusherTLS = process.env.PUSHER_TLS === 'true';
   const notificationCtx = useContext(NotificationContext);
   // Info: for the use of useStateRef (20231106 - Shirley)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -129,6 +130,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       cluster: '',
       wsHost: pusherHost,
       wsPort: pusherPort,
+      forceTLS: pusherTLS,
       channelAuthorization: {
         transport: 'jsonp',
         endpoint: `${pusherHost}/api/pusher/auth`,

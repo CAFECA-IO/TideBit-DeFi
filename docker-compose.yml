@@ -1,24 +1,3 @@
-version: '3.8'
-services:
-  nextjs-app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      # 確保在build階段也可以有
-      args:
-        - API_URL=http://localhost:3001
-    ports:
-      - '3000:3000'
-    environment:
-      - API_URL=http://localhost:3001
-    # depends_on:
-    #   - nestjs-app
-    networks:
-      - mongodb-net
+# ToDo: (20251211 - Luphia) docker-compose.yml with poxa, ipfs, postgres, isuncoin
 
-networks:
-  mongodb-net:
-    external: true
 
-volumes:
-  mongodb-data:

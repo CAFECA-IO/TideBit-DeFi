@@ -1,5 +1,6 @@
 import { TradeDirection, TransactionDirection } from "@/interfaces/trade";
 import { IBankAccountDetail, ICreditCardDetail } from "@/interfaces/bank";
+import { ITokenInfo } from "@/interfaces/token";
 
 // Info: (20251212 - Julian) PnL 資訊
 export interface IPnl {
@@ -31,16 +32,6 @@ export interface IWalletBalanceChangeChart {
     dateTimestamp: number; // Info: (20251212 - Julian) 日期時間戳
     balanceChangeAmount: number; // Info: (20251212 - Julian) 餘額變動數量
   }[];
-}
-
-// Info: (20251212 - Julian) Token 基本資訊
-export interface ITokenInfo {
-  id: string;
-  tokenName: string; // Info: (20251212 - Julian) e.g. "ETH", "USDC"
-  companyName: string; // Info: (20251212 - Julian) 公司名稱
-  tokenLogoId: string; // Info: (20251212 - Julian) 代幣圖標
-  priceInUsd: number; // Info: (20251212 - Julian) 代幣價格 (USD)
-  priceInTwd: number; // Info: (20251212 - Julian) 代幣價格 (TWD)
 }
 
 // Info: (20251212 - Julian) 用於 Wallet overview，用戶持有的代幣項目

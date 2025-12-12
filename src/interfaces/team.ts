@@ -27,3 +27,39 @@ export interface ITeamDetail extends ITeamBrief {
   upGoingFundingList: IFundingList[]; // Info: (20251212 - Julian) 即將開始的募資列表
   closedFundingList: IFundingList[]; // Info: (20251212 - Julian) 已結束的募資列表
 }
+
+// Info: (20251212 - Julian) ============ form UI interfaces ============
+// 用於 Create team info 表單 UI
+export interface ITeamCreateInfo {
+  tokenName: string;
+  tokenLogoId: string;
+}
+
+// 用於 Team basic info 表單 UI
+export interface ITeamBasicInfo {
+  legalCompanyName: string;
+  companyRegisteredLocation: string;
+  keyCompanyRepresentativeName: string;
+  keyContactPerson?: string;
+  contactNumber: string;
+  emailAddress: string;
+}
+
+// 用於 Team registration info 表單 UI
+export interface ITeamRegistrationInfo {
+  legalStructure: "Company Limited by Shares"; // 可能有其他選項，待確認
+  businessRegistrationNumber: string;
+  RegistrationTimestamp: number; // 公司註冊時間戳
+  industry: string; // 應該會有固定選項，待確認
+}
+
+// 用於 Team upload document UI
+export interface ITeamDocument {
+  keyCompanyRepresentativeIdType:
+    | "Passport"
+    | "National ID"
+    | "Driving License"; // 關鍵代表人的身份證件類型
+  pictureOfKeyCompanyRepresentativePassport: string; // 身份證件圖片 ID
+  pictureOfBusinessRegistrationCertificate: string; // 商業登記證圖片 ID
+  pictureOfTaxStatusCertification: string; // 稅務狀況證明圖片 ID
+}

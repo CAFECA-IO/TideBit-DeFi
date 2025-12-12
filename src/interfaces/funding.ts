@@ -6,7 +6,7 @@ export interface IFundingInfoBrief extends IProjectBelief {
   // id, title, companyName, fundingStatus, coverImageId,
   // raisedFundingAmount, goalFundingAmount, raisedFundingAmount,
   // createdAt, startedAt, endedAt, remainingDays, fundingResult
-  tokenName: string; // // Info: (20251212 - Julian) 代幣名稱
+  tokenName: string; // Info: (20251212 - Julian) 代幣名稱
   tokenPrice: number; // Info: (20251212 - Julian) 代幣價格
   industry: string; // Info: (20251212 - Julian) 公司的產業類別，可能有固定選項，待確認
   committedFundAmount: number; // Info: (20251212 - Julian) 已承諾募資金額

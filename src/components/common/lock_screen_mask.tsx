@@ -1,40 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FiLock } from 'react-icons/fi';
+import { useIdleTimer } from '@/lib/hooks/use_idle_timer';
 import { Button } from '@/components/common/button';
-
-export function useIdleTimer(timeout = 5 * 60 * 1000, onIdle: () => void) {
-  useEffect(() => {
-    let timer: number;
-
-    const resetTimer = () => {
-      clearTimeout(timer);
-      timer = window.setTimeout(onIdle, timeout);
-    };
-
-    const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'];
-
-    events.forEach((event) => window.addEventListener(event, resetTimer));
-
-    resetTimer();
-
-    return () => {
-      clearTimeout(timer);
-      events.forEach((event) => window.removeEventListener(event, resetTimer));
-    };
-  }, [timeout, onIdle]);
-}
 
 const LockScreenMask: React.FC = () => {
   const [isLocked, setIsLocked] = useState<boolean>(true);
 
-  // const IDLE_TIME = 5 * 60 * 1000; // Info: (20251215 - Julian) 5 分鐘
-  const IDLE_TIME = 3 * 1000; // Info: (20240624 - Julian) 3 秒鐘 for demo
+  const IDLE_TIME = 5 * 60 * 1000; // Info: (20251215 - Julian) 5 分鐘
 
   const unlockScreen = () => setIsLocked(false);
   const lockScreen = () => setIsLocked(true);
 
+  // Info: (20251215 - Julian) 使用 useIdleTimer 監測閒置時間，超過指定時間後鎖定螢幕
   useIdleTimer(IDLE_TIME, lockScreen);
 
   return (

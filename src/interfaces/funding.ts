@@ -1,4 +1,4 @@
-import { IProjectBelief } from "@/interfaces/project";
+import { IProjectBelief } from '@/interfaces/project';
 
 // Info: (20251212 - Julian) 用於首頁的 funding item 列表
 export interface IFundingInfoBrief extends IProjectBelief {

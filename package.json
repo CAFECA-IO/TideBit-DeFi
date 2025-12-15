@@ -1,6 +1,6 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+2",
+  "version": "0.9.0+3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -16,10 +16,13 @@
     "test": "jest --coverage"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "eslint-plugin-tailwindcss": "^3.18.2",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "tailwind-merge": "^3.4.0",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {

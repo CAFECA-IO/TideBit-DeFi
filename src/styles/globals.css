@@ -960,6 +960,30 @@
   --color-tooltips-text-default-secondary: var(--color-text-neutral-secondary);
   --color-tooltips-text-inverse-primary: var(--color-text-neutral-inverse);
   --color-tooltips-text-inverse-secondary: var(--color-text-neutral-inverse);
+
+  --spacing-lv-13: 120px;
+  --spacing-lv-12: 96px;
+  --spacing-lv-11: 80px;
+  --spacing-lv-10: 72px;
+  --spacing-lv-9: 56px;
+  --spacing-lv-8: 40px;
+  --spacing-lv-7: 32px;
+  --spacing-lv-6: 24px;
+  --spacing-lv-5: 20px;
+  --spacing-lv-4: 16px;
+  --spacing-lv-3: 12px;
+  --spacing-lv-2: 8px;
+  --spacing-lv-1: 6px;
+  --spacing-lv-0: 4px;
+  --spacing-none: 0px;
+
+  --radius-rounded: 999px;
+  --radius-xl: 25px;
+  --radius-l: 20px;
+  --radius-m: 15px;
+  --radius-s: 10px;
+  --radius-xs: 5px;
+  --radius-xxs: 3px;
 }
 
 @media (prefers-color-scheme: dark) {

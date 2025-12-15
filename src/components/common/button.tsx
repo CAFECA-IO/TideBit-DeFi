@@ -38,7 +38,6 @@ const buttonVariants = cva(
 export interface IButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
 
-// Info: (20240319 - Shirley) 使用 forwardRef 將引用傳遞給 DOM 元素
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     const Comp = 'button';

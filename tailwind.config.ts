@@ -765,7 +765,9 @@ module.exports = {
         'spacing-lv-0': 'var(--spacing-lv-0)',
         'spacing-none': 'var(--spacing-none)',
 
+        '50px': '50px',
         '100px': '100px',
+        '250px': '250px',
       },
     },
   },

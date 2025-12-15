@@ -1,10 +1,10 @@
-import { ITokenInfo } from "@/interfaces/token";
+import { ITokenInfo } from '@/interfaces/token';
 
 // Info: (20251212 - Julian) 交易方向：賣出/買入
-export type TradeDirection = "Sell" | "Buy";
+export type TradeDirection = 'Sell' | 'Buy';
 
 // Info: (20251212 - Julian) 交易方向：存入/提取
-export type TransactionDirection = "Deposit" | "Withdraw";
+export type TransactionDirection = 'Deposit' | 'Withdraw';
 
 // Info: (20251212 - Julian) 詢問 Swap trading 報價
 export interface ISwapTradeRequest {
@@ -38,7 +38,7 @@ export interface ILimitOrderRequest {
   fromToken: ITokenInfo;
   toToken: ITokenInfo;
   amount: string; // Info: (20251212 - Julian) 交易數量 (string decimal)
-  slippageTolerance: "Market" | "+1%" | "+5%" | "+10%"; // Info: (20251212 - Julian) 價差容忍度
+  slippageTolerance: 'Market' | '+1%' | '+5%' | '+10%'; // Info: (20251212 - Julian) 價差容忍度
 }
 
 // Info: (20251212 - Julian) 取得 Limit Order 報價回應

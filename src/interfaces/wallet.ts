@@ -1,12 +1,12 @@
-import { TradeDirection, TransactionDirection } from "@/interfaces/trade";
-import { IBankAccountDetail, ICreditCardDetail } from "@/interfaces/bank";
-import { ITokenInfo } from "@/interfaces/token";
+import { TradeDirection, TransactionDirection } from '@/interfaces/trade';
+import { IBankAccountDetail, ICreditCardDetail } from '@/interfaces/bank';
+import { ITokenInfo } from '@/interfaces/token';
 
 // Info: (20251212 - Julian) PnL 資訊
 export interface IPnl {
   amount: number;
   profitLoss: number;
-  profitLossSymbol: "+" | "-";
+  profitLossSymbol: '+' | '-';
   percentage: number;
   currency: string; // Info: (20251212 - Julian) 貨幣單位
 }
@@ -27,7 +27,7 @@ export interface IWalletBalance {
 
 // Info: (20251212 - Julian) 用於 Wallet Overview 的餘額變動折線圖資料
 export interface IWalletBalanceChangeChart {
-  period: "This Week"; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
+  period: 'This Week'; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
   graphData: {
     dateTimestamp: number; // Info: (20251212 - Julian) 日期時間戳
     balanceChangeAmount: number; // Info: (20251212 - Julian) 餘額變動數量
@@ -40,7 +40,7 @@ export interface IPortfolioTokenItem extends ITokenInfo {
   currentValueInUsd: number; // Info: (20251212 - Julian) 目前價值 (USD)
   returnInUsd: number; // Info: (20251212 - Julian) 投資報酬 (USD)
   returnPercentage: number; // Info: (20251212 - Julian) 投資報酬百分比
-  returnSymbol: "+" | "-"; // Info: (20251212 - Julian) 投資報酬符號
+  returnSymbol: '+' | '-'; // Info: (20251212 - Julian) 投資報酬符號
   tokenImageColorHex?: string; // Info: (20251212 - Julian) 代幣圖標背景顏色，Hex 格式
 }
 
@@ -58,7 +58,7 @@ export interface IWalletCompletedTokenItem extends ITokenInfo {
   createdAt: number; // Info: (20251212 - Julian) 交易完成時間戳
   amount: number; // Info: (20251212 - Julian) 持有數量
   totalPriceInTwd: number; // Info: (20251212 - Julian) 總價值 (TWD)
-  operation: "Success" | "Failed"; // Info: (20251212 - Julian) 交易結果
+  operation: 'Success' | 'Failed'; // Info: (20251212 - Julian) 交易結果
 }
 
 // Info: (20251212 - Julian) 用於 Wallet overview，Token section 的「開放訂單項目」
@@ -68,7 +68,7 @@ export interface IWalletOpenOrderTokenItem extends ITokenInfo {
   quantity: number; // Info: (20251212 - Julian) 交易數量
   feeInTwd: number; // Info: (20251212 - Julian) 交易手續費 (TWD)
   totalPriceInTwd: number; // Info: (20251212 - Julian) 總價值 (TWD)
-  operation: "Close"; // Info: (20251212 - Julian) 交易狀態，可能還有其他狀態待補充
+  operation: 'Close'; // Info: (20251212 - Julian) 交易狀態，可能還有其他狀態待補充
 }
 
 // Info: (20251212 - Julian) 用於 Wallet overview，Token section 的「交易紀錄項目」
@@ -88,7 +88,7 @@ export interface IWalletTransactionHistoryTokenItem extends ITokenInfo {
   amount: number; // Info: (20251212 - Julian) 交易數量
   feeInTwd: number; // Info: (20251212 - Julian) 交易手續費 (TWD)
   fromOrTo: string; // Info: (20251212 - Julian) 交易對象
-  status: "Success" | "Failed" | "Pending"; // Info: (20251212 - Julian) 交易狀態
+  status: 'Success' | 'Failed' | 'Pending'; // Info: (20251212 - Julian) 交易狀態
   balance: number; // Info: (20251212 - Julian) 交易後餘額
 }
 

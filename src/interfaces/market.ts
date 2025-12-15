@@ -1,11 +1,11 @@
-import { ITokenInfo } from "@/interfaces/token";
+import { ITokenInfo } from '@/interfaces/token';
 
 // Info: (20251212 - Julian) 用於 Market 頁面：Market Overview
 export interface IMarketOverview {
   totalMarketCap: number;
   total24hVolume: number;
   marketSentimentData: {
-    type: "Positive" | "Neutral" | "Negative";
+    type: 'Positive' | 'Neutral' | 'Negative';
     percentage: number;
   }[];
 }
@@ -27,7 +27,7 @@ export interface ITokenItemUI extends ITokenItem {
 
 // Info: (20251212 - Julian) 用於 Token detail 頁面：K 線圖資料
 export interface ITokenCandlestickChart {
-  period: "Live" | "5m" | "15m" | "30m" | "1h" | "4h" | "12h" | "1d"; // Info: (20251212 - Julian) 圖表區間
+  period: 'Live' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d'; // Info: (20251212 - Julian) 圖表區間
   openPrice: number; // Info: (20251212 - Julian) 開盤價
   highPrice: number; // Info: (20251212 - Julian) 最高價
   lowPrice: number; // Info: (20251212 - Julian) 最低價

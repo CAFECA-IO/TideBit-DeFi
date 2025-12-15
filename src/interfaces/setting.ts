@@ -29,14 +29,14 @@ export interface IGeneralSetting {
   userName: string;
   isNewMessageNotificationEnabled: boolean;
   isSystemAnnouncementNotificationEnabled: boolean;
-  language: "English" | "Traditional Chinese";
-  theme: "Light" | "Dark" | "System Default";
+  language: 'English' | 'Traditional Chinese';
+  theme: 'Light' | 'Dark' | 'System Default';
 }
 
 // Info: (20251212 - Julian) ============ form UI interfaces ============
 // Info: (20251212 - Julian) 用於 Report a problem 表單
 export interface IReportForm {
-  issueType: "General Inquiry"; // Info: (20251212 - Julian) 可能有其他選項，待確認
+  issueType: 'General Inquiry'; // Info: (20251212 - Julian) 可能有其他選項，待確認
   subject: string;
   description: string;
 }

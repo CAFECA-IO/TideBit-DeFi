@@ -1,16 +1,12 @@
-import { ITeamBrief } from "@/interfaces/team";
+import { ITeamBrief } from '@/interfaces/team';
 
 // Info: (20251212 - Julian) 限定投資人：員工/股東
-type InvestorType = "employee" | "shareholder";
+type InvestorType = 'employee' | 'shareholder';
 
 // Info: (20251212 - Julian) 用於 Budget Categories Modal UI，選項須補上
 type BudgetCategories =
   // ===== Operation =====
-  | "Product Management"
-  | "Employees"
-  | "Marketing"
-  | "Sales"
-  | "Customer Support";
+  'Product Management' | 'Employees' | 'Marketing' | 'Sales' | 'Customer Support';
 // ===== Marketing =====
 // ===== Sales =====
 // ===== Product Development =====
@@ -22,7 +18,7 @@ export interface IProjectBelief {
   id: string;
   title: string; // Info: (20251212 - Julian) 專案標題
   companyName: string; // Info: (20251212 - Julian) 公司名稱
-  fundingStatus: "On-going" | "Upcoming" | "Closed"; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資狀態
+  fundingStatus: 'On-going' | 'Upcoming' | 'Closed'; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資狀態
   coverImageId: string; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 封面圖片 ID
   raisedFundingAmount: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 已募資金額
   goalFundingAmount: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 目標金額
@@ -30,7 +26,7 @@ export interface IProjectBelief {
   startedAt: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資開始時間戳
   endedAt: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結束時間戳
   remainingDays: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 剩餘天數
-  fundingResult: "Success" | "Failed" | "Pending"; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結果，Pending 為募資中
+  fundingResult: 'Success' | 'Failed' | 'Pending'; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結果，Pending 為募資中
 }
 
 // Info: (20251212 - Julian) 用於 Project detail 頁面 UI
@@ -39,13 +35,13 @@ export interface IProjectDetail extends IProjectBelief {
   tokenPrice: number; // Info: (20251212 - Julian) 代幣價格
   committedTokensCount: number; // Info: (20251212 - Julian) 已承諾代幣數量
   investorsCount: number; // Info: (20251212 - Julian) 投資人數
-  investorType: "Public" | "Private"; // Info: (20251212 - Julian) 目標投資者類型
+  investorType: 'Public' | 'Private'; // Info: (20251212 - Julian) 目標投資者類型
   allowedInvestorTypes?: InvestorType[]; // Info: (20251212 - Julian) 允許的投資人類型，當 investorType 為 Private 時使用
 }
 
 // Info: (20251212 - Julian) 用於 Project detail 頁面：投資人數折線圖資料
 export interface ICommittedInvestorsChart {
-  period: "This Week"; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
+  period: 'This Week'; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
   graphData: {
     dateTimestamp: number; // Info: (20251212 - Julian) 日期時間戳
     committedInvestorsCount: number; // Info: (20251212 - Julian) 當日新增投資人數
@@ -54,7 +50,7 @@ export interface ICommittedInvestorsChart {
 
 // Info: (20251212 - Julian) 用於 Project detail 頁面：募資金額折線圖資料
 export interface IFundsRaisedChart {
-  period: "This Week"; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
+  period: 'This Week'; // Info: (20251212 - Julian) 圖表區間，其他選項待補充
   graphData: {
     dateTimestamp: number; // Info: (20251212 - Julian) 日期時間戳
     fundsRaisedAmount: number; // Info: (20251212 - Julian) 當日募資金額
@@ -64,7 +60,7 @@ export interface IFundsRaisedChart {
 // Info: (20251212 - Julian) 用於 Project detail 頁面：投資人分析長條圖資料
 export interface ICommittedInvestorsBreakdownChart {
   graphData: {
-    amountRange: "0 - 100" | "100 - 1K" | "1K - 10K" | ">10K"; // Info: (20251212 - Julian) 金額區間
+    amountRange: '0 - 100' | '100 - 1K' | '1K - 10K' | '>10K'; // Info: (20251212 - Julian) 金額區間
     investorsCount: number; // Info: (20251212 - Julian) 投資人數
   }[];
 }
@@ -115,7 +111,7 @@ export interface IProjectSetting {
   goalAmount: number; // Info: (20251212 - Julian) 募資目標金額
   publicTimestamp: number; // Info: (20251212 - Julian) 預計公開時間戳
   publicPeriod: number; // Info: (20251212 - Julian) 預計公開期間 (天數)
-  investorType: "Public" | "Private"; // Info: (20251212 - Julian) 目標投資者類型
+  investorType: 'Public' | 'Private'; // Info: (20251212 - Julian) 目標投資者類型
   allowedInvestorTypes?: InvestorType[]; // Info: (20251212 - Julian) 允許的投資人類型，當 investorType 為 Private 時使用
   keyContactPerson?: string; // Info: (20251212 - Julian) 關鍵聯絡人姓名，可與 registered contact person 相同
   contactNumber: string;
@@ -126,7 +122,7 @@ export interface IProjectSetting {
 export interface IProjectDocument {
   pictureOfKeyCompanyRepresentativePassport: string; // Info: (20251212 - Julian) 關鍵代表人身份證件圖片 ID
   pictureOfInvestmentAgreement: string; // Info: (20251212 - Julian) 投資協議圖片 ID
-  financialReportsType: "Upload manually" | "Link to iSunFA"; // Info: (20251212 - Julian) 財務報告類型
+  financialReportsType: 'Upload manually' | 'Link to iSunFA'; // Info: (20251212 - Julian) 財務報告類型
   pictureOfBalanceSheet?: string; // Info: (20251212 - Julian) 資產負債表圖片 ID，當 financialReportsType 為 Upload manually 時使用
   pictureOfIncomeStatement?: string; // Info: (20251212 - Julian) 綜合損益表圖片 ID，當 financialReportsType 為 Upload manually 時使用
   pictureOfCashFlowStatement?: string; // Info: (20251212 - Julian) 現金流量表圖片 ID，當 financialReportsType 為 Upload manually 時使用

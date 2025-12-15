@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "swarm": "next start -p 10010"
+    "swarm": "next start -p 10010",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "16.0.8",
@@ -22,6 +23,8 @@
     "autoprefixer": "^10.4.22",
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.7.2",

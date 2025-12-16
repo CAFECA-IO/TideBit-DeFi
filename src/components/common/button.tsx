@@ -2,21 +2,28 @@ import React, { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/common';
 
+// Info: (20251216 - Julian) Disabled styles
+const fillColorDisabledStyles =
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-button-state-filled-disable disabled:text-button-state-filled-on-disable';
+const outlineDisabledStyles =
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-button-state-outline-disable disabled:text-button-state-outline-on-disable';
+const textDisabledStyles =
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:text-button-state-outline-on-disable';
+
 const buttonVariants = cva(
   'group inline-flex items-center justify-center whitespace-nowrap transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
-        default:
-          'bg-button-brand-filled-primary-default text-button-brand-filled-on-primary-default hover:bg-button-brand-filled-primary-hover active:bg-button-brand-filled-primary-active active:text-button-brand-filled-on-primary-active disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-button-state-filled-disable disabled:text-button-state-filled-on-disable',
-        secondary:
-          'bg-button-brand-filled-secondary-default text-button-brand-filled-on-secondary-default hover:bg-button-brand-filled-secondary-hover active:bg-button-brand-filled-secondary-active active:text-button-brand-filled-on-secondary-active disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-button-state-filled-disable disabled:text-button-state-filled-on-disable',
-        neutral:
-          'bg-button-neutral-filled-neutral-default text-button-neutral-filled-on-neutral-default hover:bg-button-neutral-filled-neutral-hover active:bg-button-neutral-filled-neutral-active active:text-button-neutral-filled-on-neutral-active disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-button-state-filled-disable disabled:text-button-state-filled-on-disable',
-        outline:
-          'border border-button-brand-outline-on-primary-default bg-transparent text-button-brand-outline-on-primary-default hover:bg-button-brand-outline-primary-hover-surface active:border-button-brand-outline-primary-active-outline active:bg-button-brand-outline-primary-active-surface active:text-button-brand-outline-primary-active-outline disabled:border-button-state-outline-disable disabled:text-button-state-outline-on-disable',
-        borderless:
-          'bg-transparent text-button-brand-outline-on-primary-default hover:text-button-brand-outline-on-primary-hover active:text-button-brand-outline-primary-active-outline disabled:text-button-state-outline-on-disable',
+        // Info: (20251216 - Julian) ======= Fill colors =======
+        default: `bg-button-brand-filled-primary-default text-button-brand-filled-on-primary-default enabled:hover:bg-button-brand-filled-primary-hover enabled:active:bg-button-brand-filled-primary-active enabled:active:text-button-brand-filled-on-primary-active ${fillColorDisabledStyles}`,
+        secondary: `bg-button-brand-filled-secondary-default text-button-brand-filled-on-secondary-default enabled:hover:bg-button-brand-filled-secondary-hover enabled:active:bg-button-brand-filled-secondary-active enabled:active:text-button-brand-filled-on-secondary-active ${fillColorDisabledStyles}`,
+        neutral: `bg-button-neutral-filled-neutral-default text-button-neutral-filled-on-neutral-default enabled:hover:bg-button-neutral-filled-neutral-hover enabled:active:bg-button-neutral-filled-neutral-active enabled:active:text-button-neutral-filled-on-neutral-active ${fillColorDisabledStyles}`,
+        // Info: (20251216 - Julian) ======= Outline =======
+        outline: `border border-button-brand-outline-on-primary-default bg-transparent text-button-brand-outline-on-primary-default enabled:hover:bg-button-brand-outline-primary-hover-surface enabled:active:border-button-brand-outline-primary-active-outline enabled:active:bg-button-brand-outline-primary-active-surface enabled:active:text-button-brand-outline-primary-active-outline ${outlineDisabledStyles}`,
+        errorOutline: `border border-button-state-filled-error-default bg-transparent text-button-state-outline-on-error-default enabled:hover:border-button-state-outline-error-hover-outline enabled:hover:bg-button-state-outline-error-hover-surface enabled:hover:text-button-state-outline-on-error-hover enabled:active:border-button-state-outline-error-active-outline enabled:active:bg-button-state-outline-error-active-surface enabled:active:text-button-state-outline-error-active-outline ${outlineDisabledStyles}`,
+        // Info: (20251216 - Julian) ======= Text only =======
+        borderless: `bg-transparent text-button-brand-outline-on-primary-default enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:text-button-brand-outline-primary-active-outline ${textDisabledStyles}`,
       },
       size: {
         xs: 'gap-spacing-lv-0 px-spacing-lv-4 py-spacing-lv-2 text-xs font-extrabold',

@@ -19,15 +19,21 @@ const buttonVariants = cva(
         default: `bg-button-brand-filled-primary-default text-button-brand-filled-on-primary-default enabled:hover:bg-button-brand-filled-primary-hover enabled:active:bg-button-brand-filled-primary-active enabled:active:text-button-brand-filled-on-primary-active ${fillColorDisabledStyles}`,
         secondary: `bg-button-brand-filled-secondary-default text-button-brand-filled-on-secondary-default enabled:hover:bg-button-brand-filled-secondary-hover enabled:active:bg-button-brand-filled-secondary-active enabled:active:text-button-brand-filled-on-secondary-active ${fillColorDisabledStyles}`,
         neutral: `bg-button-neutral-filled-neutral-default text-button-neutral-filled-on-neutral-default enabled:hover:bg-button-neutral-filled-neutral-hover enabled:active:bg-button-neutral-filled-neutral-active enabled:active:text-button-neutral-filled-on-neutral-active ${fillColorDisabledStyles}`,
+        info: `bg-button-state-filled-info-default text-button-state-filled-on-info-default enabled:hover:bg-button-state-filled-info-hover enabled:hover:text-button-state-filled-on-info-hover enabled:active:bg-button-state-filled-info-active enabled:active:text-button-state-filled-on-info-active ${fillColorDisabledStyles}`,
         // Info: (20251216 - Julian) ======= Outline =======
-        outline: `border border-button-brand-outline-on-primary-default bg-transparent text-button-brand-outline-on-primary-default enabled:hover:bg-button-brand-outline-primary-hover-surface enabled:active:border-button-brand-outline-primary-active-outline enabled:active:bg-button-brand-outline-primary-active-surface enabled:active:text-button-brand-outline-primary-active-outline ${outlineDisabledStyles}`,
+        outline: `border border-button-brand-outline-on-primary-default bg-transparent text-button-brand-outline-on-primary-default enabled:hover:border-button-brand-outline-primary-hover-outline enabled:hover:bg-button-brand-outline-primary-hover-surface enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:border-button-brand-outline-primary-active-outline enabled:active:bg-button-brand-outline-primary-active-surface enabled:active:text-button-brand-outline-primary-active-outline ${outlineDisabledStyles}`,
+        infoOutline: `border border-button-state-outline-info-default bg-transparent text-button-state-outline-on-info-default enabled:hover:border-button-state-outline-info-hover-outline enabled:hover:bg-button-state-outline-info-hover-surface enabled:hover:text-button-state-outline-on-info-hover enabled:active:border-button-state-outline-info-active-outline enabled:active:bg-button-state-outline-info-active-surface enabled:active:text-button-state-outline-info-active-outline ${outlineDisabledStyles}`,
         errorOutline: `border border-button-state-filled-error-default bg-transparent text-button-state-outline-on-error-default enabled:hover:border-button-state-outline-error-hover-outline enabled:hover:bg-button-state-outline-error-hover-surface enabled:hover:text-button-state-outline-on-error-hover enabled:active:border-button-state-outline-error-active-outline enabled:active:bg-button-state-outline-error-active-surface enabled:active:text-button-state-outline-error-active-outline ${outlineDisabledStyles}`,
         // Info: (20251216 - Julian) ======= Text only =======
         borderless: `bg-transparent text-button-brand-outline-on-primary-default enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:text-button-brand-outline-primary-active-outline ${textDisabledStyles}`,
+        infoBorderless: `bg-transparent text-button-state-outline-on-info-default enabled:hover:text-button-state-outline-on-info-hover enabled:active:text-button-state-outline-info-active-outline ${textDisabledStyles}`,
       },
       size: {
         xs: 'gap-spacing-lv-0 px-spacing-lv-4 py-spacing-lv-2 text-xs font-extrabold',
         default: 'gap-spacing-lv-2 px-spacing-lv-6 py-spacing-lv-3 text-base font-semibold',
+        square: 'flex size-36px items-center justify-center p-spacing-lv-0',
+        rectangle:
+          'flex h-36px items-center justify-center px-spacing-lv-4 py-spacing-lv-0 font-black',
       },
       rounded: {
         rounded: 'rounded-radius-rounded',

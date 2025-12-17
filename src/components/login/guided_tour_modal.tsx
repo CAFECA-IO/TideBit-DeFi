@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
+import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
 // ToDo: (20251217 - Julian) Replace with actual guided tour steps content
@@ -42,6 +43,9 @@ const GUIDED_TOUR_STEPS = [
 const GuidedTourModal: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
+  const { isGuidedTourModalVisible: isModalVisible, guidedTourModalVisibilityHandler: onClose } =
+    useModalCtx();
+
   const totalSteps = GUIDED_TOUR_STEPS.length; // Info: (20251217 - Julian) 總步驟數
 
   // Info: (20251217 - Julian) 取得當前步驟的資料
@@ -57,6 +61,11 @@ const GuidedTourModal: React.FC = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     }
+  };
+
+  const closeModal = () => {
+    setCurrentStep(0);
+    onClose();
   };
 
   // Info: (20251216 - Julian) Carousel Indicators
@@ -89,12 +98,12 @@ const GuidedTourModal: React.FC = () => {
         <FaArrowRight size={20} />
       </Button>
     ) : (
-      <Button type="button" variant="info" size="rectangle" onClick={toNextStep}>
+      <Button type="button" variant="info" size="rectangle" onClick={closeModal}>
         Start
       </Button>
     );
 
-  return (
+  const isDisplayedModal = isModalVisible && (
     <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
       <div className="flex flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
         <div className="flex flex-col gap-spacing-lv-6 px-spacing-lv-6 pb-spacing-lv-4 pt-spacing-lv-7">
@@ -114,7 +123,7 @@ const GuidedTourModal: React.FC = () => {
         </div>
         {/* Info: (20251216 - Julian) Modal Actions */}
         <div className="flex items-center justify-between px-spacing-lv-6 py-spacing-lv-4">
-          <Button type="button" variant="borderless">
+          <Button type="button" variant="borderless" onClick={closeModal}>
             Skip
           </Button>
           <div className="flex items-center gap-spacing-lv-3">
@@ -125,6 +134,8 @@ const GuidedTourModal: React.FC = () => {
       </div>
     </div>
   );
+
+  return isDisplayedModal;
 };
 
 export default GuidedTourModal;

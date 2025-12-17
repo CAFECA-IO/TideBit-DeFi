@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
 const TERM_OF_SERVICE_TEXT = `
@@ -21,15 +22,15 @@ Party A and Party B, for the purpose of using the “CAFECA Digital Identity Car
 2. For any disputes arising from this contract, both parties agree that the Taipei District Court of Taiwan shall be the court of first instance.
 `;
 
-interface ITermsOfServiceModalProps {
-  isModalVisible: boolean;
-  onClose: () => void;
-}
-
-const TermsOfServiceModal: React.FC<ITermsOfServiceModalProps> = ({ isModalVisible, onClose }) => {
+const TermsOfServiceModal: React.FC = () => {
   const textContainerRef = useRef<HTMLDivElement>(null);
   const [readingProgress, setReadingProgress] = useState<number>(0);
   const [isAgreedDisabled, setIsAgreedDisabled] = useState<boolean>(true);
+
+  const {
+    isTermsOfServiceModalVisible: isModalVisible,
+    termsOfServiceModalVisibilityHandler: onClose,
+  } = useModalCtx();
 
   // ToDo: (20251216 - Julian) 處理同意條款的邏輯
   const handleAgree = async () => {

@@ -2,11 +2,14 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
-const LoginPageBody: React.FC<{ toggleTosModal: () => void }> = ({ toggleTosModal }) => {
+const LoginPageBody: React.FC = () => {
   const logoRef = useRef<HTMLDivElement>(null);
   const [isShowLogo, setIsShowLogo] = useState<boolean>(false);
+
+  const { termsOfServiceModalVisibilityHandler } = useModalCtx();
 
   useEffect(() => {
     if (!logoRef.current) return;
@@ -42,7 +45,7 @@ const LoginPageBody: React.FC<{ toggleTosModal: () => void }> = ({ toggleTosModa
         {/* Info: (20251215 - Julian) Buttons */}
         <div className="flex flex-col gap-spacing-lv-0 transition-all duration-300 ease-in-out">
           <Button type="button">Login</Button>
-          <Button type="button" variant="borderless" onClick={toggleTosModal}>
+          <Button type="button" variant="borderless" onClick={termsOfServiceModalVisibilityHandler}>
             I don&apos;t have an account yet
           </Button>
         </div>

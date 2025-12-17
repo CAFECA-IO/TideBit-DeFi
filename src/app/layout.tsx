@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Manrope, Noto_Sans_TC, Noto_Sans_SC } from 'next/font/google';
 import LockScreenMask from '@/components/common/lock_screen_mask';
+import { ModalProvider } from '@/contexts/modal_context';
 import '@/styles/globals.css';
 
 // Info: (20251216 - Julian) 英文字體用 Manrope
@@ -38,7 +39,7 @@ export default function RootLayout({
       <body
         className={`${manrope.className} ${notoSansTC.className} ${notoSansSC.className} antialiased`}
       >
-        {children}
+        <ModalProvider>{children}</ModalProvider>
 
         {/* Info: (20251216 - Julian) 全域鎖定螢幕遮罩 */}
         <LockScreenMask />

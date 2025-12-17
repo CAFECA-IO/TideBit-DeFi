@@ -26,6 +26,7 @@ const buttonVariants = cva(
         errorOutline: `border border-button-state-filled-error-default bg-transparent text-button-state-outline-on-error-default enabled:hover:border-button-state-outline-error-hover-outline enabled:hover:bg-button-state-outline-error-hover-surface enabled:hover:text-button-state-outline-on-error-hover enabled:active:border-button-state-outline-error-active-outline enabled:active:bg-button-state-outline-error-active-surface enabled:active:text-button-state-outline-error-active-outline ${outlineDisabledStyles}`,
         // Info: (20251216 - Julian) ======= Text only =======
         borderless: `bg-transparent text-button-brand-outline-on-primary-default enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:text-button-brand-outline-primary-active-outline ${textDisabledStyles}`,
+        infoBorderless: `bg-transparent text-button-state-outline-on-info-default enabled:hover:text-button-state-outline-on-info-hover enabled:active:text-button-state-outline-info-active-outline ${textDisabledStyles}`,
       },
       size: {
         xs: 'gap-spacing-lv-0 px-spacing-lv-4 py-spacing-lv-2 text-xs font-extrabold',

@@ -7,6 +7,8 @@ interface IModalContextType {
   termsOfServiceModalVisibilityHandler: () => void;
   isGuidedTourModalVisible: boolean;
   guidedTourModalVisibilityHandler: () => void;
+  isRegisterModalVisible: boolean;
+  registerModalVisibilityHandler: () => void;
 }
 
 const ModalContext = createContext<IModalContextType>({
@@ -14,6 +16,8 @@ const ModalContext = createContext<IModalContextType>({
   termsOfServiceModalVisibilityHandler: () => {},
   isGuidedTourModalVisible: false,
   guidedTourModalVisibilityHandler: () => {},
+  isRegisterModalVisible: false,
+  registerModalVisibilityHandler: () => {},
 });
 
 interface IModalProviderProps {
@@ -23,6 +27,7 @@ interface IModalProviderProps {
 export const ModalProvider = ({ children }: IModalProviderProps) => {
   const [isTermsOfServiceModalVisible, setIsTermsOfServiceModalVisible] = useState<boolean>(false);
   const [isGuidedTourModalVisible, setIsGuidedTourModalVisible] = useState<boolean>(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
 
   // Info: (20251217 - Julian) Visibility handler for Modals
   const termsOfServiceModalVisibilityHandler = () =>
@@ -30,18 +35,24 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
 
   const guidedTourModalVisibilityHandler = () => setIsGuidedTourModalVisible((prev) => !prev);
 
+  const registerModalVisibilityHandler = () => setIsRegisterModalVisible((prev) => !prev);
+
   const value = useMemo(
     () => ({
       isTermsOfServiceModalVisible,
       termsOfServiceModalVisibilityHandler,
       isGuidedTourModalVisible,
       guidedTourModalVisibilityHandler,
+      isRegisterModalVisible,
+      registerModalVisibilityHandler,
     }),
     [
       isTermsOfServiceModalVisible,
       termsOfServiceModalVisibilityHandler,
       isGuidedTourModalVisible,
       guidedTourModalVisibilityHandler,
+      isRegisterModalVisible,
+      registerModalVisibilityHandler,
     ]
   );
 

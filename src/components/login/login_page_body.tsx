@@ -9,7 +9,10 @@ const LoginPageBody: React.FC = () => {
   const logoRef = useRef<HTMLDivElement>(null);
   const [isShowLogo, setIsShowLogo] = useState<boolean>(false);
 
-  const { guidedTourModalVisibilityHandler: clickLogin } = useModalCtx();
+  const {
+    guidedTourModalVisibilityHandler: clickLogin,
+    registerModalVisibilityHandler: clickRegister,
+  } = useModalCtx();
 
   useEffect(() => {
     if (!logoRef.current) return;
@@ -47,7 +50,7 @@ const LoginPageBody: React.FC = () => {
           <Button type="button" onClick={clickLogin}>
             Login
           </Button>
-          <Button type="button" variant="borderless">
+          <Button type="button" variant="borderless" onClick={clickRegister}>
             I don&apos;t have an account yet
           </Button>
         </div>

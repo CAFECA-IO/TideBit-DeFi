@@ -766,10 +766,15 @@ module.exports = {
         'spacing-none': 'var(--spacing-none)',
 
         '4px': '4px',
+        '15px': '15px',
+        '30px': '30px',
+        '36px': '36px',
         '50px': '50px',
         '100px': '100px',
         '250px': '250px',
+        '300px': '300px',
         '400px': '400px',
+        '500px': '500px',
       },
       zIndex: {
         masking: 10000,

@@ -2,6 +2,7 @@
 
 import LoginPageBody from '@/components/login/login_page_body';
 import TermsOfServiceModal from '@/components/login/terms_of_service_modal';
+import GuidedTourModal from '@/components/login/guided_tour_modal';
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <LoginPageBody />
 
       <TermsOfServiceModal />
+      <GuidedTourModal />
     </main>
   );
 }

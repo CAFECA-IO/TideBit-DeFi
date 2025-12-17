@@ -779,6 +779,7 @@ module.exports = {
       },
       zIndex: {
         masking: 10000,
+        'masking-2': 20000,
         'lock-screen': 100000,
       },
     },

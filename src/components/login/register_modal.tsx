@@ -2,17 +2,39 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { FaRegCircleCheck } from 'react-icons/fa6';
+import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { LiaDiceSolid } from 'react-icons/lia';
 import { RxCross2 } from 'react-icons/rx';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
 const RegisterModal: React.FC = () => {
-  const { isRegisterModalVisible: isModalVisible, registerModalVisibilityHandler: onClose } =
-    useModalCtx();
+  const {
+    isRegisterModalVisible: isModalVisible,
+    registerModalVisibilityHandler: onClose,
+    termsOfServiceModalVisibilityHandler,
+  } = useModalCtx();
+
+  // ToDo: (20251217 - Julian) 從 Global Context 取得使用者是否已閱讀並同意條款
+  const isReadTerms = false;
 
   const DEFAULT_IMAGE = '/elements/default_pic.png';
+
+  const displayedAgreeTerms = isReadTerms ? (
+    <div className="flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold text-button-state-outline-on-success-default">
+      <FaRegCircleCheck size={24} />
+      <p>Before You Register, Please Review the Agreement</p>
+    </div>
+  ) : (
+    <button
+      type="button"
+      onClick={termsOfServiceModalVisibilityHandler}
+      className="flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold text-button-state-outline-on-info-default hover:text-button-state-outline-on-info-hover"
+    >
+      <FaRegCircle size={24} />
+      <p>Before You Register, Please Review the Agreement</p>
+    </button>
+  );
 
   const isDisplayedModal = isModalVisible && (
     <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
@@ -55,10 +77,7 @@ const RegisterModal: React.FC = () => {
               />
             </div>
           </div>
-          <div className="flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold text-button-state-outline-on-success-default">
-            <FaRegCircleCheck size={24} />
-            <p>Before You Register, Please Review the Agreement</p>
-          </div>
+          {displayedAgreeTerms}
         </div>
         {/* Info: (20251217 - Julian) Modal Actions */}
         <div className="ml-auto flex items-center gap-spacing-lv-3 px-spacing-lv-8 pb-spacing-lv-8 pt-spacing-lv-6">

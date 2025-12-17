@@ -90,7 +90,7 @@ const TermsOfServiceModal: React.FC = () => {
   );
 
   const isDisplayedModal = isModalVisible && (
-    <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
+    <div className="fixed z-masking-2 flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
       <div className="flex flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
         {/* Info: (20251216 - Julian) Modal Header */}
         <div className="p-spacing-lv-4 font-semibold text-modal-text-title">

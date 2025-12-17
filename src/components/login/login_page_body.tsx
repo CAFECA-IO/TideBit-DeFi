@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/common/button';
 
-const LoginPageBody: React.FC = () => {
+const LoginPageBody: React.FC<{ toggleTosModal: () => void }> = ({ toggleTosModal }) => {
   const logoRef = useRef<HTMLDivElement>(null);
   const [isShowLogo, setIsShowLogo] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ const LoginPageBody: React.FC = () => {
         {/* Info: (20251215 - Julian) Buttons */}
         <div className="flex flex-col gap-spacing-lv-0 transition-all duration-300 ease-in-out">
           <Button type="button">Login</Button>
-          <Button type="button" variant="borderless">
+          <Button type="button" variant="borderless" onClick={toggleTosModal}>
             I don&apos;t have an account yet
           </Button>
         </div>

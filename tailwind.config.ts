@@ -765,9 +765,15 @@ module.exports = {
         'spacing-lv-0': 'var(--spacing-lv-0)',
         'spacing-none': 'var(--spacing-none)',
 
+        '4px': '4px',
         '50px': '50px',
         '100px': '100px',
         '250px': '250px',
+        '400px': '400px',
+      },
+      zIndex: {
+        masking: 10000,
+        'lock-screen': 100000,
       },
     },
   },

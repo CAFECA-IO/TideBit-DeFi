@@ -4,6 +4,7 @@ import LoginPageBody from '@/components/login/login_page_body';
 import TermsOfServiceModal from '@/components/login/terms_of_service_modal';
 import GuidedTourModal from '@/components/login/guided_tour_modal';
 import RegisterModal from '@/components/login/register_modal';
+import AuthenticationModal from '@/components/login/authentication_modal';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <TermsOfServiceModal />
       <GuidedTourModal />
       <RegisterModal />
+      <AuthenticationModal />
     </main>
   );
 }

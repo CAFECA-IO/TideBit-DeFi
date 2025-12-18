@@ -29,6 +29,10 @@ const RegisterModal: React.FC = () => {
     setInputValue(e.target.value);
   };
 
+  const generateRandomImage = async () => {
+    // ToDo: (20251218 - Julian) Implement random image generation logic
+  };
+
   const displayedAgreeTerms = (
     <button
       type="button"
@@ -65,7 +69,7 @@ const RegisterModal: React.FC = () => {
                 <Image src={DEFAULT_IMAGE} alt="Profile Picture" fill objectFit="cover" />
               </div>
               <div className="flex flex-col items-center gap-spacing-lv-0">
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" onClick={generateRandomImage}>
                   <LiaDiceSolid size={24} />
                   <p>Generate New Picture</p>
                 </Button>

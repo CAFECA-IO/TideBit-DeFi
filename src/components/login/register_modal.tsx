@@ -1,37 +1,45 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { LiaDiceSolid } from 'react-icons/lia';
 import { RxCross2 } from 'react-icons/rx';
+import { useGlobalCtx } from '@/contexts/global_context';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
 const RegisterModal: React.FC = () => {
+  const [inputValue, setInputValue] = useState<string>('');
   const {
     isRegisterModalVisible: isModalVisible,
     registerModalVisibilityHandler: onClose,
     termsOfServiceModalVisibilityHandler,
   } = useModalCtx();
 
-  // ToDo: (20251217 - Julian) 從 Global Context 取得使用者是否已閱讀並同意條款
-  const isReadTerms = false;
+  // Info: (20251218 - Julian) 從 Global Context 取得使用者是否已閱讀並同意條款
+  const { isReviewedTerms } = useGlobalCtx();
 
-  const DEFAULT_IMAGE = '/elements/default_pic.png';
+  const DEFAULT_IMAGE = '/elements/default_pic.png'; // ToDo: (20251218 - Julian) Replace with actual default image path
 
-  const displayedAgreeTerms = isReadTerms ? (
-    <div className="flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold text-button-state-outline-on-success-default">
-      <FaRegCircleCheck size={24} />
-      <p>Before You Register, Please Review the Agreement</p>
-    </div>
-  ) : (
+  // Info: (20251218 - Julian) 需要同意條款；輸入框不為空才能提交
+  const isSubmitDisabled = !isReviewedTerms || inputValue.trim() === '';
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const displayedAgreeTerms = (
     <button
       type="button"
       onClick={termsOfServiceModalVisibilityHandler}
-      className="flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold text-button-state-outline-on-info-default hover:text-button-state-outline-on-info-hover"
+      className={`${
+        isReviewedTerms
+          ? 'text-button-state-outline-on-success-default hover:text-button-state-outline-on-success-hover'
+          : 'text-button-state-outline-on-info-default hover:text-button-state-outline-on-info-hover'
+      } flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold`}
     >
-      <FaRegCircle size={24} />
+      {isReviewedTerms ? <FaRegCircleCheck size={24} /> : <FaRegCircle size={24} />}
       <p>Before You Register, Please Review the Agreement</p>
     </button>
   );
@@ -72,8 +80,10 @@ const RegisterModal: React.FC = () => {
             <div className="bg-text-field-surface-placeholder rounded-radius-s border border-text-field-outline-default px-spacing-lv-6 py-spacing-lv-4">
               <input
                 type="text"
+                value={inputValue}
+                onChange={handleInputChange}
                 className="w-full bg-transparent outline-none placeholder:text-text-field-text-placeholder"
-                placeholder="Search"
+                placeholder="Enter your nickname"
               />
             </div>
           </div>
@@ -84,7 +94,9 @@ const RegisterModal: React.FC = () => {
           <Button type="button" variant="infoBorderless" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="button">Sign Up</Button>
+          <Button type="button" disabled={isSubmitDisabled}>
+            Sign Up
+          </Button>
         </div>
       </div>
     </div>

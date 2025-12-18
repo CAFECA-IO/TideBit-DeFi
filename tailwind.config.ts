@@ -488,10 +488,9 @@ module.exports = {
         'loading-indicator-outline-default': 'var(--color-loading-indicator-outline-default)',
         'loading-indicator-surface-base': 'var(--color-loading-indicator-surface-base)',
         'loading-indicator-surface-error': 'var(--color-loading-indicator-surface-error)',
-        'loading-indicator-surface-gradient-0%':
-          'var(--color-loading-indicator-surface-gradient-0%)',
-        'loading-indicator-surface-gradient-100%':
-          'var(--color-loading-indicator-surface-gradient-100%)',
+        'loading-indicator-surface-gradient-0': 'var(--color-loading-indicator-surface-gradient-0)',
+        'loading-indicator-surface-gradient-100':
+          'var(--color-loading-indicator-surface-gradient-100)',
         'loading-indicator-surface-primary': 'var(--color-loading-indicator-surface-primary)',
         'loading-indicator-surface-success': 'var(--color-loading-indicator-surface-success)',
         'loading-indicator-text-on-error': 'var(--color-loading-indicator-text-on-error)',
@@ -767,12 +766,14 @@ module.exports = {
 
         '4px': '4px',
         '15px': '15px',
+        '16px': '16px',
         '30px': '30px',
         '36px': '36px',
         '50px': '50px',
         '100px': '100px',
         '120px': '120px',
         '150px': '150px',
+        '180px': '180px',
         '250px': '250px',
         '300px': '300px',
         '400px': '400px',

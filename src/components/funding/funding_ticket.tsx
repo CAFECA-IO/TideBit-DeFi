@@ -4,63 +4,96 @@ import React from 'react';
 import Image from 'next/image';
 import { IFundingItemUI } from '@/interfaces/funding';
 import { numberWithCommas } from '@/lib/utils/common';
+import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 
+type StatDisplay = { value: number; label: string };
 interface IFundingTicketProps {
   data: IFundingItemUI;
 }
 
-const GradientProgressBar: React.FC<{ percentage: number }> = ({ percentage }) => {
-  // Info: (202501218 - Julian) 限制 percentage 在 0 到 100 之間
-  const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
-
-  return (
-    <div className="relative h-16px w-full overflow-hidden rounded-radius-rounded bg-loading-indicator-surface-base px-spacing-lv-0">
-      <div
-        style={{ width: `${clampedPercentage}%` }}
-        className="absolute left-0 rounded-radius-rounded bg-gradient-to-r from-loading-indicator-surface-gradient-0 to-loading-indicator-surface-gradient-100"
-      >
-        <p className="text-center text-xs font-extrabold text-loading-indicator-text-on-primary">
-          {clampedPercentage}%
-        </p>
-      </div>
-    </div>
-  );
-};
-
 const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
-  const { coverImageId, companyName, title, raisedFundingAmount, goalFundingAmount } = data;
+  const {
+    coverImageId,
+    tokenPrice,
+    tokenName,
+    industry,
+    companyName,
+    title,
+    raisedFundingAmount,
+    goalFundingAmount,
+    committedFundAmount,
+    committedTokensCount,
+    investorsCount,
+  } = data;
 
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
+  const raisedFundingText = `NT$ ${numberWithCommas(raisedFundingAmount)}`;
+  const goalFundingText = `NT$ ${numberWithCommas(goalFundingAmount)}`;
+
+  // Info: (202501218 - Julian) 根據整理好的 StatDisplay ，產生統計數據區塊
+  const leftStatData: StatDisplay = {
+    value: committedFundAmount,
+    label: 'Tokens / 10K',
+  };
+
+  const centerStatData: StatDisplay = {
+    value: committedTokensCount,
+    label: 'Investors',
+  };
+
+  const rightStatData: StatDisplay = {
+    value: investorsCount,
+    label: 'Days',
+  };
 
   return (
     <div className="flex flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
       {/* Info: (202501218 - Julian) Cover Image */}
-      <div className="relative h-180px w-full">
+      <div className="relative h-180px w-full shrink-0">
         <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />
+
+        {/* Info: (202501218 - Julian) Token & Industry */}
+        <div className="absolute bottom-0 left-0 w-full px-spacing-lv-4 py-spacing-lv-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-end gap-spacing-lv-0 text-text-neutral-primary">
+              <p className="text-2xl font-bold">$ {tokenPrice}</p>
+              <p className="text-xs font-normal">/{tokenName}</p>
+            </div>
+            <div className="rounded-radius-rounded bg-badge-brand-secondary px-spacing-lv-2 py-spacing-lv-0 text-xs font-bold text-badge-brand-on-secondary">
+              {industry}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Info: (202501218 - Julian) Content */}
       <div className="flex flex-col">
+        {/* Info: (202501218 - Julian) Company Name and Title */}
         <div className="flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-3">
           <p className="text-xs font-normal text-text-neutral-tertiary">{companyName}</p>
           <p className="font-bold text-text-neutral-primary">{title}</p>
         </div>
-        <div className="flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-2">
-          <div className="flex items-center justify-between font-semibold text-loading-indicator-text-primary">
-            <p>NT$ {numberWithCommas(raisedFundingAmount)}</p>
-            <p>NT$ {numberWithCommas(goalFundingAmount)}</p>
-          </div>
-          <GradientProgressBar percentage={progressPercentage} />
-        </div>
+        {/* Info: (202501218 - Julian) Funding Progress */}
+        <ProgressBar
+          percentage={progressPercentage}
+          color={ProgressBarColor.GRADIENT}
+          size={ProgressBarSize.BASE}
+          minText={raisedFundingText}
+          maxText={goalFundingText}
+        />
+        {/* Info: (202501218 - Julian) Funding Stats */}
         <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
           <div className="flex flex-col items-center">
-            <p className="font-normal text-text-neutral-tertiary">Tokens / 10K</p>
+            <p className="text-lg font-bold text-text-neutral-primary">{leftStatData.value}</p>
+            <p className="text-xs font-normal text-text-neutral-tertiary">{leftStatData.label}</p>
+          </div>
+          <div className="flex flex-col items-center border-x border-border-neutral-strong">
+            <p className="text-lg font-bold text-text-neutral-primary">{centerStatData.value}</p>
+            <p className="text-xs font-normal text-text-neutral-tertiary">{centerStatData.label}</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="font-normal text-text-neutral-tertiary">Investors</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <p className="font-normal text-text-neutral-tertiary">Days</p>
+            <p className="text-lg font-bold text-text-neutral-primary">{rightStatData.value}</p>
+            <p className="text-xs font-normal text-text-neutral-tertiary">{rightStatData.label}</p>
           </div>
         </div>
       </div>

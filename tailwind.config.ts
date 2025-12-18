@@ -765,6 +765,7 @@ module.exports = {
         'spacing-none': 'var(--spacing-none)',
 
         '4px': '4px',
+        '8px': '8px',
         '15px': '15px',
         '16px': '16px',
         '30px': '30px',

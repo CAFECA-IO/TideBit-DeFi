@@ -69,7 +69,7 @@ contract SCW is IAccount {
         uint256 responseTypeLocation;
         uint256 r;
         uint256 s;
-        // [PoC 4] 簽名中必須包含公鑰，以便合約知道要用哪把鑰匙驗證
+        // Info: (20251219 - Tzuhan) [PoC 4] 簽名中必須包含公鑰，以便合約知道要用哪把鑰匙驗證
         uint256 pubKeyX;
         uint256 pubKeyY;
     }

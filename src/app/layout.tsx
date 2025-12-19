@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description: 'TideBit-DeFi V2 Application',
   authors: [{ name: 'CAFECA' }],
   keywords: ['CAFECA', 'TideBit-DeFi'],
-  icons: { icon: '/logo/logo_icon.svg' },
+  icons: { icon: '/logo/favicon.svg' },
 };
 
 export default function RootLayout({

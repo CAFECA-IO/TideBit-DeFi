@@ -181,7 +181,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
           <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
         </div>
       )}
-      <div className="flex flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
+      <div className="flex h-full w-450px flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
         {/* Info: (202501218 - Julian) Cover Image */}
         <div className="relative h-180px w-full shrink-0">
           <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />

@@ -14,6 +14,21 @@ export const numberWithCommas = (number: number | string) => {
   return num < 0 ? `(${formattedNumber})` : formattedNumber;
 };
 
+// Info: (20251219 - Julian) 將大數字轉換為帶單位的字串表示（K, M, B）
+export const bigNumberToString = (number: number | string) => {
+  const num = typeof number === 'string' ? parseFloat(number) : number;
+
+  if (Math.abs(num) >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(0) + ' B';
+  } else if (Math.abs(num) >= 1_000_000) {
+    return (num / 1_000_000).toFixed(0) + ' M';
+  } else if (Math.abs(num) >= 1_000) {
+    return (num / 1_000).toFixed(0) + ' K';
+  } else {
+    return num.toString();
+  }
+};
+
 // Info: (20251219 - Julian) 將時間戳轉換為日期/時間字串的工具
 export const timestampToString = (timestamp: number | undefined) => {
   if (timestamp === 0 || timestamp === undefined || timestamp === null) {

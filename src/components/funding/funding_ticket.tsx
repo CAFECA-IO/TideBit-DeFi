@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
-import { numberWithCommas, timestampToString } from '@/lib/utils/common';
+import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/utils/common';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
 
@@ -27,6 +27,8 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     committedTokensCount,
     investorsCount,
     remainingDays,
+    releasedTokensCount,
+    soldTokensCount,
     startedAt,
     endedAt,
     isCommitted,
@@ -84,7 +86,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     </div>
   );
 
-  // Info: (202501219 - Julian) 募資進行中： 顯示進度條與「Token 價值」、「投資人數」、「剩餘天數」三個統計數據
+  // Info: (202501219 - Julian) 募資進行中：顯示進度條與「售出/釋出 Token 數量」、「投資人數」、「剩餘天數」三個統計數據
   const onGoingContent = (
     <>
       {/* Info: (202501218 - Julian) Funding Progress */}
@@ -99,8 +101,8 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
       {/* Info: (202501218 - Julian) Funding Stats */}
       <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
         <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{tokenPrice}</p>
-          <p className={statLabelStyle}>Tokens / 10K</p>
+          <p className={statValueStyle}>{bigNumberToString(soldTokensCount)}</p>
+          <p className={statLabelStyle}>Tokens / {bigNumberToString(releasedTokensCount)}</p>
         </div>
         <div className="flex flex-col items-center border-x border-border-neutral-strong">
           <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
@@ -149,11 +151,11 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
       {/* Info: (202501219 - Julian) Funding Stats */}
       <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
         <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{committedFundAmount}</p>
+          <p className={statValueStyle}>{bigNumberToString(committedFundAmount)}</p>
           <p className={statLabelStyle}>Committed Fund</p>
         </div>
         <div className="flex flex-col items-center border-x border-border-neutral-strong">
-          <p className={statValueStyle}>{numberWithCommas(committedTokensCount)}</p>
+          <p className={statValueStyle}>{bigNumberToString(committedTokensCount)}</p>
           <p className={statLabelStyle}>Committed Tokens</p>
         </div>
         <div className="flex flex-col items-center">

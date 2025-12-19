@@ -9,6 +9,10 @@ const outlineDisabledStyles =
   'disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-button-state-outline-disable disabled:text-button-state-outline-on-disable';
 const textDisabledStyles =
   'disabled:pointer-events-none disabled:cursor-not-allowed disabled:text-button-state-outline-on-disable';
+const underlineDisabledStyles =
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-tabs-outline-disable disabled:text-tabs-text-disable';
+const labelDisabledStyles =
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-tabs-surface-disable disabled:bg-tabs-surface-disable disabled:text-tabs-text-disable';
 
 const buttonVariants = cva(
   'group inline-flex items-center justify-center whitespace-nowrap transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
@@ -27,6 +31,12 @@ const buttonVariants = cva(
         // Info: (20251216 - Julian) ======= Text only =======
         borderless: `bg-transparent text-button-brand-outline-on-primary-default enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:text-button-brand-outline-primary-active-outline ${textDisabledStyles}`,
         infoBorderless: `bg-transparent text-button-state-outline-on-info-default enabled:hover:text-button-state-outline-on-info-hover enabled:active:text-button-state-outline-info-active-outline ${textDisabledStyles}`,
+
+        // Info: (20251219 - Julian) ======= Label Style =======
+        underlineDefault: `border-b-2 border-tabs-text-default bg-transparent text-tabs-text-default enabled:hover:border-tabs-text-hover-neutral enabled:hover:text-tabs-text-hover-neutral ${underlineDisabledStyles}`,
+        underlineActive: `border-b-2 border-tabs-text-active-primary bg-transparent text-tabs-outline-active ${underlineDisabledStyles}`,
+        labelDefault: `border-x border-t border-tabs-outline-default bg-tabs-surface-default text-tabs-text-default enabled:hover:border-tabs-surface-hover-neutral enabled:hover:bg-tabs-surface-hover-neutral enabled:hover:text-tabs-text-hover-neutral ${labelDisabledStyles}`,
+        labelActive: `border-x border-t border-tabs-surface-active-neutral bg-tabs-surface-active-neutral text-tabs-text-active-neutral ${labelDisabledStyles}`,
       },
       size: {
         xs: 'gap-spacing-lv-0 px-spacing-lv-4 py-spacing-lv-2 text-xs font-extrabold',
@@ -36,14 +46,15 @@ const buttonVariants = cva(
           'flex h-36px items-center justify-center px-spacing-lv-4 py-spacing-lv-0 font-black',
       },
       rounded: {
-        rounded: 'rounded-radius-rounded',
-        'non-rounded': 'rounded-radius-s',
+        default: 'rounded-radius-s',
+        full: 'rounded-radius-rounded',
+        top: 'rounded-t-radius-m',
       },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      rounded: 'non-rounded',
+      rounded: 'default',
     },
   }
 );
@@ -52,10 +63,14 @@ export interface IButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
 
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, rounded, ...props }, ref) => {
     const Comp = 'button';
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <Comp
+        className={cn(buttonVariants({ variant, size, rounded, className }))}
+        ref={ref}
+        {...props}
+      />
     );
   }
 );

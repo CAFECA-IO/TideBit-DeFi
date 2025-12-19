@@ -902,7 +902,7 @@
   --color-tabs-text-active-primary: var(--color-text-brand-primary);
   --color-tabs-text-default: var(--color-text-neutral-tertiary);
   --color-tabs-text-disable: var(--color-text-state-on-mute-container);
-  --color-tabs-text-hove-neutral: var(--color-text-neutral-secondary);
+  --color-tabs-text-hover-neutral: var(--color-text-neutral-secondary);
   --color-tabs-text-hover-primary: var(--color-text-brand-on-primary-container);
   --color-text-brand-on-primary-container: var(--color-primary-light-aqua-700);
   --color-text-brand-on-primary: var(--color-primary-light-aqua-900);

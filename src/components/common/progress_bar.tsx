@@ -63,8 +63,8 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
   // Info: (202501218 - Julian) BASE 才顯示百分比
   const textSize = size === ProgressBarSize.BASE ? 'block' : 'hidden';
 
-  // Info: (202501218 - Julian) 限制 percentage 在 0 到 100 之間
-  const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
+  // Info: (202501218 - Julian) 限制 percentage 在 0 到 100 之間，並取整數
+  const clampedPercentage = Math.min(Math.max(percentage, 0), 100).toFixed(0);
 
   return (
     <div className={`${className} flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-2`}>

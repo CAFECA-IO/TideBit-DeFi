@@ -4,10 +4,10 @@ import React from 'react';
 import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
-import { numberWithCommas } from '@/lib/utils/common';
+import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/utils/common';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
+import { FundingStatus } from '@/constants/funding';
 
-type StatDisplay = { value: number; label: string };
 interface IFundingTicketProps {
   data: IFundingItemUI;
 }
@@ -20,31 +20,30 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     industry,
     companyName,
     title,
+    fundingStatus,
     raisedFundingAmount,
     goalFundingAmount,
     committedFundAmount,
     committedTokensCount,
     investorsCount,
+    remainingDays,
+    releasedTokensCount,
+    soldTokensCount,
+    startedAt,
+    endedAt,
+    isCommitted,
     isLocked,
   } = data;
 
+  // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
   const raisedFundingText = `NT$ ${numberWithCommas(raisedFundingAmount)}`;
   const goalFundingText = `NT$ ${numberWithCommas(goalFundingAmount)}`;
 
-  // Info: (202501218 - Julian) 根據整理好的 StatDisplay ，產生統計數據區塊
-  const leftStatData: StatDisplay = {
-    value: committedFundAmount,
-    label: 'Tokens / 10K',
-  };
-  const centerStatData: StatDisplay = {
-    value: committedTokensCount,
-    label: 'Investors',
-  };
-  const rightStatData: StatDisplay = {
-    value: investorsCount,
-    label: 'Days',
-  };
+  // Info: (202501219 - Julian) 已結束的募資須顯示期間
+  const fundingPeriodText =
+    fundingStatus === FundingStatus.CLOSED &&
+    `${timestampToString(startedAt).dateWithSlash} - ${timestampToString(endedAt).dateWithSlash}`;
 
   // Info: (202501218 - Julian) 根據是否鎖定，調整文字樣式
   const statValueStyle = `${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-lg font-bold`;
@@ -64,7 +63,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
 
   const displayedCoverOverlay = (
     <div
-      className={` ${
+      className={`${
         isLocked ? 'bg-opacity-neutral-dark-80' : 'bg-transparent'
       } absolute bottom-0 left-0 flex size-full flex-col justify-end px-spacing-lv-4 py-spacing-lv-3`}
     >
@@ -87,13 +86,102 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     </div>
   );
 
+  // Info: (202501219 - Julian) 募資進行中：顯示進度條與「售出/釋出 Token 數量」、「投資人數」、「剩餘天數」三個統計數據
+  const onGoingContent = (
+    <>
+      {/* Info: (202501218 - Julian) Funding Progress */}
+      <ProgressBar
+        percentage={progressPercentage}
+        color={ProgressBarColor.GRADIENT}
+        size={ProgressBarSize.BASE}
+        minText={raisedFundingText}
+        maxText={goalFundingText}
+        disabled={isLocked}
+      />
+      {/* Info: (202501218 - Julian) Funding Stats */}
+      <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{bigNumberToString(soldTokensCount)}</p>
+          <p className={statLabelStyle}>Tokens / {bigNumberToString(releasedTokensCount)}</p>
+        </div>
+        <div className="flex flex-col items-center border-x border-border-neutral-strong">
+          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
+          <p className={statLabelStyle}>Investors</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{numberWithCommas(remainingDays)}</p>
+          <p className={statLabelStyle}>Days</p>
+        </div>
+      </div>
+    </>
+  );
+
+  // Info: (202501219 - Julian) 即將開始：顯示目標金額與開始日期
+  const upcomingContent = (
+    <div className="flex items-center justify-between px-spacing-lv-6 pb-spacing-lv-4 pt-spacing-lv-2">
+      <div className="flex flex-col">
+        <p className="text-xs font-normal text-text-neutral-tertiary">Goal:</p>
+        <p
+          className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-lg font-bold`}
+        >
+          NT$ {numberWithCommas(goalFundingAmount)}
+        </p>
+      </div>
+      <div className="flex flex-col">
+        <p className="text-xs font-normal text-text-neutral-tertiary">Coming Soon ...</p>
+        <p
+          className={`${isLocked ? 'text-text-state-mute' : 'text-text-brand-primary'} text-lg font-bold`}
+        >
+          {timestampToString(startedAt).dateString}
+        </p>
+      </div>
+    </div>
+  );
+
+  const closedContent = (
+    <>
+      {/* Info: (202501219 - Julian) Funding Progress */}
+      <ProgressBar
+        // Info: (202501219 - Julian) 募資已結束，所以不顯示金額
+        percentage={progressPercentage}
+        color={ProgressBarColor.GRADIENT}
+        size={ProgressBarSize.BASE}
+        disabled={isLocked}
+      />
+      {/* Info: (202501219 - Julian) Funding Stats */}
+      <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{bigNumberToString(committedFundAmount)}</p>
+          <p className={statLabelStyle}>Committed Fund</p>
+        </div>
+        <div className="flex flex-col items-center border-x border-border-neutral-strong">
+          <p className={statValueStyle}>{bigNumberToString(committedTokensCount)}</p>
+          <p className={statLabelStyle}>Committed Tokens</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
+          <p className={statLabelStyle}>Investors</p>
+        </div>
+      </div>
+    </>
+  );
+
+  const displayedContent =
+    fundingStatus === FundingStatus.ON_GOING
+      ? onGoingContent
+      : fundingStatus === FundingStatus.UPCOMING
+        ? upcomingContent
+        : closedContent;
+
   return (
     <div className="relative">
-      {/* ToDo: (202501218 - Julian) 調整位置 */}
-      <div className="absolute z-10">
-        <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
-      </div>
-      <div className="flex flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
+      {/* Info: (202501219 - Julian) Committed Mark */}
+      {isCommitted && (
+        <div className="absolute -top-2 right-spacing-lv-4 z-10">
+          <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
+        </div>
+      )}
+      <div className="flex h-full w-450px flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
         {/* Info: (202501218 - Julian) Cover Image */}
         <div className="relative h-180px w-full shrink-0">
           <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />
@@ -102,41 +190,22 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
           {displayedCoverOverlay}
         </div>
 
-        {/* Info: (202501218 - Julian) Content */}
         <div className="flex flex-col">
           {/* Info: (202501218 - Julian) Company Name and Title */}
           <div className="flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-3">
-            <p className="text-xs font-normal text-text-neutral-tertiary">{companyName}</p>
+            <div className="flex items-center justify-between text-xs font-normal text-text-neutral-tertiary">
+              <p>{companyName}</p>
+              <p>{fundingPeriodText}</p>
+            </div>
+
             <p
-              className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} font-bold`}
+              className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-xl font-bold`}
             >
               {title}
             </p>
           </div>
-          {/* Info: (202501218 - Julian) Funding Progress */}
-          <ProgressBar
-            percentage={progressPercentage}
-            color={ProgressBarColor.GRADIENT}
-            size={ProgressBarSize.BASE}
-            minText={raisedFundingText}
-            maxText={goalFundingText}
-            disabled={isLocked}
-          />
-          {/* Info: (202501218 - Julian) Funding Stats */}
-          <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
-            <div className="flex flex-col items-center">
-              <p className={statValueStyle}>{leftStatData.value}</p>
-              <p className={statLabelStyle}>{leftStatData.label}</p>
-            </div>
-            <div className="flex flex-col items-center border-x border-border-neutral-strong">
-              <p className={statValueStyle}>{centerStatData.value}</p>
-              <p className={statLabelStyle}>{centerStatData.label}</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <p className={statValueStyle}>{rightStatData.value}</p>
-              <p className={statLabelStyle}>{rightStatData.label}</p>
-            </div>
-          </div>
+          {/* Info: (202501219 - Julian) Content */}
+          {displayedContent}
         </div>
       </div>
     </div>

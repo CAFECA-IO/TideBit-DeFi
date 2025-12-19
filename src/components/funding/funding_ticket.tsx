@@ -4,11 +4,10 @@ import React from 'react';
 import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
-import { numberWithCommas } from '@/lib/utils/common';
+import { numberWithCommas, timestampToString } from '@/lib/utils/common';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
 
-type StatDisplay = { value: number; label: string };
 interface IFundingTicketProps {
   data: IFundingItemUI;
 }
@@ -27,27 +26,22 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     committedFundAmount,
     committedTokensCount,
     investorsCount,
+    remainingDays,
+    startedAt,
+    endedAt,
     isCommitted,
     isLocked,
   } = data;
 
+  // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
   const raisedFundingText = `NT$ ${numberWithCommas(raisedFundingAmount)}`;
   const goalFundingText = `NT$ ${numberWithCommas(goalFundingAmount)}`;
 
-  // Info: (202501218 - Julian) 根據整理好的 StatDisplay ，產生統計數據區塊
-  const leftStatData: StatDisplay = {
-    value: committedFundAmount,
-    label: 'Tokens / 10K',
-  };
-  const centerStatData: StatDisplay = {
-    value: committedTokensCount,
-    label: 'Investors',
-  };
-  const rightStatData: StatDisplay = {
-    value: investorsCount,
-    label: 'Days',
-  };
+  // Info: (202501219 - Julian) 已結束的募資須顯示期間
+  const fundingPeriodText =
+    fundingStatus === FundingStatus.CLOSED &&
+    `${timestampToString(startedAt).dateWithSlash} - ${timestampToString(endedAt).dateWithSlash}`;
 
   // Info: (202501218 - Julian) 根據是否鎖定，調整文字樣式
   const statValueStyle = `${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-lg font-bold`;
@@ -67,7 +61,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
 
   const displayedCoverOverlay = (
     <div
-      className={` ${
+      className={`${
         isLocked ? 'bg-opacity-neutral-dark-80' : 'bg-transparent'
       } absolute bottom-0 left-0 flex size-full flex-col justify-end px-spacing-lv-4 py-spacing-lv-3`}
     >
@@ -105,30 +99,70 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
       {/* Info: (202501218 - Julian) Funding Stats */}
       <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
         <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{leftStatData.value}</p>
-          <p className={statLabelStyle}>{leftStatData.label}</p>
+          <p className={statValueStyle}>{tokenPrice}</p>
+          <p className={statLabelStyle}>Tokens / 10K</p>
         </div>
         <div className="flex flex-col items-center border-x border-border-neutral-strong">
-          <p className={statValueStyle}>{centerStatData.value}</p>
-          <p className={statLabelStyle}>{centerStatData.label}</p>
+          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
+          <p className={statLabelStyle}>Investors</p>
         </div>
         <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{rightStatData.value}</p>
-          <p className={statLabelStyle}>{rightStatData.label}</p>
+          <p className={statValueStyle}>{numberWithCommas(remainingDays)}</p>
+          <p className={statLabelStyle}>Days</p>
         </div>
       </div>
     </>
   );
 
+  // Info: (202501219 - Julian) 即將開始：顯示目標金額與開始日期
   const upcomingContent = (
+    <div className="flex items-center justify-between px-spacing-lv-6 pb-spacing-lv-4 pt-spacing-lv-2">
+      <div className="flex flex-col">
+        <p className="text-xs font-normal text-text-neutral-tertiary">Goal:</p>
+        <p
+          className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-lg font-bold`}
+        >
+          NT$ {numberWithCommas(goalFundingAmount)}
+        </p>
+      </div>
+      <div className="flex flex-col">
+        <p className="text-xs font-normal text-text-neutral-tertiary">Coming Soon ...</p>
+        <p
+          className={`${isLocked ? 'text-text-state-mute' : 'text-text-brand-primary'} text-lg font-bold`}
+        >
+          {timestampToString(startedAt).dateString}
+        </p>
+      </div>
+    </div>
+  );
+
+  const closedContent = (
     <>
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col"></div>
+      {/* Info: (202501219 - Julian) Funding Progress */}
+      <ProgressBar
+        // Info: (202501219 - Julian) 募資已結束，所以不顯示金額
+        percentage={progressPercentage}
+        color={ProgressBarColor.GRADIENT}
+        size={ProgressBarSize.BASE}
+        disabled={isLocked}
+      />
+      {/* Info: (202501219 - Julian) Funding Stats */}
+      <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{committedFundAmount}</p>
+          <p className={statLabelStyle}>Committed Fund</p>
+        </div>
+        <div className="flex flex-col items-center border-x border-border-neutral-strong">
+          <p className={statValueStyle}>{numberWithCommas(committedTokensCount)}</p>
+          <p className={statLabelStyle}>Committed Tokens</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
+          <p className={statLabelStyle}>Investors</p>
+        </div>
       </div>
     </>
   );
-
-  const closedContent = <></>;
 
   const displayedContent =
     fundingStatus === FundingStatus.ON_GOING
@@ -157,9 +191,13 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
         <div className="flex flex-col">
           {/* Info: (202501218 - Julian) Company Name and Title */}
           <div className="flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-3">
-            <p className="text-xs font-normal text-text-neutral-tertiary">{companyName}</p>
+            <div className="flex items-center justify-between text-xs font-normal text-text-neutral-tertiary">
+              <p>{companyName}</p>
+              <p>{fundingPeriodText}</p>
+            </div>
+
             <p
-              className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} font-bold`}
+              className={`${isLocked ? 'text-text-state-mute' : 'text-text-neutral-primary'} text-xl font-bold`}
             >
               {title}
             </p>

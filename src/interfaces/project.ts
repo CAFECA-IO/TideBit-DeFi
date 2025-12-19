@@ -1,5 +1,5 @@
 import { ITeamBrief } from '@/interfaces/team';
-import { FundingStatus } from '@/constants/funding';
+import { FundingStatus, FundingResult } from '@/constants/funding';
 
 // Info: (20251212 - Julian) 限定投資人：員工/股東
 type InvestorType = 'employee' | 'shareholder';
@@ -27,7 +27,7 @@ export interface IProjectBelief {
   startedAt: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資開始時間戳
   endedAt: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結束時間戳
   remainingDays: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 剩餘天數
-  fundingResult: 'Success' | 'Failed' | 'Pending'; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結果，Pending 為募資中
+  fundingResult: FundingResult; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資結果，Pending 為募資中
 }
 
 // Info: (20251212 - Julian) 用於 Project detail 頁面 UI

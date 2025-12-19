@@ -3,3 +3,9 @@ export enum FundingStatus {
   UPCOMING = 'Upcoming',
   CLOSED = 'Closed',
 }
+
+export enum FundingResult {
+  SUCCESS = 'Success',
+  FAILED = 'Failed',
+  PENDING = 'Pending',
+}

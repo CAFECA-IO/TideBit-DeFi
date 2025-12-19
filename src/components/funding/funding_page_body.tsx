@@ -4,34 +4,65 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { LuUserRound } from 'react-icons/lu';
 import FundingTicket from '@/components/funding/funding_ticket';
-import { mockFundingItems } from '@/interfaces/funding';
 import Layout from '@/components/common/layout';
+import { Button } from '@/components/common/button';
+import { mockFundingItems } from '@/interfaces/funding';
 import { FundingStatus } from '@/constants/funding';
+
+// ToDo: (20251219 - Julian) 須確認排序項目
+enum FundingSort {
+  UPLOAD_DATE = 'Upload Date',
+  POPULARITY = 'Popularity',
+  ENDING_SOON = 'Ending Soon',
+}
 
 const FundingPageBody: React.FC = () => {
   const [activeTab, setActiveTab] = useState<FundingStatus>(FundingStatus.ON_GOING);
+  const [activeSort, setActiveSort] = useState<FundingSort>(FundingSort.UPLOAD_DATE);
 
   const tabOptions = Object.values(FundingStatus);
+  const sortOptions = Object.values(FundingSort);
+
+  const switchSort = () => {
+    setActiveSort((prevSort) => {
+      // Info: (20251219 - Julian) 切換到下一個排序選項，若到最後一個則回到第一個
+      const currentIndex = sortOptions.indexOf(prevSort);
+      const nextIndex = (currentIndex + 1) % sortOptions.length;
+      return sortOptions[nextIndex];
+    });
+  };
 
   const displayedTabs = tabOptions.map((status) => {
     const isActive = status === activeTab;
     const switchTab = () => setActiveTab(status);
 
     return (
-      <button
-        key={status}
+      <Button
         type="button"
+        key={status}
         onClick={switchTab}
-        className={` ${
-          isActive
-            ? 'border-tabs-text-active-primary text-tabs-outline-active'
-            : 'border-tabs-text-default text-tabs-text-default enabled:hover:border-tabs-text-hover-neutral enabled:hover:text-tabs-text-hover-neutral'
-        } rounded-t-radius-m border-b-2 px-spacing-lv-6 py-spacing-lv-3 transition-all duration-300 ease-in-out`}
+        variant={isActive ? 'underlineActive' : 'underlineDefault'}
+        rounded="top"
       >
         {status}
-      </button>
+      </Button>
     );
   });
+
+  const sortSwitcher = (
+    <button
+      type="button"
+      onClick={switchSort}
+      className="flex items-center gap-spacing-lv-2 rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-4 py-spacing-lv-2 font-medium text-text-field-text-active"
+    >
+      <LuUserRound size={20} />
+      <p>{activeSort}</p>
+    </button>
+  );
+
+  const displayedFundingList = mockFundingItems.map((item) => (
+    <FundingTicket key={item.id} data={item} />
+  ));
 
   return (
     <Layout className="flex flex-col">
@@ -50,7 +81,7 @@ const FundingPageBody: React.FC = () => {
         </div>
       </div>
 
-      {/* Info: (20251219 - Julian) Funding Filter Section */}
+      {/* ToDo: (20251219 - Julian) Funding Filter Section */}
       <div className="flex px-spacing-lv-8 py-spacing-lv-5"></div>
 
       {/* Info: (20251219 - Julian) Funding Tab */}
@@ -58,17 +89,12 @@ const FundingPageBody: React.FC = () => {
         {/* Info: (20251219 - Julian) Tab */}
         <div className="grid grid-cols-3 gap-spacing-lv-2 py-spacing-lv-3">{displayedTabs}</div>
         {/* Info: (20251219 - Julian) Sorting */}
-        <div className="flex items-center gap-spacing-lv-2 rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-4 py-spacing-lv-2 font-medium text-text-field-text-active">
-          <LuUserRound size={20} />
-          <p>Upload Date</p>
-        </div>
+        {sortSwitcher}
       </div>
 
       {/* Info: (20251219 - Julian) Funding List */}
       <div className="grid grid-cols-2 justify-items-center gap-spacing-lv-7 p-2 px-spacing-lv-8 pb-spacing-lv-8">
-        {mockFundingItems.map((item) => (
-          <FundingTicket key={item.id} data={item} />
-        ))}
+        {displayedFundingList}
       </div>
     </Layout>
   );

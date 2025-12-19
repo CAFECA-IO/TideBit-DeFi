@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useGlobalCtx } from '@/contexts/global_context';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 
@@ -32,8 +33,16 @@ const TermsOfServiceModal: React.FC = () => {
     termsOfServiceModalVisibilityHandler: onClose,
   } = useModalCtx();
 
-  // ToDo: (20251216 - Julian) 處理同意條款的邏輯
+  const { reviewedTermsHandler } = useGlobalCtx();
+
+  // Info: (20251218 - Julian) 處理同意條款的邏輯
   const handleAgree = async () => {
+    reviewedTermsHandler(true);
+    onClose();
+  };
+
+  const handleDecline = () => {
+    reviewedTermsHandler(false);
     onClose();
   };
 
@@ -103,7 +112,7 @@ const TermsOfServiceModal: React.FC = () => {
         </div>
         {/* Info: (20251216 - Julian) Modal Actions */}
         <div className="grid grid-cols-2 gap-spacing-lv-3 px-spacing-lv-6 py-spacing-lv-4">
-          <Button type="button" variant="errorOutline" onClick={onClose} className="w-full">
+          <Button type="button" variant="errorOutline" onClick={handleDecline} className="w-full">
             Decline
           </Button>
           <Button

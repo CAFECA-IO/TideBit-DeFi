@@ -1,4 +1,5 @@
 import { ITeamBrief } from '@/interfaces/team';
+import { FundingStatus } from '@/constants/funding';
 
 // Info: (20251212 - Julian) 限定投資人：員工/股東
 type InvestorType = 'employee' | 'shareholder';
@@ -18,7 +19,7 @@ export interface IProjectBelief {
   id: string;
   title: string; // Info: (20251212 - Julian) 專案標題
   companyName: string; // Info: (20251212 - Julian) 公司名稱
-  fundingStatus: 'On-going' | 'Upcoming' | 'Closed'; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資狀態
+  fundingStatus: FundingStatus; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 募資狀態
   coverImageId: string; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 封面圖片 ID
   raisedFundingAmount: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 已募資金額
   goalFundingAmount: number; // Info: (20251212 - Julian) // Info: (20251212 - Julian) 目標金額

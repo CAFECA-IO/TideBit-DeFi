@@ -1,4 +1,5 @@
 import { IProjectBelief } from '@/interfaces/project';
+import { FundingStatus } from '@/constants/funding';
 
 // Info: (20251212 - Julian) 用於首頁的 funding item 列表
 export interface IFundingInfoBrief extends IProjectBelief {
@@ -65,7 +66,7 @@ export const mockFundingItems: IFundingItemUI[] = [
     id: 'f-01',
     title: 'GreenTech Innovations',
     companyName: 'GreenTech Co.',
-    fundingStatus: 'On-going',
+    fundingStatus: FundingStatus.ON_GOING,
     coverImageId: '/elements/default_pic.png',
     raisedFundingAmount: 500000,
     goalFundingAmount: 1000000,
@@ -87,7 +88,7 @@ export const mockFundingItems: IFundingItemUI[] = [
     id: 'f-02',
     title: 'Together for Elmary: from surviving to healing',
     companyName: 'Monday Foundation',
-    fundingStatus: 'Upcoming',
+    fundingStatus: FundingStatus.UPCOMING,
     coverImageId: '/elements/default_pic.png',
     raisedFundingAmount: 34500,
     goalFundingAmount: 50000,
@@ -109,9 +110,9 @@ export const mockFundingItems: IFundingItemUI[] = [
     id: 'f-03',
     title: 'Tech for Tomorrow: AI Innovations',
     companyName: 'FutureTech Inc.',
-    fundingStatus: 'Closed',
+    fundingStatus: FundingStatus.CLOSED,
     coverImageId: '/elements/default_pic.png',
-    raisedFundingAmount: 750000,
+    raisedFundingAmount: 75000,
     goalFundingAmount: 750000,
     createdAt: 1695000000,
     startedAt: 1695500000,

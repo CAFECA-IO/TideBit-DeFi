@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useGlobalCtx } from '@/contexts/global_context';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
+import { MarkdownContent } from '@/components/common/markdown_content';
 
 const TERM_OF_SERVICE_TEXT = `
 # CAFECA Digital Identity Standard Form Contract
@@ -93,8 +94,8 @@ const TermsOfServiceModal: React.FC = () => {
       onScroll={handleScroll}
       className="size-400px overflow-y-auto bg-surface-neutral-background p-spacing-lv-6 text-text-neutral-secondary"
     >
-      {/* ToDo: (20251216 - Julian) Markdown to HTML Parsing */}
-      <p className="whitespace-pre-wrap">{TERM_OF_SERVICE_TEXT}</p>
+      {/* ToDo: (20251220 - Luphia) use MarkdownContent */}
+      <MarkdownContent content={TERM_OF_SERVICE_TEXT} />
     </div>
   );
 

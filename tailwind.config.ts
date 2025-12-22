@@ -768,7 +768,9 @@ module.exports = {
         'spacing-lv-0': 'var(--spacing-lv-0)',
         'spacing-none': 'var(--spacing-none)',
 
+        '3px': '3px',
         '4px': '4px',
+        '6px': '6px',
         '8px': '8px',
         '15px': '15px',
         '16px': '16px',
@@ -787,6 +789,8 @@ module.exports = {
         '400px': '400px',
         '450px': '450px',
         '500px': '500px',
+
+        '95%': '95%',
       },
       zIndex: {
         sidebar: 5000,

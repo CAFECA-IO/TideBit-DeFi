@@ -6,6 +6,7 @@ import { LuUserRound } from 'react-icons/lu';
 import FundingTicket from '@/components/funding/funding_ticket';
 import Layout from '@/components/common/layout';
 import { Button } from '@/components/common/button';
+import Slider from '@/components/common/slider';
 import { mockFundingItems } from '@/interfaces/funding';
 import { FundingStatus } from '@/constants/funding';
 
@@ -17,11 +18,19 @@ enum FundingSort {
 }
 
 const FundingPageBody: React.FC = () => {
+  const priceRanges = [10, 25, 50, 75, 100]; // Info: (20251222 - Julian) 查詢價格範圍選項
+
   const [activeTab, setActiveTab] = useState<FundingStatus>(FundingStatus.ON_GOING);
   const [activeSort, setActiveSort] = useState<FundingSort>(FundingSort.UPLOAD_DATE);
 
+  const [activePriceRange, setActivePriceRange] = useState<number>(priceRanges[0]);
+
   const tabOptions = Object.values(FundingStatus);
   const sortOptions = Object.values(FundingSort);
+
+  const selectPrice = (value: number) => {
+    setActivePriceRange(value);
+  };
 
   const switchSort = () => {
     setActiveSort((prevSort) => {
@@ -82,7 +91,14 @@ const FundingPageBody: React.FC = () => {
       </div>
 
       {/* ToDo: (20251219 - Julian) Funding Filter Section */}
-      <div className="flex px-spacing-lv-8 py-spacing-lv-5"></div>
+      <div className="flex flex-col text-white">
+        <p>Filter Options: (To be removed)</p>
+        <p>Price: {activePriceRange}</p>
+      </div>
+      <div className="flex items-center gap-spacing-lv-8 px-spacing-lv-8 py-spacing-lv-5">
+        {/* Info: (20251222 - Julian) Price Range */}
+        <Slider label="Price" options={priceRanges} selectOption={selectPrice} />
+      </div>
 
       {/* Info: (20251219 - Julian) Funding Tab */}
       <div className="flex items-end justify-between px-spacing-lv-8 py-spacing-lv-5">

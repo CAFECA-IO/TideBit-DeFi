@@ -31,6 +31,7 @@ const buttonVariants = cva(
         // Info: (20251216 - Julian) ======= Text only =======
         borderless: `bg-transparent text-button-brand-outline-on-primary-default enabled:hover:text-button-brand-outline-on-primary-hover enabled:active:text-button-brand-outline-primary-active-outline ${textDisabledStyles}`,
         infoBorderless: `bg-transparent text-button-state-outline-on-info-default enabled:hover:text-button-state-outline-on-info-hover enabled:active:text-button-state-outline-info-active-outline ${textDisabledStyles}`,
+        defaultBorderless: `bg-transparent text-navigation-text-default enabled:hover:text-navigation-text-hover enabled:active:text-navigation-text-active ${textDisabledStyles}`,
 
         // Info: (20251219 - Julian) ======= Label Style =======
         underlineDefault: `border-b-2 border-tabs-text-default bg-transparent text-tabs-text-default enabled:hover:border-tabs-text-hover-neutral enabled:hover:text-tabs-text-hover-neutral ${underlineDisabledStyles}`,
@@ -40,6 +41,7 @@ const buttonVariants = cva(
       },
       size: {
         xs: 'gap-spacing-lv-0 px-spacing-lv-4 py-spacing-lv-2 text-xs font-extrabold',
+        sm: 'gap-spacing-lv-3 px-spacing-lv-4 py-spacing-lv-2 text-sm font-semibold',
         default: 'gap-spacing-lv-2 px-spacing-lv-6 py-spacing-lv-3 text-base font-semibold',
         square: 'flex size-36px items-center justify-center p-spacing-lv-0',
         rectangle:

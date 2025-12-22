@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { LuUserRound } from 'react-icons/lu';
+import { FaChevronDown } from 'react-icons/fa6';
+import { LuUserRound, LuBuilding2 } from 'react-icons/lu';
 import FundingTicket from '@/components/funding/funding_ticket';
 import Layout from '@/components/common/layout';
 import { Button } from '@/components/common/button';
 import Slider from '@/components/common/slider';
+import SearchBar from '@/components/common/search_bar';
 import { mockFundingItems } from '@/interfaces/funding';
 import { FundingStatus } from '@/constants/funding';
 
@@ -22,11 +24,16 @@ const FundingPageBody: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<FundingStatus>(FundingStatus.ON_GOING);
   const [activeSort, setActiveSort] = useState<FundingSort>(FundingSort.UPLOAD_DATE);
-
   const [activePriceRange, setActivePriceRange] = useState<number>(priceRanges[0]);
+
+  const [keyword, setKeyword] = useState<string>('');
 
   const tabOptions = Object.values(FundingStatus);
   const sortOptions = Object.values(FundingSort);
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  };
 
   const selectPrice = (value: number) => {
     setActivePriceRange(value);
@@ -94,10 +101,25 @@ const FundingPageBody: React.FC = () => {
       <div className="flex flex-col text-white">
         <p>Filter Options: (To be removed)</p>
         <p>Price: {activePriceRange}</p>
+        <p>Keyword: {keyword}</p>
       </div>
       <div className="flex items-center gap-spacing-lv-8 px-spacing-lv-8 py-spacing-lv-5">
         {/* Info: (20251222 - Julian) Price Range */}
         <Slider label="Price" options={priceRanges} selectOption={selectPrice} />
+
+        {/* Info: (20251222 - Julian) Industry Dropdown */}
+        <div className="flex items-center rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active">
+          <div className="pl-spacing-lv-6 pr-spacing-lv-4">
+            <LuBuilding2 size={24} />
+          </div>
+          <div className="px-spacing-lv-6 font-medium">All Industry</div>
+          <div className="pl-spacing-lv-4 pr-spacing-lv-6">
+            <FaChevronDown size={24} />
+          </div>
+        </div>
+
+        {/* Info: (20251222 - Julian) Search Bar */}
+        <SearchBar value={keyword} onChange={handleKeywordChange} />
       </div>
 
       {/* Info: (20251219 - Julian) Funding Tab */}

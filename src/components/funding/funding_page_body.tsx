@@ -69,7 +69,7 @@ const FundingPageBody: React.FC = () => {
     <button
       type="button"
       onClick={switchSort}
-      className="flex items-center gap-spacing-lv-2 rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-4 py-spacing-lv-2 font-medium text-text-field-text-active"
+      className="flex items-center gap-spacing-lv-2 rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-4 py-spacing-lv-2 font-medium text-text-field-text-active hover:border-text-field-outline-focused"
     >
       <LuUserRound size={20} />
       <p>{activeSort}</p>
@@ -112,7 +112,7 @@ const FundingPageBody: React.FC = () => {
           <div className="pl-spacing-lv-6 pr-spacing-lv-4">
             <LuBuilding2 size={24} />
           </div>
-          <div className="px-spacing-lv-6 font-medium">All Industry</div>
+          <div className="whitespace-nowrap px-spacing-lv-6 font-medium">All Industry</div>
           <div className="pl-spacing-lv-4 pr-spacing-lv-6">
             <FaChevronDown size={24} />
           </div>

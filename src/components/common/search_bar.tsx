@@ -14,7 +14,7 @@ const SearchBar: React.FC<{
     <div
       className={`${
         isActive ? 'border-text-field-outline-focused' : 'border-text-field-outline-default'
-      } flex items-center overflow-hidden rounded-full border py-spacing-lv-3`}
+      } flex w-full items-center overflow-hidden rounded-full border py-spacing-lv-3`}
     >
       <input
         type="text"

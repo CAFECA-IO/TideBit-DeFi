@@ -34,6 +34,8 @@ const FundingPageBody: React.FC = () => {
   const [activeIndustry, setActiveIndustry] = useState<string>(industryOptions[0]);
   const [keyword, setKeyword] = useState<string>('');
 
+  const [inputValue, setInputValue] = useState<number>(0);
+
   const tabOptions = Object.values(FundingStatus);
   const sortOptions = Object.values(FundingSort);
 
@@ -112,7 +114,14 @@ const FundingPageBody: React.FC = () => {
       </div>
 
       <div className="mx-auto">
-        <NumericInput />
+        value: {inputValue}
+        <NumericInput
+          saveNumberValue={(num: number) => {
+            setInputValue(num);
+          }}
+          plusValue={1000}
+          minusValue={1000}
+        />
       </div>
 
       {/* Info: (20251219 - Julian) Funding Filter Section */}

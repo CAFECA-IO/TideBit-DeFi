@@ -1,9 +1,13 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+25",
+  "version": "0.9.0+26",
   "private": true,
   "type": "module",
   "scripts": {
+    "gen:env": "npx tsx scripts/initial_env.ts",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down -v",
+    "db:logs": "docker compose logs -f postgres",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

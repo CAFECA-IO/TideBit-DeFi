@@ -9,6 +9,7 @@ import Layout from '@/components/common/layout';
 import { Button } from '@/components/common/button';
 import Slider from '@/components/common/slider';
 import SearchBar from '@/components/common/search_bar';
+import NumericInput from '@/components/common/numeric_input';
 import { mockFundingItems } from '@/interfaces/funding';
 import { FundingStatus } from '@/constants/funding';
 
@@ -108,6 +109,10 @@ const FundingPageBody: React.FC = () => {
         <div>
           <Image src="/elements/funding_banner.png" width={374} height={143} alt="funding_banner" />
         </div>
+      </div>
+
+      <div className="mx-auto">
+        <NumericInput />
       </div>
 
       {/* Info: (20251219 - Julian) Funding Filter Section */}

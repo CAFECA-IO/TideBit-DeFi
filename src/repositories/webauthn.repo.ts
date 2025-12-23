@@ -1,0 +1,60 @@
+import { prisma } from '@/lib/prisma';
+import type { User } from '@prisma/client';
+
+export interface IWebAuthnRepository {
+  findUserByAddress(address: string): Promise<User | null>;
+  findUserById(id: string): Promise<User | null>;
+  updateChallenge(address: string, challenge: string): Promise<void>;
+  upsertUser(data: {
+    address: string;
+    pubKeyX: string;
+    pubKeyY: string;
+    name?: string;
+  }): Promise<User>;
+}
+
+class WebAuthnRepository implements IWebAuthnRepository {
+  public async findUserByAddress(address: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where: { address },
+    });
+  }
+
+  public async findUserById(id: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  public async updateChallenge(address: string, challenge: string): Promise<void> {
+    await prisma.user.update({
+      where: { address },
+      data: { currentChallenge: challenge },
+    });
+  }
+
+  // Info: (20251223 - Tzuhan) 用於 Indexer 或 Lazy Sync 寫入
+  public async upsertUser(data: {
+    address: string;
+    pubKeyX: string;
+    pubKeyY: string;
+    name?: string;
+  }): Promise<User> {
+    return prisma.user.upsert({
+      where: { address: data.address },
+      update: {
+        pubKeyX: data.pubKeyX,
+        pubKeyY: data.pubKeyY,
+        ...(data.name ? { name: data.name } : {}),
+      },
+      create: {
+        address: data.address,
+        pubKeyX: data.pubKeyX,
+        pubKeyY: data.pubKeyY,
+        name: data.name ?? `User ${data.address.slice(0, 6)}`,
+      },
+    });
+  }
+}
+
+export const webAuthnRepo = new WebAuthnRepository();

@@ -1,6 +1,6 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+24",
+  "version": "0.9.0+25",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,9 +19,13 @@
   "dependencies": {
     "@account-abstraction/contracts": "^0.6.0",
     "@openzeppelin/contracts": "^4.9.6",
+    "@passwordless-id/webauthn": "^2.3.1",
+    "@prisma/client": "^7.2.0",
+    "cbor-js": "^0.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint-plugin-tailwindcss": "^3.18.2",
+    "jose": "^6.1.3",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
@@ -35,6 +39,7 @@
     "@nomicfoundation/hardhat-ignition": "^3.0.6",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.1",
     "@tailwindcss/postcss": "^4",
+    "@types/cbor-js": "^0.1.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",

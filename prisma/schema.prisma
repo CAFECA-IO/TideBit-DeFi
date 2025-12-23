@@ -19,6 +19,7 @@ model User {
   // Info: (20251222 - Tzuhan) FIDO2 相關 (從鏈上爬取或登入時更新)
   pubKeyX       String?   // Info: (20251222 - Tzuhan) 來自合約 AccountCreated 事件
   pubKeyY       String?   // Info: (20251222 - Tzuhan) 來自合約 AccountCreated 事件
+  credentialId  String?   
   
   // Info: (20251222 - Tzuhan) 認證相關 (僅用於 Challenge-Response 登入流程)
   currentChallenge String? 

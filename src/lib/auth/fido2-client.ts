@@ -9,6 +9,7 @@ import type {
 } from '@passwordless-id/webauthn/dist/esm/types';
 import { ApiCode } from '@/lib/utils/status';
 import { AppError } from '@/lib/utils/error';
+import { UserOperationJson } from '@/validators';
 
 // Info: (20251223 - Tzuhan) 定義登入回傳結果介面
 export interface ILoginResult {
@@ -109,4 +110,37 @@ export async function verifyLogin(
   }
 
   return data.data;
+}
+
+/**
+ * Info: (20251223 - Tzuhan)
+ * 呼叫後端解析 Passkey 註冊資料
+ * 回傳：P-256 公鑰座標 (x, y) 與 Credential ID
+ */
+export async function parsePasskey(registration: RegistrationJSON, challenge: string) {
+  const res = await fetch('/api/v1/auth/parse-passkey', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ registration, challenge }),
+  });
+
+  const data = await res.json();
+  if (data.code !== 'SUCCESS') {
+    throw new Error(data.message || 'Failed to parse passkey');
+  }
+
+  return data.payload as { x: string; y: string; credentialID: string };
+}
+
+/**
+ * Info: (20251223 - Tzuhan) 呼叫後端 Bundler 發送 UserOp
+ */
+export async function sendUserOpToBundler(userOp: UserOperationJson, entryPointAddress: string) {
+  const res = await fetch('/api/v1/bundler', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userOp, entryPointAddress }),
+  });
+
+  return await res.json();
 }

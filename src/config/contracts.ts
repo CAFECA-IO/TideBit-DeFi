@@ -21,6 +21,7 @@ export const ABIS = {
   ]),
   FACTORY: parseAbi([
     'function getAddress(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) external view returns (address)',
+    'function createAccount(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) external returns (address)',
   ]),
   SCW: parseAbi([
     'function signers(bytes32 hash) view returns (bool)',

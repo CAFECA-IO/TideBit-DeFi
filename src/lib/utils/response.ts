@@ -21,7 +21,7 @@ export const ok = <T>(payload: T, message = 'OK'): IApiResponse<T> => {
   return {
     powerby: POWERBY,
     success: true,
-    code: ApiCode.OK,
+    code: ApiCode.SUCCESS,
     message,
     payload: safePayload,
   };
@@ -46,7 +46,7 @@ export const jsonFail = (code: ApiCode, message: string, init?: ResponseInit) =>
 
 function httpStatusOf(code: ApiCode): number {
   switch (code) {
-    case ApiCode.OK:
+    case ApiCode.SUCCESS:
       return 200;
     case ApiCode.VALIDATION_ERROR:
       return 400;

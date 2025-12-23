@@ -1,6 +1,6 @@
 export enum ApiCode {
   // Info: (20250925 - Tzuhan) --- 成功 ---
-  OK = 'OK',
+  SUCCESS = 'SUCCESS',
 
   // Info: (20250925 - Tzuhan) --- 客戶端錯誤 ---
   VALIDATION_ERROR = 'VALIDATION_ERROR', // Info: (20250925 - Tzuhan) 400: 請求參數驗證失敗
@@ -15,7 +15,7 @@ export enum ApiCode {
 }
 
 export const HTTP_MAP: Record<ApiCode, number> = {
-  [ApiCode.OK]: 200,
+  [ApiCode.SUCCESS]: 200,
   [ApiCode.VALIDATION_ERROR]: 400,
   [ApiCode.UNAUTHORIZED]: 401,
   [ApiCode.FORBIDDEN]: 403,

@@ -33,9 +33,6 @@ interface IParsedPublicKey {
 class WebAuthnService {
   constructor(private readonly repo: IWebAuthnRepository) {}
 
-  /**
-   * [Step 1] 產生登入 Challenge (Lazy Sync)
-   */
   public async generateLoginOptions(address: string): Promise<string> {
     const user = await this.ensureUserSynced(address);
 
@@ -65,12 +62,12 @@ class WebAuthnService {
     const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
 
     // Info: (20251223 - Tzuhan) 建構符合 CredentialInfo 定義的物件
-    // P-256 對應的演算法名稱通常是 'ES256'
+    // Info: (20251223 - Tzuhan) P-256 對應的演算法名稱通常是 'ES256'
     const credential: CredentialInfo = {
       id: authenticationData.id,
       publicKey: credentialPublicKey,
       algorithm: 'ES256',
-      transports: [], // 資料庫未存 transports，給空陣列以符合型別
+      transports: [], // Info: (20251223 - Tzuhan) 資料庫未存 transports，給空陣列以符合型別
     };
 
     try {
@@ -80,7 +77,7 @@ class WebAuthnService {
       throw new AppError(ApiCode.UNAUTHORIZED, 'Invalid signature');
     }
 
-    // 驗證通過，簽發 Token
+    // Info: (20251223 - Tzuhan) 驗證通過，簽發 Token
     const dewt = await signDeWT(user);
 
     await this.repo.updateChallenge(address, '');

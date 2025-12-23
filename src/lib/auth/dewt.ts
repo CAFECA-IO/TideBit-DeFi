@@ -9,7 +9,7 @@ import { ApiCode } from '@/lib/utils/status';
 const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 const PEM_PRIVATE_KEY = process.env.DEWT_PRIVATE_KEY_PEM;
 
-// 移除強制的 process.exit，避免在庫中直接殺死進程，改為拋出錯誤
+// Info: (20251223 - Tzuhan) 移除強制的 process.exit，避免在庫中直接殺死進程，改為拋出錯誤
 if (!PEM_PRIVATE_KEY) {
   logger.error('FATAL: DEWT_PRIVATE_KEY_PEM environment variable is not set.');
 }
@@ -58,7 +58,7 @@ async function loadKeys(): Promise<ILoadedKeys> {
 export const signDeWT = async (user: User): Promise<string> => {
   const { privateKey } = await loadKeys();
 
-  // Payload 包含前端需要的基礎資訊
+  // Info: (20251223 - Tzuhan) Payload 包含前端需要的基礎資訊
   const payload = {
     sub: user.id,
     address: user.address,
@@ -104,7 +104,7 @@ export const getIdentityFromDeWT = async (
 
     if (!userId) return null;
 
-    // 使用 Repo 查找用戶
+    // Info: (20251223 - Tzuhan) 使用 Repo 查找用戶
     return await webAuthnRepo.findUserById(userId);
   } catch (error) {
     logger.error(`Token verification failed: ${JSON.stringify(error)}`);

@@ -1,32 +1,36 @@
 'use client';
 
-// Info: (20250917 - Tzuhan) 從外部函式庫導入核心 client 物件和確切的類型
 import { client } from '@passwordless-id/webauthn';
 import type {
-  RegisterOptions, // Info: (20250917 - Tzuhan) 用於註冊
-  AuthenticateOptions, // Info: (20250917 - Tzuhan) 用於登入
-  RegistrationJSON, // Info: (20250917 - Tzuhan) 註冊成功後的回應類型
-  AuthenticationJSON, // Info: (20250917 - Tzuhan) 登入成功後的回應類型
+  RegisterOptions,
+  AuthenticateOptions,
+  RegistrationJSON,
+  AuthenticationJSON,
 } from '@passwordless-id/webauthn/dist/esm/types';
+import { ApiCode } from '@/lib/utils/status';
+import { AppError } from '@/lib/utils/error';
+
+// Info: (20251223 - Tzuhan) 定義登入回傳結果介面
+export interface ILoginResult {
+  dewt: string;
+  user: {
+    address: string;
+    name: string | null;
+    role: string;
+  };
+}
 
 /**
  * Info: (20251001-tzuhan)
  * 封裝 FIDO2 WebAuthn 客戶端邏輯的單例服務。
- * 透過 isAvailable() 方法檢查 WebAuthn 功能是否可用。
  */
 class Fido2ClientService {
   private client: typeof client | null;
 
   constructor() {
-    // Info: (20251001-tzuhan) 在建構函式中立即檢查 client 是否存在
     this.client = client ?? null;
   }
 
-  /**
-   * Info: (20251001-tzuhan) 檢查 WebAuthn 是否在此環境中可用
-   * (例如，在不安全的來源上，client 會是 null)
-   * @returns {boolean}
-   */
   public isAvailable(): boolean {
     return this.client !== null;
   }
@@ -40,11 +44,6 @@ class Fido2ClientService {
     return this.client;
   }
 
-  /**
-   * Info: (20250917 - Tzuhan) 啟動 FIDO2 註冊流程。
-   * @param options - 從伺服器獲取的註冊選項。
-   * @returns {Promise<RegistrationEncoded>} 註冊成功後的憑證資訊。
-   */
   public async startRegistration(options: RegisterOptions): Promise<RegistrationJSON> {
     const client = this.getClientOrThrow();
     try {
@@ -57,11 +56,6 @@ class Fido2ClientService {
     }
   }
 
-  /**
-   * Info: (20250917 - Tzuhan) 啟動 FIDO2 登入流程。
-   * @param options - 從伺服器獲取的登入選項。
-   * @returns {Promise<AuthenticationEncoded>} 登入成功後的驗證資訊。
-   */
   public async startLogin(options: AuthenticateOptions): Promise<AuthenticationJSON> {
     const client = this.getClientOrThrow();
     try {
@@ -74,5 +68,45 @@ class Fido2ClientService {
   }
 }
 
-// Info: (20251001-tzuhan) 導出單例實例，確保整個應用程式只使用一個 Fido2ClientService
 export const fido2ClientService = new Fido2ClientService();
+
+// --- Info: (20251223 - Tzuhan) 新增：與後端 API 溝通的輔助函式 ---
+
+/**
+ * Info: (20251223 - Tzuhan)
+ * 取得登入用的 Challenge (Nonce)
+ * 後端會在此時執行 Lazy Sync (查鏈 -> 同步 DB)
+ */
+export async function getLoginChallenge(address: string): Promise<string> {
+  const res = await fetch(`/api/v1/auth/nonce?address=${address}`);
+  const data = await res.json();
+
+  if (data.code !== ApiCode.SUCCESS) {
+    throw new AppError(data.code, data.message || 'Failed to get login challenge');
+  }
+
+  return data.data.challenge;
+}
+
+/**
+ * Info: (20251223 - Tzuhan)
+ * 驗證登入簽名並獲取 DeWT (JWT)
+ */
+export async function verifyLogin(
+  address: string,
+  authentication: AuthenticationJSON
+): Promise<ILoginResult> {
+  const res = await fetch('/api/v1/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address, authentication }),
+  });
+
+  const data = await res.json();
+
+  if (data.code !== ApiCode.SUCCESS) {
+    throw new AppError(data.code, data.message || 'Login verification failed');
+  }
+
+  return data.data;
+}

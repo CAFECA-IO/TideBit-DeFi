@@ -9,6 +9,7 @@ import Layout from '@/components/common/layout';
 import { Button } from '@/components/common/button';
 import Slider from '@/components/common/slider';
 import SearchBar from '@/components/common/search_bar';
+import NumericInput from '@/components/common/numeric_input';
 import { mockFundingItems } from '@/interfaces/funding';
 import { FundingStatus } from '@/constants/funding';
 
@@ -32,6 +33,8 @@ const FundingPageBody: React.FC = () => {
   const [activePriceRange, setActivePriceRange] = useState<number>(priceRanges[0]);
   const [activeIndustry, setActiveIndustry] = useState<string>(industryOptions[0]);
   const [keyword, setKeyword] = useState<string>('');
+
+  const [inputValue, setInputValue] = useState<number>(0);
 
   const tabOptions = Object.values(FundingStatus);
   const sortOptions = Object.values(FundingSort);
@@ -108,6 +111,17 @@ const FundingPageBody: React.FC = () => {
         <div>
           <Image src="/elements/funding_banner.png" width={374} height={143} alt="funding_banner" />
         </div>
+      </div>
+
+      <div className="mx-auto">
+        value: {inputValue}
+        <NumericInput
+          saveNumberValue={(num: number) => {
+            setInputValue(num);
+          }}
+          plusValue={1000}
+          minusValue={1000}
+        />
       </div>
 
       {/* Info: (20251219 - Julian) Funding Filter Section */}

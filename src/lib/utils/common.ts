@@ -9,8 +9,22 @@ export const cn = (...inputs: ClassValue[]) => {
 
 // Info: (20251218 - Julian) 給數值加上千分位逗號的格式化工具
 export const numberWithCommas = (number: number | string) => {
+  if (number === null || number === undefined || number === '') {
+    return '-';
+  }
   const num = typeof number === 'string' ? parseFloat(number) : number;
-  const formattedNumber = new Intl.NumberFormat().format(Math.abs(num));
+
+  // Info: (20251223 - Julian) 將整數部分和小數部分分離
+  const numStr = num.toString().split('.');
+  const integerStr = numStr[0];
+  const decimalStr = numStr.length > 1 ? `.${numStr[1]}` : '';
+
+  // Info: (20251223 - Julian) 格式化整數：每三位數加一個逗號；小數部分保持不變
+  const formattedIntegerPart = integerStr.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // Info: (20251223 - Julian) 組合整數部分和小數部分
+  const formattedNumber = `${formattedIntegerPart}${decimalStr}`;
+
   return num < 0 ? `(${formattedNumber})` : formattedNumber;
 };
 

@@ -1,10 +1,10 @@
 import { SignJWT, jwtVerify, importPKCS8, exportJWK, importJWK } from 'jose';
-import type { User } from '@prisma/client';
 import type { JWTPayload, KeyObject, CryptoKey, JWK } from 'jose';
 import { webAuthnRepo } from '@/repositories/webauthn.repo';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/lib/utils/error';
 import { ApiCode } from '@/lib/utils/status';
+import { User } from '@/generated/client';
 
 const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 const PEM_PRIVATE_KEY = process.env.DEWT_PRIVATE_KEY_PEM;

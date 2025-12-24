@@ -1,5 +1,5 @@
+import { User } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
-import type { User } from '@prisma/client';
 
 export interface IWebAuthnRepository {
   findUserByAddress(address: string): Promise<User | null>;

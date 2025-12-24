@@ -8,9 +8,15 @@ import { RxCross2 } from 'react-icons/rx';
 import { useGlobalCtx } from '@/contexts/global_context';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
+import { encodeFunctionData } from 'viem';
+import { publicClient } from '@/lib/viem';
+import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
+import { fido2ClientService, parsePasskey, sendUserOpToBundler } from '@/lib/auth/fido2-client';
 
 const RegisterModal: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Info: (20251224 - Tzuhan) 新增 Loading 狀態
+
   const {
     isRegisterModalVisible: isModalVisible,
     registerModalVisibilityHandler: onClose,
@@ -31,6 +37,88 @@ const RegisterModal: React.FC = () => {
 
   const generateRandomImage = async () => {
     // ToDo: (20251218 - Julian) Implement random image generation logic
+  };
+
+  // Info: (20251223 - Update) 核心註冊邏輯
+  const handleSignUp = async () => {
+    setIsLoading(true);
+    try {
+      const username = inputValue.trim();
+      // Info: (20251223 - Update) 1. 在前端產生隨機 Challenge (註冊時通常只需確保不可預測性)
+      const challenge = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString(
+        'base64url'
+      );
+
+      // Info: (20251223 - Update) 2. 喚起瀏覽器/手機 Passkey 註冊
+      const registration = await fido2ClientService.startRegistration({
+        user: username,
+        challenge: challenge,
+        userVerification: 'required',
+        discoverable: 'preferred',
+      });
+
+      // Info: (20251223 - Update) 3. 呼叫後端解析，取得 P-256 公鑰座標 (X, Y)
+      const { x, y, credentialID } = await parsePasskey(registration, challenge);
+      console.log('Parsed Key:', { x, y, credentialID });
+
+      // Info: (20251223 - Update) 4. 準備合約部署參數
+      const salt = BigInt(0); // Info: (20251223 - Update) 這裡先用 0，實務上可用隨機數
+      const pubKeyX = BigInt(x);
+      const pubKeyY = BigInt(y);
+
+      // Info: (20251223 - Update) 5. 預測未來的 SCW 地址 (呼叫 Factory 的 view function)
+      const scwAddress = await publicClient.readContract({
+        address: CONTRACT_ADDRESSES.FACTORY,
+        abi: ABIS.FACTORY,
+        functionName: 'getAddress',
+        args: [pubKeyX, pubKeyY, salt],
+      });
+      console.log('Predicted SCW Address:', scwAddress);
+
+      // Info: (20251223 - Update) 6. 組裝 UserOp 的 initCode (Factory Address + createAccount encoded data)
+      const factoryCallData = encodeFunctionData({
+        abi: ABIS.FACTORY,
+        functionName: 'createAccount',
+        args: [pubKeyX, pubKeyY, salt],
+      });
+      const initCode = `${CONTRACT_ADDRESSES.FACTORY}${factoryCallData.slice(2)}`;
+
+      // Info: (20251223 - Update) 7. 組裝 UserOp
+      const userOp = {
+        sender: scwAddress,
+        nonce: '0x0', // Info: (20251223 - Update) 部署時 nonce 通常為 0
+        initCode: initCode,
+        callData: '0x', // Info: (20251223 - Update) 部署時不執行其他函式
+        callGasLimit: '0x100000', // Info: (20251223 - Update) 估算值，可調高
+        verificationGasLimit: '0x100000', // Info: (20251223 - Update) 部署需要較多 Gas
+        preVerificationGas: '0x186a0', // Info: (20251223 - Update) 100000
+        maxFeePerGas: '0x0', // Info: (20251223 - Update) 0 Gas 費由 Relayer 買單
+        maxPriorityFeePerGas: '0x0',
+        paymasterAndData: '0x',
+        signature: '0x', // Info: (20251223 - Update) 部署 UserOp 在 EntryPoint 0.6 若有 initCode 且無 paymaster，簽名可為空或任意值，視 Factory 實作而定
+      };
+
+      // Info: (20251223 - Update) 8. 發送給後端 Bundler
+      const result = await sendUserOpToBundler(userOp, CONTRACT_ADDRESSES.ENTRY_POINT);
+
+      const { message, transactionHash, status } = result;
+
+      console.log('Bundler message:', message);
+      console.log('Transaction Hash:', transactionHash);
+      console.log('Deployment Status:', status);
+
+      if (result.code === 'SUCCESS') {
+        alert(`Account created! Address: ${scwAddress}`);
+        onClose();
+      } else {
+        alert(`Registration failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Sign up failed:', error);
+      alert('Sign up failed. See console for details.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const displayedAgreeTerms = (
@@ -95,11 +183,11 @@ const RegisterModal: React.FC = () => {
         </div>
         {/* Info: (20251217 - Julian) Modal Actions */}
         <div className="ml-auto flex items-center gap-spacing-lv-3 px-spacing-lv-8 pb-spacing-lv-8 pt-spacing-lv-6">
-          <Button type="button" variant="infoBorderless" onClick={onClose}>
+          <Button type="button" variant="infoBorderless" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="button" disabled={isSubmitDisabled}>
-            Sign Up
+          <Button type="button" disabled={isSubmitDisabled} onClick={handleSignUp}>
+            {isLoading ? 'Processing...' : 'Sign Up'}
           </Button>
         </div>
       </div>

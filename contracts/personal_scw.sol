@@ -6,7 +6,7 @@ import "@account-abstraction/contracts/core/EntryPoint.sol";
 import "./lib/fcl_ecdsa.sol";
 import "./lib/utils/base64url.sol";
 
-contract SCW is IAccount {
+contract PersonalSCW is IAccount {
     EntryPoint public immutable entryPoint;
 
     uint256 public signerCount;
@@ -23,7 +23,7 @@ contract SCW is IAccount {
 
     // Info: (20251127 - Tzuhan) 限制只能由合約自己呼叫 (透過 execute)
     modifier onlySelf() {
-        require(msg.sender == address(this), "SCW: must call via UserOp");
+        require(msg.sender == address(this), "PersonalSCW: must call via UserOp");
         _;
     }
 
@@ -45,7 +45,7 @@ contract SCW is IAccount {
         bytes32 hash = keccak256(abi.encode(x, y));
         if (signers[hash]) {
             // Info: (20251128 - Tzuhan) 安全檢查：確保移除後至少還剩一個 Signer
-            require(signerCount > 1, "SCW: cannot remove last signer");
+            require(signerCount > 1, "PersonalSCW: cannot remove last signer");
             
             signers[hash] = false;
             signerCount--;
@@ -85,7 +85,7 @@ contract SCW is IAccount {
         uint256 missingAccountFunds
     ) external override returns (uint256) {
         // Info: (20251124 - Tzuhan) 1. 安全檢查：只允許 EntryPoint 呼叫
-        require(msg.sender == address(entryPoint), "SCW: unauthorized");
+        require(msg.sender == address(entryPoint), "PersonalSCW: unauthorized");
 
         /**
          * Info: (20251121 - Tzuhan) [資金流向] 支付 Gas 預付款
@@ -94,8 +94,8 @@ contract SCW is IAccount {
          * ★★★ 關於 Relayer 全額買單 ★★★
          * 如果前端傳來的 UserOp 中 maxFeePerGas 為 0，
          * EntryPoint 計算出的 missingAccountFunds 就會是 0。
-         * 下面的 if 條件就不會成立，SCW 就不會轉出任何代幣。
-         * 這樣就實現了「不扣 SCW 錢」的目標。
+         * 下面的 if 條件就不會成立，PersonalSCW 就不會轉出任何代幣。
+         * 這樣就實現了「不扣 PersonalSCW 錢」的目標。
          */
         if (missingAccountFunds != 0) {
             (bool success, ) = payable(msg.sender).call{value: missingAccountFunds}("");
@@ -151,9 +151,9 @@ contract SCW is IAccount {
     }
 
     function execute(address dest, uint256 value, bytes calldata func) external {
-        require(msg.sender == address(this) || msg.sender == address(entryPoint), "SCW: unauthorized");
+        require(msg.sender == address(this) || msg.sender == address(entryPoint), "PersonalSCW: unauthorized");
         (bool success, ) = dest.call{value: value}(func);
-        require(success, "SCW: execution failed");
+        require(success, "PersonalSCW: execution failed");
     }
 
     receive() external payable {}

@@ -15,7 +15,7 @@ import { fido2ClientService, parsePasskey, sendUserOpToBundler } from '@/lib/aut
 
 const RegisterModal: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false); // 新增 Loading 狀態
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Info: (20251224 - Tzuhan) 新增 Loading 狀態
 
   const {
     isRegisterModalVisible: isModalVisible,

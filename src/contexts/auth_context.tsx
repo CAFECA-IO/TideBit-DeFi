@@ -24,7 +24,7 @@ const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<IUserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize as true
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Info: (20251224 - Tzuhan) Initialize as true
   const router = useRouter();
 
   const logout = useCallback(() => {

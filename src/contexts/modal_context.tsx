@@ -9,6 +9,9 @@ interface IModalContextType {
   guidedTourModalVisibilityHandler: () => void;
   isRegisterModalVisible: boolean;
   registerModalVisibilityHandler: () => void;
+  // Info: (20251223 - Tzuhan) 新增 Authentication Modal 控制
+  isAuthenticationModalVisible: boolean;
+  authenticationModalVisibilityHandler: () => void;
 }
 
 const ModalContext = createContext<IModalContextType>({
@@ -18,6 +21,9 @@ const ModalContext = createContext<IModalContextType>({
   guidedTourModalVisibilityHandler: () => {},
   isRegisterModalVisible: false,
   registerModalVisibilityHandler: () => {},
+  // Info: (20251223 - Tzuhan) Default values
+  isAuthenticationModalVisible: false,
+  authenticationModalVisibilityHandler: () => {},
 });
 
 interface IModalProviderProps {
@@ -28,14 +34,19 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
   const [isTermsOfServiceModalVisible, setIsTermsOfServiceModalVisible] = useState<boolean>(false);
   const [isGuidedTourModalVisible, setIsGuidedTourModalVisible] = useState<boolean>(false);
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
+  // Info: (20251223 - Tzuhan) State
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState<boolean>(false);
 
-  // Info: (20251217 - Julian) Visibility handler for Modals
   const termsOfServiceModalVisibilityHandler = () =>
     setIsTermsOfServiceModalVisible((prev) => !prev);
 
   const guidedTourModalVisibilityHandler = () => setIsGuidedTourModalVisible((prev) => !prev);
 
   const registerModalVisibilityHandler = () => setIsRegisterModalVisible((prev) => !prev);
+
+  // Info: (20251223 - Tzuhan) Handler
+  const authenticationModalVisibilityHandler = () =>
+    setIsAuthenticationModalVisible((prev) => !prev);
 
   const value = useMemo(
     () => ({
@@ -45,6 +56,9 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
       guidedTourModalVisibilityHandler,
       isRegisterModalVisible,
       registerModalVisibilityHandler,
+      // Info: (20251223 - Tzuhan) Value
+      isAuthenticationModalVisible,
+      authenticationModalVisibilityHandler,
     }),
     [
       isTermsOfServiceModalVisible,
@@ -53,6 +67,8 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
       guidedTourModalVisibilityHandler,
       isRegisterModalVisible,
       registerModalVisibilityHandler,
+      isAuthenticationModalVisible,
+      authenticationModalVisibilityHandler,
     ]
   );
 

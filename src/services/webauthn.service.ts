@@ -47,6 +47,7 @@ class WebAuthnService {
   }
 
   /**
+   * Info: (20251224 - Tzuhan)
    * [Step 2] 驗證登入
    */
   public async loginWithAddress(

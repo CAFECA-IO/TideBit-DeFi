@@ -1,36 +1,29 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  adapter = ""
 }
 
 datasource db {
   provider = "postgresql"
-//   url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  address          String   @unique
+  pubKeyX          String?
+  pubKeyY          String?
+  credentialId     String?
+  currentChallenge String?
+  name             String?
+  role             Role     @default(PERSONAL)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([address])
 }
 
 enum Role {
   PERSONAL
   COMPANY
 }
-
-model User {
-  id            String    @id @default(uuid())
-  address       String    @unique // Info: (20251222 - Tzuhan) SCW 合約地址 (Identity)
-  
-  // Info: (20251222 - Tzuhan) FIDO2 相關 (從鏈上爬取或登入時更新)
-  pubKeyX       String?   // Info: (20251222 - Tzuhan) 來自合約 AccountCreated 事件
-  pubKeyY       String?   // Info: (20251222 - Tzuhan) 來自合約 AccountCreated 事件
-  credentialId  String?   
-  
-  // Info: (20251222 - Tzuhan) 認證相關 (僅用於 Challenge-Response 登入流程)
-  currentChallenge String? 
-
-  name            String?
-  role            Role   @default(PERSONAL) 
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([address])
-}
-
-// Info: (20251222 - Tzuhan) 之後再擴充 Company, Project 等

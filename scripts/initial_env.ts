@@ -39,14 +39,14 @@ async function ensureEnvVar(
  * Info: (20250925 - Tzuhan) 生成 ES256 金鑰對並回傳格式化後的 PEM 私鑰。
  */
 async function generateFormattedPrivateKey(): Promise<string> {
-  // Info: (20250925 - Tzuhan) 【修正】新增 { extractable: true } 選項，允許私鑰被匯出。
   const { privateKey } = await generateKeyPair('ES256', { extractable: true });
   const pem = await exportPKCS8(privateKey);
+  // Info: (20250925 - Tzuhan) 將換行符號轉義，確保能單行存入 .env
   return `"${pem.replace(/\n/g, '\\n')}"`;
 }
 
 async function initializeEnv() {
-  console.log('Checking .env file for CAFECA Digital ID setup...');
+  console.log('Checking .env file for TideBit DeFi setup...');
   const envFile = path.resolve(process.cwd(), '.env');
   const sampleFile = path.resolve(process.cwd(), '.env.example');
   let originalContent = '';
@@ -67,7 +67,7 @@ async function initializeEnv() {
 
   modifiedContent = await ensureEnvVar(
     modifiedContent,
-    'NEXT_PUBLIC_ORIGIN',
+    'NEXT_PUBLIC_APP_URL',
     () => '"http://localhost:3000"'
   );
 
@@ -77,8 +77,16 @@ async function initializeEnv() {
     generateFormattedPrivateKey
   );
 
+  // Info: (20251223 - Tzuhan) 確保 DATABASE_URL 存在 (提醒用)
   if (!/^DATABASE_URL=.*$/m.test(modifiedContent)) {
     console.warn('\n[!] IMPORTANT: Please manually set your DATABASE_URL in the .env file.');
+  }
+
+  if (modifiedContent !== originalContent) {
+    await fs.writeFile(envFile, modifiedContent, 'utf-8');
+    console.log('✅ .env file updated successfully.');
+  } else {
+    console.log('No changes needed for .env file.');
   }
 }
 

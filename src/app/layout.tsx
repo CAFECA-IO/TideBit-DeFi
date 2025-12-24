@@ -4,6 +4,7 @@ import LockScreenMask from '@/components/common/lock_screen_mask';
 import { GlobalProvider } from '@/contexts/global_context';
 import { ModalProvider } from '@/contexts/modal_context';
 import '@/styles/globals.css';
+import { AuthProvider } from '@/contexts/auth_context';
 
 // Info: (20251216 - Julian) 英文字體用 Manrope
 const manrope = Manrope({
@@ -40,9 +41,11 @@ export default function RootLayout({
       <body
         className={`${manrope.className} ${notoSansTC.className} ${notoSansSC.className} antialiased`}
       >
-        <GlobalProvider>
-          <ModalProvider>{children}</ModalProvider>
-        </GlobalProvider>
+        <AuthProvider>
+          <GlobalProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </GlobalProvider>
+        </AuthProvider>
 
         {/* Info: (20251216 - Julian) 全域鎖定螢幕遮罩 */}
         <LockScreenMask />

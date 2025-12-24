@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
@@ -14,6 +15,7 @@ interface IFundingTicketProps {
 
 const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
   const {
+    id,
     coverImageId,
     tokenPrice,
     tokenName,
@@ -34,6 +36,8 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     isCommitted,
     isLocked,
   } = data;
+
+  const detailLink = `/funding/${id}`;
 
   // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
@@ -173,15 +177,21 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
         ? upcomingContent
         : closedContent;
 
-  return (
-    <div className="relative">
+  const displayedTicket = (
+    <>
       {/* Info: (202501219 - Julian) Committed Mark */}
       {isCommitted && (
         <div className="absolute -top-2 right-spacing-lv-4 z-10">
           <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
         </div>
       )}
-      <div className="flex h-full w-450px flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
+      <div
+        className={`${
+          isLocked
+            ? 'group-hover:cursor-not-allowed'
+            : 'group-hover:cursor-pointer group-hover:border-text-field-outline-focused'
+        } flex h-full w-450px flex-col overflow-hidden rounded-radius-l border border-transparent bg-surface-neutral-container-lv2`}
+      >
         {/* Info: (202501218 - Julian) Cover Image */}
         <div className="relative h-180px w-full shrink-0">
           <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />
@@ -208,8 +218,18 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
           {displayedContent}
         </div>
       </div>
-    </div>
+    </>
   );
+
+  const isDisplayedLink = isLocked ? (
+    <div className="group relative">{displayedTicket}</div>
+  ) : (
+    <Link href={detailLink} className="group relative">
+      {displayedTicket}
+    </Link>
+  );
+
+  return isDisplayedLink;
 };
 
 export default FundingTicket;

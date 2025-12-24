@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
 import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/utils/common';
+import OnGoingFundingStat from '@/components/funding/ongoing_funding_stat';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
 
@@ -28,9 +29,6 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     committedFundAmount,
     committedTokensCount,
     investorsCount,
-    remainingDays,
-    releasedTokensCount,
-    soldTokensCount,
     startedAt,
     endedAt,
     isCommitted,
@@ -41,8 +39,6 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
 
   // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
-  const raisedFundingText = `NT$ ${numberWithCommas(raisedFundingAmount)}`;
-  const goalFundingText = `NT$ ${numberWithCommas(goalFundingAmount)}`;
 
   // Info: (202501219 - Julian) 已結束的募資須顯示期間
   const fundingPeriodText =
@@ -88,36 +84,6 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
         </div>
       </div>
     </div>
-  );
-
-  // Info: (202501219 - Julian) 募資進行中：顯示進度條與「售出/釋出 Token 數量」、「投資人數」、「剩餘天數」三個統計數據
-  const onGoingContent = (
-    <>
-      {/* Info: (202501218 - Julian) Funding Progress */}
-      <ProgressBar
-        percentage={progressPercentage}
-        color={ProgressBarColor.GRADIENT}
-        size={ProgressBarSize.BASE}
-        minText={raisedFundingText}
-        maxText={goalFundingText}
-        disabled={isLocked}
-      />
-      {/* Info: (202501218 - Julian) Funding Stats */}
-      <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
-        <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{bigNumberToString(soldTokensCount)}</p>
-          <p className={statLabelStyle}>Tokens / {bigNumberToString(releasedTokensCount)}</p>
-        </div>
-        <div className="flex flex-col items-center border-x border-border-neutral-strong">
-          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
-          <p className={statLabelStyle}>Investors</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{numberWithCommas(remainingDays)}</p>
-          <p className={statLabelStyle}>Days</p>
-        </div>
-      </div>
-    </>
   );
 
   // Info: (202501219 - Julian) 即將開始：顯示目標金額與開始日期
@@ -171,11 +137,13 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
   );
 
   const displayedContent =
-    fundingStatus === FundingStatus.ON_GOING
-      ? onGoingContent
-      : fundingStatus === FundingStatus.UPCOMING
-        ? upcomingContent
-        : closedContent;
+    fundingStatus === FundingStatus.ON_GOING ? (
+      <OnGoingFundingStat data={data} />
+    ) : fundingStatus === FundingStatus.UPCOMING ? (
+      upcomingContent
+    ) : (
+      closedContent
+    );
 
   const displayedTicket = (
     <>

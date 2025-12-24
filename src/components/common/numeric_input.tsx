@@ -13,6 +13,7 @@ export enum NumericInputSize {
 
 interface INumericInputProps {
   saveNumberValue: (value: number) => void;
+  defaultValue?: number; // Info: (20251223 - Julian) 預設值，若不提供則為 0
   plusValue?: number; // Info: (20251223 - Julian) 點擊加號時增加的值，預設為 1
   minusValue?: number; // Info: (20251223 - Julian) 點擊減號時減少的值，預設為 1
   maxValue?: number; // Info: (20251223 - Julian) 最大值限制，預設為 Infinity
@@ -23,6 +24,7 @@ interface INumericInputProps {
 // ToDo: (20251224 - Julian) 未來可能有需要加入小數點的需求
 const NumericInput: React.FC<INumericInputProps> = ({
   saveNumberValue,
+  defaultValue = 0,
   plusValue = 1,
   minusValue = 1,
   maxValue = Infinity,
@@ -33,7 +35,7 @@ const NumericInput: React.FC<INumericInputProps> = ({
   const removeRegex = /[^0-9.-]/g;
 
   // Info: (20251223 - Julian) 顯示用的值(string)
-  const [displayedValue, setDisplayedValue] = useState<string>(numberWithCommas(0));
+  const [displayedValue, setDisplayedValue] = useState<string>(numberWithCommas(defaultValue));
 
   // Info: (20251224 - Julian) 按鈕樣式設定
   const btnSize = size === NumericInputSize.SMALL ? 20 : size === NumericInputSize.LARGE ? 36 : 24;
@@ -180,7 +182,7 @@ const NumericInput: React.FC<INumericInputProps> = ({
   };
 
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <button
         type="button"
         onClick={handleMinus}
@@ -188,7 +190,7 @@ const NumericInput: React.FC<INumericInputProps> = ({
       >
         <FaMinus size={btnSize} />
       </button>
-      <div className="border-x border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-3">
+      <div className="flex-1 border-x border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-3">
         <input
           type="text"
           value={displayedValue}
@@ -197,7 +199,7 @@ const NumericInput: React.FC<INumericInputProps> = ({
           onWheel={handleWheel}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`${inputStyle} h-full flex-1 bg-transparent text-center text-text-field-text-active outline-none`}
+          className={`${inputStyle} size-full bg-transparent text-center text-text-field-text-active outline-none`}
         />
       </div>
       <button

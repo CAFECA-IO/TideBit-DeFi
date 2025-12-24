@@ -25,6 +25,9 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
+  // Info: (20251224 - Julian) 在選單打開或非預設選項時，顯示高亮邊框
+  const isFocused = isDropdownOpen || activeOption !== options[0];
+
   // Info: (20251224 - Julian) 圖標
   const icon = prefixIcon && <div className="pl-spacing-lv-6 pr-spacing-lv-4">{prefixIcon}</div>;
 
@@ -50,7 +53,9 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
       {/* Info: (20251224 - Julian) Button */}
       <div
         onClick={toggleDropdown}
-        className="flex w-full items-center rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active hover:cursor-pointer hover:border-text-field-outline-focused hover:bg-text-field-surface-addon"
+        className={` ${
+          isFocused ? 'border-text-field-outline-focused' : 'border-text-field-outline-default'
+        } flex w-full items-center rounded-radius-s border bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active hover:cursor-pointer hover:border-text-field-outline-focused hover:bg-text-field-surface-addon`}
       >
         {icon}
         <div className="w-140px whitespace-nowrap px-spacing-lv-6 font-medium">{activeOption}</div>
@@ -64,7 +69,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
           isDropdownOpen
             ? 'visible translate-y-0 opacity-100'
             : 'invisible -translate-y-12 opacity-0'
-        } absolute top-14 z-dropmenu flex w-full flex-col rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active shadow-md transition-all duration-150 ease-in-out`}
+        } absolute top-14 z-dropmenu flex w-full flex-col rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active shadow-lg transition-all duration-150 ease-in-out`}
       >
         {dropdown}
       </div>

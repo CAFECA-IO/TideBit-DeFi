@@ -7,14 +7,14 @@ export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
 
-    // 1. Verify Token & Get User
+    // Info: (20251224 - Tzuhan) 1. Verify Token & Get User
     const user = await getIdentityFromDeWT(authHeader);
 
     if (!user) {
       return jsonFail(ApiCode.UNAUTHORIZED, 'Invalid or expired token');
     }
 
-    // 2. Return User Profile
+    // Info: (20251224 - Tzuhan) 2. Return User Profile
     return jsonOk({
       address: user.address,
       name: user.name,

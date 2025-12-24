@@ -5,22 +5,48 @@ import { FaPlus, FaMinus } from 'react-icons/fa6';
 import { numberWithCommas } from '@/lib/utils/common';
 import { KEYBOARD_EVENT_CODE } from '@/constants/keyboard_event_code';
 
-interface INumericInputProps {
-  saveNumberValue: (value: number) => void;
-  plusValue?: number;
-  minusValue?: number;
+export enum NumericInputSize {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
 }
 
+interface INumericInputProps {
+  saveNumberValue: (value: number) => void;
+  defaultValue?: number; // Info: (20251223 - Julian) 預設值，若不提供則為 0
+  plusValue?: number; // Info: (20251223 - Julian) 點擊加號時增加的值，預設為 1
+  minusValue?: number; // Info: (20251223 - Julian) 點擊減號時減少的值，預設為 1
+  maxValue?: number; // Info: (20251223 - Julian) 最大值限制，預設為 Infinity
+  minValue?: number; // Info: (20251223 - Julian) 最小值限制，預設為 0
+  size?: NumericInputSize; // Info: (20251224 - Julian) 輸入框大小
+}
+
+// ToDo: (20251224 - Julian) 未來可能有需要加入小數點的需求
 const NumericInput: React.FC<INumericInputProps> = ({
   saveNumberValue,
+  defaultValue = 0,
   plusValue = 1,
   minusValue = 1,
+  maxValue = Infinity,
+  minValue = 0,
+  size = NumericInputSize.MEDIUM,
 }) => {
   // Info: (20251223 - Julian) 移除非數字、非小數點、非負號的正規表達式
   const removeRegex = /[^0-9.-]/g;
 
   // Info: (20251223 - Julian) 顯示用的值(string)
-  const [displayedValue, setDisplayedValue] = useState<string>(numberWithCommas(0));
+  const [displayedValue, setDisplayedValue] = useState<string>(numberWithCommas(defaultValue));
+
+  // Info: (20251224 - Julian) 按鈕樣式設定
+  const btnSize = size === NumericInputSize.SMALL ? 20 : size === NumericInputSize.LARGE ? 36 : 24;
+  const btnStyle = size === NumericInputSize.LARGE ? 'p-spacing-lv-4' : 'p-spacing-lv-2';
+  // Info: (20251224 - Julian) 輸入框文字樣式設定
+  const inputStyle =
+    size === NumericInputSize.SMALL
+      ? 'text-xs font-medium'
+      : size === NumericInputSize.LARGE
+        ? 'text-3xl font-semibold'
+        : 'text-sm font-medium';
 
   const saveNumber = (str: string) => {
     // Info: (20251223 - Julian) 移除格式並轉為數字
@@ -37,10 +63,10 @@ const NumericInput: React.FC<INumericInputProps> = ({
       value
         .toString()
         .replace(/^0[^.](\d)/, '$1') // Info: (20251223 - Julian) 避免 01，但允許 0.1
-        .replace(/[^0-9.]/g, '') // Info: (20251223 - Julian) 移除非數字和小數點字符
+        .replace(/[^0-9]/g, '') // Info: (20251223 - Julian) 移除非數字
         .replace(/(\..*)\./g, '$1') || '0'; // Info: (20251223 - Julian) 只允許一個小數點
 
-    // // Info: (20251223 - Julian) 允許輸入 `.`，但顯示 `0.`
+    // Info: (20251223 - Julian) 允許輸入 `.`，但顯示 `0.`
     if (sanitizedValue === '.') {
       setDisplayedValue('0.');
       return;
@@ -86,9 +112,10 @@ const NumericInput: React.FC<INumericInputProps> = ({
 
     // Info: (20250306 - Julian) 如果按下的是數字鍵
     if (regex.test(event.code)) {
-      code = event.code.replace(/\D/g, ''); // Info: (20250321 - Julian) 取得數字 (去掉前面的字符)
-      // Info: (20250319 - Anna) 允許輸入小數點，但只能輸入一次
+      // Info: (20250321 - Julian) 取得數字 (去掉前面的字符)
+      code = event.code.replace(/\D/g, '');
     } else if (
+      // Info: (20250319 - Anna) 允許輸入小數點，但只能輸入一次
       (event.key === '.' || event.code === KEYBOARD_EVENT_CODE.PERIOD) &&
       displayedValue.includes('.')
     ) {
@@ -126,30 +153,44 @@ const NumericInput: React.FC<INumericInputProps> = ({
 
   // Info: (20251223 - Julian) 減號按鈕處理：將目前值減去 minusValue，更新顯示並儲存
   const handleMinus = () => {
-    const newValue = parseFloat(displayedValue.replace(removeRegex, '')) - minusValue;
-    const formattedValue = numberWithCommas(newValue.toString());
+    // Info: (20251223 - Julian) 取得純數字
+    const pureNum = parseFloat(displayedValue.replace(removeRegex, ''));
+    // Info: (20251223 - Julian) 計算新值
+    const newValue = pureNum - minusValue;
+    // Info: (20251223 - Julian) 檢查是否低於最小值
+    const availableValue = newValue < minValue ? minValue : newValue;
+    // Info: (20251223 - Julian) 格式化顯示值
+    const formattedValue = numberWithCommas(availableValue.toString());
+
     setDisplayedValue(formattedValue);
-    saveNumberValue(newValue);
+    saveNumberValue(availableValue);
   };
 
   // Info: (20251223 - Julian) 加號按鈕處理：將目前值加上 plusValue，更新顯示並儲存
   const handlePlus = () => {
-    const newValue = parseFloat(displayedValue.replace(removeRegex, '')) + plusValue;
-    const formattedValue = numberWithCommas(newValue.toString());
+    // Info: (20251223 - Julian) 取得純數字
+    const pureNum = parseFloat(displayedValue.replace(removeRegex, ''));
+    // Info: (20251223 - Julian) 計算新值
+    const newValue = pureNum + plusValue;
+    // Info: (20251223 - Julian) 檢查是否超過最大值
+    const availableValue = newValue > maxValue ? maxValue : newValue;
+    // Info: (20251223 - Julian) 格式化顯示值
+    const formattedValue = numberWithCommas(availableValue.toString());
+
     setDisplayedValue(formattedValue);
-    saveNumberValue(newValue);
+    saveNumberValue(availableValue);
   };
 
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <button
         type="button"
         onClick={handleMinus}
-        className="rounded-l-radius-s bg-button-neutral-filled-neutral-default p-spacing-lv-2 text-button-neutral-filled-on-neutral-default"
+        className={`${btnStyle} rounded-l-radius-s bg-button-neutral-filled-neutral-default text-button-neutral-filled-on-neutral-default`}
       >
-        <FaMinus size={24} />
+        <FaMinus size={btnSize} />
       </button>
-      <div className="border-x border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-3">
+      <div className="flex-1 border-x border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-3">
         <input
           type="text"
           value={displayedValue}
@@ -158,15 +199,15 @@ const NumericInput: React.FC<INumericInputProps> = ({
           onWheel={handleWheel}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="h-full flex-1 bg-transparent text-center text-sm font-medium text-text-field-text-active outline-none"
+          className={`${inputStyle} size-full bg-transparent text-center text-text-field-text-active outline-none`}
         />
       </div>
       <button
         type="button"
         onClick={handlePlus}
-        className="rounded-r-radius-s bg-button-neutral-filled-neutral-default p-spacing-lv-2 text-button-neutral-filled-on-neutral-default"
+        className={`${btnStyle} rounded-r-radius-s bg-button-neutral-filled-neutral-default p-spacing-lv-2 text-button-neutral-filled-on-neutral-default`}
       >
-        <FaPlus size={24} />
+        <FaPlus size={btnSize} />
       </button>
     </div>
   );

@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
 import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/utils/common';
+import OnGoingFundingStat from '@/components/funding/ongoing_funding_stat';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
 
@@ -14,6 +16,7 @@ interface IFundingTicketProps {
 
 const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
   const {
+    id,
     coverImageId,
     tokenPrice,
     tokenName,
@@ -26,19 +29,16 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     committedFundAmount,
     committedTokensCount,
     investorsCount,
-    remainingDays,
-    releasedTokensCount,
-    soldTokensCount,
     startedAt,
     endedAt,
     isCommitted,
     isLocked,
   } = data;
 
+  const detailLink = `/funding/${id}`;
+
   // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
-  const raisedFundingText = `NT$ ${numberWithCommas(raisedFundingAmount)}`;
-  const goalFundingText = `NT$ ${numberWithCommas(goalFundingAmount)}`;
 
   // Info: (202501219 - Julian) 已結束的募資須顯示期間
   const fundingPeriodText =
@@ -84,36 +84,6 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
         </div>
       </div>
     </div>
-  );
-
-  // Info: (202501219 - Julian) 募資進行中：顯示進度條與「售出/釋出 Token 數量」、「投資人數」、「剩餘天數」三個統計數據
-  const onGoingContent = (
-    <>
-      {/* Info: (202501218 - Julian) Funding Progress */}
-      <ProgressBar
-        percentage={progressPercentage}
-        color={ProgressBarColor.GRADIENT}
-        size={ProgressBarSize.BASE}
-        minText={raisedFundingText}
-        maxText={goalFundingText}
-        disabled={isLocked}
-      />
-      {/* Info: (202501218 - Julian) Funding Stats */}
-      <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
-        <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{bigNumberToString(soldTokensCount)}</p>
-          <p className={statLabelStyle}>Tokens / {bigNumberToString(releasedTokensCount)}</p>
-        </div>
-        <div className="flex flex-col items-center border-x border-border-neutral-strong">
-          <p className={statValueStyle}>{numberWithCommas(investorsCount)}</p>
-          <p className={statLabelStyle}>Investors</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <p className={statValueStyle}>{numberWithCommas(remainingDays)}</p>
-          <p className={statLabelStyle}>Days</p>
-        </div>
-      </div>
-    </>
   );
 
   // Info: (202501219 - Julian) 即將開始：顯示目標金額與開始日期
@@ -167,21 +137,29 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
   );
 
   const displayedContent =
-    fundingStatus === FundingStatus.ON_GOING
-      ? onGoingContent
-      : fundingStatus === FundingStatus.UPCOMING
-        ? upcomingContent
-        : closedContent;
+    fundingStatus === FundingStatus.ON_GOING ? (
+      <OnGoingFundingStat data={data} />
+    ) : fundingStatus === FundingStatus.UPCOMING ? (
+      upcomingContent
+    ) : (
+      closedContent
+    );
 
-  return (
-    <div className="relative">
+  const displayedTicket = (
+    <>
       {/* Info: (202501219 - Julian) Committed Mark */}
       {isCommitted && (
         <div className="absolute -top-2 right-spacing-lv-4 z-10">
           <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
         </div>
       )}
-      <div className="flex h-full w-450px flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2">
+      <div
+        className={`${
+          isLocked
+            ? 'group-hover:cursor-not-allowed'
+            : 'group-hover:cursor-pointer group-hover:border-text-field-outline-focused'
+        } flex h-full w-450px flex-col overflow-hidden rounded-radius-l border border-transparent bg-surface-neutral-container-lv2`}
+      >
         {/* Info: (202501218 - Julian) Cover Image */}
         <div className="relative h-180px w-full shrink-0">
           <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />
@@ -208,8 +186,18 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
           {displayedContent}
         </div>
       </div>
-    </div>
+    </>
   );
+
+  const isDisplayedLink = isLocked ? (
+    <div className="group relative">{displayedTicket}</div>
+  ) : (
+    <Link href={detailLink} className="group relative">
+      {displayedTicket}
+    </Link>
+  );
+
+  return isDisplayedLink;
 };
 
 export default FundingTicket;

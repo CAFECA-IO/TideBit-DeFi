@@ -11,6 +11,7 @@ export interface IWebAuthnRepository {
     pubKeyY: string;
     credentialId?: string;
     name?: string;
+    imageUrl?: string;
   }): Promise<User>;
 }
 
@@ -41,6 +42,7 @@ class WebAuthnRepository implements IWebAuthnRepository {
     pubKeyY: string;
     credentialId?: string;
     name?: string;
+    imageUrl?: string;
   }): Promise<User> {
     return prisma.user.upsert({
       where: { address: data.address },
@@ -49,6 +51,7 @@ class WebAuthnRepository implements IWebAuthnRepository {
         pubKeyY: data.pubKeyY,
         ...(data.credentialId ? { credentialId: data.credentialId, currentChallenge: null } : {}),
         ...(data.name ? { name: data.name } : {}),
+        ...(data.imageUrl ? { imageUrl: data.imageUrl } : {}),
       },
       create: {
         address: data.address,
@@ -56,6 +59,7 @@ class WebAuthnRepository implements IWebAuthnRepository {
         pubKeyY: data.pubKeyY,
         credentialId: data.credentialId,
         name: data.name ?? `User ${data.address.slice(0, 6)}`,
+        imageUrl: data.imageUrl ?? null,
       },
     });
   }

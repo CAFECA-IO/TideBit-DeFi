@@ -126,7 +126,7 @@ class WebAuthnService {
       if (logs.length === 0) return null;
 
       // Update: 解構取得 name
-      const { pubKeyX, pubKeyY, name } = logs[0].args;
+      const { pubKeyX, pubKeyY, name, imageUrl } = logs[0].args;
 
       if (!pubKeyX || !pubKeyY) return null;
 
@@ -135,6 +135,7 @@ class WebAuthnService {
         pubKeyX: pubKeyX.toString(),
         pubKeyY: pubKeyY.toString(),
         name: name || `User ${address.slice(0, 6)}`, // 使用鏈上抓到的 name
+        imageUrl: imageUrl,
       });
     } catch (error) {
       console.error('[Sync] Chain fetch failed:', error);

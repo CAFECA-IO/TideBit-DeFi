@@ -113,7 +113,7 @@ class WebAuthnService {
 
     console.log(`[Sync] Fetching ${address} from chain...`);
     try {
-      // Update: 更新 event 定義以包含 name, imageUrl
+      // Info: (20251226 - Tzuhan) Update: 更新 event 定義以包含 name, imageUrl
       const logs = await publicClient.getLogs({
         address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
         event: parseAbiItem(
@@ -125,7 +125,7 @@ class WebAuthnService {
 
       if (logs.length === 0) return null;
 
-      // Update: 解構取得 name
+      // Info: (20251226 - Tzuhan) Update: 解構取得 name
       const { pubKeyX, pubKeyY, credentialId, name, imageUrl } = logs[0].args;
 
       if (!pubKeyX || !pubKeyY) return null;
@@ -135,7 +135,7 @@ class WebAuthnService {
         pubKeyX: pubKeyX.toString(),
         pubKeyY: pubKeyY.toString(),
         credentialId: credentialId,
-        name: name || `User ${address.slice(0, 6)}`, // 使用鏈上抓到的 name
+        name: name || `User ${address.slice(0, 6)}`, // Info: (20251226 - Tzuhan) 使用鏈上抓到的 name
         imageUrl: imageUrl,
       });
     } catch (error) {

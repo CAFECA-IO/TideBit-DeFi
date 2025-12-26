@@ -117,7 +117,7 @@ class WebAuthnService {
       const logs = await publicClient.getLogs({
         address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
         event: parseAbiItem(
-          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string name, string imageUrl)'
+          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId,string name, string imageUrl)'
         ),
         args: { scw: address as `0x${string}` },
         fromBlock: 'earliest',
@@ -126,7 +126,7 @@ class WebAuthnService {
       if (logs.length === 0) return null;
 
       // Update: 解構取得 name
-      const { pubKeyX, pubKeyY, name, imageUrl } = logs[0].args;
+      const { pubKeyX, pubKeyY, credentialId, name, imageUrl } = logs[0].args;
 
       if (!pubKeyX || !pubKeyY) return null;
 
@@ -134,6 +134,7 @@ class WebAuthnService {
         address: address,
         pubKeyX: pubKeyX.toString(),
         pubKeyY: pubKeyY.toString(),
+        credentialId: credentialId,
         name: name || `User ${address.slice(0, 6)}`, // 使用鏈上抓到的 name
         imageUrl: imageUrl,
       });

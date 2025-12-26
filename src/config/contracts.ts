@@ -6,9 +6,9 @@ export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isunc
 // 建議: 若專案設定允許引用 src 外部檔案，可直接 import JSON；否則在此定義常量
 export const CONTRACT_ADDRESSES = {
   ENTRY_POINT: (process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS ||
-    '0x1e5cBD605Aa15Ed0b5068B371E8d40D1BC7a406a') as Address,
+    '0x1eF970481a7fD1ee4A21a473E123bb842d29bb01') as Address,
   FACTORY: (process.env.NEXT_PUBLIC_SCW_FACTORY_ADDRESS ||
-    '0x6c661c64Bd3F6C37C81daEC7f5A54e18D4CeaDcd') as Address,
+    '0xa5d06d2550eceE9Ef21A17107Bccd7f72FEc4F9C') as Address,
 } as const;
 
 export const ABIS = {
@@ -21,8 +21,8 @@ export const ABIS = {
     'error FailedOp(uint256 opIndex, string reason)',
   ]),
   FACTORY: parseAbi([
-    'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt)',
+    'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string username, string imageUrl)',
     'function getAddress(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) public view returns (address)',
-    'function createAccount(uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string username, string imageUrl) external returns (address)',
+    'function createAccount(uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string username, string imageUrl) external returns (address)',
   ]),
 };

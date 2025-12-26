@@ -206,7 +206,7 @@ const RegisterModal: React.FC = () => {
       const factoryCallData = encodeFunctionData({
         abi: ABIS.FACTORY,
         functionName: 'createAccount',
-        args: [pubKeyX, pubKeyY, salt, username, imageUrl],
+        args: [pubKeyX, pubKeyY, salt, credentialID, username, imageUrl],
       });
       const initCode = `${CONTRACT_ADDRESSES.FACTORY}${factoryCallData.slice(2)}` as Hex;
 

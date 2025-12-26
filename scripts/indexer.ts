@@ -1,0 +1,60 @@
+import 'dotenv/config';
+import { parseAbiItem } from 'viem';
+import { publicClient } from '../src/lib/viem';
+import { CONTRACT_ADDRESSES } from '../src/config/contracts';
+import { webAuthnRepo } from '../src/repositories/webauthn.repo';
+
+/**
+ * Info: (20251226 - Tzuhan)
+ * Background Indexer Service
+ * 職責：監聽鏈上 SCWFactory 事件，即時將新註冊的用戶資料同步到資料庫。
+ */
+async function main() {
+  console.log('🚀 Starting TideBit-DeFi Indexer...');
+  console.log(`📡 Watching Factory Contract: ${CONTRACT_ADDRESSES.FACTORY}`);
+
+  // Info: (20251226 - Tzuhan) 監聽 AccountCreated 事件
+  const unwatch = publicClient.watchEvent({
+    address: CONTRACT_ADDRESSES.FACTORY,
+    event: parseAbiItem(
+      'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string name, string imageUrl)'
+    ),
+    onLogs: async (logs) => {
+      for (const log of logs) {
+        const { scw, pubKeyX, pubKeyY, name, imageUrl } = log.args;
+
+        if (!scw || !pubKeyX || !pubKeyY) continue;
+
+        console.log(`[Indexer] New Account Detected: ${name} (${scw})`);
+
+        try {
+          await webAuthnRepo.upsertUser({
+            address: scw,
+            pubKeyX: pubKeyX.toString(),
+            pubKeyY: pubKeyY.toString(),
+            name: name || `User ${scw.slice(0, 6)}`,
+            imageUrl: imageUrl,
+          });
+          console.log(`✅ [Indexer] Synced user ${scw} to DB.`);
+        } catch (err) {
+          console.error(`❌ [Indexer] Failed to sync user ${scw}:`, err);
+        }
+      }
+    },
+    onError: (error) => {
+      console.error('❌ [Indexer] Watch Error:', error);
+    },
+  });
+
+  // Info: (20251226 - Tzuhan) 保持 Process 執行 (除非被強制停止)
+  process.on('SIGINT', () => {
+    console.log('🛑 Stopping Indexer...');
+    unwatch();
+    process.exit(0);
+  });
+}
+
+main().catch((error) => {
+  console.error('Indexer fatal error:', error);
+  process.exit(1);
+});

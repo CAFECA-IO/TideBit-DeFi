@@ -18,6 +18,7 @@ contract SCWFactory {
         uint256 pubKeyX, 
         uint256 pubKeyY, 
         uint256 salt, 
+        string credentialId,
         string name, 
         string imageUrl
     );
@@ -73,6 +74,7 @@ contract SCWFactory {
         uint256 pubKeyX, 
         uint256 pubKeyY, 
         uint256 salt, 
+        string calldata credentialId,
         string calldata name, 
         string calldata imageUrl
     ) external returns (PersonalSCW ret) {
@@ -90,6 +92,6 @@ contract SCWFactory {
         require(address(ret) == addr, "Factory: address mismatch");
 
         // Info: (20251125 - Tzuhan) 5. 發送事件。Update: 發送包含 Metadata 的事件
-        emit AccountCreated(address(ret), pubKeyX, pubKeyY, salt, name, imageUrl);
+        emit AccountCreated(address(ret), pubKeyX, pubKeyY, salt, credentialId, name, imageUrl);
     }
 }

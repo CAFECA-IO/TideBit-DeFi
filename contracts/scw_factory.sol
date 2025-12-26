@@ -12,8 +12,15 @@ import "./personal_scw.sol";
 contract SCWFactory {
     address payable public immutable entryPoint;
 
-    // Info: (20251125 - Tzuhan) [重要] 讓後端/Graph 可以索引到新帳戶的建立
-    event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt);
+    // Info: (20251126 - Tzuhan) Update: 新增 name 和 imageUrl 到事件
+    event AccountCreated(
+        address indexed scw, 
+        uint256 pubKeyX, 
+        uint256 pubKeyY, 
+        uint256 salt, 
+        string name, 
+        string imageUrl
+    );
 
     constructor(address payable _entryPoint) {
         entryPoint = _entryPoint;
@@ -60,9 +67,15 @@ contract SCWFactory {
      * Info: (20251125 - Tzuhan) 
      * @dev 部署 PersonalSCW 合約
      * 這是 Lazy Deployment 中，Bundler 會透過 UserOp 的 initCode 呼叫的函式
-     */
-    function createAccount(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) external returns (PersonalSCW ret) {
-        // Info: (20251125 - Tzuhan) 1. 計算預期地址
+     * Update: 新增 name 和 imageUrl 參數
+     */    
+    function createAccount(
+        uint256 pubKeyX, 
+        uint256 pubKeyY, 
+        uint256 salt, 
+        string calldata name, 
+        string calldata imageUrl
+    ) external returns (PersonalSCW ret) {
         address addr = getAddress(pubKeyX, pubKeyY, salt);
 
         // Info: (20251125 - Tzuhan) 2. 檢查是否已經部署 (使用 Solidity 0.8+ 內建語法，更乾淨)
@@ -76,7 +89,7 @@ contract SCWFactory {
         // Info: (20251125 - Tzuhan) 4. 安全檢查：確保計算的地址與實際部署地址一致
         require(address(ret) == addr, "Factory: address mismatch");
 
-        // Info: (20251125 - Tzuhan) 5. 發送事件
-        emit AccountCreated(address(ret), pubKeyX, pubKeyY, salt);
+        // Info: (20251125 - Tzuhan) 5. 發送事件。Update: 發送包含 Metadata 的事件
+        emit AccountCreated(address(ret), pubKeyX, pubKeyY, salt, name, imageUrl);
     }
 }

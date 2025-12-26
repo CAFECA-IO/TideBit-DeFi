@@ -82,6 +82,7 @@ class WebAuthnService {
     // Info: (20251223 - Tzuhan) 驗證通過，簽發 Token
     const dewt = await signDeWT(user);
     await this.repo.updateChallenge(address, '');
+    await this.repo.updateChallenge(address, '');
 
     return {
       dewt,
@@ -112,10 +113,11 @@ class WebAuthnService {
 
     console.log(`[Sync] Fetching ${address} from chain...`);
     try {
+      // Update: 更新 event 定義以包含 name, imageUrl
       const logs = await publicClient.getLogs({
         address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
         event: parseAbiItem(
-          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt)'
+          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string name, string imageUrl)'
         ),
         args: { scw: address as `0x${string}` },
         fromBlock: 'earliest',
@@ -123,13 +125,16 @@ class WebAuthnService {
 
       if (logs.length === 0) return null;
 
-      const { pubKeyX, pubKeyY } = logs[0].args;
+      // Update: 解構取得 name
+      const { pubKeyX, pubKeyY, name } = logs[0].args;
+
       if (!pubKeyX || !pubKeyY) return null;
 
       return await this.repo.upsertUser({
         address: address,
         pubKeyX: pubKeyX.toString(),
         pubKeyY: pubKeyY.toString(),
+        name: name || `User ${address.slice(0, 6)}`, // 使用鏈上抓到的 name
       });
     } catch (error) {
       console.error('[Sync] Chain fetch failed:', error);

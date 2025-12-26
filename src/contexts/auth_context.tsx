@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (res.ok) {
           const responseData = await res.json();
           if (responseData.code === 200) {
-            const userData = responseData.data;
+            const userData = responseData.payload;
             setToken(currentToken);
             setUser({
               address: userData.address,

@@ -86,7 +86,7 @@ export async function getLoginChallenge(address: string): Promise<string> {
     throw new AppError(data.code, data.message || 'Failed to get login challenge');
   }
 
-  return data.data.challenge;
+  return data.payload.challenge;
 }
 
 /**
@@ -109,7 +109,7 @@ export async function verifyLogin(
     throw new AppError(data.code, data.message || 'Login verification failed');
   }
 
-  return data.data;
+  return data.payload;
 }
 
 /**

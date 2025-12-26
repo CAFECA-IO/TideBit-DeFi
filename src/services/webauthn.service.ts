@@ -47,7 +47,7 @@ class WebAuthnService {
   }
 
   /**
-   * Info: (20251224 - Tzuhan)
+   * Info: (20251226 - Tzuhan)
    * [Step 2] 驗證登入
    */
   public async loginWithAddress(
@@ -60,6 +60,7 @@ class WebAuthnService {
       throw new AppError(ApiCode.NOT_FOUND, 'User data incomplete. Please retry login flow.');
     }
 
+    // Info: (20251226 - Tzuhan) 將 DB 中的 (X, Y) 還原為驗證庫需要的 SPKI Key 字串
     const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
 
     // Info: (20251223 - Tzuhan) 建構符合 CredentialInfo 定義的物件
@@ -80,7 +81,7 @@ class WebAuthnService {
 
     // Info: (20251223 - Tzuhan) 驗證通過，簽發 Token
     const dewt = await signDeWT(user);
-
+    await this.repo.updateChallenge(address, '');
     await this.repo.updateChallenge(address, '');
 
     return {
@@ -112,10 +113,11 @@ class WebAuthnService {
 
     console.log(`[Sync] Fetching ${address} from chain...`);
     try {
+      // Info: (20251226 - Tzuhan) Update: 更新 event 定義以包含 name, imageUrl
       const logs = await publicClient.getLogs({
         address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
         event: parseAbiItem(
-          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt)'
+          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId,string name, string imageUrl)'
         ),
         args: { scw: address as `0x${string}` },
         fromBlock: 'earliest',
@@ -123,13 +125,18 @@ class WebAuthnService {
 
       if (logs.length === 0) return null;
 
-      const { pubKeyX, pubKeyY } = logs[0].args;
+      // Info: (20251226 - Tzuhan) Update: 解構取得 name
+      const { pubKeyX, pubKeyY, credentialId, name, imageUrl } = logs[0].args;
+
       if (!pubKeyX || !pubKeyY) return null;
 
       return await this.repo.upsertUser({
         address: address,
         pubKeyX: pubKeyX.toString(),
         pubKeyY: pubKeyY.toString(),
+        credentialId: credentialId,
+        name: name || `User ${address.slice(0, 6)}`, // Info: (20251226 - Tzuhan) 使用鏈上抓到的 name
+        imageUrl: imageUrl,
       });
     } catch (error) {
       console.error('[Sync] Chain fetch failed:', error);
@@ -137,7 +144,14 @@ class WebAuthnService {
     }
   }
 
+  /**
+   * Info: (20251226 - Tzuhan) 將 X, Y 座標還原為 P-256 SPKI (DER) 格式
+   */
   private reconstructKeyFromXY(xStr: string, yStr: string): string {
+    // Info: (20251226 - Tzuhan) P-256 SPKI Header (ASN.1 DER sequence for id-ecPublicKey + prime256v1)
+    // Info: (20251226 - Tzuhan) Hex: 3059301306072a8648ce3d020106082a8648ce3d030107034200
+    const SPKI_HEADER = Buffer.from('3059301306072a8648ce3d020106082a8648ce3d030107034200', 'hex');
+
     const toBuffer32 = (numStr: string) => {
       let hex = BigInt(numStr).toString(16);
       if (hex.length % 2 !== 0) hex = '0' + hex;
@@ -150,11 +164,11 @@ class WebAuthnService {
     const x = toBuffer32(xStr);
     const y = toBuffer32(yStr);
 
-    const prefix = Buffer.from([0xa5, 0x01, 0x02, 0x03, 0x26, 0x20, 0x01, 0x21, 0x58, 0x20]);
-    const mid = Buffer.from([0x22, 0x58, 0x20]);
+    // Info: (20251226 - Tzuhan) 0x04 表示 Uncompressed Point
+    const uncompressedPoint = Buffer.concat([Buffer.from([0x04]), x, y]);
 
-    const coseKeyBuffer = Buffer.concat([prefix, x, mid, y]);
-    return coseKeyBuffer.toString('base64url');
+    // Info: (20251226 - Tzuhan) 組合 Header + Point
+    return Buffer.concat([SPKI_HEADER, uncompressedPoint]).toString('base64url');
   }
 }
 

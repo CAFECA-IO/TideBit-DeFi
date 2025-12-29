@@ -6,14 +6,14 @@ import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FiLock } from 'react-icons/fi';
 import { mockFundingItems } from '@/interfaces/funding';
-import { numberWithCommas } from '@/lib/utils/common';
+import { numberWithCommas, timestampToString } from '@/lib/utils/common';
 import Layout from '@/components/common/layout';
 import Breadcrumb from '@/components/common/breadcrumb';
 import { Button } from '@/components/common/button';
-import OnGoingFundingStat from '@/components/funding/ongoing_funding_stat';
+import FundingStat from '@/components/funding/funding_stat';
 import NumericInput from '@/components/common/numeric_input';
 import Countdown from '@/components/common/countdown';
-import { FundingStatus } from '@/constants/funding';
+import { FundingResult, FundingStatus } from '@/constants/funding';
 
 interface IFundingDetailPageBodyProps {
   fundingId: string;
@@ -50,10 +50,12 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     title,
     coverImageId,
     fundingStatus,
+    fundingResult,
     companyName,
     industry,
     tokenPrice,
     tokenName,
+    startedAt,
     endedAt,
     isLocked,
     isCommitted,
@@ -95,7 +97,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
       <>
         {/* Info: (20251224 - Julian) Funding Stat */}
         <div className="flex flex-col gap-spacing-lv-0">
-          <OnGoingFundingStat data={data} />
+          <FundingStat data={data} />
         </div>
         {/* Info: (20251224 - Julian) Funding Value */}
         <div className="flex flex-col">
@@ -123,6 +125,13 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
       <div className="my-spacing-lv-8">
         <Countdown targetTimestamp={endedAt} label="Starting in" />
       </div>
+    ) : fundingResult === FundingResult.FAILED ? (
+      <>
+        <FundingStat data={data} />
+        <p className="text-xs font-normal text-text-neutral-tertiary">
+          {timestampToString(startedAt).dateWithSlash} - {timestampToString(endedAt).dateWithSlash}
+        </p>
+      </>
     ) : null;
 
   // ToDo: (20251224 - Julian) upcoming info, success info, failed info

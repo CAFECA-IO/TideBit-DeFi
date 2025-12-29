@@ -7,6 +7,7 @@ export enum ProgressBarColor {
   GRADIENT = 'gradient',
   ERROR = 'error',
   SUCCESS = 'success',
+  DISABLED = 'disabled',
 }
 
 export enum ProgressBarSize {
@@ -22,7 +23,6 @@ interface IProgressBarProps {
   maxText?: string;
   minText?: string;
   className?: string;
-  disabled?: boolean;
 }
 
 const ProgressBar: React.FC<IProgressBarProps> = ({
@@ -32,7 +32,6 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
   maxText = '',
   minText = '',
   className = '',
-  disabled = false,
 }) => {
   // Info: (202501218 - Julian) 進度條顏色
   const barColor =
@@ -44,7 +43,7 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
           ? 'bg-loading-indicator-surface-error'
           : 'bg-loading-indicator-surface-success';
   // Info: (202501218 - Julian) 停用狀態下的進度條顏色
-  const isShowBarColor = disabled ? 'bg-surface-state-mute' : barColor;
+  const isShowBarColor = color === ProgressBarColor.DISABLED ? 'bg-surface-state-mute' : barColor;
 
   // Info: (202501218 - Julian) 進度條高度
   const barSize =
@@ -58,7 +57,8 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
         ? 'text-loading-indicator-text-on-success'
         : 'text-loading-indicator-text-on-primary'; // Info: (202501218 - Julian) primary 和 gradient 使用相同的文字顏色
   // Info: (202501218 - Julian) 停用狀態下的文字顏色
-  const isShowTextColor = disabled ? 'text-loading-indicator-text-on-primary' : textColor;
+  const isShowTextColor =
+    color === ProgressBarColor.DISABLED ? 'text-loading-indicator-text-on-primary' : textColor;
 
   // Info: (202501218 - Julian) BASE 才顯示百分比
   const textSize = size === ProgressBarSize.BASE ? 'block' : 'hidden';

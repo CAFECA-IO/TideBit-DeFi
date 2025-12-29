@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FiLock } from 'react-icons/fi';
 import { IFundingItemUI } from '@/interfaces/funding';
 import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/utils/common';
-import OnGoingFundingStat from '@/components/funding/ongoing_funding_stat';
+import FundingStat from '@/components/funding/funding_stat';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
 
@@ -39,6 +39,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
 
   // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;
+  const progressColor = isLocked ? ProgressBarColor.DISABLED : ProgressBarColor.GRADIENT;
 
   // Info: (202501219 - Julian) 已結束的募資須顯示期間
   const fundingPeriodText =
@@ -114,9 +115,8 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
       <ProgressBar
         // Info: (202501219 - Julian) 募資已結束，所以不顯示金額
         percentage={progressPercentage}
-        color={ProgressBarColor.GRADIENT}
+        color={progressColor}
         size={ProgressBarSize.BASE}
-        disabled={isLocked}
       />
       {/* Info: (202501219 - Julian) Funding Stats */}
       <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
@@ -138,7 +138,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
 
   const displayedContent =
     fundingStatus === FundingStatus.ON_GOING ? (
-      <OnGoingFundingStat data={data} />
+      <FundingStat data={data} />
     ) : fundingStatus === FundingStatus.UPCOMING ? (
       upcomingContent
     ) : (

@@ -12,6 +12,8 @@ import Breadcrumb from '@/components/common/breadcrumb';
 import { Button } from '@/components/common/button';
 import OnGoingFundingStat from '@/components/funding/ongoing_funding_stat';
 import NumericInput from '@/components/common/numeric_input';
+import Countdown from '@/components/common/countdown';
+import { FundingStatus } from '@/constants/funding';
 
 interface IFundingDetailPageBodyProps {
   fundingId: string;
@@ -44,11 +46,27 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     );
   }
 
-  const { title, coverImageId, companyName, industry, tokenPrice, tokenName, isLocked } = data;
+  const {
+    title,
+    coverImageId,
+    fundingStatus,
+    companyName,
+    industry,
+    tokenPrice,
+    tokenName,
+    endedAt,
+    isLocked,
+    isCommitted,
+  } = data;
 
   // ToDo: (20251224 - Julian) Get real data from API
   const availableBalance = 500000;
   const totalCost = fundingValue * tokenPrice;
+
+  const commitOrder = () => {
+    // ToDo: (20251229 - Julian) Commit Order Logic
+    alert('Commit Order: ' + totalCost);
+  };
 
   // Info: (20251224 - Julian) 用於 Breadcrumb
   const breadcrumbData = [
@@ -72,67 +90,82 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     </div>
   );
 
+  const fundingInfo =
+    fundingStatus === FundingStatus.ON_GOING ? (
+      <>
+        {/* Info: (20251224 - Julian) Funding Stat */}
+        <div className="flex flex-col gap-spacing-lv-0">
+          <OnGoingFundingStat data={data} />
+        </div>
+        {/* Info: (20251224 - Julian) Funding Value */}
+        <div className="flex flex-col">
+          <div className="flex items-stretch justify-between py-spacing-lv-4">
+            <p className="text-text-field-text-label">
+              Available: {numberWithCommas(availableBalance)} TWD
+            </p>
+            <Link href={depositLink} className="text-link-default hover:text-link-hover">
+              Not enough TWD?
+            </Link>
+          </div>
+          <NumericInput saveNumberValue={saveFundingValue} defaultValue={1} minValue={1} />
+        </div>
+        {/* Info: (20251224 - Julian) Total Value */}
+        <div className="flex justify-between text-lg font-bold text-text-neutral-primary">
+          <p>Total</p>
+          <p>{numberWithCommas(totalCost)} TWD</p>
+        </div>
+        {/* Info: (20251224 - Julian) Commit Order Button */}
+        <Button type="button" disabled={isLocked} onClick={commitOrder}>
+          Commit Order
+        </Button>
+      </>
+    ) : fundingStatus === FundingStatus.UPCOMING ? (
+      <div className="my-spacing-lv-8">
+        <Countdown targetTimestamp={endedAt} label="Starting in" />
+      </div>
+    ) : null;
+
   // ToDo: (20251224 - Julian) upcoming info, success info, failed info
   const fundingDetail = (
-    <div className="flex flex-1 flex-col gap-spacing-lv-6 py-spacing-lv-8 pl-spacing-lv-6 pr-spacing-lv-8">
-      {/* Info: (20251224 - Julian) Token Price and Industry */}
-      <div className="flex items-end justify-between">
-        <div className="flex items-end gap-spacing-lv-4">
-          <div className="flex items-end gap-spacing-lv-0 text-text-neutral-primary">
-            <p className="text-5xl font-extrabold">${tokenPrice}</p>
-            <p className="text-xs font-normal">/{tokenName}</p>
-          </div>
-          {isLocked && (
-            <div className="shrink-0 text-icon-neutral-primary">
-              <FiLock size={24} />
+    <div className="relative w-full">
+      {/* Info: (202501219 - Julian) Committed Mark */}
+      {isCommitted && (
+        <div className="absolute -top-2 right-spacing-lv-8 z-10">
+          <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
+        </div>
+      )}
+      <div className="flex flex-1 flex-col gap-spacing-lv-6 py-spacing-lv-8 pl-spacing-lv-6 pr-spacing-lv-8">
+        {/* Info: (20251224 - Julian) Token Price and Industry */}
+        <div className="flex items-end justify-between">
+          <div className="flex items-end gap-spacing-lv-4">
+            <div className="flex items-end gap-spacing-lv-0 text-text-neutral-primary">
+              <p className="text-5xl font-extrabold">${tokenPrice}</p>
+              <p className="text-xs font-normal">/{tokenName}</p>
             </div>
-          )}
+            {isLocked && (
+              <div className="shrink-0 text-icon-neutral-primary">
+                <FiLock size={24} />
+              </div>
+            )}
+          </div>
+          <div className="rounded-radius-rounded bg-badge-brand-secondary px-spacing-lv-2 py-spacing-lv-0 text-xs font-bold text-badge-brand-on-secondary">
+            {industry}
+          </div>
         </div>
-        <div className="rounded-radius-rounded bg-badge-brand-secondary px-spacing-lv-2 py-spacing-lv-0 text-xs font-bold text-badge-brand-on-secondary">
-          {industry}
+        {/* Info: (20251224 - Julian) Title and Company Name */}
+        <div className="flex flex-col gap-spacing-lv-0 py-spacing-lv-3">
+          <p className="text-xl font-bold text-text-neutral-primary">{title}</p>
+          <p className="text-xs font-normal text-text-neutral-tertiary">{companyName}</p>
         </div>
+        {fundingInfo}
       </div>
-      {/* Info: (20251224 - Julian) Title and Company Name */}
-      <div className="flex flex-col gap-spacing-lv-0 py-spacing-lv-3">
-        <p className="text-xl font-bold text-text-neutral-primary">{title}</p>
-        <p className="text-xs font-normal text-text-neutral-tertiary">{companyName}</p>
-      </div>
-      {/* Info: (20251224 - Julian) Funding Stat */}
-      <div className="flex flex-col gap-spacing-lv-0">
-        <OnGoingFundingStat data={data} />
-      </div>
-      {/* Info: (20251224 - Julian) Funding Value */}
-      <div className="flex flex-col">
-        <div className="flex items-stretch justify-between py-spacing-lv-4">
-          <p className="text-text-field-text-label">
-            Available: {numberWithCommas(availableBalance)} TWD
-          </p>
-          <Link href={depositLink} className="text-link-default hover:text-link-hover">
-            Not enough TWD?
-          </Link>
-        </div>
-        <NumericInput
-          saveNumberValue={saveFundingValue}
-          defaultValue={1}
-          plusValue={1000}
-          minusValue={1000}
-          minValue={1}
-        />
-      </div>
-      {/* Info: (20251224 - Julian) Total Value */}
-      <div className="flex justify-between text-lg font-bold text-text-neutral-primary">
-        <p>Total</p>
-        <p>{numberWithCommas(totalCost)} TWD</p>
-      </div>
-      {/* Info: (20251224 - Julian) Commit Order Button */}
-      <Button type="button">Commit Order</Button>
     </div>
   );
 
   const content = (
     <div className="flex">
       {/* Info: (20251224 - Julian) Cover Image */}
-      <div className="size-600px relative shrink-0">
+      <div className="relative size-600px shrink-0">
         <Image src={coverImageId} fill objectFit="cover" alt="cover" />
       </div>
       {/* Info: (20251224 - Julian) Funding Detail */}

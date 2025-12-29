@@ -145,21 +145,15 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
       closedContent
     );
 
-  const displayedTicket = (
-    <>
+  return (
+    <Link href={detailLink} className="group relative">
       {/* Info: (202501219 - Julian) Committed Mark */}
       {isCommitted && (
         <div className="absolute -top-2 right-spacing-lv-4 z-10">
           <Image src="/icons/committed_mark.svg" width={36} height={40} alt="committed mark" />
         </div>
       )}
-      <div
-        className={`${
-          isLocked
-            ? 'group-hover:cursor-not-allowed'
-            : 'group-hover:cursor-pointer group-hover:border-text-field-outline-focused'
-        } flex h-full w-450px flex-col overflow-hidden rounded-radius-l border border-transparent bg-surface-neutral-container-lv2`}
-      >
+      <div className="flex h-full w-450px flex-col overflow-hidden rounded-radius-l bg-surface-neutral-container-lv2 hover:opacity-50 group-hover:cursor-pointer">
         {/* Info: (202501218 - Julian) Cover Image */}
         <div className="relative h-180px w-full shrink-0">
           <Image src={coverImageId} alt="Funding Cover" fill objectFit="cover" />
@@ -186,18 +180,8 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
           {displayedContent}
         </div>
       </div>
-    </>
-  );
-
-  const isDisplayedLink = isLocked ? (
-    <div className="group relative">{displayedTicket}</div>
-  ) : (
-    <Link href={detailLink} className="group relative">
-      {displayedTicket}
     </Link>
   );
-
-  return isDisplayedLink;
 };
 
 export default FundingTicket;

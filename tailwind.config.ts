@@ -804,6 +804,20 @@ const config = {
         'masking-2': 20000,
         'lock-screen': 100000,
       },
+      animation: {
+        'flip-in': 'flip-in 300ms ease-out forwards',
+        'flip-out': 'flip-out 300ms ease-in forwards',
+      },
+      keyframes: {
+        'flip-in': {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'flip-out': {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(-100%)', opacity: '0' },
+        },
+      },
     },
   },
   plugins: [],

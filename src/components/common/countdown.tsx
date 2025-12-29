@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import NumberContainer from '@/components/common/number_container';
 import { timestampToString } from '@/lib/utils/common';
-
-interface INumberContainerProps {
-  value: number;
-  maxValue?: number;
-  minValue?: number;
-}
 
 interface ICountdownProps {
   targetTimestamp: number;
@@ -15,35 +10,10 @@ interface ICountdownProps {
 }
 
 // Info: (20251229 - Julian) constants setting
-const SECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
-const SECONDS_IN_AN_HOUR = 1000 * 60 * 60;
-const SECONDS_IN_A_MINUTE = 1000 * 60;
+const SECONDS_IN_A_DAY = 60 * 60 * 24;
+const SECONDS_IN_AN_HOUR = 60 * 60;
+const SECONDS_IN_A_MINUTE = 60;
 const MAX_TIME_VALUE = 59;
-
-const NumberContainer: React.FC<INumberContainerProps> = ({
-  value,
-  maxValue = 99,
-  minValue = 0,
-}) => {
-  const containerStyle =
-    'relative flex w-60px flex-col items-center justify-center overflow-hidden rounded-radius-s border border-border-neutral-default bg-surface-neutral-container-lv2 px-8px py-16px text-6xl font-extrabold text-text-brand-primary';
-
-  // Info: (20251229 - Julian) 限制數值範圍，並轉換為兩位數字的字串
-  const availableValue = Math.max(minValue, Math.min(maxValue, value));
-  const twoDigitValue = availableValue.toString().padStart(2, '0');
-  const digits = twoDigitValue.split('');
-
-  return (
-    <div className="grid grid-cols-2 gap-spacing-lv-0 font-[Manrope]">
-      <div className={containerStyle}>
-        <span className="transition-all duration-300 ease-out">{digits[0]}</span>
-      </div>
-      <div className={containerStyle}>
-        <span className="transition-all duration-300 ease-out">{digits[1]}</span>
-      </div>
-    </div>
-  );
-};
 
 function getTimeLeft(targetTimestamp: number) {
   // Info: (20251229 - Julian) 取得目前時間的 Unix Timestamp（秒）
@@ -75,10 +45,10 @@ const Countdown: React.FC<ICountdownProps> = ({ targetTimestamp, label }) => {
   );
 
   return (
-    <div className="gap-24px flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-24px">
       {/* Info: (20251229 - Julian) Label */}
       {displayLabel}
-      <div className="gap-24px grid grid-cols-3">
+      <div className="grid grid-cols-3 gap-24px">
         <div className="flex flex-col items-center gap-spacing-lv-2 uppercase">
           <NumberContainer value={timeLeft.days} />
           <p className="font-semibold text-text-neutral-secondary">days</p>

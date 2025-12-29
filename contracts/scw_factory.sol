@@ -3,16 +3,17 @@ pragma solidity ^0.8.28;
 
 import "@account-abstraction/contracts/core/EntryPoint.sol";
 import "./personal_scw.sol";
+import "./company_scw.sol"; // Info: (20251229 - Tzuhan) [New] 引入企業合約
 
 /**
  * Info: (20251125 - Tzuhan) 
  * @title SCWFactory
- * @dev 負責使用 CREATE2 確定性地部署 PersonalSCW 合約
+ * @dev 負責部署 PersonalSCW 與 CompanySCW
  */
 contract SCWFactory {
     address payable public immutable entryPoint;
 
-    // Info: (20251126 - Tzuhan) Update: 新增 name 和 imageUrl 到事件
+    // Info: (20251229 - Tzuhan) --- Personal Account Events ---
     event AccountCreated(
         address indexed scw, 
         uint256 pubKeyX, 
@@ -23,19 +24,24 @@ contract SCWFactory {
         string imageUrl
     );
 
+    // Info: (20251229 - Tzuhan) --- [New] Company Account Events ---
+    event CompanyCreated(
+        address indexed scw,
+        uint256[][] owners,
+        uint256 threshold,
+        uint256 salt,
+        string name,
+        string imageUrl
+    );
+
     constructor(address payable _entryPoint) {
         entryPoint = _entryPoint;
     }
 
-    /**
-     * Info: (20251125 - Tzuhan)
-     * 預先計算 PersonalSCW 合約地址 (Deterministic Address)。
-     * 這讓前端可以在不發送交易的情況下，就知道用戶未來的錢包地址。
-     *
-     * @param pubKeyX Passkey 公鑰 X
-     * @param pubKeyY Passkey 公鑰 Y
-     * @param salt 隨機鹽值 (通常由前端生成，用於區分同一用戶的不同帳戶)
-     */
+    // Info: (20251229 - Tzuhan) ==========================================
+    //            Personal SCW Logic
+    // ==========================================
+
     function getAddress(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) public view returns (address) {
         // Info: (20251125 - Tzuhan) 1. 取得 PersonalSCW 的 Creation Code (包含合約編譯後的 Bytecode)
         bytes memory bytecode = type(PersonalSCW).creationCode;
@@ -54,9 +60,9 @@ contract SCWFactory {
         bytes32 hash = keccak256(
             abi.encodePacked(
                 bytes1(0xff),
-                address(this),     // Info: (20251125 - Tzuhan) sender (工廠地址)
-                salt,              // Info: (20251125 - Tzuhan) salt
-                bytecodeHash       // Info: (20251125 - Tzuhan) init code hash
+                address(this),
+                salt,
+                bytecodeHash
             )
         );
 
@@ -93,5 +99,60 @@ contract SCWFactory {
 
         // Info: (20251125 - Tzuhan) 5. 發送事件。Update: 發送包含 Metadata 的事件
         emit AccountCreated(address(ret), pubKeyX, pubKeyY, salt, credentialId, name, imageUrl);
+    }
+
+    // Info: (20251229 - Tzuhan) ==========================================
+    //            [New] Company SCW Logic
+    // ==========================================
+
+    /**
+     * Info: (20251229 - Tzuhan) 計算 CompanySCW 地址
+     * @param owners 初始擁有者公鑰列表 [[x1, y1], [x2, y2]]
+     * @param threshold 門檻值
+     * @param salt 隨機鹽
+     */
+    function getCompanyAddress(
+        uint256[][] memory owners, 
+        uint256 threshold, 
+        uint256 salt
+    ) public view returns (address) {
+        bytes memory bytecode = type(CompanySCW).creationCode;
+        // Info: (20251229 - Tzuhan) 建構子參數：EntryPoint, Owners Array, Threshold
+        bytes memory constructorArgs = abi.encode(address(entryPoint), owners, threshold);
+        bytes memory fullBytecode = abi.encodePacked(bytecode, constructorArgs);
+        bytes32 bytecodeHash = keccak256(fullBytecode);
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                bytes1(0xff),
+                address(this),
+                salt,
+                bytecodeHash
+            )
+        );
+        return address(uint160(uint256(hash)));
+    }
+
+    /**
+     * Info: (20251229 - Tzuhan) 部署 CompanySCW
+     */
+    function createCompanyAccount(
+        uint256[][] memory owners, 
+        uint256 threshold, 
+        uint256 salt,
+        string calldata name,
+        string calldata imageUrl
+    ) external returns (CompanySCW ret) {
+        address addr = getCompanyAddress(owners, threshold, salt);
+        
+        if (addr.code.length > 0) {
+            return CompanySCW(payable(addr));
+        }
+
+        ret = new CompanySCW{salt: bytes32(salt)}(entryPoint, owners, threshold);
+        
+        require(address(ret) == addr, "Factory: address mismatch");
+
+        // Info: (20251229 - Tzuhan) 這裡 owners 雖然是 memory 陣列，但在 Event 中會被正確紀錄
+        emit CompanyCreated(address(ret), owners, threshold, salt, name, imageUrl);
     }
 }

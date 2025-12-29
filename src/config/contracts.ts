@@ -6,9 +6,9 @@ export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isunc
 // 建議: 若專案設定允許引用 src 外部檔案，可直接 import JSON；否則在此定義常量
 export const CONTRACT_ADDRESSES = {
   ENTRY_POINT: (process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS ||
-    '0x1eF970481a7fD1ee4A21a473E123bb842d29bb01') as Address,
+    '0xE617D9180B0aC1e0B8B3F2a408B406898BC86148') as Address,
   FACTORY: (process.env.NEXT_PUBLIC_SCW_FACTORY_ADDRESS ||
-    '0xa5d06d2550eceE9Ef21A17107Bccd7f72FEc4F9C') as Address,
+    '0x86EE60851B6B916528241442BA53697DfEE75897') as Address,
 } as const;
 
 export const ABIS = {

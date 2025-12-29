@@ -775,10 +775,12 @@ const config = {
         '8px': '8px',
         '15px': '15px',
         '16px': '16px',
+        '24px': '24px',
         '30px': '30px',
         '36px': '36px',
         '48px': '48px',
         '50px': '50px',
+        '60px': '60px',
         '100px': '100px',
         '120px': '120px',
         '140px': '140px',
@@ -801,6 +803,20 @@ const config = {
         masking: 10000,
         'masking-2': 20000,
         'lock-screen': 100000,
+      },
+      animation: {
+        'flip-in': 'flip-in 300ms ease-out forwards',
+        'flip-out': 'flip-out 300ms ease-in forwards',
+      },
+      keyframes: {
+        'flip-in': {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'flip-out': {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(-100%)', opacity: '0' },
+        },
       },
     },
   },

@@ -132,6 +132,26 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
           {timestampToString(startedAt).dateWithSlash} - {timestampToString(endedAt).dateWithSlash}
         </p>
       </>
+    ) : fundingResult === FundingResult.SUCCESS ? (
+      <>
+        <div className="flex flex-col gap-spacing-lv-2">
+          <p className="text-sm font-bold text-text-neutral-secondary">Budget Summary</p>
+          <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
+            <div className="flex flex-col items-center">
+              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-xs font-normal text-text-neutral-tertiary">Total</p>
+            </div>
+            <div className="flex flex-col items-center border-x border-border-neutral-strong">
+              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-xs font-normal text-text-neutral-tertiary">Expense</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-xs font-normal text-text-neutral-tertiary">Remain</p>
+            </div>
+          </div>
+        </div>
+      </>
     ) : null;
 
   // ToDo: (20251224 - Julian) upcoming info, success info, failed info

@@ -8,6 +8,8 @@ export interface IUserProfile {
   address: string;
   name: string | null;
   role: string;
+  pubKeyX: string;
+  pubKeyY: string;
 }
 
 interface IAuthContextType {
@@ -52,6 +54,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               address: userData.address,
               name: userData.name || 'User',
               role: userData.role,
+              pubKeyX: userData.pubKeyX,
+              pubKeyY: userData.pubKeyY,
             });
           } else {
             logout();
@@ -86,11 +90,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         address: string;
         name: string | null;
         role: string;
+        pubKeyX: string;
+        pubKeyY: string;
       };
       setUser({
         address: payload.address,
         name: payload.name || 'User',
         role: payload.role,
+        pubKeyX: payload.pubKeyX,
+        pubKeyY: payload.pubKeyY,
       });
     } catch (e) {
       console.error('Invalid token format', e);

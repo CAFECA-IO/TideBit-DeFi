@@ -13,33 +13,7 @@ import { publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { fido2ClientService, parsePasskey, sendUserOpToBundler } from '@/lib/auth/fido2-client';
 import { AuthenticationJSON } from '@passwordless-id/webauthn/dist/esm/types';
-
-// Info: (20251226 - Tzuhan) --- [工具函式] 瀏覽器端 Hex 轉 Base64URL (不使用 Buffer) ---
-function hexToBase64Url(hex: string): string {
-  const hexStr = hex.startsWith('0x') ? hex.slice(2) : hex;
-  const match = hexStr.match(/.{1,2}/g);
-  if (!match) return '';
-  const bytes = new Uint8Array(match.map((byte) => parseInt(byte, 16)));
-  let binary = '';
-  bytes.forEach((b) => (binary += String.fromCharCode(b)));
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-}
-
-// Info: (20251226 - Tzuhan) --- [工具函式] Base64 轉 Hex (含 Padding 修正，不使用 Buffer) ---
-function base64ToHex(base64: string): string {
-  // Info: (20251226 - Tzuhan) Fix: 增加 padding 邏輯，避免 atob 失敗
-  let padded = base64.replace(/-/g, '+').replace(/_/g, '/');
-  while (padded.length % 4) {
-    padded += '=';
-  }
-
-  const binary = atob(padded);
-  let hex = '';
-  for (let i = 0; i < binary.length; i++) {
-    hex += binary.charCodeAt(i).toString(16).padStart(2, '0');
-  }
-  return hex;
-}
+import { base64ToHex, hexToBase64Url } from '@/lib/auth/passkey-encoding';
 
 // Info: (20251226 - Tzuhan) --- [核心] 打包簽名給合約 ---
 function encodeWebAuthnSignature(

@@ -75,3 +75,8 @@ export const timestampToString = (timestamp: number | undefined) => {
     dateWithSlash,
   };
 };
+
+// Info: (20251230 - Julian) 取得 CSS 變數顏色
+export function getCssVariable(variableName: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+}

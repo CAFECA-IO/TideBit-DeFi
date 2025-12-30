@@ -15,6 +15,8 @@ import NumericInput from '@/components/common/numeric_input';
 import Countdown from '@/components/common/countdown';
 import { FundingResult, FundingStatus } from '@/constants/funding';
 
+import BudgetPieChart from './budget_pie_chart';
+
 interface IFundingDetailPageBodyProps {
   fundingId: string;
 }
@@ -204,6 +206,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   return (
     <Layout className="flex flex-col">
+      <BudgetPieChart />
       {/* Info: (20251224 - Julian) Page Header */}
       {header}
       {/* Info: (20251224 - Julian) Page Content */}

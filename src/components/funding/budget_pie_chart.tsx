@@ -8,6 +8,7 @@ import { getCssVariable, numberWithCommas } from '@/lib/utils/common';
 // Info: (20251230 - Julian) 動態載入，避免 SSR 錯誤
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+// Info: (20251231 - Julian) 定義顏色變數
 const LABEL_COLOR_PROPERTY = '--color-text-neutral-primary';
 const FILL_COLORS_PROPERTIES = [
   '--color-surface-support-strong-maple',
@@ -27,15 +28,42 @@ enum HoleSize {
   NONE = 'none',
 }
 
+enum PieSize {
+  EXTRA_SMALL = 'extra_small',
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
+}
+
+type IChartData = {
+  label: string;
+  value: number;
+};
+
 interface IPieChartProps {
-  labels: string[];
-  series: number[];
+  data: IChartData[];
+  size?: PieSize;
   hole?: HoleSize;
 }
 
-const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LARGE }) => {
+const PieChart: React.FC<IPieChartProps> = ({
+  data,
+  size = PieSize.LARGE,
+  hole = HoleSize.LARGE,
+}) => {
+  // Info: (20251230 - Julian) 分別抽出標籤和數據
+  const labels = data.map((item) => item.label);
+  const series = data.map((item) => item.value);
+
   // Info: (20251230 - Julian) 取得標籤顏色
   const labelColor = getCssVariable(LABEL_COLOR_PROPERTY);
+
+  // Info: (20251230 - Julian) 計算總值
+  const totalValue = series.reduce((acc, val) => acc + val, 0);
+  // Info: (20251231 - Julian) 計算去除空白項目的總值
+  const valueWithoutEmpty = totalValue - (data.find((item) => item.label === 'empty')?.value || 0);
+  // Info: (20251231 - Julian) 計算去除空白項目的百分比
+  const donutPercentage = ((valueWithoutEmpty / totalValue) * 100).toFixed(0);
 
   // Info: (20251230 - Julian) 取得填充顏色
   const fillColors = labels.map((label, index) => {
@@ -60,9 +88,20 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
           ? '25%'
           : '0%';
 
+  const pieSize =
+    size === PieSize.EXTRA_SMALL
+      ? 160
+      : size === PieSize.SMALL
+        ? 200
+        : size === PieSize.MEDIUM
+          ? 240
+          : 280;
+
+  // Info: (20251231 - Julian) 是否顯示內圈標籤
+  const isShowLabel = hole === HoleSize.LARGE;
+
   // Info: (20251230 - Julian) 計算百分比
   function calculatePercentage(val: number) {
-    const totalValue = series.reduce((acc, val) => acc + val, 0);
     const percentage = ((val / totalValue) * 100).toFixed(0);
     return `${percentage}%`;
   }
@@ -103,6 +142,7 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
     const value = series[seriesIndex];
     const fillColors = w.config.fill.colors[seriesIndex];
     const bgColor = GetTooltipBgColor(fillColors);
+    const percentage = ((value / totalValue) * 100).toFixed(0);
 
     // Info: (20251230 - Julian) 不顯示空白項目的提示框
     if (label === 'empty') {
@@ -112,7 +152,10 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
     return `
       <div class="${bgColor} arrow_box flex flex-col items-center whitespace-nowrap px-spacing-lv-4 py-spacing-lv-2 text-xs">
       <p>${label}</p>
-      <p class="font-bold">${numberWithCommas(value)}</p>
+      <p class="font-bold">
+      ${numberWithCommas(value)}
+      <span class="text-sm">${percentage}%</span>
+      </p>
       </div>
       `;
   }
@@ -123,6 +166,7 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
     stroke: { show: false }, // Info: (20251230 - Julian) 取消邊框
     dataLabels: { enabled: false }, // Info: (20251230 - Julian) 取消顯示數據標籤
     fill: { colors: fillColors }, // Info: (20251230 - Julian) 設定圈圈的填充顏色
+    // Info: (20251231 - Julian) 游標懸浮於區塊上時顯示的提示框
     tooltip: {
       enabled: true,
       custom: getCustomTooltip,
@@ -135,7 +179,7 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
           background: 'transparent',
           // Info: (20251230 - Julian) 內圈的標籤設定
           labels: {
-            show: true,
+            show: isShowLabel,
             name: { show: false },
             value: {
               show: true,
@@ -146,15 +190,24 @@ const PieChart: React.FC<IPieChartProps> = ({ labels, series, hole = HoleSize.LA
               offsetY: 14,
               formatter: calculatePercentage,
             },
+            total: {
+              show: isShowLabel,
+              fontSize: '36px',
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 800,
+              color: labelColor,
+              formatter: () => `${donutPercentage}%`,
+            },
           },
         },
       },
     },
+    legend: { show: false }, // Info: (20251231 - Julian) 取消顯示圖例
   };
 
   return (
     <div id="chart">
-      <Chart options={options} series={series} type="donut" width={400} height={400} />
+      <Chart options={options} series={series} type="donut" width={pieSize} height={pieSize} />
     </div>
   );
 };
@@ -174,11 +227,7 @@ const BudgetPieChart: React.FC = () => {
     { label: 'empty', value: emptyBudget },
   ];
 
-  // Info: (20251230 - Julian) 分別抽出標籤和數據
-  const labels = data.map((item) => item.label);
-  const series = data.map((item) => item.value);
-
-  return <PieChart labels={labels} series={series} />;
+  return <PieChart data={data} />;
 };
 
 export default BudgetPieChart;

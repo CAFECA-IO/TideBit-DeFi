@@ -3,8 +3,5 @@
     "./node_modules/.bin/prettier --write",
     "./node_modules/.bin/eslint --fix"
   ],
-  "**/*.+(css)": [
-    "./node_modules/.bin/prettier --write",
-    "./node_modules/.bin/eslint/tailwindcss --fix"
-  ]
+  "**/*.+(css)": ["./node_modules/.bin/prettier --write"]
 }

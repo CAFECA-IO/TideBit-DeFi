@@ -72,7 +72,20 @@ const Sidebar: React.FC = () => {
   const header = isSidebarOpen ? (
     <div className="flex items-center justify-between">
       <Link href={'/'}>
-        <Image src="/logo/horizontal_logo.svg" width={135} height={40} alt="tidebit_logo" />
+        <Image
+          src="/logo/horizontal_logo_dark.svg"
+          width={135}
+          height={40}
+          alt="tidebit_logo"
+          className="light-only" // Info: (20251231 - Julian) Light Mode Logo
+        />
+        <Image
+          src="/logo/horizontal_logo_light.svg"
+          width={135}
+          height={40}
+          alt="tidebit_logo"
+          className="dark-only" // Info: (20251231 - Julian) Dark Mode Logo
+        />
       </Link>
       <button
         type="button"

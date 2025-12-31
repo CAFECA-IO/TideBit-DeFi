@@ -5,17 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FiLock } from 'react-icons/fi';
-import { mockFundingItems } from '@/interfaces/funding';
+import { mockFundingItems, mockFundingDetail } from '@/interfaces/funding';
 import { numberWithCommas, timestampToString } from '@/lib/utils/common';
 import Layout from '@/components/common/layout';
 import Breadcrumb from '@/components/common/breadcrumb';
 import { Button } from '@/components/common/button';
 import FundingStat from '@/components/funding/funding_stat';
 import NumericInput from '@/components/common/numeric_input';
+import BudgetPieChart from '@/components/funding/budget_pie_chart';
 import Countdown from '@/components/common/countdown';
 import { FundingResult, FundingStatus } from '@/constants/funding';
-
-import BudgetPieChart from './budget_pie_chart';
 
 interface IFundingDetailPageBodyProps {
   fundingId: string;
@@ -62,6 +61,9 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     isLocked,
     isCommitted,
   } = data;
+
+  const { budgetSummary } = mockFundingDetail;
+  const { totalFundingAmount, expenseAmount, remainAmount } = budgetSummary;
 
   // ToDo: (20251224 - Julian) Get real data from API
   const availableBalance = 500000;
@@ -136,22 +138,33 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
       </>
     ) : fundingResult === FundingResult.SUCCESS ? (
       <>
+        {/* Info: (20251231 - Julian) Successful Funding Stat */}
         <div className="flex flex-col gap-spacing-lv-2">
           <p className="text-sm font-bold text-text-neutral-secondary">Budget Summary</p>
           <div className="grid grid-cols-3 px-spacing-lv-4 pb-spacing-lv-4 pt-spacing-lv-2">
             <div className="flex flex-col items-center">
-              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-lg font-bold text-text-neutral-primary">
+                {numberWithCommas(totalFundingAmount)}
+              </p>
               <p className="text-xs font-normal text-text-neutral-tertiary">Total</p>
             </div>
             <div className="flex flex-col items-center border-x border-border-neutral-strong">
-              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-lg font-bold text-text-neutral-primary">
+                {numberWithCommas(expenseAmount)}
+              </p>
               <p className="text-xs font-normal text-text-neutral-tertiary">Expense</p>
             </div>
             <div className="flex flex-col items-center">
-              <p className="text-lg font-bold text-text-neutral-primary">{numberWithCommas(0)}</p>
+              <p className="text-lg font-bold text-text-neutral-primary">
+                {numberWithCommas(remainAmount)}
+              </p>
               <p className="text-xs font-normal text-text-neutral-tertiary">Remain</p>
             </div>
           </div>
+        </div>
+
+        <div className="flex gap-x-24px">
+          <BudgetPieChart budgetSummary={budgetSummary} />
         </div>
       </>
     ) : null;
@@ -206,7 +219,6 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   return (
     <Layout className="flex flex-col">
-      <BudgetPieChart />
       {/* Info: (20251224 - Julian) Page Header */}
       {header}
       {/* Info: (20251224 - Julian) Page Content */}

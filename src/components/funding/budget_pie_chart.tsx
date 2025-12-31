@@ -4,6 +4,8 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import { getCssVariable, numberWithCommas } from '@/lib/utils/common';
+import { IFundingBudgetSummary } from '@/interfaces/funding';
+import { IChartData } from '@/interfaces/chart';
 
 // Info: (20251230 - Julian) 動態載入，避免 SSR 錯誤
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -28,29 +30,17 @@ enum HoleSize {
   NONE = 'none',
 }
 
-enum PieSize {
-  EXTRA_SMALL = 'extra_small',
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  LARGE = 'large',
-}
-
-type IChartData = {
-  label: string;
-  value: number;
-};
-
 interface IPieChartProps {
   data: IChartData[];
-  size?: PieSize;
+  size?: number;
   hole?: HoleSize;
 }
 
-const PieChart: React.FC<IPieChartProps> = ({
-  data,
-  size = PieSize.LARGE,
-  hole = HoleSize.LARGE,
-}) => {
+interface IBudgetPieChartProps {
+  budgetSummary: IFundingBudgetSummary;
+}
+
+const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.LARGE }) => {
   // Info: (20251230 - Julian) 分別抽出標籤和數據
   const labels = data.map((item) => item.label);
   const series = data.map((item) => item.value);
@@ -87,15 +77,6 @@ const PieChart: React.FC<IPieChartProps> = ({
         : hole === HoleSize.SMALL
           ? '25%'
           : '0%';
-
-  const pieSize =
-    size === PieSize.EXTRA_SMALL
-      ? 160
-      : size === PieSize.SMALL
-        ? 200
-        : size === PieSize.MEDIUM
-          ? 240
-          : 280;
 
   // Info: (20251231 - Julian) 是否顯示內圈標籤
   const isShowLabel = hole === HoleSize.LARGE;
@@ -207,25 +188,25 @@ const PieChart: React.FC<IPieChartProps> = ({
 
   return (
     <div id="chart">
-      <Chart options={options} series={series} type="donut" width={pieSize} height={pieSize} />
+      <Chart options={options} series={series} type="donut" width={size} height={size} />
     </div>
   );
 };
 
-const BudgetPieChart: React.FC = () => {
-  // Info: (20251230 - Julian) 總預算
-  const totalBudget = 146000;
-  // Info: (20251230 - Julian) 計算空白的數據
-  const emptyBudget = totalBudget - (23000 + 35000 + 51000 + 12000);
+const BudgetPieChart: React.FC<IBudgetPieChartProps> = ({ budgetSummary }) => {
+  const { remainAmount, breakdown } = budgetSummary;
 
-  // Info: (20251230 - Julian) 圖表標籤和數據
-  const data = [
-    { label: 'Product Development', value: 23000 },
-    { label: 'Marketing & Promotion', value: 35000 },
-    { label: 'Operations & Staffing', value: 51000 },
-    { label: 'Legal & Compliance', value: 12000 },
-    { label: 'empty', value: emptyBudget },
-  ];
+  // Info: (20251230 - Julian) 實際支出部分
+  const expensePart = breakdown.map((item) => ({
+    label: item.title,
+    value: item.amount,
+  }));
+
+  // Info: (20251230 - Julian) 剩餘部分
+  const emptyPart = { label: 'empty', value: remainAmount };
+
+  // Info: (20251230 - Julian) 組合圖表數據
+  const data: IChartData[] = [...expensePart, emptyPart];
 
   return <PieChart data={data} />;
 };

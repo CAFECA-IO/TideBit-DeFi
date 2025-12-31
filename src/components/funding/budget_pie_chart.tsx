@@ -30,6 +30,11 @@ enum HoleSize {
   NONE = 'none',
 }
 
+enum FillType {
+  PIE = 'pie',
+  MARKER = 'marker',
+}
+
 interface IPieChartProps {
   data: IChartData[];
   size?: number;
@@ -55,18 +60,25 @@ const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.
   // Info: (20251231 - Julian) 計算去除空白項目的百分比
   const donutPercentage = ((valueWithoutEmpty / totalValue) * 100).toFixed(0);
 
-  // Info: (20251230 - Julian) 取得填充顏色
-  const fillColors = labels.map((label, index) => {
+  // Info: (20251230 - Julian) 根據標籤和索引取得填充顏色
+  function getFillColor(label: string, index: number, type: FillType): string {
     if (label === 'empty') {
-      // Info: (20251230 - Julian) 空白項目使用特定顏色
-      return getCssVariable(EMPTY_FILL_COLOR_PROPERTY);
+      // Info: (20251230 - Julian) 空白項目的圓餅顏色使用特定顏色，標記則透明
+      const markerColor = 'transparent';
+      const pieColor = getCssVariable(EMPTY_FILL_COLOR_PROPERTY);
+      return type === FillType.MARKER ? markerColor : pieColor;
     } else {
       // Info: (20251230 - Julian) 用模數運算取得顏色索引，確保不會超出陣列範圍
       const targetIndex = index % FILL_COLORS_PROPERTIES.length;
       // Info: (20251230 - Julian) 根據項目的數量，取出對應的顏色
       return getCssVariable(FILL_COLORS_PROPERTIES[targetIndex]);
     }
-  });
+  }
+
+  // Info: (20251230 - Julian) 取得圓餅填充顏色
+  const pieColors = labels.map((label, index) => getFillColor(label, index, FillType.PIE));
+  // Info: (20251230 - Julian) 取得圖例標記顏色
+  const markerColors = labels.map((label, index) => getFillColor(label, index, FillType.MARKER));
 
   // Info: (20251230 - Julian) 內圈空白處的佔比
   const donutSize =
@@ -121,8 +133,8 @@ const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.
   }) {
     const label = w.config.labels ? w.config.labels[seriesIndex] : '';
     const value = series[seriesIndex];
-    const fillColors = w.config.fill.colors[seriesIndex];
-    const bgColor = GetTooltipBgColor(fillColors);
+    const colors = w.config.fill.colors[seriesIndex];
+    const bgColor = GetTooltipBgColor(colors);
     const percentage = ((value / totalValue) * 100).toFixed(0);
 
     // Info: (20251230 - Julian) 不顯示空白項目的提示框
@@ -143,10 +155,14 @@ const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.
 
   // Info: (20251230 - Julian) 圖表配置項目
   const options: ApexOptions = {
+    chart: {
+      type: 'pie',
+      parentHeightOffset: 0, // Info: (20251230 - Julian) 取消高度偏移
+    },
     labels, // Info: (20251230 - Julian) 設定標籤
     stroke: { show: false }, // Info: (20251230 - Julian) 取消邊框
     dataLabels: { enabled: false }, // Info: (20251230 - Julian) 取消顯示數據標籤
-    fill: { colors: fillColors }, // Info: (20251230 - Julian) 設定圈圈的填充顏色
+    fill: { colors: pieColors }, // Info: (20251230 - Julian) 設定圓餅的填充顏色
     // Info: (20251231 - Julian) 游標懸浮於區塊上時顯示的提示框
     tooltip: {
       enabled: true,
@@ -183,12 +199,41 @@ const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.
         },
       },
     },
-    legend: { show: false }, // Info: (20251231 - Julian) 取消顯示圖例
+    // Info: (20251230 - Julian) 圖例設定
+    legend: {
+      show: true,
+      showForSingleSeries: true, // Info: (20251231 - Julian) 只有單一項目時也要顯示圖例
+      showForNullSeries: true, // Info: (20251231 - Julian) 項目為空時也要顯示圖例
+      showForZeroSeries: true, // Info: (20251231 - Julian) 數據為零時也要顯示圖例
+      position: 'right',
+      fontSize: '12px',
+      fontFamily: 'Manrope, sans-serif',
+      fontWeight: 500,
+      floating: false, // Info: (20251230 - xwJulian) 不使用浮動圖例
+      // Info: (20251230 - Julian) 自訂 marker 樣式
+      markers: {
+        size: 5,
+        fillColors: markerColors,
+        strokeWidth: 0,
+      },
+      formatter: (seriesName) => {
+        if (seriesName === 'empty') return '';
+        return `${seriesName}`;
+      },
+      onItemClick: {
+        // Info: (20251230 - Julian) 取消點擊圖例事件
+        toggleDataSeries: false,
+      },
+      onItemHover: {
+        // Info: (20251230 - Julian) 取消懸停圖例事件
+        highlightDataSeries: false,
+      },
+    },
   };
 
   return (
-    <div id="chart">
-      <Chart options={options} series={series} type="donut" width={size} height={size} />
+    <div id="chart" className="w-full">
+      <Chart options={options} series={series} type="donut" height={size} />
     </div>
   );
 };
@@ -208,7 +253,7 @@ const BudgetPieChart: React.FC<IBudgetPieChartProps> = ({ budgetSummary }) => {
   // Info: (20251230 - Julian) 組合圖表數據
   const data: IChartData[] = [...expensePart, emptyPart];
 
-  return <PieChart data={data} />;
+  return <PieChart data={data} size={300} />;
 };
 
 export default BudgetPieChart;

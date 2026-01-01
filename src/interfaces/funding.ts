@@ -233,3 +233,17 @@ export const mockFundingItems: IFundingItemUI[] = [
     isLocked: true,
   },
 ];
+
+export const mockFundingDetail: IFundingInfoDetail = {
+  ...mockFundingItems[6],
+  budgetSummary: {
+    totalFundingAmount: 1000000,
+    expenseAmount: 600000,
+    remainAmount: 400000,
+    breakdown: [
+      { title: 'Research and Development', amount: 300000, percentage: 30 },
+      { title: 'Marketing', amount: 200000, percentage: 20 },
+      { title: 'Operations', amount: 100000, percentage: 10 },
+    ],
+  },
+};

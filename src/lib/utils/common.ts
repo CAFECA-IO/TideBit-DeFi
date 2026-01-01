@@ -78,5 +78,9 @@ export const timestampToString = (timestamp: number | undefined) => {
 
 // Info: (20251230 - Julian) 取得 CSS 變數顏色
 export function getCssVariable(variableName: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+  const computedStyle = getComputedStyle(document.documentElement);
+  const property = computedStyle.getPropertyValue(variableName);
+  const value = property || variableName;
+
+  return value.trim();
 }

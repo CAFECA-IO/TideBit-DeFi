@@ -14,6 +14,7 @@ import FundingStat from '@/components/funding/funding_stat';
 import NumericInput from '@/components/common/numeric_input';
 import BudgetPieChart from '@/components/funding/budget_pie_chart';
 import Countdown from '@/components/common/countdown';
+import FundingDetailTabs from '@/components/funding/funding_detail_tabs';
 import { FundingResult, FundingStatus } from '@/constants/funding';
 
 interface IFundingDetailPageBodyProps {
@@ -206,7 +207,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     </div>
   );
 
-  const content = (
+  const main = (
     <div className="flex">
       {/* Info: (20251224 - Julian) Cover Image */}
       <div className="relative size-600px shrink-0">
@@ -221,8 +222,10 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     <Layout className="flex flex-col">
       {/* Info: (20251224 - Julian) Page Header */}
       {header}
-      {/* Info: (20251224 - Julian) Page Content */}
-      {content}
+      {/* Info: (20251224 - Julian) Page Main */}
+      {main}
+      {/* Info: (20260102 - Julian) Page Detail Tab */}
+      <FundingDetailTabs fundingId={fundingId} />
     </Layout>
   );
 };

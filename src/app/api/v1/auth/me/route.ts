@@ -14,11 +14,13 @@ export async function GET(request: NextRequest) {
       return jsonFail(ApiCode.UNAUTHORIZED, 'Invalid or expired token');
     }
 
-    // Info: (20251224 - Tzuhan) 2. Return User Profile
+    // Info: (20251230 - Update) 新增 pubKeyX, pubKeyY 回傳
     return jsonOk({
       address: user.address,
       name: user.name,
       role: user.role,
+      pubKeyX: user.pubKeyX,
+      pubKeyY: user.pubKeyY,
     });
   } catch (error) {
     console.error('[API] /auth/me error:', error);

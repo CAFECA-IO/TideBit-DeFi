@@ -777,6 +777,7 @@ const config = {
         '16px': '16px',
         '24px': '24px',
         '30px': '30px',
+        '32px': '32px',
         '36px': '36px',
         '48px': '48px',
         '50px': '50px',

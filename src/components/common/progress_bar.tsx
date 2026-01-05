@@ -23,6 +23,7 @@ interface IProgressBarProps {
   maxText?: string;
   minText?: string;
   className?: string;
+  notPadding?: boolean;
 }
 
 const ProgressBar: React.FC<IProgressBarProps> = ({
@@ -32,6 +33,7 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
   maxText = '',
   minText = '',
   className = '',
+  notPadding = false,
 }) => {
   // Info: (202501218 - Julian) 進度條顏色
   const barColor =
@@ -66,8 +68,11 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
   // Info: (202501218 - Julian) 限制 percentage 在 0 到 100 之間，並取整數
   const clampedPercentage = Math.min(Math.max(percentage, 0), 100).toFixed(0);
 
+  // Info: (20260102 - Julian) 是否添加內邊距
+  const paddingClass = notPadding ? '' : 'px-spacing-lv-6 py-spacing-lv-2';
+
   return (
-    <div className={`${className} flex flex-col gap-spacing-lv-0 px-spacing-lv-6 py-spacing-lv-2`}>
+    <div className={`${className} ${paddingClass} flex flex-col gap-spacing-lv-0`}>
       <div className="flex items-center justify-between font-semibold text-loading-indicator-text-primary">
         <p>{minText}</p>
         <p>{maxText}</p>

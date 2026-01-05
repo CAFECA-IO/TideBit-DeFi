@@ -233,3 +233,40 @@ export const mockFundingItems: IFundingItemUI[] = [
     isLocked: true,
   },
 ];
+
+export const mockFundingDetail: IFundingInfoDetail = {
+  ...mockFundingItems[6],
+  budgetSummary: {
+    totalFundingAmount: 1000000,
+    expenseAmount: 600000,
+    remainAmount: 400000,
+    breakdown: [
+      { title: 'Research and Development', amount: 300000, percentage: 30 },
+      { title: 'Marketing', amount: 200000, percentage: 20 },
+      { title: 'Operations', amount: 100000, percentage: 10 },
+    ],
+  },
+};
+
+export const mockFundingIntroduction: IFundingIntroduction = {
+  introduction: `# Effect comment font content prototype.
+
+  Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply of ETH.
+
+  ![image](https://image.jpg)
+
+  # List blur align effect arrange.
+
+  Layer thumbnail comment reesizing prototype outline select link. Share select fill frame figjam layout hand auto. Auto inspect boolean prototype text scale text move. Inspect rotate font share prototype font plugin distribute. Undo polygon team link vertical polygon variant blur. Italic auto clip rectangle layout arrow list outline flows. Mask image italic slice flows.
+  Ipsum flows subtract invite device boolean draft. Flatten draft library frame plugin underline arrow overflow. Font arrange figma component asset object. Pixel pixel layer slice content variant editor. Image group figjam vector opacity figjam project hand. Pen thumbnail flatten arrange edit layout selection background. Layer italic inspect inspect link move list align shadow project. Fill list union pencil reesizing link blur boolean. Flows background union editor mask align scrolling text ellipse union. Team opacity font style editor. Community list project invite stroke union team editor pen. Boolean export main text create star list selection pen.
+  Ellipse blur editor image reesizing. Layer content mask pen reesizing comment ipsum reesizing pencil. Blur slice polygon object selection device select outline thumbnail. Scale object underline figjam edit subtract team prototype. Ellipse pencil draft style team.
+
+  Text group flows hand duplicate plugin ellipse component vertical arrow. Create mask flatten thumbnail background content rectangle. Pencil strikethrough scrolling pixel scale main. Library shadow overflow comment font link object pen line italic. Vector strikethrough component content rotate. Follower arrange scrolling strikethrough pencil content vector. Rotate opacity blur horizontal rectangle line plugin move background underline. Slice shadow variant ellipse link. Reesizing shadow strikethrough draft plugin select auto team. Horizontal select polygon frame rectangle device.
+
+  ![image](https://image.jpg)
+
+  # Link strikethrough component mask align. Share strikethrough link style rotate. Editor font.
+
+  Library layout draft list opacity move. Ipsum ellipse bullet edit follower auto slice export. Plugin thumbnail content align boolean ipsum community text list. Stroke rotate auto component connection library effect. Pen undo prototype share project scale pen. Image plugin device scrolling italic create effect rectangle blur draft. Invite image hand plugin subtract vector move rectangle bullet. Reesizing thumbnail comment blur team. Variant asset edit mask mask project project.
+  Flows inspect select project scrolling. Rectangle thumbnail frame prototype strikethrough. Overflow figjam arrow flatten figjam.`,
+};

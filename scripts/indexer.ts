@@ -22,7 +22,7 @@ async function main() {
     ),
     onLogs: async (logs) => {
       for (const log of logs) {
-        const { scw, pubKeyX, pubKeyY, name, imageUrl } = log.args;
+        const { scw, pubKeyX, pubKeyY, name, imageUrl, credentialId } = log.args;
 
         if (!scw || !pubKeyX || !pubKeyY) continue;
 
@@ -33,6 +33,7 @@ async function main() {
             address: scw,
             pubKeyX: pubKeyX.toString(),
             pubKeyY: pubKeyY.toString(),
+            credentialId: credentialId,
             name: name || `User ${scw.slice(0, 6)}`,
             imageUrl: imageUrl,
           });

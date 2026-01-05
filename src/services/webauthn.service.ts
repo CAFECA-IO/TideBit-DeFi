@@ -15,6 +15,7 @@ import { ApiCode } from '@/lib/utils/status';
 import { extractXYFromSPKI } from '@/lib/auth/fido2-parse';
 import { randomBytes } from 'crypto';
 import { generateChallengeToken, verifyChallengeToken } from '@/lib/auth/challenge-token';
+import { prisma } from '@/lib/prisma';
 
 interface ILoginResult {
   dewt: string;
@@ -177,21 +178,120 @@ class WebAuthnService {
     return await generateChallengeToken();
   }
 
-  // Info: (20260105 - Tzuhan) 處理無地址登入
+  // Info: (20260105 - Tzuhan) [New] 從鏈上掃描事件並恢復用戶 (救災模式)
+  // 當 DB 清空時，這是唯一能找回使用者的方法
+  private async recoverUserByCredentialId(credentialId: string) {
+    try {
+      console.log('[Recovery] Scanning blockchain for AccountCreated events...');
+
+      // 1. 抓取所有 AccountCreated 事件
+      // 注意：因為 credentialId 沒有 indexed，我們必須抓回來在記憶體中過濾
+      // 在生產環境如果事件量大，這會變慢，但在目前階段是可行的
+      const logs = await publicClient.getLogs({
+        address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
+        event: parseAbiItem(
+          'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string name, string imageUrl)'
+        ),
+        fromBlock: 'earliest',
+      });
+
+      // 2. 尋找符合的 credentialId
+      const matchLog = logs.find((log) => log.args.credentialId === credentialId);
+
+      if (!matchLog) {
+        console.log('[Recovery] No matching credential ID found on chain.');
+        return null;
+      }
+
+      const { scw, pubKeyX, pubKeyY, name, imageUrl } = matchLog.args;
+      if (!scw || !pubKeyX || !pubKeyY) return null;
+
+      console.log(`[Recovery] Found user ${scw} on chain. Restoring...`);
+
+      // 3. 恢復用戶到 DB
+      const user = await this.repo.upsertUser({
+        address: scw,
+        pubKeyX: pubKeyX.toString(),
+        pubKeyY: pubKeyY.toString(),
+        credentialId: credentialId,
+        name: name || `User ${scw.slice(0, 6)}`,
+        imageUrl: imageUrl,
+      });
+
+      // 4. [Important] 既然用戶都救回來了，順便把他的公司也救回來
+      await this.syncUserCompanies(user.address, user.pubKeyX!, user.pubKeyY!);
+
+      return user;
+    } catch (error) {
+      console.error('[Recovery] Failed to recover user:', error);
+      return null;
+    }
+  }
+
+  // Info: (20260105 - Tzuhan) [New] 同步該用戶的公司 (從鏈上)
+  private async syncUserCompanies(userAddress: string, pubKeyX: string, pubKeyY: string) {
+    console.log(`[Sync] Checking companies for user ${userAddress}...`);
+    try {
+      const logs = await publicClient.getLogs({
+        address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
+        event: parseAbiItem(
+          'event CompanyCreated(address indexed scw, uint256[][] owners, uint256 threshold, uint256 salt, string name, string imageUrl)'
+        ),
+        fromBlock: 'earliest',
+      });
+
+      const userPkX = BigInt(pubKeyX);
+      const userPkY = BigInt(pubKeyY);
+
+      for (const log of logs) {
+        const { scw, owners, threshold, salt, name, imageUrl } = log.args;
+        // 檢查是否為 owner
+        const isOwner = owners?.some(([ox, oy]) => ox === userPkX && oy === userPkY);
+
+        if (isOwner && scw) {
+          await prisma.company.upsert({
+            where: { address: scw },
+            update: { owners: { connect: { address: userAddress } } }, // 確保關聯
+            create: {
+              address: scw,
+              name: name || 'Unknown Company',
+              imageUrl: imageUrl,
+              threshold: Number(threshold),
+              salt: salt ? salt.toString() : '0',
+              owners: { connect: { address: userAddress } },
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.error('[Sync] Failed to sync companies:', error);
+    }
+  }
+
+  // Info: (20260105 - Tzuhan) [核心修改] 處理無地址登入 (Discoverable Login)
   public async loginWithCredential(
     challengeToken: string,
     authenticationData: AuthenticationJSON
   ): Promise<ILoginResult> {
-    // Info: (20260105 - Tzuhan) 1. 驗證 Challenge Token 並還原 Challenge
+    // 1. 驗證 Challenge
     const expectedChallenge = await verifyChallengeToken(challengeToken);
 
-    // Info: (20260105 - Tzuhan) 2. 透過 Credential ID 找人
-    const user = await this.repo.findUserByCredentialId(authenticationData.id);
+    // 2. 透過 Credential ID 找人
+    let user = await this.repo.findUserByCredentialId(authenticationData.id);
+
+    // [Fix] 若 DB 找不到 (可能是 DB 被清空)，嘗試從鏈上救援
+    if (!user) {
+      console.log(
+        `[Login] User not found in DB, attempting to recover from chain using Credential ID: ${authenticationData.id}`
+      );
+      user = await this.recoverUserByCredentialId(authenticationData.id);
+    }
+
     if (!user || !user.pubKeyX || !user.pubKeyY) {
       throw new AppError(ApiCode.NOT_FOUND, 'User not found or passkey not registered');
     }
 
-    // Info: (20260105 - Tzuhan) 3. 還原公鑰並驗證
+    // 3. 還原公鑰並驗證
     const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
     const credential: CredentialInfo = {
       id: authenticationData.id,
@@ -207,7 +307,7 @@ class WebAuthnService {
       throw new AppError(ApiCode.UNAUTHORIZED, 'Invalid signature');
     }
 
-    // Info: (20260105 - Tzuhan) 4. 簽發 DeWT
+    // 4. 簽發 DeWT
     const dewt = await signDeWT(user);
 
     return {

@@ -81,16 +81,15 @@ const CreateCompanyModal = () => {
     }
   };
 
-  // Info: (20251230 - Tzuhan) UI 部分保持簡單
   return (
     isModalVisible && (
-      <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
-        <div className="flex w-400px flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
+      <div className="fixed inset-0 z-[999] flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
+        <div className="flex w-400px flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background shadow-lg">
           <div className="flex items-center justify-between p-spacing-lv-4">
             <h3 className="text-lg font-bold text-text-neutral-primary">Create Company</h3>
             <button
               onClick={onClose}
-              className="p-spacing-lv-0 text-button-neutral-outline-on-neutral-default"
+              className="p-spacing-lv-0 text-button-neutral-outline-on-neutral-default hover:opacity-70"
             >
               <RxCross2 size={24} />
             </button>
@@ -107,7 +106,7 @@ const CreateCompanyModal = () => {
               <div className="rounded-radius-s border border-text-field-outline-default bg-gray-100 px-spacing-lv-4 py-spacing-lv-3">
                 <input
                   id="company-name-input"
-                  className="w-full bg-transparent outline-none"
+                  className="w-full bg-transparent text-black outline-none"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Enter company name"

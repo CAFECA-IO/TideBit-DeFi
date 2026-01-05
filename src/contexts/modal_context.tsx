@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useContext, createContext, useMemo } from 'react';
+import React, { useState, useContext, createContext, useMemo, useCallback } from 'react';
 
 interface IModalContextType {
   isTermsOfServiceModalVisible: boolean;
@@ -49,7 +49,10 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
   const authenticationModalVisibilityHandler = () =>
     setIsAuthenticationModalVisible((prev) => !prev);
 
-  const createCompanyModalVisibilityHandler = () => setIsCreateCompanyModalVisible((prev) => !prev);
+  const createCompanyModalVisibilityHandler = useCallback(() => {
+    setIsCreateCompanyModalVisible((prev) => !prev);
+    console.log('Toggled CreateCompanyModal visibility');
+  }, []);
 
   const value = useMemo(
     () => ({

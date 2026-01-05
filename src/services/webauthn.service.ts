@@ -14,6 +14,7 @@ import { AppError } from '@/lib/utils/error';
 import { ApiCode } from '@/lib/utils/status';
 import { extractXYFromSPKI } from '@/lib/auth/fido2-parse';
 import { randomBytes } from 'crypto';
+import { generateChallengeToken, verifyChallengeToken } from '@/lib/auth/challenge-token';
 
 interface ILoginResult {
   dewt: string;
@@ -169,6 +170,54 @@ class WebAuthnService {
 
     // Info: (20251226 - Tzuhan) 組合 Header + Point
     return Buffer.concat([SPKI_HEADER, uncompressedPoint]).toString('base64url');
+  }
+
+  // Info: (20260105 - Tzuhan) 產生無狀態 Challenge (給 Discoverable Login 用)
+  public async generateStatelessLoginOptions() {
+    return await generateChallengeToken();
+  }
+
+  // Info: (20260105 - Tzuhan) 處理無地址登入
+  public async loginWithCredential(
+    challengeToken: string,
+    authenticationData: AuthenticationJSON
+  ): Promise<ILoginResult> {
+    // Info: (20260105 - Tzuhan) 1. 驗證 Challenge Token 並還原 Challenge
+    const expectedChallenge = await verifyChallengeToken(challengeToken);
+
+    // Info: (20260105 - Tzuhan) 2. 透過 Credential ID 找人
+    const user = await this.repo.findUserByCredentialId(authenticationData.id);
+    if (!user || !user.pubKeyX || !user.pubKeyY) {
+      throw new AppError(ApiCode.NOT_FOUND, 'User not found or passkey not registered');
+    }
+
+    // Info: (20260105 - Tzuhan) 3. 還原公鑰並驗證
+    const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
+    const credential: CredentialInfo = {
+      id: authenticationData.id,
+      publicKey: credentialPublicKey,
+      algorithm: 'ES256',
+      transports: [],
+    };
+
+    try {
+      await verifyAuthentication(authenticationData, credential, expectedChallenge);
+    } catch (error) {
+      console.error('Login verification failed:', error);
+      throw new AppError(ApiCode.UNAUTHORIZED, 'Invalid signature');
+    }
+
+    // Info: (20260105 - Tzuhan) 4. 簽發 DeWT
+    const dewt = await signDeWT(user);
+
+    return {
+      dewt,
+      user: {
+        address: user.address,
+        name: user.name,
+        role: user.role,
+      },
+    };
   }
 }
 

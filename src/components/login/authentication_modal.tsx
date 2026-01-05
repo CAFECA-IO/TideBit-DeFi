@@ -8,11 +8,13 @@ import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
 import { fido2ClientService, getLoginChallenge, verifyLogin } from '@/lib/auth/fido2-client';
 import { useRouter } from 'next/navigation';
+import { ApiCode } from '@/lib/utils/status';
 
 const AuthenticationModal: React.FC = () => {
-  const [addressInput, setAddressInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [addressInput, setAddressInput] = useState('');
 
   const {
     isAuthenticationModalVisible: isModalVisible,
@@ -22,7 +24,54 @@ const AuthenticationModal: React.FC = () => {
   const { login } = useAuth();
   const router = useRouter();
 
-  // Info: (20251223 - Tzuhan) 核心登入邏輯
+  // Info: (20260105 - Tzuhan) 快速登入 (Discoverable)
+  const handleQuickLogin = async () => {
+    setIsLoading(true);
+    setErrorMsg('');
+    try {
+      // Info: (20260105 - Tzuhan) 1. 取得 Stateless Challenge
+      const res = await fetch('/api/v1/auth/nonce');
+      const data = await res.json();
+      if (data.code !== ApiCode.SUCCESS) throw new Error(data.message);
+
+      const { challenge, token } = data.payload;
+
+      // Info: (20260105 - Tzuhan) 2. 喚起 Passkey (不指定 user，讓瀏覽器探索)
+      const authentication = await fido2ClientService.startLogin({
+        challenge: challenge,
+        userVerification: 'required',
+        timeout: 60000,
+        // Info: (20260105 - Tzuhan) 關鍵：不傳 allowCredentials
+      });
+
+      // Info: (20260105 - Tzuhan) 3. 驗證並登入
+      const resLogin = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          authentication,
+          challengeToken: token, // Info: (20260105 - Tzuhan) 傳回 token 讓後端驗證 challenge
+        }),
+      });
+
+      const loginData = await resLogin.json();
+      if (loginData.code !== ApiCode.SUCCESS) throw new Error(loginData.message);
+
+      // Info: (20260105 - Tzuhan) 4. 成功
+      login(loginData.payload.dewt);
+      onClose();
+      router.push('/funding');
+    } catch (error) {
+      console.error(error);
+      setErrorMsg('Login failed. Try manual input if you are using a new device.');
+      // Info: (20260105 - Tzuhan) 失敗時顯示手動輸入框
+      setShowManualInput(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Info: (20260105 - Tzuhan) 原有的 handleLogin (手動輸入地址)
   const handleLogin = async () => {
     // Info: (20251223 - Tzuhan) 簡單驗證地址格式 (0x 開頭 + 40 hex char = 42 char)
     if (!addressInput.startsWith('0x') || addressInput.length !== 42) {
@@ -69,63 +118,69 @@ const AuthenticationModal: React.FC = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddressInput(e.target.value);
-    if (errorMsg) setErrorMsg('');
-  };
+  return (
+    isModalVisible && (
+      <div className="fixed inset-0 z-[999] flex size-full items-center justify-center bg-surface-neutral-mask-subtle backdrop-blur-lg">
+        <div className="flex w-400px flex-col overflow-hidden rounded-radius-m bg-modal-surface-background p-6 shadow-xl">
+          <div className="flex justify-end">
+            <button onClick={onClose}>
+              <RxCross2 size={24} />
+            </button>
+          </div>
 
-  const isDisplayedModal = isModalVisible && (
-    <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
-      <div className="flex w-400px flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
-        {/* Info: (20251223 - Tzuhan) Header */}
-        <div className="ml-auto p-spacing-lv-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-spacing-lv-0 text-button-neutral-outline-on-neutral-default"
-          >
-            <RxCross2 size={24} />
-          </button>
-        </div>
-
-        {/* Info: (20251223 - Tzuhan) Content */}
-        <div className="flex flex-col gap-spacing-lv-6 px-spacing-lv-8 pb-spacing-lv-8 pt-spacing-lv-2">
-          <div className="flex flex-col items-center gap-spacing-lv-4 text-center">
+          <div className="flex flex-col items-center gap-6 py-4">
             <div className="rounded-full bg-surface-neutral-container-lv2 p-4 text-icon-brand-primary">
-              <LiaFingerprintSolid size={48} />
+              <LiaFingerprintSolid size={64} />
             </div>
-            <div>
+            <div className="text-center">
               <h3 className="text-xl font-bold text-text-neutral-primary">Welcome Back</h3>
-              <p className="text-sm text-text-neutral-tertiary">
-                Enter your wallet address to sign in with Passkey
-              </p>
+              <p className="text-sm text-text-neutral-tertiary">Sign in with your Passkey</p>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-spacing-lv-2">
-            <p className="text-sm font-semibold text-text-field-text-label">Wallet Address</p>
-            <div className="bg-text-field-surface-placeholder rounded-radius-s border border-text-field-outline-default px-spacing-lv-4 py-spacing-lv-3">
-              <input
-                type="text"
-                value={addressInput}
-                onChange={handleInputChange}
-                className="w-full bg-transparent text-sm outline-none placeholder:text-text-field-text-placeholder"
-                placeholder="0x..."
+            {/* 大按鈕：直接登入 */}
+            {!showManualInput && (
+              <Button
+                className="h-12 w-full text-lg"
+                onClick={handleQuickLogin}
                 disabled={isLoading}
-              />
-            </div>
-            {errorMsg && <p className="text-xs text-text-state-error">{errorMsg}</p>}
-          </div>
+              >
+                {isLoading ? 'Scanning...' : 'Tap to Login'}
+              </Button>
+            )}
 
-          <Button type="button" onClick={handleLogin} disabled={isLoading || !addressInput}>
-            {isLoading ? 'Verifying...' : 'Sign In with Passkey'}
-          </Button>
+            {/* 錯誤訊息 */}
+            {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
+
+            {showManualInput && (
+              <div className="flex w-full flex-col gap-2">
+                <label htmlFor="wallet-address-input" className="sr-only">
+                  Wallet Address
+                </label>
+                <input
+                  id="wallet-address-input"
+                  className="w-full rounded border bg-transparent p-2"
+                  placeholder="Or enter wallet address..."
+                  value={addressInput}
+                  onChange={(e) => setAddressInput(e.target.value)}
+                  aria-label="Wallet Address"
+                />
+                <Button onClick={handleLogin}>Login with Address</Button>
+              </div>
+            )}
+
+            {!showManualInput && (
+              <button
+                onClick={() => setShowManualInput(true)}
+                className="text-sm text-gray-500 hover:underline"
+              >
+                I want to type my address
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
-
-  return isDisplayedModal;
 };
 
 export default AuthenticationModal;

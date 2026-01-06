@@ -178,15 +178,20 @@ class WebAuthnService {
     return await generateChallengeToken();
   }
 
-  // Info: (20260105 - Tzuhan) [New] 從鏈上掃描事件並恢復用戶 (救災模式)
-  // 當 DB 清空時，這是唯一能找回使用者的方法
+  /**
+   * Info: (20260105 - Tzuhan) 救災模式
+   * 從鏈上掃描事件並恢復用戶
+   * 當 DB 清空時，這是唯一能找回使用者的方法
+   */
   private async recoverUserByCredentialId(credentialId: string) {
     try {
       console.log('[Recovery] Scanning blockchain for AccountCreated events...');
 
-      // 1. 抓取所有 AccountCreated 事件
-      // 注意：因為 credentialId 沒有 indexed，我們必須抓回來在記憶體中過濾
-      // 在生產環境如果事件量大，這會變慢，但在目前階段是可行的
+      /**
+       * Info: (20260105 - Tzuhan) 1. 抓取所有 AccountCreated 事件
+       * 注意：因為 credentialId 沒有 indexed，我們必須抓回來在記憶體中過濾
+       * 在生產環境如果事件量大，這會變慢，但在目前階段是可行的
+       */
       const logs = await publicClient.getLogs({
         address: CONTRACT_ADDRESSES.FACTORY as `0x${string}`,
         event: parseAbiItem(
@@ -195,7 +200,7 @@ class WebAuthnService {
         fromBlock: 'earliest',
       });
 
-      // 2. 尋找符合的 credentialId
+      // Info: (20260105 - Tzuhan) 2. 尋找符合的 credentialId
       const matchLog = logs.find((log) => log.args.credentialId === credentialId);
 
       if (!matchLog) {
@@ -208,7 +213,7 @@ class WebAuthnService {
 
       console.log(`[Recovery] Found user ${scw} on chain. Restoring...`);
 
-      // 3. 恢復用戶到 DB
+      // Info: (20260105 - Tzuhan) 3. 恢復用戶到 DB
       const user = await this.repo.upsertUser({
         address: scw,
         pubKeyX: pubKeyX.toString(),
@@ -218,7 +223,7 @@ class WebAuthnService {
         imageUrl: imageUrl,
       });
 
-      // 4. [Important] 既然用戶都救回來了，順便把他的公司也救回來
+      // Info: (20260105 - Tzuhan) 4. 既然用戶都救回來了，順便把他的公司也救回來
       await this.syncUserCompanies(user.address, user.pubKeyX!, user.pubKeyY!);
 
       return user;
@@ -245,13 +250,13 @@ class WebAuthnService {
 
       for (const log of logs) {
         const { scw, owners, threshold, salt, name, imageUrl } = log.args;
-        // 檢查是否為 owner
+        // Info: (20260105 - Tzuhan) 檢查是否為 owner
         const isOwner = owners?.some(([ox, oy]) => ox === userPkX && oy === userPkY);
 
         if (isOwner && scw) {
           await prisma.company.upsert({
             where: { address: scw },
-            update: { owners: { connect: { address: userAddress } } }, // 確保關聯
+            update: { owners: { connect: { address: userAddress } } }, // Info: (20260105 - Tzuhan) 確保關聯
             create: {
               address: scw,
               name: name || 'Unknown Company',
@@ -273,13 +278,13 @@ class WebAuthnService {
     challengeToken: string,
     authenticationData: AuthenticationJSON
   ): Promise<ILoginResult> {
-    // 1. 驗證 Challenge
+    // Info: (20260105 - Tzuhan) 1. 驗證 Challenge
     const expectedChallenge = await verifyChallengeToken(challengeToken);
 
-    // 2. 透過 Credential ID 找人
+    // Info: (20260105 - Tzuhan) 2. 透過 Credential ID 找人
     let user = await this.repo.findUserByCredentialId(authenticationData.id);
 
-    // [Fix] 若 DB 找不到 (可能是 DB 被清空)，嘗試從鏈上救援
+    // Info: (20260105 - Tzuhan) 3. 若 DB 找不到 (可能是 DB 被清空)，嘗試從鏈上救援
     if (!user) {
       console.log(
         `[Login] User not found in DB, attempting to recover from chain using Credential ID: ${authenticationData.id}`
@@ -291,7 +296,7 @@ class WebAuthnService {
       throw new AppError(ApiCode.NOT_FOUND, 'User not found or passkey not registered');
     }
 
-    // 3. 還原公鑰並驗證
+    // Info: (20260105 - Tzuhan) 4. 還原公鑰並驗證
     const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
     const credential: CredentialInfo = {
       id: authenticationData.id,
@@ -307,7 +312,7 @@ class WebAuthnService {
       throw new AppError(ApiCode.UNAUTHORIZED, 'Invalid signature');
     }
 
-    // 4. 簽發 DeWT
+    // Info: (20260105 - Tzuhan) 5. 簽發 DeWT
     const dewt = await signDeWT(user);
 
     return {

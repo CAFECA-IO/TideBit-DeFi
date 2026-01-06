@@ -308,13 +308,14 @@ const RegisterModal: React.FC = () => {
             <p className="font-semibold text-text-field-text-label">
               <span className="text-text-field-text-error">*</span> What do you want us to call you?
             </p>
-            <div className="bg-text-field-surface-placeholder rounded-radius-s border border-text-field-outline-default px-spacing-lv-6 py-spacing-lv-4">
+            <div className="rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default px-spacing-lv-6 py-spacing-lv-4">
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
                 className="w-full bg-transparent outline-none placeholder:text-text-field-text-placeholder"
                 placeholder="Enter your nickname"
+                aria-label="Nickname entry"
               />
             </div>
           </div>

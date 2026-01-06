@@ -2,26 +2,26 @@ import { useEffect, useRef } from 'react';
 import useStateRef from 'react-usestateref';
 
 function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
-  const [, setComponentVisible, componentVisibleRef] = useStateRef<boolean>(initialVisibleState);
+  const [componentVisible, setComponentVisible] = useStateRef<boolean>(initialVisibleState);
 
   const targetRef = useRef<T>(null);
 
-  function handleClickOutside(this: Document, event: MouseEvent): void {
-    if (event.target instanceof HTMLElement && !targetRef.current?.contains(event.target)) {
-      setComponentVisible(false);
-    }
-  }
-
   useEffect(() => {
+    function handleClickOutside(event: MouseEvent): void {
+      if (event.target instanceof HTMLElement && !targetRef.current?.contains(event.target)) {
+        setComponentVisible(false);
+      }
+    }
+
     document.addEventListener('click', handleClickOutside, true);
     return () => {
       document.removeEventListener('click', handleClickOutside, true);
     };
-  }, []);
+  }, [setComponentVisible]);
 
   return {
     targetRef,
-    componentVisible: componentVisibleRef.current,
+    componentVisible,
     setComponentVisible,
   };
 }

@@ -18,7 +18,7 @@ const LockScreenMask: React.FC = () => {
 
   return (
     isLocked && (
-      <div className="z-lock-screen min-w-screen fixed flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask backdrop-blur-lg">
+      <div className="fixed z-lock-screen flex size-full min-h-screen w-screen flex-col items-center justify-center bg-surface-neutral-mask backdrop-blur-lg">
         <div className="flex w-250px flex-col items-center justify-center gap-50px">
           <FiLock size={80} className="text-icon-neutral-primary" />
           <Button type="button" className="w-full" onClick={unlockScreen}>

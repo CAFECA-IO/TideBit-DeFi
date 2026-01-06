@@ -39,15 +39,25 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState<boolean>(false);
   const [isCreateCompanyModalVisible, setIsCreateCompanyModalVisible] = useState<boolean>(false);
 
-  const termsOfServiceModalVisibilityHandler = () =>
-    setIsTermsOfServiceModalVisible((prev) => !prev);
+  const termsOfServiceModalVisibilityHandler = useCallback(
+    () => setIsTermsOfServiceModalVisible((prev) => !prev),
+    []
+  );
 
-  const guidedTourModalVisibilityHandler = () => setIsGuidedTourModalVisible((prev) => !prev);
+  const guidedTourModalVisibilityHandler = useCallback(
+    () => setIsGuidedTourModalVisible((prev) => !prev),
+    []
+  );
 
-  const registerModalVisibilityHandler = () => setIsRegisterModalVisible((prev) => !prev);
+  const registerModalVisibilityHandler = useCallback(
+    () => setIsRegisterModalVisible((prev) => !prev),
+    []
+  );
 
-  const authenticationModalVisibilityHandler = () =>
-    setIsAuthenticationModalVisible((prev) => !prev);
+  const authenticationModalVisibilityHandler = useCallback(
+    () => setIsAuthenticationModalVisible((prev) => !prev),
+    []
+  );
 
   const createCompanyModalVisibilityHandler = useCallback(() => {
     setIsCreateCompanyModalVisible((prev) => !prev);

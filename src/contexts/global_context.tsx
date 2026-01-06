@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useContext, createContext, useMemo } from 'react';
+import React, { useState, useContext, createContext, useMemo, useCallback } from 'react';
 
 interface IGlobalContextType {
   isSidebarOpen: boolean;
@@ -25,10 +25,13 @@ export const GlobalProvider = ({ children }: IGlobalProviderProps) => {
   const [isReviewedTerms, setIsReviewedTerms] = useState<boolean>(false);
 
   // Info: (20251219 - Julian) Sidebar toggle handler
-  const sidebarToggleHandler = () => setIsSidebarOpen((prev) => !prev);
+  const sidebarToggleHandler = useCallback(() => setIsSidebarOpen((prev) => !prev), []);
 
   // Info: (20251218 - Julian) Visibility handler for Modals
-  const reviewedTermsHandler = (isReviewed: boolean) => setIsReviewedTerms(isReviewed);
+  const reviewedTermsHandler = useCallback(
+    (isReviewed: boolean) => setIsReviewedTerms(isReviewed),
+    []
+  );
 
   const value = useMemo(
     () => ({

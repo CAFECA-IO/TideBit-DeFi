@@ -7,23 +7,63 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER      
+  ADMIN     
+}
+
+enum Status {
+  PENDING   
+  APPROVED  
+  REJECTED  
+}
+
 model User {
   id               String   @id @default(uuid())
   address          String   @unique
   pubKeyX          String?  @map("pub_key_x")
   pubKeyY          String?  @map("pub_key_y")
-  credentialId     String?  @map("credential_id")
+  credentialId     String?  @unique @map("credential_id")
   currentChallenge String?  @map("current_challenge")
   name             String?
   imageUrl         String?  @map("image_url")
-  role             Role     @default(PERSONAL)
+  role             Role     @default(USER)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  companies        Company[] @relation("CompanyOwners")
 
   @@index([address])
 }
 
-enum Role {
-  PERSONAL
-  COMPANY
+model Company {
+  id              String   @id @default(uuid())
+  address         String   @unique // Info: (20260106 - Tzuhan) Company SCW 合約地址
+  
+  // Info: (20260106 - Tzuhan) --- 來自鏈上事件 (Indexer 同步) ---
+  name            String   // Info: (20260106 - Tzuhan) 公司顯示名稱 (On-chain)
+  imageUrl        String?  @map("image_url") // Info: (20260106 - Tzuhan) 公司 Logo (On-chain)
+  threshold       Int      // Info: (20260106 - Tzuhan) 多簽門檻 (On-chain)
+  salt            String   // Info: (20260106 - Tzuhan) 部署 Salt (On-chain, 存為字串以防 BigInt 問題)
+
+  // Info: (20260106 - Tzuhan) --- 來自業務填寫 (API 更新) ---
+  legalName       String?  @map("legal_name") // Info: (20260106 - Tzuhan) 公司法定名稱 (如: 某某股份有限公司)
+  taxId           String?  @map("tax_id")     // Info: (20260106 - Tzuhan) 統一編號
+  description     String?  // Info: (20260106 - Tzuhan) 公司簡介
+  industry        String?  // Info: (20260106 - Tzuhan) 產業類別
+  email           String?  // Info: (20260106 - Tzuhan) 聯絡 Email
+  phone           String?  // Info: (20260106 - Tzuhan) 聯絡電話
+  website         String?  // Info: (20260106 - Tzuhan) 官方網站
+  
+  status          Status   @default(PENDING) 
+
+  // Info: (20260106 - Tzuhan) --- 關聯 ---
+  // Info: (20260106 - Tzuhan) 多簽擁有者 (多對多)
+  owners          User[]   @relation("CompanyOwners")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([address])
 }
+

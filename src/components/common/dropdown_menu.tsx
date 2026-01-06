@@ -31,28 +31,16 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
   // Info: (20251224 - Julian) 圖標
   const icon = prefixIcon && <div className="pl-spacing-lv-6 pr-spacing-lv-4">{prefixIcon}</div>;
 
-  // Info: (20251224 - Julian) 選單選項
-  const dropdown = options.map((op) => {
-    const clickHandler = () => {
-      selectOption(op);
-      setDropdownOpen(false);
-    };
-    return (
-      <div
-        key={op}
-        onClick={clickHandler}
-        className="px-spacing-lv-6 py-spacing-lv-3 hover:cursor-pointer hover:bg-text-field-surface-addon"
-      >
-        {op}
-      </div>
-    );
-  });
-
   return (
     <div ref={targetRef} className="relative flex flex-col items-center">
       {/* Info: (20251224 - Julian) Button */}
       <div
         onClick={toggleDropdown}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') toggleDropdown();
+        }}
+        role="button"
+        tabIndex={0}
         className={` ${
           isFocused ? 'border-text-field-outline-focused' : 'border-text-field-outline-default'
         } flex w-full items-center rounded-radius-s border bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active hover:cursor-pointer hover:border-text-field-outline-focused hover:bg-text-field-surface-addon`}
@@ -71,7 +59,26 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
             : 'invisible -translate-y-12 opacity-0'
         } absolute top-14 z-dropmenu flex w-full flex-col rounded-radius-s border border-text-field-outline-default bg-text-field-surface-default py-spacing-lv-3 text-text-field-text-active shadow-lg transition-all duration-150 ease-in-out`}
       >
-        {dropdown}
+        {options.map((op) => (
+          <div
+            key={op}
+            onClick={() => {
+              selectOption(op);
+              setDropdownOpen(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                selectOption(op);
+                setDropdownOpen(false);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            className="px-spacing-lv-6 py-spacing-lv-3 hover:cursor-pointer hover:bg-text-field-surface-addon"
+          >
+            {op}
+          </div>
+        ))}
       </div>
     </div>
   );

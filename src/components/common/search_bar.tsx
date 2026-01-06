@@ -22,6 +22,7 @@ const SearchBar: React.FC<{
         onChange={onChange}
         placeholder={placeholder}
         className="flex-1 bg-transparent px-spacing-lv-6 font-medium text-text-field-text-active outline-none placeholder:text-text-field-text-placeholder"
+        aria-label="Search"
       />
       <div className="shrink-0 pl-spacing-lv-4 pr-spacing-lv-6 text-text-field-text-placeholder">
         <FiSearch size={24} />

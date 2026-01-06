@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiTarget } from 'react-icons/fi';
+import { FiPlusSquare, FiTarget } from 'react-icons/fi';
 import { IoIosList } from 'react-icons/io';
 import { LuEye, LuEyeClosed, LuWallet, LuAlignHorizontalDistributeCenter } from 'react-icons/lu';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from 'react-icons/tb';
 import { Button } from '@/components/common/button';
 import { useGlobalCtx } from '@/contexts/global_context';
 import { numberWithCommas } from '@/lib/utils/common';
+import { useModalCtx } from '@/contexts/modal_context';
 
 enum SidebarPage {
   CROWDFUNDING = 'Crowdfunding',
@@ -25,6 +26,7 @@ const Sidebar: React.FC = () => {
 
   // ToDo: (20251219 - Julian) Get active page from router
   const [activePage, setActivePage] = useState<SidebarPage>(SidebarPage.CROWDFUNDING);
+  const { createCompanyModalVisibilityHandler } = useModalCtx();
 
   // ToDo: (20251219 - Julian) Mock Data
   const userAvatar = '/elements/default_pic.png';
@@ -105,6 +107,19 @@ const Sidebar: React.FC = () => {
     </button>
   );
 
+  const createCompanyButton = (
+    <Button
+      type="button"
+      size="sm"
+      variant="defaultBorderless"
+      className="justify-start text-text-brand-primary hover:text-text-brand-secondary"
+      onClick={createCompanyModalVisibilityHandler}
+    >
+      <FiPlusSquare size={24} />
+      <p>Create Company</p>
+    </Button>
+  );
+
   // ToDo: (20251219 - Julian) During Development
   const body = isSidebarOpen ? (
     <div className="flex flex-col gap-spacing-lv-6">
@@ -136,7 +151,12 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
       {/* Info: (20251219 - Julian) Links */}
-      <div className="flex flex-col items-stretch gap-spacing-lv-2">{displayedLinks}</div>
+      <div className="flex flex-col items-stretch gap-spacing-lv-2">
+        {displayedLinks}
+        {/* Info: (20251230 - Tzuhan) 插入 Create Company 按鈕 [New] */}
+        <div className="my-2 h-px bg-border-neutral-subtle" /> {/* 分隔線 */}
+        {createCompanyButton}
+      </div>
     </div>
   ) : null;
 

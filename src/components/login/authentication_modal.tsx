@@ -6,11 +6,11 @@ import { LiaFingerprintSolid } from 'react-icons/lia';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
-import { fido2ClientService, getLoginChallenge, verifyLogin } from '@/lib/auth/fido2-client';
+import { fido2ClientService } from '@/lib/auth/fido2-client';
 import { useRouter } from 'next/navigation';
+import { ApiCode } from '@/lib/utils/status';
 
 const AuthenticationModal: React.FC = () => {
-  const [addressInput, setAddressInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -22,110 +22,85 @@ const AuthenticationModal: React.FC = () => {
   const { login } = useAuth();
   const router = useRouter();
 
-  // Info: (20251223 - Tzuhan) 核心登入邏輯
+  // Info: (20260105 - Tzuhan) 快速登入 (Discoverable)
   const handleLogin = async () => {
-    // Info: (20251223 - Tzuhan) 簡單驗證地址格式 (0x 開頭 + 40 hex char = 42 char)
-    if (!addressInput.startsWith('0x') || addressInput.length !== 42) {
-      setErrorMsg('Invalid wallet address format');
-      return;
-    }
-
     setIsLoading(true);
     setErrorMsg('');
-
     try {
-      // Info: (20251223 - Tzuhan) 1. 取得 Challenge (同時觸發後端 Lazy Sync)
-      const challenge = await getLoginChallenge(addressInput);
-      console.log('Got challenge:', challenge);
+      // 1. 取得 Stateless Challenge
+      const res = await fetch('/api/v1/auth/nonce');
+      const data = await res.json();
+      if (data.code !== ApiCode.SUCCESS) throw new Error(data.message);
 
-      // Info: (20251223 - Tzuhan) 2. 喚起 Passkey 簽名
+      const { challenge, token } = data.payload;
+
+      // Info: (20260105 - Tzuhan) 2. 喚起 Passkey
       const authentication = await fido2ClientService.startLogin({
         challenge: challenge,
         userVerification: 'required',
         timeout: 60000,
+        // Info: (20260105 - Tzuhan) 不傳 allowCredentials，啟用探索模式
       });
 
-      console.log('Passkey signed:', authentication);
+      // Info: (20260105 - Tzuhan) 3. 驗證並登入
+      const resLogin = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          authentication,
+          challengeToken: token,
+        }),
+      });
 
-      // Info: (20251223 - Tzuhan) 3. 驗證簽名並取得 JWT
-      const { dewt, user } = await verifyLogin(addressInput, authentication);
-      console.log('Login success:', user);
+      const loginData = await resLogin.json();
+      if (loginData.code !== ApiCode.SUCCESS) throw new Error(loginData.message);
 
-      // Info: (20251223 - Tzuhan) 4. 寫入 Context 並跳轉
-      login(dewt);
+      // Info: (20260105 - Tzuhan) 4. 成功
+      login(loginData.payload.dewt);
       onClose();
-      router.push('/funding'); // Info: (20251223 - Tzuhan) 登入後導向募資頁
+      router.push('/funding');
     } catch (error) {
-      console.error('Login failed:', error);
-      // Info: (20251223 - Tzuhan) 顯示較友善的錯誤訊息
-      const msg = (error as Error).message || 'Authentication failed';
-      if (msg.includes('User not found')) {
-        setErrorMsg('User not found. Please register first.');
-      } else {
-        setErrorMsg(msg);
-      }
+      console.error(error);
+      setErrorMsg('Login failed. Please verify your identity.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddressInput(e.target.value);
-    if (errorMsg) setErrorMsg('');
-  };
+  return (
+    isModalVisible && (
+      <div className="fixed inset-0 z-[999] flex size-full items-center justify-center bg-surface-neutral-mask-subtle backdrop-blur-lg">
+        <div className="flex w-400px flex-col overflow-hidden rounded-radius-m bg-modal-surface-background p-6 shadow-xl">
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className="text-text-neutral-tertiary hover:text-text-neutral-primary"
+            >
+              <RxCross2 size={24} />
+            </button>
+          </div>
 
-  const isDisplayedModal = isModalVisible && (
-    <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
-      <div className="flex w-400px flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
-        {/* Info: (20251223 - Tzuhan) Header */}
-        <div className="ml-auto p-spacing-lv-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-spacing-lv-0 text-button-neutral-outline-on-neutral-default"
-          >
-            <RxCross2 size={24} />
-          </button>
-        </div>
-
-        {/* Info: (20251223 - Tzuhan) Content */}
-        <div className="flex flex-col gap-spacing-lv-6 px-spacing-lv-8 pb-spacing-lv-8 pt-spacing-lv-2">
-          <div className="flex flex-col items-center gap-spacing-lv-4 text-center">
+          <div className="flex flex-col items-center gap-6 py-4">
             <div className="rounded-full bg-surface-neutral-container-lv2 p-4 text-icon-brand-primary">
-              <LiaFingerprintSolid size={48} />
+              <LiaFingerprintSolid size={64} />
             </div>
-            <div>
+            <div className="text-center">
               <h3 className="text-xl font-bold text-text-neutral-primary">Welcome Back</h3>
               <p className="text-sm text-text-neutral-tertiary">
-                Enter your wallet address to sign in with Passkey
+                Log in with your biometric passkey
               </p>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-spacing-lv-2">
-            <p className="text-sm font-semibold text-text-field-text-label">Wallet Address</p>
-            <div className="bg-text-field-surface-placeholder rounded-radius-s border border-text-field-outline-default px-spacing-lv-4 py-spacing-lv-3">
-              <input
-                type="text"
-                value={addressInput}
-                onChange={handleInputChange}
-                className="w-full bg-transparent text-sm outline-none placeholder:text-text-field-text-placeholder"
-                placeholder="0x..."
-                disabled={isLoading}
-              />
-            </div>
-            {errorMsg && <p className="text-xs text-text-state-error">{errorMsg}</p>}
-          </div>
+            <Button className="h-12 w-full text-lg" onClick={handleLogin} disabled={isLoading}>
+              {isLoading ? 'Scanning...' : 'Login with Passkey'}
+            </Button>
 
-          <Button type="button" onClick={handleLogin} disabled={isLoading || !addressInput}>
-            {isLoading ? 'Verifying...' : 'Sign In with Passkey'}
-          </Button>
+            {errorMsg && <p className="text-center text-sm text-red-500">{errorMsg}</p>}
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
-
-  return isDisplayedModal;
 };
 
 export default AuthenticationModal;

@@ -28,7 +28,7 @@ const SingleNumberContainer: React.FC<ISingleNumberContainerProps> = ({ number }
         setCurrentNumber(number);
       }, 0);
     }
-  }, [number]);
+  }, [number, currentNumber]);
 
   const displayPrevNumber = prevNumber !== null && (
     <span

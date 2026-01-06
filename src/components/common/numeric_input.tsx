@@ -200,6 +200,7 @@ const NumericInput: React.FC<INumericInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={`${inputStyle} size-full bg-transparent text-center text-text-field-text-active outline-none`}
+          aria-label="Numeric input"
         />
       </div>
       <button

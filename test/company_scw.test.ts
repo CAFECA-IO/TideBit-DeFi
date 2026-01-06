@@ -12,7 +12,9 @@ import {
 import crypto from 'crypto';
 import { describe, it } from 'node:test';
 
-// --- Type Definitions ---
+const { viem } = await network.connect();
+
+// Info: (20260106 - Tzuahan) --- Type Definitions ---
 
 interface IP256Account {
   publicKey: crypto.KeyObject;
@@ -32,7 +34,7 @@ interface IWebAuthnSignatureStruct {
   pubKeyY: bigint;
 }
 
-// --- Helper Functions ---
+// Info: (20260106 - Tzuahan) --- Helper Functions ---
 
 function generateP256KeyPair(): IP256Account {
   const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', {
@@ -102,31 +104,33 @@ function signUserOpHash(userOpHash: Hex, account: IP256Account): IWebAuthnSignat
 }
 
 function encodeMultiSig(signatures: IWebAuthnSignatureStruct[]): Hex {
-  // ABI 定義需與 Solidity 結構完全一致
-  // CompanySCW.validateUserOp 預期的是 WebAuthnSignature[]
-  // 所以這裡 encodeAbiParameters 應該對應其參數結構
+  /*
+   * Info: (20260106 - Tzuahan)
+   * ABI 定義需與 Solidity 結構完全一致
+   * CompanySCW.validateUserOp 預期的是 WebAuthnSignature[]
+   * 所以這裡 encodeAbiParameters 應該對應其參數結構
+   */
   const structAbi =
     '((bytes authenticatorData, bytes clientDataJSON, uint256 challengeLocation, uint256 responseTypeLocation, uint256 r, uint256 s, uint256 pubKeyX, uint256 pubKeyY)[])';
 
   return encodeAbiParameters(parseAbiParameters(structAbi), [[signatures]]);
 }
 
-// --- Tests ---
+// Info: (20260106 - Tzuahan) --- Tests ---
 
 describe('CompanySCW (Multi-Sig)', function () {
   async function deployFixture() {
-    const { viem } = await network.connect();
     const [relayer] = await viem.getWalletClients();
     const publicClient = await viem.getPublicClient();
     const testClient = await viem.getTestClient();
 
-    // 1. 部署 EntryPoint
-    const entryPoint = await viem.deployContract('EntryPoint', []);
+    // Info: (20260106 - Tzuahan) 1. 部署 EntryPoint
+    const entryPoint = await viem.deployContract('EntryPointImportHelper', []);
 
-    // 2. 部署 Factory
+    // Info: (20260106 - Tzuahan) 2. 部署 Factory
     const factory = await viem.deployContract('SCWFactory', [entryPoint.address]);
 
-    // 3. 準備 Keys
+    // Info: (20260106 - Tzuahan) 3. 準備 Keys
     const ownerA = generateP256KeyPair();
     const ownerB = generateP256KeyPair();
     const ownerC = generateP256KeyPair();
@@ -145,7 +149,7 @@ describe('CompanySCW (Multi-Sig)', function () {
     const threshold = BigInt(2);
     const salt = BigInt(12345);
 
-    // 4. 部署 Company Wallet
+    // Info: (20260106 - Tzuahan) 4. 部署 Company Wallet
     await factory.write.createCompanyAccount([
       ownersArg,
       threshold,
@@ -166,7 +170,7 @@ describe('CompanySCW (Multi-Sig)', function () {
       value: parseEther('1.0'),
     });
 
-    await companySCW.write.addDeposit([], { value: parseEther('0.5') });
+    await entryPoint.write.depositTo([companyAddress], { value: parseEther('0.5') });
 
     return {
       entryPoint,
@@ -182,7 +186,6 @@ describe('CompanySCW (Multi-Sig)', function () {
   }
 
   it('Should PASS with 2 valid sorted signatures (2-of-3)', async function () {
-    const { viem } = await network.connect();
     const { companySCW, entryPoint, owners, testClient } = await deployFixture();
 
     const userOp = {

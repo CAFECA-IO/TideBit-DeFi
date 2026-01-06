@@ -9,14 +9,15 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const address = searchParams.get('address');
 
-    if (!address) {
-      throw new AppError(ApiCode.VALIDATION_ERROR, 'Address is required');
+    if (address) {
+      // Info: (20260105 - Tzuhan) 原有邏輯：有地址 -> 查鏈 -> 存 DB
+      const challenge = await webAuthnService.generateLoginOptions(address);
+      return jsonOk({ challenge });
+    } else {
+      // Info: (20260105 - Tzuhan) [New] 無地址 -> Stateless Challenge
+      const { challenge, token } = await webAuthnService.generateStatelessLoginOptions();
+      return jsonOk({ challenge, token });
     }
-
-    // Info: (20251223 - Tzuhan) 呼叫 Service，這裡會自動觸發 Lazy Sync (查鏈 -> 寫 DB)
-    const challenge = await webAuthnService.generateLoginOptions(address);
-
-    return jsonOk({ challenge });
   } catch (error) {
     if (error instanceof AppError) {
       return jsonFail(error.code, error.message);

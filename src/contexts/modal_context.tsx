@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useContext, createContext, useMemo } from 'react';
+import React, { useState, useContext, createContext, useMemo, useCallback } from 'react';
 
 interface IModalContextType {
   isTermsOfServiceModalVisible: boolean;
@@ -9,9 +9,10 @@ interface IModalContextType {
   guidedTourModalVisibilityHandler: () => void;
   isRegisterModalVisible: boolean;
   registerModalVisibilityHandler: () => void;
-  // Info: (20251223 - Tzuhan) 新增 Authentication Modal 控制
   isAuthenticationModalVisible: boolean;
   authenticationModalVisibilityHandler: () => void;
+  isCreateCompanyModalVisible: boolean;
+  createCompanyModalVisibilityHandler: () => void;
 }
 
 const ModalContext = createContext<IModalContextType>({
@@ -21,9 +22,10 @@ const ModalContext = createContext<IModalContextType>({
   guidedTourModalVisibilityHandler: () => {},
   isRegisterModalVisible: false,
   registerModalVisibilityHandler: () => {},
-  // Info: (20251223 - Tzuhan) Default values
   isAuthenticationModalVisible: false,
   authenticationModalVisibilityHandler: () => {},
+  isCreateCompanyModalVisible: false,
+  createCompanyModalVisibilityHandler: () => {},
 });
 
 interface IModalProviderProps {
@@ -34,8 +36,8 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
   const [isTermsOfServiceModalVisible, setIsTermsOfServiceModalVisible] = useState<boolean>(false);
   const [isGuidedTourModalVisible, setIsGuidedTourModalVisible] = useState<boolean>(false);
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
-  // Info: (20251223 - Tzuhan) State
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState<boolean>(false);
+  const [isCreateCompanyModalVisible, setIsCreateCompanyModalVisible] = useState<boolean>(false);
 
   const termsOfServiceModalVisibilityHandler = () =>
     setIsTermsOfServiceModalVisible((prev) => !prev);
@@ -44,9 +46,13 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
 
   const registerModalVisibilityHandler = () => setIsRegisterModalVisible((prev) => !prev);
 
-  // Info: (20251223 - Tzuhan) Handler
   const authenticationModalVisibilityHandler = () =>
     setIsAuthenticationModalVisible((prev) => !prev);
+
+  const createCompanyModalVisibilityHandler = useCallback(() => {
+    setIsCreateCompanyModalVisible((prev) => !prev);
+    console.log('Toggled CreateCompanyModal visibility');
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -56,9 +62,11 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
       guidedTourModalVisibilityHandler,
       isRegisterModalVisible,
       registerModalVisibilityHandler,
-      // Info: (20251223 - Tzuhan) Value
       isAuthenticationModalVisible,
       authenticationModalVisibilityHandler,
+
+      isCreateCompanyModalVisible,
+      createCompanyModalVisibilityHandler,
     }),
     [
       isTermsOfServiceModalVisible,
@@ -69,6 +77,8 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
       registerModalVisibilityHandler,
       isAuthenticationModalVisible,
       authenticationModalVisibilityHandler,
+      isCreateCompanyModalVisible,
+      createCompanyModalVisibilityHandler,
     ]
   );
 

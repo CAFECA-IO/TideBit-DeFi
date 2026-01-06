@@ -31,9 +31,12 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/app/page.tsx",
-    // "scripts/**/*.ts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "./hardhat.config.ts",
+    "scripts/**/*.ts", 
+    "test/**/*.ts",
+    "ignition/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", "scripts", "test", "ignition", "dist"]
+  "exclude": ["node_modules", ".next", "dist"]
 }

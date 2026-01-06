@@ -21,8 +21,13 @@ export const ABIS = {
     'error FailedOp(uint256 opIndex, string reason)',
   ]),
   FACTORY: parseAbi([
+    // Info: (20251230 - Tzuhan) ----- Personal SCW -----
     'event AccountCreated(address indexed scw, uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string username, string imageUrl)',
     'function getAddress(uint256 pubKeyX, uint256 pubKeyY, uint256 salt) public view returns (address)',
     'function createAccount(uint256 pubKeyX, uint256 pubKeyY, uint256 salt, string credentialId, string username, string imageUrl) external returns (address)',
+    // Info: (20251230 - Tzuhan) ----- Company SCW -----
+    'event CompanyCreated(address indexed scw, uint256[][] owners, uint256 threshold, uint256 salt, string name, string imageUrl)',
+    'function createCompanyAccount(uint256[][] owners, uint256 threshold, uint256 salt, string name, string imageUrl) external returns (address)',
+    'function getCompanyAddress(uint256[][] owners, uint256 threshold, uint256 salt) public view returns (address)',
   ]),
 };

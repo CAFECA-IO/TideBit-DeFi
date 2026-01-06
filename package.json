@@ -1,6 +1,6 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+58",
+  "version": "0.9.0+59",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,10 +14,10 @@
     "sc:deploy_factory:isuncoin_mainnet": "npx hardhat ignition deploy ./ignition/modules/deploy_factory.ts --network isuncoin_mainnet --reset",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint && eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "lint": "eslint --fix .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
     "check-format": "prettier --ignore-path .gitignore --list-different \"**/*.+(js|jsx|ts|tsx|json)\"",
-    "validate": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|ts|tsx|json|css)\" && next lint && eslint --fix --ext .js,.jsx,.ts,.tsx . && npm run test",
+    "validate": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|ts|tsx|json|css)\" && eslint --fix . && npm run test",
     "update-version": "npx tsx scripts/update_version.ts && git add package.json",
     "swarm": "next start -p 10010",
     "prepare": "husky",

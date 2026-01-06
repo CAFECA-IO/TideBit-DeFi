@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,9 +24,15 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/package": ["./package.json"],
-      "@/i18nconfig": ["./i18n-config.ts"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/package": [
+        "./package.json"
+      ],
+      "@/i18nconfig": [
+        "./i18n-config.ts"
+      ]
     }
   },
   "include": [
@@ -31,10 +41,16 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/app/page.tsx",
-    // "scripts/**/*.ts",
+    "scripts/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "./hardhat.config.ts"
   ],
-  "exclude": ["node_modules", ".next", "scripts", "test", "ignition", "dist"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "test",
+    "ignition",
+    "dist"
+  ]
 }

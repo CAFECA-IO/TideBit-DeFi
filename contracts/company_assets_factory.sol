@@ -6,18 +6,25 @@ import '@erc3643org/erc-3643/contracts/registry/implementation/IdentityRegistryS
 import '@erc3643org/erc-3643/contracts/compliance/modular/ModularCompliance.sol';
 import '@erc3643org/erc-3643/contracts/proxy/TokenProxy.sol';
 import '@erc3643org/erc-3643/contracts/token/IToken.sol';
+import '@erc3643org/erc-3643/contracts/roles/AgentRoleUpgradeable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 // Info: (20260107 - Tzuahan) 簡易的 Authority 合約，用於滿足 TokenProxy 的介面檢查需求
-contract SimpleAuthority {
-  address public immutable tokenImplementation;
+contract SimpleAuthority is Ownable {
+  address public tokenImplementation;
 
   constructor(address _tokenImplementation) {
     tokenImplementation = _tokenImplementation;
   }
 
+  function setTokenImplementation(address _newImpl) external onlyOwner {
+    tokenImplementation = _newImpl;
+  }
+
   function getTokenImplementation() external view returns (address) {
     return tokenImplementation;
   }
+
   // Info: (20260107 - Tzuahan) 回傳非零地址以通過 AbstractProxy 的檢查
   function getCTRImplementation() external pure returns (address) {
     return address(0xdead);
@@ -109,9 +116,17 @@ contract CompanyAssetsFactory {
     // Info: (20260107 - Tzuahan) 修正：將 tokenAddress 轉型為 AgentRoleUpgradeable 來呼叫 addAgent
     AgentRoleUpgradeable(tokenAddress).addAgent(_companyScw);
 
-    // Info: (20260107 - Tzuahan) 8. 轉移所有權給 CompanySCW
-    // Info: (20260107 - Tzuahan) 修正：同樣轉型為 AgentRoleUpgradeable 來呼叫 transferOwnership (繼承自 OwnableUpgradeable)
+    // Info: (20260107 - Tzuahan) 8. [New] 解除 Token 暫停狀態 (開啟流通性)
+    // Info: (20260107 - Tzuahan) Factory 先把自己加為 Agent -> Unpause -> 移除自己
+    AgentRoleUpgradeable(tokenAddress).addAgent(address(this));
+    IToken(tokenAddress).unpause();
+    AgentRoleUpgradeable(tokenAddress).removeAgent(address(this));
+
+    // Info: (20260107 - Tzuahan) 9. 轉移所有權給 CompanySCW
     AgentRoleUpgradeable(tokenAddress).transferOwnership(_companyScw);
+
+    // Info: (20260107 - Tzuahan) Authority 也必須轉移所有權，否則公司未來無法升級合約
+    authority.transferOwnership(_companyScw);
 
     identityRegistry.transferOwnership(_companyScw);
     identityStorage.transferOwnership(_companyScw);

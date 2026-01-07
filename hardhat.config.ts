@@ -2,12 +2,13 @@ import '@nomicfoundation/hardhat-viem';
 import 'dotenv/config';
 import hardhatToolboxViemPlugin from '@nomicfoundation/hardhat-toolbox-viem';
 import { configVariable, defineConfig } from 'hardhat/config';
+import hardhatViem from '@nomicfoundation/hardhat-viem';
 
 export default defineConfig({
-  plugins: [hardhatToolboxViemPlugin],
+  plugins: [hardhatToolboxViemPlugin, hardhatViem],
   solidity: {
-    profiles: {
-      default: {
+    compilers: [
+      {
         version: '0.8.28',
         settings: {
           optimizer: {
@@ -17,8 +18,8 @@ export default defineConfig({
           evmVersion: 'paris',
         },
       },
-      production: {
-        version: '0.8.28',
+      {
+        version: '0.8.20', // Info: (20260106 - Tzuahan) 許多 OpenZeppelin 合約使用
         settings: {
           optimizer: {
             enabled: true,
@@ -27,7 +28,27 @@ export default defineConfig({
           evmVersion: 'paris',
         },
       },
-    },
+      {
+        version: '0.8.19', // Info: (20260106 - Tzuahan) 中間過渡版本
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+          evmVersion: 'paris',
+        },
+      },
+      {
+        version: '0.8.17', // Info: (20260106 - Tzuahan) 針對 @erc3643org/erc-3643 (T-REX)
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+          evmVersion: 'london',
+        },
+      },
+    ],
   },
   paths: {
     sources: './contracts',

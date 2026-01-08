@@ -78,11 +78,6 @@ const Pagination: React.FC<IPaginationProps> = ({
     }
   };
 
-  // Info: (20260108 - Julian) 防止輸入框滾動改變數值
-  const handlePageScroll = (e: React.UIEvent<HTMLInputElement>) => {
-    e.currentTarget.scrollTop = 0;
-  };
-
   // Info: (20260108 - Julian) 輸入框樣式
   const displayedPageInput = (
     <div className="flex size-44px flex-col items-center justify-center rounded-radius-xs border border-text-field-outline-default bg-text-field-surface-default">
@@ -94,8 +89,8 @@ const Pagination: React.FC<IPaginationProps> = ({
         onChange={handlePageInputChange}
         onBlur={handlePageInputBlur}
         onKeyDown={handlePageInputKeyDown}
-        onScroll={handlePageScroll}
-        className="w-30px bg-transparent text-center font-medium text-text-field-text-active outline-none"
+        onWheel={(e) => e.currentTarget.blur()} // Info: (20260108 - Julian) 防止滾動改變數值
+        className="hide-arrows w-30px bg-transparent text-center font-medium text-text-field-text-active outline-none"
       />
     </div>
   );

@@ -12,7 +12,7 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
       components={{
         h1: ({ children, ...props }: React.ComponentPropsWithoutRef<'h1'>) => (
           <h1
-            className="mb-3 mt-5 flex items-center gap-2 pb-2 text-[1.4rem] text-text-neutral-primary"
+            className="mb-3 mt-5 flex items-center gap-2 pb-2 text-[32px] font-bold text-text-neutral-primary"
             {...props}
           >
             {children}
@@ -71,7 +71,10 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
           );
         },
         p: ({ children, ...props }: React.ComponentPropsWithoutRef<'p'>) => (
-          <p className="mb-2.5 leading-relaxed text-text-neutral-primary" {...props}>
+          <p
+            className="mb-2.5 text-[14px] font-normal leading-relaxed text-text-neutral-primary"
+            {...props}
+          >
             {children}
           </p>
         ),

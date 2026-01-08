@@ -8,7 +8,7 @@ import { AppError } from '@/lib/utils/error';
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Auth
+    // Info: (20260108 - Tzuhan) 1. Auth
     const authHeader = req.headers.get('Authorization');
     const user = await getIdentityFromDeWT(authHeader);
     if (!user) return jsonFail(ApiCode.UNAUTHORIZED, 'Unauthorized');
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     // Info: (20260108 - Tzuhan) 檢查是否有 companyId (更新現有草稿 vs 建立新草稿)
     const { companyId, ...payload } = body;
 
-    // 2. Validate Partial Input
+    // Info: (20260108 - Tzuhan) 2. Validate Partial Input
     const parseResult = saveDraftSchema.safeParse(payload);
     if (!parseResult.success) {
       throw new AppError(ApiCode.VALIDATION_ERROR, parseResult.error.message);
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     if (companyId) {
       // Info: (20260108 - Tzuhan) Update existing draft
-      // 確保該 Company 屬於當前 User
+      // Info: (20260108 - Tzuhan) 確保該 Company 屬於當前 User
       const existing = await prisma.company.findUnique({
         where: { id: companyId },
         include: { owners: true },
@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.status !== 'PENDING' && existing.status !== 'REJECTED') {
-        // 若已是 APPROVED，通常不允許隨意改草稿，視業務邏輯而定
-        // 這裡假設只能改 Pending/Rejected
+        // Info: (20260108 - Tzuhan) 若已是 APPROVED，通常不允許隨意改草稿，視業務邏輯而定
+        // Info: (20260108 - Tzuhan) 這裡假設只能改 Pending/Rejected
       }
 
       company = await prisma.company.update({
@@ -57,10 +57,10 @@ export async function POST(req: NextRequest) {
       company = await prisma.company.create({
         data: {
           ...data,
-          name: data.name || data.legalName || 'New Company', // 必填欄位給預設值
+          name: data.name || data.legalName || 'New Company', // Info: (20260108 - Tzuhan) 必填欄位給預設值
           currentStep,
           owners: {
-            connect: { id: user.id }, // 綁定當前用戶為 Owner
+            connect: { id: user.id }, // Info: (20260108 - Tzuhan) 綁定當前用戶為 Owner
           },
         },
       });

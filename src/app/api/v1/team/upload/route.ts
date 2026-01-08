@@ -3,7 +3,7 @@ import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
 import { AppError } from '@/lib/utils/error';
 import { loggerFromRequest } from '@/lib/utils/logger';
-import { getIdentityFromDeWT } from '@/lib/auth/dewt'; // 確保只有登入用戶能上傳
+import { getIdentityFromDeWT } from '@/lib/auth/dewt'; // Info: (20260108 - Tzuhan) 確保只有登入用戶能上傳
 
 // Info: (20260108 - Tzuhan) 設定 Storage Service 的環境變數
 const STORAGE_DOMAIN = process.env.STORAGE_DOMAIN;
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     return jsonOk({
       name,
       size,
-      url: viewUrl, // 前端拿到這個 URL 後，填入表單欄位 (e.g. tokenLogoId)
+      url: viewUrl, // Info: (20260108 - Tzuhan) 前端拿到這個 URL 後，填入表單欄位 (e.g. tokenLogoId)
       hash, // 保留 Hash 以備不時之需
     });
   } catch (err) {

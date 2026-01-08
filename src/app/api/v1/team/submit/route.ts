@@ -8,7 +8,7 @@ import { AppError } from '@/lib/utils/error';
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Auth
+    // Info: (20260108 - Tzuhan) 1. Auth
     const authHeader = req.headers.get('Authorization');
     const user = await getIdentityFromDeWT(authHeader);
     if (!user) return jsonFail(ApiCode.UNAUTHORIZED, 'Unauthorized');
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       throw new AppError(ApiCode.VALIDATION_ERROR, 'Company ID is required for submission');
     }
 
-    // 2. Validate Full Schema (所有欄位必填)
+    // Info: (20260108 - Tzuhan) 2. Validate Full Schema (所有欄位必填)
     const parseResult = submitTeamSchema.safeParse(formData);
     if (!parseResult.success) {
       const errorMsg = parseResult.error.issues
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const validData = parseResult.data;
 
-    // 3. Update & Set Status
+    // Info: (20260108 - Tzuhan) 3. Update & Set Status
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: { owners: true },

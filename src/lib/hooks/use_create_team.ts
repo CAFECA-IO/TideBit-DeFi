@@ -16,11 +16,11 @@ const TOTAL_STEPS = 5;
 
 // Info: (20260108 - Tzuhan) 定義表單初始狀態
 const initialFormData: Partial<SubmitTeamInput> = {
-  // Step 1
+  // Info: (20260108 - Tzuhan) Step 1
   tokenName: '',
   tokenSymbol: '',
   tokenLogoId: '',
-  // Step 2
+  // Info: (20260108 - Tzuhan) Step 2
   legalName: '',
   country: 'Taiwan',
   representative: '',
@@ -29,12 +29,12 @@ const initialFormData: Partial<SubmitTeamInput> = {
   email: '',
   name: '',
   website: '',
-  // Step 3
+  // Info: (20260108 - Tzuhan) Step 3
   legalStructure: 'Company Limited by Shares',
   registrationNum: '',
   industry: '',
-  // Step 5
-  docIdType: 'National ID', // Zod Enum 預設值
+  // Info: (20260108 - Tzuhan) Step 5
+  docIdType: 'National ID', // Info: (20260108 - Tzuhan) Zod Enum 預設值
   docIdFile: '',
   docRegFile: '',
   docUboFile: '',
@@ -59,7 +59,7 @@ export function useCreateTeam() {
     <K extends keyof SubmitTeamInput>(field: K, value: SubmitTeamInput[K]) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
 
-      // 清除該欄位的錯誤訊息
+      // Info: (20260108 - Tzuhan) 清除該欄位的錯誤訊息
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[field as string];
@@ -106,7 +106,7 @@ export function useCreateTeam() {
         schema = teamStep3Schema;
         break;
       case 4:
-        return true; // Review step
+        return true; // Info: (20260108 - Tzuhan) Review step
       case 5:
         schema = teamStep5Schema;
         break;

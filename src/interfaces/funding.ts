@@ -26,8 +26,8 @@ export interface IFundingItemUI extends IFundingInfoBrief {
 // Info: (20251212 - Julian) 預算明細項目，用於畫圓餅圖
 interface IBudgetBreakdown {
   title: string;
-  amount: number;
-  percentage: number;
+  totalAmount: number; // 預算金額
+  usedAmount: number; // 已使用預算金額
 }
 
 // Info: (20251212 - Julian) 募資預算摘要，和 `Budget Allocation` 通用
@@ -241,9 +241,13 @@ export const mockFundingDetail: IFundingInfoDetail = {
     expenseAmount: 600000,
     remainAmount: 400000,
     breakdown: [
-      { title: 'Research and Development', amount: 300000, percentage: 30 },
-      { title: 'Marketing', amount: 200000, percentage: 20 },
-      { title: 'Operations', amount: 100000, percentage: 10 },
+      {
+        title: 'Research and Development',
+        totalAmount: 300000,
+        usedAmount: 300000,
+      },
+      { title: 'Marketing', totalAmount: 200000, usedAmount: 45000 },
+      { title: 'Operations', totalAmount: 100000, usedAmount: 0 },
     ],
   },
 };
@@ -257,9 +261,9 @@ export const mockFundingIntroduction: IFundingIntroduction = {
 
   # List blur align effect arrange.
 
-  Layer thumbnail comment reesizing prototype outline select link. Share select fill frame figjam layout hand auto. Auto inspect boolean prototype text scale text move. Inspect rotate font share prototype font plugin distribute. Undo polygon team link vertical polygon variant blur. Italic auto clip rectangle layout arrow list outline flows. Mask image italic slice flows.
-  Ipsum flows subtract invite device boolean draft. Flatten draft library frame plugin underline arrow overflow. Font arrange figma component asset object. Pixel pixel layer slice content variant editor. Image group figjam vector opacity figjam project hand. Pen thumbnail flatten arrange edit layout selection background. Layer italic inspect inspect link move list align shadow project. Fill list union pencil reesizing link blur boolean. Flows background union editor mask align scrolling text ellipse union. Team opacity font style editor. Community list project invite stroke union team editor pen. Boolean export main text create star list selection pen.
-  Ellipse blur editor image reesizing. Layer content mask pen reesizing comment ipsum reesizing pencil. Blur slice polygon object selection device select outline thumbnail. Scale object underline figjam edit subtract team prototype. Ellipse pencil draft style team.
+  Layer thumbnail comment resizing prototype outline select link. Share select fill frame figjam layout hand auto. Auto inspect boolean prototype text scale text move. Inspect rotate font share prototype font plugin distribute. Undo polygon team link vertical polygon variant blur. Italic auto clip rectangle layout arrow list outline flows. Mask image italic slice flows.
+  Ipsum flows subtract invite device boolean draft. Flatten draft library frame plugin underline arrow overflow. Font arrange figma component asset object. Pixel pixel layer slice content variant editor. Image group figjam vector opacity figjam project hand. Pen thumbnail flatten arrange edit layout selection background. Layer italic inspect inspect link move list align shadow project. Fill list union pencil resizing link blur boolean. Flows background union editor mask align scrolling text ellipse union. Team opacity font style editor. Community list project invite stroke union team editor pen. Boolean export main text create star list selection pen.
+  Ellipse blur editor image resizing. Layer content mask pen resizing comment ipsum resizing pencil. Blur slice polygon object selection device select outline thumbnail. Scale object underline figjam edit subtract team prototype. Ellipse pencil draft style team.
 
   Text group flows hand duplicate plugin ellipse component vertical arrow. Create mask flatten thumbnail background content rectangle. Pencil strikethrough scrolling pixel scale main. Library shadow overflow comment font link object pen line italic. Vector strikethrough component content rotate. Follower arrange scrolling strikethrough pencil content vector. Rotate opacity blur horizontal rectangle line plugin move background underline. Slice shadow variant ellipse link. Reesizing shadow strikethrough draft plugin select auto team. Horizontal select polygon frame rectangle device.
 

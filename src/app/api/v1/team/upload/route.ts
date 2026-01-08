@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       name,
       size,
       url: viewUrl, // Info: (20260108 - Tzuhan) 前端拿到這個 URL 後，填入表單欄位 (e.g. tokenLogoId)
-      hash, // 保留 Hash 以備不時之需
+      hash, // Info: (20260108 - Tzuhan) 保留 Hash 以備不時之需
     });
   } catch (err) {
     log.error('[Upload] API failed', {

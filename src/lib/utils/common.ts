@@ -56,6 +56,7 @@ export const timestampToString = (timestamp: number | undefined) => {
     return {
       dateString: '-',
       dateWithSlash: '-',
+      dateWithDash: '-',
     };
   }
 
@@ -76,10 +77,12 @@ export const timestampToString = (timestamp: number | undefined) => {
   // Info: (20251219 - Julian) Formatting
   const dateString = `${monthShortName} ${day}, ${year}`;
   const dateWithSlash = `${year}/${monthWithPad}/${dayWithPad}`;
+  const dateWithDash = `${year}-${monthWithPad}-${dayWithPad}`;
 
   return {
-    dateString,
-    dateWithSlash,
+    dateString, // e.g., "Jan 01, 2026"
+    dateWithSlash, // e.g., "2026/01/01"
+    dateWithDash, // e.g., "2026-01-01"
   };
 };
 

@@ -78,7 +78,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
   // Info: (20251224 - Julian) 用於 Breadcrumb
   const breadcrumbData = [
     { title: 'Crowdfunding', link: TBD_URL.FUNDING },
-    { title: title, link: '' },
+    { title: title, link: `${TBD_URL.FUNDING}/${fundingId}` },
   ];
 
   const header = (

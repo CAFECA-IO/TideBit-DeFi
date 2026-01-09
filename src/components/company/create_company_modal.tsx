@@ -66,7 +66,7 @@ const CreateCompanyModal = () => {
   const labelStyle = 'text-sm font-semibold text-text-field-text-label mb-2 block';
   const errorStyle = 'text-xs text-text-state-error mt-1';
 
-  // --- Step 1: Token Info ---
+  // Info: (20260109 - Tzuhan) --- Step 1: Token Info ---
   const renderStep1 = () => (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -75,10 +75,10 @@ const CreateCompanyModal = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        {/* Logo Upload */}
+        {/* Info: (20260108 - Tzuhan) Logo Upload */}
         <div className="relative size-100px overflow-hidden rounded-full border border-dashed border-border-neutral-strong bg-surface-neutral-container-lv1">
           {formData.tokenLogoId ? (
-            // ToDo: 若是 File ID 需轉換為完整 URL，這邊假設 Hook 已處理或後端回傳完整 URL
+            // ToDo: (20260109 - Tzuhan) 若是 File ID 需轉換為完整 URL，這邊假設 Hook 已處理或後端回傳完整 URL
             <img src={formData.tokenLogoId} alt="Token Logo" className="object-cover" />
           ) : (
             <div className="flex size-full flex-col items-center justify-center text-text-neutral-tertiary">
@@ -137,7 +137,7 @@ const CreateCompanyModal = () => {
     </div>
   );
 
-  // --- Step 2: Basic Info ---
+  // Info: (20260109 - Tzuhan) --- Step 2: Basic Info ---
   const renderStep2 = () => (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -195,7 +195,7 @@ const CreateCompanyModal = () => {
           <DropdownMenu
             options={PHONE_PREFIX_OPTIONS}
             activeOption={'+886'}
-            selectOption={() => {}} // 簡化：暫不處理 prefix 狀態
+            selectOption={() => {}} // Info: (20260108 - Tzuhan) 簡化：暫不處理 prefix 狀態
             aria-label="Phone Prefix"
           />
         </div>
@@ -234,7 +234,7 @@ const CreateCompanyModal = () => {
     </div>
   );
 
-  // --- Step 3: Registration Info ---
+  // Info: (20260109 - Tzuhan) --- Step 3: Registration Info ---
   const renderStep3 = () => (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -276,7 +276,7 @@ const CreateCompanyModal = () => {
           <input
             type="date"
             className={inputStyle}
-            // Zod coerce date 會轉成 Date 物件，這裡需轉回 string yyyy-MM-dd
+            // Info: (20260109 - Tzuhan) Zod coerce date 會轉成 Date 物件，這裡需轉回 string yyyy-MM-dd
             value={
               formData.registrationDate instanceof Date
                 ? formData.registrationDate.toISOString().split('T')[0]
@@ -302,7 +302,7 @@ const CreateCompanyModal = () => {
     </div>
   );
 
-  // --- Step 4: Review ---
+  // Info: (20260109 - Tzuhan) --- Step 4: Review ---
   const renderStep4 = () => (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -332,7 +332,7 @@ const CreateCompanyModal = () => {
     </div>
   );
 
-  // --- Step 5: Upload Documents ---
+  // Info: (20260109 - Tzuhan) --- Step 5: Upload Documents ---
   const FileUploadField = ({ label, field }: { label: string; field: keyof typeof formData }) => (
     <div>
       <label className={labelStyle}>{label} *</label>
@@ -416,7 +416,7 @@ const CreateCompanyModal = () => {
   return (
     <div className="fixed inset-0 z-[999] flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
       <div className="flex w-500px flex-col overflow-hidden rounded-radius-m bg-modal-surface-background shadow-xl">
-        {/* Header with Progress */}
+        {/* Info: (20260109 - Tzuhan) Header with Progress */}
         <div className="relative bg-surface-neutral-container-lv1 pt-6">
           <button
             onClick={onClose}
@@ -439,10 +439,10 @@ const CreateCompanyModal = () => {
           </div>
         </div>
 
-        {/* Content Body */}
+        {/* Info: (20260109 - Tzuhan) Content Body */}
         <div className="max-h-[60vh] overflow-y-auto px-8 py-6">{renderContent()}</div>
 
-        {/* Footer Actions */}
+        {/* Info: (20260109 - Tzuhan) Footer Actions */}
         <div className="border-t border-border-neutral-subtle bg-surface-neutral-background px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             {currentStep > 1 ? (
@@ -450,7 +450,7 @@ const CreateCompanyModal = () => {
                 Back
               </Button>
             ) : (
-              <div /> // Spacer
+              <div /> // Info: (20260109 - Tzuhan) Spacer
             )}
 
             <div className="flex gap-3">

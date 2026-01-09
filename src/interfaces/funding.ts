@@ -26,8 +26,8 @@ export interface IFundingItemUI extends IFundingInfoBrief {
 // Info: (20251212 - Julian) 預算明細項目，用於畫圓餅圖
 interface IBudgetBreakdown {
   title: string;
-  totalAmount: number; // 預算金額
-  usedAmount: number; // 已使用預算金額
+  totalAmount: number; // Info: (20260109 - Julian) 預算金額
+  usedAmount: number; // Info: (20260109 - Julian) 已使用預算金額
 }
 
 // Info: (20251212 - Julian) 募資預算摘要，和 `Budget Allocation` 通用

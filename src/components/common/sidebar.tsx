@@ -10,6 +10,7 @@ import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from 'react
 import { Button } from '@/components/common/button';
 import { useGlobalCtx } from '@/contexts/global_context';
 import { bigNumberToString } from '@/lib/utils/common';
+import { TBD_URL } from '@/constants/url';
 import { useModalCtx } from '@/contexts/modal_context';
 
 enum SidebarPage {
@@ -73,7 +74,7 @@ const Sidebar: React.FC = () => {
 
   const header = isSidebarOpen ? (
     <div className="flex items-center justify-between">
-      <Link href={'/'}>
+      <Link href={TBD_URL.HOME}>
         <Image
           src="/logo/horizontal_logo_dark.svg"
           width={135}

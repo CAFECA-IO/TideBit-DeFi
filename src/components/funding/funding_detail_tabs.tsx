@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { mockFundingIntroduction } from '@/interfaces/funding';
 import { MarkdownContent } from '@/components/common/markdown_content';
+import NewsItem from '@/components/news/news_item';
+import { mockNews } from '@/interfaces/news';
+import Pagination, { PaginationType } from '@/components/common/pagination';
 
 enum FundingDetailTab {
   INTRODUCTION = 'Introduction',
@@ -16,10 +20,32 @@ interface IFundingDetailTabsProps {
 }
 
 const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Info: (20260108 - Julian) 定義 page 參數名稱
+  const pageParamsName = 'news_page';
+
+  // ToDo: (20260108 - Julian) 從 URL 參數取得 page 與 keyword
+  // const page = searchParams.get(pageParamsName) ?? '1';
+  // const pageNum = Number(page) ?? 1;
+
   const [currentTab, setCurrentTab] = useState<FundingDetailTab>(FundingDetailTab.INTRODUCTION);
+  // const [currentNewsPage, setCurrentNewsPage] = useState<number>(pageNum);
 
   // ToDo: (20260102 - Julian) Get real data from API
   const introductionData = mockFundingIntroduction.introduction;
+  const newsData = mockNews;
+  const totalPages = 100;
+
+  // Info: (20260108 - Julian) 點擊按鈕時更新當前頁面，並寫入 URL 參數
+  const selectPage = (page: number) => {
+    // Info: (20260108 - Julian) 保留現有 query
+    const params = new URLSearchParams(searchParams);
+    params.set(pageParamsName, page.toString());
+    // Info: (20260108 - Julian) 更新 URL
+    router.push(`?${params.toString()}`);
+  };
 
   const displayedTabs = Object.keys(FundingDetailTab).map((title) => {
     const titleKey = title as keyof typeof FundingDetailTab;
@@ -44,8 +70,23 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     );
   });
 
+  // Info: (20260108 - Julian) 介紹
   const introductionContent = <MarkdownContent content={introductionData} />;
-  const newsContent = <div>News Content</div>;
+
+  // Info: (20260108 - Julian) 最新消息
+  const newsList = newsData.map((news) => <NewsItem key={news.id} news={news} />);
+  const newsContent = (
+    <div className="px-spacing-lv-8 pb-spacing-lv-6 pt-spacing-lv-8">
+      <div className="flex flex-col gap-spacing-lv-4 px-spacing-lv-8">{newsList}</div>
+      <Pagination
+        paramsName={pageParamsName}
+        totalPages={totalPages}
+        selectPage={selectPage}
+        paginationType={PaginationType.NUMERIC}
+      />
+    </div>
+  );
+
   const financialReportContent = <div>Financial Report Content</div>;
   const budgetAllocationContent = <div>Budget Allocation Content</div>;
 

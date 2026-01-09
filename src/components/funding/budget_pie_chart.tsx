@@ -13,18 +13,24 @@ const BudgetPieChart: React.FC<IBudgetPieChartProps> = ({ budgetSummary }) => {
   const { remainAmount, breakdown } = budgetSummary;
 
   // Info: (20251230 - Julian) 實際支出部分
-  const expensePart = breakdown.map((item) => ({
-    label: item.title,
-    value: item.amount,
-  }));
+  const expensePart = breakdown.map((item) => {
+    // Info: (20260108 - Julian) 計算已使用預算之百分比，並取整數
+    const usedPercentage = Math.round((item.usedAmount / item.totalAmount) * 100) ?? 0;
+
+    return {
+      label: item.title,
+      value: item.totalAmount,
+      legendPercentage: usedPercentage,
+    };
+  });
 
   // Info: (20251230 - Julian) 剩餘部分
-  const emptyPart = { label: 'empty', value: remainAmount };
+  const emptyPart = { label: 'empty', value: remainAmount, legendPercentage: 0 };
 
   // Info: (20251230 - Julian) 組合圖表數據
   const data: IChartData[] = [...expensePart, emptyPart];
 
-  return <PieChart data={data} size={150} isShowLegend />;
+  return <PieChart data={data} size={150} />;
 };
 
 export default BudgetPieChart;

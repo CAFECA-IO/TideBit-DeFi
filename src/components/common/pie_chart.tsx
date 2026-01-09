@@ -34,16 +34,25 @@ interface IPieChartProps {
   data: IChartData[];
   size?: number;
   hole?: HoleSize;
-  isShowLegend?: boolean;
 }
 
 interface IPieChartLegendProps {
   label: string;
   color: string;
   value: number;
+  percentage?: number;
 }
 
-const PieChartLegend: React.FC<IPieChartLegendProps> = ({ label, color, value }) => {
+const PieChartLegend: React.FC<IPieChartLegendProps> = ({ label, color, value, percentage }) => {
+  const isShowProgressBar = percentage !== undefined && (
+    <ProgressBar
+      size={ProgressBarSize.XS}
+      color={ProgressBarColor.PRIMARY}
+      percentage={percentage}
+      notPadding
+    />
+  );
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col text-xs">
@@ -55,22 +64,12 @@ const PieChartLegend: React.FC<IPieChartLegendProps> = ({ label, color, value })
           NT$ {numberWithCommas(value)}
         </div>
       </div>
-      <ProgressBar
-        size={ProgressBarSize.XS}
-        color={ProgressBarColor.PRIMARY}
-        percentage={30}
-        notPadding
-      />
+      {isShowProgressBar}
     </div>
   );
 };
 
-const PieChart: React.FC<IPieChartProps> = ({
-  data,
-  size = 200,
-  hole = HoleSize.LARGE,
-  isShowLegend = false,
-}) => {
+const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.LARGE }) => {
   // Info: (20251230 - Julian) 分別抽出標籤和數據
   const labels = data.map((item) => item.label);
   const series = data.map((item) => item.value);
@@ -225,18 +224,17 @@ const PieChart: React.FC<IPieChartProps> = ({
   };
 
   // Info: (20260102 - Julian) 顯示圖例
-  const displayLegend =
-    isShowLegend &&
-    data
-      .filter((item) => item.label !== 'empty')
-      .map((d, index) => (
-        <PieChartLegend
-          key={d.label}
-          label={d.label}
-          color={getFillColor(d.label, index)}
-          value={d.value}
-        />
-      ));
+  const displayLegend = data
+    .filter((item) => item.label !== 'empty')
+    .map((d, index) => (
+      <PieChartLegend
+        key={d.label}
+        label={d.label}
+        color={getFillColor(d.label, index)}
+        value={d.value}
+        percentage={d.legendPercentage}
+      />
+    ));
 
   return (
     <div className="flex w-full justify-center gap-24px">

@@ -9,6 +9,7 @@ import { numberWithCommas, timestampToString, bigNumberToString } from '@/lib/ut
 import FundingStat from '@/components/funding/funding_stat';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
 import { FundingStatus } from '@/constants/funding';
+import { TBD_URL } from '@/constants/url';
 
 interface IFundingTicketProps {
   data: IFundingItemUI;
@@ -35,7 +36,7 @@ const FundingTicket: React.FC<IFundingTicketProps> = ({ data }) => {
     isLocked,
   } = data;
 
-  const detailLink = `/funding/${id}`;
+  const detailLink = `${TBD_URL.FUNDING}/${id}`;
 
   // Info: (202501219 - Julian) 用於 Progress Bar
   const progressPercentage = (raisedFundingAmount / goalFundingAmount) * 100;

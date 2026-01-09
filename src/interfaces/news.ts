@@ -14,7 +14,7 @@ export interface INewsDetail extends INewsBrief {
   content: string; // Info: (20251212 - Julian) 內文，Markdown 格式
 }
 
-export const mockNews: INewsBrief[] = [
+export const mockNews: INewsDetail[] = [
   {
     id: 'news1',
     title:
@@ -22,6 +22,19 @@ export const mockNews: INewsBrief[] = [
     imageId: null,
     excerpt:
       "Thank you for joining TideBit De-Fi! We're excited to have you here. Welcome to the CryptoWave Exchange! Your participation means a lot to us.",
+    content: `
+   # Welcome to TideBit De-Fi!
+   We're excited to have you here. Your participation means a lot to us.
+   ## Getting Started
+   To get started, make sure to explore our platform and take advantage of the various features we offer.
+   ### Features
+   - Secure Transactions
+   - User-Friendly Interface
+   - 24/7 Customer Support
+   #### Join the Community
+   Connect with other users and stay updated with the latest news and updates.
+   Visit our [website](https://www.tidebit.com) for more information.
+   `,
     publicTimestamp: 1732396800,
     viewCount: 1200,
     shareCount: 300,
@@ -32,6 +45,19 @@ export const mockNews: INewsBrief[] = [
     imageId: null,
     excerpt:
       'Decentralized Finance (DeFi) is rapidly changing the way we think about money and financial services. By leveraging blockchain technology, DeFi platforms offer a more inclusive, transparent, and efficient alternative to traditional banking systems.',
+    content: `
+    # Welcome to TideBit De-Fi!
+    We're excited to have you here. Your participation means a lot to us.
+    ## Getting Started
+    To get started, make sure to explore our platform and take advantage of the various features we offer.
+    ### Features
+    - Secure Transactions
+    - User-Friendly Interface
+    - 24/7 Customer Support
+    #### Join the Community
+    Connect with other users and stay updated with the latest news and updates.
+    Visit our [website](https://www.tidebit.com) for more information.
+    `,
     publicTimestamp: 1732483200,
     viewCount: 950,
     shareCount: 150,
@@ -42,6 +68,18 @@ export const mockNews: INewsBrief[] = [
     imageId: null,
     excerpt:
       'Smart contracts are self-executing contracts with the terms of the agreement directly written into code. They play a crucial role in DeFi by enabling trustless transactions and automating complex financial processes.',
+    content: `
+    # Understanding Smart Contracts: The Backbone of DeFi
+    Smart contracts are self-executing contracts with the terms of the agreement directly written into code. They play a crucial role in DeFi by enabling trustless transactions and automating complex financial processes.
+    ## How Smart Contracts Work
+    Smart contracts operate on blockchain networks, where they automatically execute actions when predefined conditions are met. This eliminates the need for intermediaries, reducing costs and increasing efficiency.
+    ### Applications of Smart Contracts in DeFi
+    - Automated Market Makers (AMMs)
+    - Lending and Borrowing Protocols
+    - Yield Farming
+    #### Challenges and Considerations
+    While smart contracts offer numerous benefits, they also come with challenges such as security vulnerabilities and regulatory concerns. It is essential to conduct thorough audits and stay informed about the evolving legal landscape.
+    `,
     publicTimestamp: 1732569600,
     viewCount: 800,
     shareCount: 100,

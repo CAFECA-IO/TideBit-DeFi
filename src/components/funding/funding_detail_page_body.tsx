@@ -16,6 +16,7 @@ import BudgetPieChart from '@/components/funding/budget_pie_chart';
 import Countdown from '@/components/common/countdown';
 import FundingDetailTabs from '@/components/funding/funding_detail_tabs';
 import { FundingResult, FundingStatus } from '@/constants/funding';
+import { TBD_URL } from '@/constants/url';
 
 interface IFundingDetailPageBodyProps {
   fundingId: string;
@@ -26,7 +27,6 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
   const data = mockFundingItems.find((item) => item.id === fundingId);
 
   // ToDo: (20251224 - Julian) Constant
-  const homeLink = `/funding`;
   const depositLink = `/`;
 
   // ToDo: (20260102 - Julian) 用於投資金額輸入框
@@ -41,7 +41,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
     return (
       <Layout className="flex min-h-screen flex-col items-center justify-center gap-spacing-lv-4 p-spacing-lv-10 text-text-neutral-primary">
         <h2 className="text-4xl font-bold">Funding item not found.</h2>
-        <Link href={homeLink} className="text-xl text-link-default hover:text-link-hover">
+        <Link href={TBD_URL.FUNDING} className="text-xl text-link-default hover:text-link-hover">
           Back to Funding Page
         </Link>
       </Layout>
@@ -77,15 +77,15 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   // Info: (20251224 - Julian) 用於 Breadcrumb
   const breadcrumbData = [
-    { title: 'Crowdfunding', link: '/funding' },
-    { title: title, link: '' },
+    { title: 'Crowdfunding', link: TBD_URL.FUNDING },
+    { title: title, link: `${TBD_URL.FUNDING}/${fundingId}` },
   ];
 
   const header = (
     <div className="flex flex-col gap-spacing-lv-6 px-spacing-lv-8 pb-spacing-lv-6 pt-spacing-lv-8">
       <div className="flex items-center gap-8px">
         <Link
-          href={homeLink}
+          href={TBD_URL.FUNDING}
           className="p-spacing-lv-4 text-button-neutral-outline-on-neutral-default"
         >
           <FaArrowLeft size={36} />

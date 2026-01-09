@@ -38,6 +38,7 @@ const tslintConfigs = [
   // Info: (20250918 - Luphia) 全域忽略設定
   {
     ignores: [
+      'src/generated',
       'coverage',
       'node_modules',
       '.next',

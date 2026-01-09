@@ -27,3 +27,5 @@ export const MONTH_SHORT_NAME = [
   'Nov.',
   'Dec.',
 ];
+
+export const DEFAULT_PIC_URL = '/elements/default_pic.png';

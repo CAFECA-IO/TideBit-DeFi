@@ -17,7 +17,7 @@ export const teamStep2Schema = z.object({
   country: z.string().min(1, 'Registered Location is required'),
   representative: z.string().min(1, 'Representative Name is required'),
   contactPerson: z.string().optional(),
-  contactNumber: z.string().min(1, 'Contact Number is required'),
+  phone: z.string().min(1, 'Contact Number is required'),
   email: z.string().email('Invalid email address'),
   name: z.string().optional(), // Info: (20260108 - Tzuhan) Display Name, 若未填可由後端預設為 Legal Name
   website: z.string().url().optional().or(z.literal('')), // Info: (20260108 - Tzuhan) Optional URL

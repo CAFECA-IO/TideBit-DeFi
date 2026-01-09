@@ -31,15 +31,22 @@ export const numberWithCommas = (number: number | string) => {
 // Info: (20251219 - Julian) 將大數字轉換為帶單位的字串表示（K, M, B）
 export const bigNumberToString = (number: number | string) => {
   const num = typeof number === 'string' ? parseFloat(number) : number;
+  const absNum = Math.abs(num); // Info: (20260109 - Julian) 取絕對值進行比較
 
-  if (Math.abs(num) >= 1_000_000_000) {
-    return (num / 1_000_000_000).toFixed(0) + ' B';
-  } else if (Math.abs(num) >= 1_000_000) {
-    return (num / 1_000_000).toFixed(0) + ' M';
-  } else if (Math.abs(num) >= 1_000) {
-    return (num / 1_000).toFixed(0) + ' K';
+  if (absNum >= 1_000_000_000) {
+    // Info: (20260109 - Julian) 處理十億
+    const billion = Math.floor(num / 1_000_000_000);
+    return numberWithCommas(billion) + ' B';
+  } else if (absNum >= 1_000_000) {
+    // Info: (20260109 - Julian) 處理百萬
+    const million = Math.floor(num / 1_000_000);
+    return numberWithCommas(million) + ' M';
+  } else if (absNum >= 1_000) {
+    // Info: (20260109 - Julian) 處理千
+    const thousand = Math.floor(num / 1_000);
+    return numberWithCommas(thousand) + ' K';
   } else {
-    return num.toString();
+    return numberWithCommas(num);
   }
 };
 

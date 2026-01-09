@@ -9,7 +9,7 @@ import { LuEye, LuEyeClosed, LuWallet, LuAlignHorizontalDistributeCenter } from 
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from 'react-icons/tb';
 import { Button } from '@/components/common/button';
 import { useGlobalCtx } from '@/contexts/global_context';
-import { numberWithCommas } from '@/lib/utils/common';
+import { bigNumberToString } from '@/lib/utils/common';
 import { useModalCtx } from '@/contexts/modal_context';
 
 enum SidebarPage {
@@ -31,8 +31,8 @@ const Sidebar: React.FC = () => {
   // ToDo: (20251219 - Julian) Mock Data
   const userAvatar = '/elements/default_pic.png';
   const userName = 'John Doe';
-  const twdBalance = 100000;
-  const iscBalance = 2500;
+  const twdBalance = 100000000;
+  const iscBalance = 23242500;
 
   const links = Object.values(SidebarPage);
 
@@ -66,8 +66,8 @@ const Sidebar: React.FC = () => {
     );
   });
 
-  const displayedTwdBalance = isShowBalance ? numberWithCommas(twdBalance) : '********';
-  const displayedIscBalance = isShowBalance ? numberWithCommas(iscBalance) : '********';
+  const displayedTwdBalance = isShowBalance ? bigNumberToString(twdBalance) : '********';
+  const displayedIscBalance = isShowBalance ? bigNumberToString(iscBalance) : '********';
 
   const toggleHideBalance = () => setIsShowBalance((prev) => !prev);
 

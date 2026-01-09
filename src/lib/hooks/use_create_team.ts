@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ZodTypeAny } from 'zod'; // Info: (20260108 - Tzuhan) 引入 ZodTypeAny
+import { ZodTypeAny } from 'zod';
 import { teamService } from '@/services/team.service';
 import {
   teamStep1Schema,
@@ -25,7 +25,7 @@ const initialFormData: Partial<SubmitTeamInput> = {
   country: 'Taiwan',
   representative: '',
   contactPerson: '',
-  contactNumber: '+886',
+  phone: '+886',
   email: '',
   name: '',
   website: '',
@@ -39,6 +39,21 @@ const initialFormData: Partial<SubmitTeamInput> = {
   docRegFile: '',
   docUboFile: '',
 };
+
+// Info: (20260109 - Tzuhan) [Fix] 清理 FormData，移除空字串，避免 Draft 驗證失敗
+function cleanFormData(data: Partial<SubmitTeamInput>) {
+  const cleaned: Record<string, unknown> = {};
+
+  Object.entries(data).forEach(([key, value]) => {
+    // Info: (20260109 - Tzuhan) 只保留非空字串、非 null、非 undefined 的值
+    // 注意：如果是數字 0 或布林值 false 應該保留，但目前的欄位都是 string/date
+    if (value !== '' && value !== null && value !== undefined) {
+      cleaned[key] = value;
+    }
+  });
+
+  return cleaned;
+}
 
 export function useCreateTeam() {
   const router = useRouter();
@@ -106,7 +121,7 @@ export function useCreateTeam() {
         schema = teamStep3Schema;
         break;
       case 4:
-        return true; // Info: (20260108 - Tzuhan) Review step
+        return true;
       case 5:
         schema = teamStep5Schema;
         break;
@@ -142,9 +157,12 @@ export function useCreateTeam() {
     try {
       const nextStepIndex = currentStep < TOTAL_STEPS ? currentStep + 1 : currentStep;
 
+      // Info: (20260109 - Tzuhan) [Fix] 使用 cleanFormData 過濾空值
+      const cleanedData = cleanFormData(formData);
+
       const result = await teamService.saveDraft(companyId, {
         currentStep: nextStepIndex,
-        data: formData,
+        data: cleanedData,
       });
 
       if (!companyId && result.companyId) {
@@ -203,9 +221,12 @@ export function useCreateTeam() {
   const handleSaveAndLeave = useCallback(async () => {
     setIsSubmitting(true);
     try {
+      // Info: (20260109 - Tzuhan) [Fix] 同樣使用 cleanFormData
+      const cleanedData = cleanFormData(formData);
+
       await teamService.saveDraft(companyId, {
         currentStep,
-        data: formData,
+        data: cleanedData,
       });
       router.push('/funding');
     } catch (error) {

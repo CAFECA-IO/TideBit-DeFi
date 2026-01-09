@@ -17,6 +17,12 @@ interface IDraftResult {
   currentStep: number;
 }
 
+// Info: (20260109 - Tzuhan) Helper function to get auth headers
+const getAuthHeaders = (): Record<string, string> => {
+  const token = localStorage.getItem('dewt');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export const teamService = {
   // Info: (20260108 - Tzuhan) 1. 上傳文件/圖片
   async uploadFile(file: File): Promise<IUploadResult> {
@@ -25,6 +31,9 @@ export const teamService = {
 
     const res = await fetch(`${BASE_URL}/upload`, {
       method: 'POST',
+      headers: {
+        ...getAuthHeaders(),
+      } as HeadersInit,
       body: formData,
     });
 
@@ -44,7 +53,10 @@ export const teamService = {
 
     const res = await fetch(`${BASE_URL}/draft`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify(body),
     });
 
@@ -62,11 +74,14 @@ export const teamService = {
   async submitApplication(companyId: string, formData: SubmitTeamInput): Promise<void> {
     const res = await fetch(`${BASE_URL}/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify({ companyId, ...formData }),
     });
 
-    const data = (await res.json()) as IApiResponse<null>; // Info: (20260108 - Tzuhan) Payload 是 null 或其他不重要的資訊
+    const data = (await res.json()) as IApiResponse<null>;
 
     if (data.code !== ApiCode.SUCCESS) {
       throw new Error(data.message || 'Submission failed');

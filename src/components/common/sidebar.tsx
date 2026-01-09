@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
   // ToDo: (20251219 - Julian) Mock Data
   const userAvatar = '/elements/default_pic.png';
   const userName = 'John Doe';
-  const twdBalance = 100000000;
+  const twdBalance = 10000000000;
   const iscBalance = 23242500;
 
   const links = Object.values(SidebarPage);
@@ -67,8 +67,13 @@ const Sidebar: React.FC = () => {
     );
   });
 
-  const displayedTwdBalance = isShowBalance ? bigNumberToString(twdBalance) : '********';
-  const displayedIscBalance = isShowBalance ? bigNumberToString(iscBalance) : '********';
+  // Info: (20260109 - Julian) 超過 1_000_000_000 才會顯示單位
+  const displayedTwdBalance = isShowBalance
+    ? bigNumberToString(twdBalance, 1_000_000_000)
+    : '********';
+  const displayedIscBalance = isShowBalance
+    ? bigNumberToString(iscBalance, 1_000_000_000)
+    : '********';
 
   const toggleHideBalance = () => setIsShowBalance((prev) => !prev);
 
@@ -132,13 +137,13 @@ const Sidebar: React.FC = () => {
         <p className="text-lg font-semibold text-navigation-text-default">{userName}</p>
       </div>
       {/* Info: (20251219 - Julian) Account */}
-      <div className="flex items-center gap-spacing-lv-2">
-        <div className="flex flex-1 items-center gap-spacing-lv-2">
-          <div className="flex flex-col items-start gap-spacing-lv-2 text-sm font-semibold">
+      <div className="flex items-center gap-spacing-lv-4">
+        <div className="flex flex-1 flex-col gap-spacing-lv-2">
+          <div className="flex items-start gap-spacing-lv-2 text-sm font-semibold">
             <p className="text-text-neutral-tertiary">TWD</p>
             <p className="text-text-neutral-primary">{displayedTwdBalance}</p>
           </div>
-          <div className="flex flex-col items-start gap-spacing-lv-2 text-sm font-semibold">
+          <div className="flex items-start gap-spacing-lv-2 text-sm font-semibold">
             <p className="text-text-neutral-tertiary">ISC</p>
             <p className="text-text-neutral-primary">{displayedIscBalance}</p>
           </div>

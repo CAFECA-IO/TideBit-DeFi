@@ -29,10 +29,20 @@ export const numberWithCommas = (number: number | string) => {
 };
 
 // Info: (20251219 - Julian) 將大數字轉換為帶單位的字串表示（K, M, B）
-export const bigNumberToString = (number: number | string) => {
+export const bigNumberToString = (number: number | string, ceiling?: number) => {
+  // Info: (20260109 - Julian) 取絕對值進行比較
   const num = typeof number === 'string' ? parseFloat(number) : number;
-  const absNum = Math.abs(num); // Info: (20260109 - Julian) 取絕對值進行比較
+  const absNum = Math.abs(num);
 
+  // Info: (20260109 - Julian) 預設 ceiling 為 1,000
+  const finalCeiling = ceiling !== undefined ? ceiling : 1_000;
+
+  // Info: (20260109 - Julian) 若數字小於 ceiling，則直接回傳帶千分位逗號的字串
+  if (absNum < finalCeiling) {
+    return numberWithCommas(num);
+  }
+
+  // Info: (20260109 - Julian) 根據數值大小決定使用的單位
   if (absNum >= 1_000_000_000) {
     // Info: (20260109 - Julian) 處理十億
     const billion = Math.floor(num / 1_000_000_000);

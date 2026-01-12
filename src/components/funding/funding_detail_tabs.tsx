@@ -59,11 +59,6 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     router.push(`?${params.toString()}`);
   };
   const selectReportPage = (page: number) => {
-    // Info: (20260112 - Julian) 保留現有 query
-    const params = new URLSearchParams(searchParams);
-    params.set(reportParamsName, page.toString());
-    // Info: (20260112 - Julian) 更新 URL 和 state
-    router.push(`?${params.toString()}`);
     setCurrentReportPage(page);
   };
 

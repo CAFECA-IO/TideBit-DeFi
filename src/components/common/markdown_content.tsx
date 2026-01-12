@@ -35,18 +35,26 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
             {children}
           </h3>
         ),
+        h4: ({ children, ...props }: React.ComponentPropsWithoutRef<'h4'>) => (
+          <h4
+            className="mb-1.5 mt-2 text-[1rem] font-semibold text-text-neutral-primary"
+            {...props}
+          >
+            {children}
+          </h4>
+        ),
         strong: ({ children, ...props }: React.ComponentPropsWithoutRef<'strong'>) => (
           <strong className="text-text-neutral-primary" {...props}>
             {children}
           </strong>
         ),
         ul: ({ children, ...props }: React.ComponentPropsWithoutRef<'ul'>) => (
-          <ul className="list-none pl-5" {...props}>
+          <ul className="list-disc pl-5 text-text-neutral-primary" {...props}>
             {children}
           </ul>
         ),
         ol: ({ children, ...props }: React.ComponentPropsWithoutRef<'ol'>) => (
-          <ol className="list-decimal pl-5" {...props}>
+          <ol className="list-decimal pl-5 text-text-neutral-primary" {...props}>
             {children}
           </ol>
         ),
@@ -71,21 +79,18 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
           );
         },
         p: ({ children, ...props }: React.ComponentPropsWithoutRef<'p'>) => (
-          <p
-            className="mb-2.5 text-[14px] font-normal leading-relaxed text-text-neutral-primary"
-            {...props}
-          >
+          <p className="text-[14px] font-normal leading-relaxed" {...props}>
             {children}
           </p>
         ),
         a: ({ children, ...props }: React.ComponentPropsWithoutRef<'a'>) => (
-          <a className="text-[#64B5F6] underline" {...props}>
+          <a className="text-link-default underline hover:text-link-hover" {...props}>
             {children}
           </a>
         ),
         blockquote: ({ children, ...props }: React.ComponentPropsWithoutRef<'blockquote'>) => (
           <blockquote
-            className="my-2.5 rounded border-l-4 border-[#FF9800] bg-[#FF9800]/10 px-3.5 py-2.5 italic text-[#FFE0B2]"
+            className="my-2.5 rounded border-l-4 border-alert-surface-icon-warn bg-alert-surface-warn px-3.5 py-2.5 italic text-alert-text-on-warn"
             {...props}
           >
             {children}
@@ -93,13 +98,16 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
         ),
         table: ({ children, ...props }: React.ComponentPropsWithoutRef<'table'>) => (
           <div className="my-5 overflow-x-auto">
-            <table className="w-full border-collapse border border-[#444] text-sm" {...props}>
+            <table
+              className="w-full border-collapse border border-table-outline-default text-sm"
+              {...props}
+            >
               {children}
             </table>
           </div>
         ),
         thead: ({ children, ...props }: React.ComponentPropsWithoutRef<'thead'>) => (
-          <thead className="bg-white/5" {...props}>
+          <thead className="bg-surface-neutral-container-lv1" {...props}>
             {children}
           </thead>
         ),
@@ -107,20 +115,23 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
           <tbody {...props}>{children}</tbody>
         ),
         tr: ({ children, ...props }: React.ComponentPropsWithoutRef<'tr'>) => (
-          <tr className="border-b border-[#333]" {...props}>
+          <tr className="border-b border-table-outline-default" {...props}>
             {children}
           </tr>
         ),
         th: ({ children, ...props }: React.ComponentPropsWithoutRef<'th'>) => (
           <th
-            className="border-r border-[#444] p-3 text-left font-semibold text-[#FFB74D]"
+            className="border-r border-table-outline-default p-3 text-left font-semibold text-table-text-support"
             {...props}
           >
             {children}
           </th>
         ),
         td: ({ children, ...props }: React.ComponentPropsWithoutRef<'td'>) => (
-          <td className="border-r border-[#444] p-3 text-left text-[#E0E0E0]" {...props}>
+          <td
+            className="border-r border-table-outline-default p-3 text-left text-table-text-primary"
+            {...props}
+          >
             {children}
           </td>
         ),

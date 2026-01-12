@@ -15,6 +15,13 @@ enum FundingDetailTab {
   BUDGET_ALLOCATION = 'Budget Allocation',
 }
 
+enum ReportTab {
+  BALANCE_SHEET = 'Balance Sheet',
+  INCOME_STATEMENT = 'Income Statement',
+  CASH_FLOW_STATEMENT = 'Cash Flow Statement',
+  PROFITABILITY_ANALYSIS = 'Profitability Analysis',
+}
+
 interface IFundingDetailTabsProps {
   fundingId: string;
 }
@@ -24,14 +31,19 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const searchParams = useSearchParams();
 
   // Info: (20260108 - Julian) 定義 page 參數名稱
-  const pageParamsName = 'news_page';
+  const newsParamsName = 'news_page';
+  const reportParamsName = 'report_page';
 
-  // ToDo: (20260108 - Julian) 從 URL 參數取得 page 與 keyword
-  // const page = searchParams.get(pageParamsName) ?? '1';
-  // const pageNum = Number(page) ?? 1;
+  // Info: (20260112 - Julian) 從 URL 參數取得 page
+  // const newsPage = searchParams.get(newsParamsName) ?? '1';
+  // const newsPageNum = Number(newsPage);
+  const reportPage = searchParams.get(reportParamsName) ?? '1';
+  const reportPageNum = Number(reportPage);
 
   const [currentTab, setCurrentTab] = useState<FundingDetailTab>(FundingDetailTab.INTRODUCTION);
-  // const [currentNewsPage, setCurrentNewsPage] = useState<number>(pageNum);
+  // const [currentNewsPage, setCurrentNewsPage] = useState<number>(newsPageNum);
+  const [currentReportTab, setCurrentReportTab] = useState<ReportTab>(ReportTab.BALANCE_SHEET);
+  const [currentReportPage, setCurrentReportPage] = useState<number>(reportPageNum);
 
   // ToDo: (20260102 - Julian) Get real data from API
   const introductionData = mockFundingIntroduction.introduction;
@@ -39,12 +51,20 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const totalPages = 100;
 
   // Info: (20260108 - Julian) 點擊按鈕時更新當前頁面，並寫入 URL 參數
-  const selectPage = (page: number) => {
+  const selectNewsPage = (page: number) => {
     // Info: (20260108 - Julian) 保留現有 query
     const params = new URLSearchParams(searchParams);
-    params.set(pageParamsName, page.toString());
+    params.set(newsParamsName, page.toString());
     // Info: (20260108 - Julian) 更新 URL
     router.push(`?${params.toString()}`);
+  };
+  const selectReportPage = (page: number) => {
+    // Info: (20260112 - Julian) 保留現有 query
+    const params = new URLSearchParams(searchParams);
+    params.set(reportParamsName, page.toString());
+    // Info: (20260112 - Julian) 更新 URL 和 state
+    router.push(`?${params.toString()}`);
+    setCurrentReportPage(page);
   };
 
   const displayedTabs = Object.keys(FundingDetailTab).map((title) => {
@@ -63,7 +83,7 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
           isActive
             ? 'border-tabs-surface-active-neutral bg-tabs-surface-active-neutral'
             : 'border-tabs-outline-default bg-tabs-surface-default'
-        } cursor-pointer rounded-t-radius-m border px-spacing-lv-6 py-spacing-lv-3 text-center text-tabs-text-active-neutral`}
+        } rounded-t-radius-m border-l border-t px-spacing-lv-6 py-spacing-lv-3 text-center text-tabs-text-active-neutral last:border-r`}
       >
         {titleValue}
       </button>
@@ -77,17 +97,59 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const newsList = newsData.map((news) => <NewsItem key={news.id} news={news} />);
   const newsContent = (
     <div className="px-spacing-lv-8 pb-spacing-lv-6 pt-spacing-lv-8">
-      <div className="flex flex-col gap-spacing-lv-4 px-spacing-lv-8">{newsList}</div>
+      <div className="flex flex-col gap-spacing-lv-4 px-spacing-lv-8">
+        {newsList}
+        <Pagination
+          paramsName={newsParamsName}
+          totalPages={totalPages}
+          selectPage={selectNewsPage}
+          paginationType={PaginationType.NUMERIC}
+        />
+      </div>
+    </div>
+  );
+
+  const reportTab = Object.keys(ReportTab).map((report) => {
+    const reportKey = report as keyof typeof ReportTab;
+    const reportValue = ReportTab[reportKey];
+
+    const isActive = currentReportTab === reportValue;
+    const onClick = () => setCurrentReportTab(reportValue);
+
+    return (
+      <button
+        type="button"
+        key={reportKey}
+        onClick={onClick}
+        className={`${
+          isActive
+            ? 'border-tabs-outline-active bg-tabs-surface-active-primary text-tabs-text-active-on-primary'
+            : 'border-tabs-outline-default bg-tabs-surface-default text-tabs-text-default hover:bg-tabs-surface-hover-neutral hover:text-tabs-text-hover-neutral'
+        } border-y border-l px-spacing-lv-6 py-spacing-lv-3 text-base font-semibold last:border-r`}
+      >
+        {reportValue}
+      </button>
+    );
+  });
+
+  // Info: (20260112 - Julian) 財務報告
+  const financialReportContent = (
+    <div className="flex flex-col items-center gap-spacing-lv-8 px-spacing-lv-6 py-spacing-lv-8">
+      <div className="grid w-full grid-cols-4">{reportTab}</div>
+      {/* ToDo: (20260112 - Julian) Develop Report PDF Viewer */}
+      <div className="flex h-[1200px] w-[800px] flex-col bg-pink-300 p-5">
+        <p>Financial Report Content - {currentReportTab}</p>
+        <p>Now showing page {currentReportPage}.</p>
+      </div>
       <Pagination
-        paramsName={pageParamsName}
+        paramsName="report_page"
+        paginationType={PaginationType.TEXT}
+        selectPage={selectReportPage}
         totalPages={totalPages}
-        selectPage={selectPage}
-        paginationType={PaginationType.NUMERIC}
       />
     </div>
   );
 
-  const financialReportContent = <div>Financial Report Content</div>;
   const budgetAllocationContent = <div>Budget Allocation Content</div>;
 
   const displayedContent =

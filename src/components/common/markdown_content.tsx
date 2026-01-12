@@ -23,7 +23,7 @@ const MarkdownContent: React.FC<IMarkdownContentProps> = ({ content }) => {
             className="mb-2 mt-4 flex items-center gap-2 text-[1.2rem] text-text-neutral-primary"
             {...props}
           >
-            <span className="inline-block h-[18px] w-1 rounded-sm bg-[#FF9800]"></span>
+            <span className="inline-block h-[18px] w-1 rounded-sm bg-alert-surface-icon-warn font-bold"></span>
             {children}
           </h2>
         ),

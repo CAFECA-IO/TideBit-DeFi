@@ -90,9 +90,9 @@ export const timestampToString = (timestamp: number | undefined) => {
   const dateWithDash = `${year}-${monthWithPad}-${dayWithPad}`;
 
   return {
-    dateString, // e.g., "Jan 01, 2026"
-    dateWithSlash, // e.g., "2026/01/01"
-    dateWithDash, // e.g., "2026-01-01"
+    dateString, // Info: (20260109 - Julian) e.g., "Jan 01, 2026"
+    dateWithSlash, // Info: (20260109 - Julian) e.g., "2026/01/01"
+    dateWithDash, // Info: (20260109 - Julian) e.g., "2026-01-01"
   };
 };
 

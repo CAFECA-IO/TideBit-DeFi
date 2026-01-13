@@ -48,20 +48,12 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     tokenImpl,
   ]);
 
-  // Info: (20260113 - Tzuhan) 6. 部署 EntryPoint
-  const entryPoint = m.contract('EntryPointImportHelper');
-
-  // Info: (20260113 - Tzuhan) 7. 部署 Factory
-  const scwFactory = m.contract('SCWFactory', [entryPoint]);
-
   return {
     claimTopicsRegistry,
     trustedIssuersRegistry,
     identityRegistryStorage,
     tokenImpl,
     companyAssetsFactory,
-    entryPoint,
-    scwFactory,
   };
 });
 

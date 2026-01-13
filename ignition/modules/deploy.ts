@@ -8,8 +8,8 @@ const require = createRequire(import.meta.url);
 const CTR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/ClaimTopicsRegistry.sol/ClaimTopicsRegistry.json');
 const TIR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/TrustedIssuersRegistry.sol/TrustedIssuersRegistry.json');
 const IRS_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistryStorage.sol/IdentityRegistryStorage.json');
-// [Fix] 新增 Token Artifact
 const TOKEN_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json');
+const EP_ARTIFACT = require('../../artifacts/@account-abstraction/contracts/core/EntryPoint.sol/EntryPoint.json');
 
 const DeployAllModule = buildModule('DeployAllModule', (m) => {
   // =================================================================
@@ -18,7 +18,7 @@ const DeployAllModule = buildModule('DeployAllModule', (m) => {
   const deployer = m.getAccount(0);
   const CLAIM_TOPIC = BigInt(101); // KYC Topic ID
 
-  const entryPoint = m.contract('EntryPointImportHelper', [], {
+  const entryPoint = m.contract('EntryPoint', EP_ARTIFACT, [], {
     id: 'EntryPoint_Deployed',
   });
 

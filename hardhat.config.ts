@@ -1,8 +1,12 @@
 import 'dotenv/config';
 import hardhatToolboxViemPlugin from '@nomicfoundation/hardhat-toolbox-viem';
-import { configVariable, defineConfig } from 'hardhat/config';
+import { HardhatUserConfig } from 'hardhat/config';
 
-export default defineConfig({
+const PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY;
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
+const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
+
+const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
   solidity: {
     compilers: [
@@ -11,28 +15,9 @@ export default defineConfig({
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1,
           },
-          evmVersion: 'paris',
-        },
-      },
-      {
-        version: '0.8.20', // Info: (20260106 - Tzuahan) 許多 OpenZeppelin 合約使用
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-          evmVersion: 'paris',
-        },
-      },
-      {
-        version: '0.8.19', // Info: (20260106 - Tzuahan) 中間過渡版本
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
+          viaIR: true,
           evmVersion: 'paris',
         },
       },
@@ -58,12 +43,15 @@ export default defineConfig({
     isuncoin_mainnet: {
       type: 'http',
       chainType: 'l1',
-      url: 'https://mainnet.isuncoin.com',
-      accounts: [configVariable('ISUNCOIN_PRIVATE_KEY')],
+      url: RPC_URL,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      chainId: CHAIN_ID,
     },
     localhost: {
       type: 'http',
       url: 'http://127.0.0.1:8545',
     },
   },
-});
+};
+
+export default config;

@@ -112,34 +112,6 @@ function getOwnerHash(x: bigint, y: bigint) {
   return keccak256(encodeAbiParameters(parseAbiParameters('uint256 x, uint256 y'), [x, y]));
 }
 
-/**
-function encodeMultiSig(signatures: IWebAuthnSignatureStruct[]): Hex {
-  // Info: (20260106 - Tzuahan)
-  // ABI 定義需與 Solidity 結構完全一致
-  // CompanySCW.validateUserOp 預期的是 WebAuthnSignature[]
-  // 所以這裡 encodeAbiParameters 應該對應其參數結構
-  const structAbi =
-    '((bytes authenticatorData, bytes clientDataJSON, uint256 challengeLocation, uint256 responseTypeLocation, uint256 r, uint256 s, uint256 pubKeyX, uint256 pubKeyY)[])';
-  return encodeAbiParameters(parseAbiParameters(structAbi), [[signatures]]);
-}
-
-function createBaseUserOp(sender: Address) {
-  return {
-    sender,
-    nonce: BigInt(0),
-    initCode: '0x' as Hex,
-    callData: '0x' as Hex,
-    callGasLimit: BigInt(100000),
-    verificationGasLimit: BigInt(2000000),
-    preVerificationGas: BigInt(50000),
-    maxFeePerGas: BigInt(100),
-    maxPriorityFeePerGas: BigInt(10),
-    paymasterAndData: '0x' as Hex,
-    signature: '0x' as Hex,
-  };
-}
- */
-
 // Info: (20260106 - Tzuahan) --- Tests ---
 
 describe('CompanySCW (Multi-Sig)', function () {

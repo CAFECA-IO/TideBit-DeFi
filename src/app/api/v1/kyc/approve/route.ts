@@ -9,24 +9,47 @@ import {
   toHex,
   keccak256,
   encodePacked,
+  defineChain, // Info: (20260114 - Tzuhan) 用於定義自定義鏈
   type Abi,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { prisma } from '@/lib/prisma';
 import IdentityArtifact from '@/abis/Identity.json';
+import IdentityRegistryArtifact from '@/abis/IdentityRegistry.json';
 
+// Info: (20260114 - Tzuhan) --- 環境變數與常數 ---
 const RELAYER_PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`;
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
-const CLAIM_TOPIC = BigInt(101); // Info: (20260112 - Tzuhan) Basic KYC
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
+const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
+const CLAIM_TOPIC = BigInt(101); // Info: (20260114 - Tzuhan) Basic KYC Topic
+
+// Info: (20260114 - Tzuhan) --- 1. 定義 iSunCoin 鏈資訊 ---
+const isuncoin = defineChain({
+  id: CHAIN_ID,
+  name: 'iSunCoin Mainnet',
+  network: 'isuncoin',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'iSunCoin',
+    symbol: 'ISC',
+  },
+  rpcUrls: {
+    default: { http: [RPC_URL] },
+    public: { http: [RPC_URL] },
+  },
+});
 
 const account = privateKeyToAccount(RELAYER_PRIVATE_KEY);
 
+// Info: (20260114 - Tzuhan) --- 2. 初始化 Client 時注入 chain ---
 const walletClient = createWalletClient({
   account,
+  chain: isuncoin, // Info: (20260114 - Tzuhan) 注入鏈資訊後，後續 action 就不需重複寫 chain: isuncoin
   transport: http(RPC_URL),
 });
 
 const publicClient = createPublicClient({
+  chain: isuncoin,
   transport: http(RPC_URL),
 });
 
@@ -37,92 +60,74 @@ const approveKycSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const parseResult = approveKycSchema.safeParse(body);
-    if (!parseResult.success) {
-      return jsonFail(ApiCode.VALIDATION_ERROR, 'Invalid User ID');
-    }
+    if (!parseResult.success) return jsonFail(ApiCode.VALIDATION_ERROR, 'Invalid User ID');
+
     const { userId } = parseResult.data;
-
-    // Info: (20260112 - Tzuhan) 2. 取得用戶
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return jsonFail(ApiCode.NOT_FOUND, 'User not found');
-    if (!user.address) return jsonFail(ApiCode.VALIDATION_ERROR, 'User has no wallet address');
+    if (!user || !user.address) return jsonFail(ApiCode.NOT_FOUND, 'User or wallet not found');
 
-    console.log(`[KYC] Processing user ${user.address}...`);
+    console.log(`[KYC] Processing User: ${userId}, Wallet: ${user.address}`);
 
-    // ----------------------------------------------------------------
-    // Info: (20260112 - Tzuhan) Step A: 確保用戶有 Identity 合約 (ONCHAINID)
-    // ----------------------------------------------------------------
+    // Info: (20260114 - Tzuhan) Step A: 部署或取得 Identity 合約
     let identityAddress = user.identityAddress;
-
     if (!identityAddress) {
-      console.log('[KYC] Deploying new Identity for user...');
+      console.log('[KYC] Deploying Identity contract...');
       const hash = await walletClient.deployContract({
         abi: IdentityArtifact.abi as Abi,
         bytecode: IdentityArtifact.bytecode as `0x${string}`,
         args: [user.address, false],
-        chain: undefined,
       });
-
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      if (!receipt.contractAddress) throw new Error('Identity deployment failed');
+      identityAddress = receipt.contractAddress!;
 
-      identityAddress = receipt.contractAddress;
-      console.log(`[KYC] Identity deployed at ${identityAddress}`);
-
-      // Info: (20260112 - Tzuhan) 存回 DB
       await prisma.user.update({
         where: { id: userId },
         data: { identityAddress },
       });
-    } else {
-      console.log(`[KYC] User already has Identity: ${identityAddress}`);
     }
 
-    // ----------------------------------------------------------------
-    // Info: (20260112 - Tzuhan) Step B: Relayer (Issuer) 簽署 Claim 並寫入 Identity
-    // ----------------------------------------------------------------
-
-    // Info: (20260112 - Tzuhan) Claim 內容
-    const topic = CLAIM_TOPIC;
-    const scheme = BigInt(1); // ECDSA
-    const issuer = account.address;
+    // Info: (20260114 - Tzuhan) Step B: 添加 KYC Claim (Topic 101)
     const data = toHex('KYC_PASSED_V1');
-    const uri = '';
-
-    // Info: (20260112 - Tzuhan) 計算 Claim Hash (ERC-735 標準)
-    // Info: (20260112 - Tzuhan) keccak256(abi.encode(address identitySubject, uint256 topic, bytes data))
     const claimHash = keccak256(
-      encodePacked(['address', 'uint256', 'bytes'], [identityAddress as `0x${string}`, topic, data])
+      encodePacked(
+        ['address', 'uint256', 'bytes'],
+        [identityAddress as `0x${string}`, CLAIM_TOPIC, data]
+      )
     );
+    const signature = await account.signMessage({ message: { raw: claimHash } });
 
-    // Info: (20260112 - Tzuhan) Relayer 簽名
-    const signature = await account.signMessage({
-      message: { raw: claimHash },
-    });
-
-    console.log('[KYC] Adding claim to Identity contract...');
-
-    // Info: (20260112 - Tzuhan) 呼叫 Identity.addClaim
-    const txHash = await walletClient.writeContract({
+    console.log('[KYC] Adding Claim...');
+    const claimTxHash = await walletClient.writeContract({
       address: identityAddress as `0x${string}`,
       abi: IdentityArtifact.abi as Abi,
       functionName: 'addClaim',
-      args: [topic, scheme, issuer, signature, data, uri],
-      chain: undefined,
+      args: [CLAIM_TOPIC, BigInt(1), account.address, signature, data, ''],
     });
+    await publicClient.waitForTransactionReceipt({ hash: claimTxHash });
 
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`[KYC] Claim added! Tx: ${txHash}`);
+    // Info: (20260114 - Tzuhan) Step C: 註冊 Identity 到 Registry (關鍵流通性步驟)
+    if (!identityAddress) throw new Error('IDENTITY_REGISTRY_ADDRESS is not configured');
+
+    console.log('[KYC] Registering Identity to Registry...');
+    const countryCode = 458;
+
+    const registerTxHash = await walletClient.writeContract({
+      address: identityAddress as `0x${string}`,
+      abi: IdentityRegistryArtifact.abi as Abi,
+      functionName: 'registerIdentity',
+      args: [user.address as `0x${string}`, identityAddress as `0x${string}`, countryCode],
+    });
+    await publicClient.waitForTransactionReceipt({ hash: registerTxHash });
 
     return jsonOk({
       status: 'APPROVED',
       identityAddress,
-      txHash,
+      claimTxHash,
+      registerTxHash,
     });
   } catch (error) {
-    console.error('[KYC] Error:', error);
+    console.error('[KYC] API Error:', error);
     return jsonFail(ApiCode.INTERNAL_SERVER_ERROR, (error as Error).message);
   }
 }

@@ -12,7 +12,7 @@ import { encodeFunctionData, type Hex } from 'viem';
 import { publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { fido2ClientService, parsePasskey, sendUserOpToBundler } from '@/lib/auth/fido2_client';
-import { encodeWebAuthnSignature, hexToBase64Url } from '@/lib/auth/passkey_encoding';
+import { encodeWebAuthnSignature, hexToBase64Url } from '@/lib/auth/crypto_utils';
 
 const RegisterModal: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');

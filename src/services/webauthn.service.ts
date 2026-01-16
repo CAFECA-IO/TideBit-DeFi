@@ -12,7 +12,7 @@ import type { IWebAuthnRepository } from '@/repositories/webauthn.repo';
 import { webAuthnRepo } from '@/repositories/webauthn.repo';
 import { AppError } from '@/lib/utils/error';
 import { ApiCode } from '@/lib/utils/status';
-import { extractXYFromSPKI } from '@/lib/auth/passkey_encoding';
+import { extractXYFromSPKI, reconstructKeyFromXY } from '@/lib/auth/crypto_utils';
 import { randomBytes } from 'crypto';
 import { generateChallengeToken, verifyChallengeToken } from '@/lib/auth/challenge_token';
 import { prisma } from '@/lib/prisma';
@@ -63,7 +63,7 @@ class WebAuthnService {
     }
 
     // Info: (20251226 - Tzuhan) 將 DB 中的 (X, Y) 還原為驗證庫需要的 SPKI Key 字串
-    const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
+    const credentialPublicKey = reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
 
     // Info: (20251223 - Tzuhan) 建構符合 CredentialInfo 定義的物件
     // Info: (20251223 - Tzuhan) P-256 對應的演算法名稱通常是 'ES256'
@@ -144,33 +144,6 @@ class WebAuthnService {
       console.error('[Sync] Chain fetch failed:', error);
       return null;
     }
-  }
-
-  /**
-   * Info: (20251226 - Tzuhan) 將 X, Y 座標還原為 P-256 SPKI (DER) 格式
-   */
-  private reconstructKeyFromXY(xStr: string, yStr: string): string {
-    // Info: (20251226 - Tzuhan) P-256 SPKI Header (ASN.1 DER sequence for id-ecPublicKey + prime256v1)
-    // Info: (20251226 - Tzuhan) Hex: 3059301306072a8648ce3d020106082a8648ce3d030107034200
-    const SPKI_HEADER = Buffer.from('3059301306072a8648ce3d020106082a8648ce3d030107034200', 'hex');
-
-    const toBuffer32 = (numStr: string) => {
-      let hex = BigInt(numStr).toString(16);
-      if (hex.length % 2 !== 0) hex = '0' + hex;
-      const buf = Buffer.from(hex, 'hex');
-      const padded = Buffer.alloc(32);
-      buf.copy(padded, 32 - buf.length);
-      return padded;
-    };
-
-    const x = toBuffer32(xStr);
-    const y = toBuffer32(yStr);
-
-    // Info: (20251226 - Tzuhan) 0x04 表示 Uncompressed Point
-    const uncompressedPoint = Buffer.concat([Buffer.from([0x04]), x, y]);
-
-    // Info: (20251226 - Tzuhan) 組合 Header + Point
-    return Buffer.concat([SPKI_HEADER, uncompressedPoint]).toString('base64url');
   }
 
   // Info: (20260105 - Tzuhan) 產生無狀態 Challenge (給 Discoverable Login 用)
@@ -298,7 +271,7 @@ class WebAuthnService {
     }
 
     // Info: (20260105 - Tzuhan) 4. 還原公鑰並驗證
-    const credentialPublicKey = this.reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
+    const credentialPublicKey = reconstructKeyFromXY(user.pubKeyX, user.pubKeyY);
     const credential: CredentialInfo = {
       id: authenticationData.id,
       publicKey: credentialPublicKey,

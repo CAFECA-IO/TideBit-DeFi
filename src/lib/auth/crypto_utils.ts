@@ -135,3 +135,30 @@ export function extractXYFromSPKI(spkiBase64: string) {
     y: BigInt('0x' + yBuffer.toString('hex')),
   };
 }
+
+/**
+ * Info: (20251226 - Tzuhan) 將 X, Y 座標還原為 P-256 SPKI (DER) 格式
+ */
+export function reconstructKeyFromXY(xStr: string, yStr: string): string {
+  // Info: (20251226 - Tzuhan) P-256 SPKI Header (ASN.1 DER sequence for id-ecPublicKey + prime256v1)
+  // Info: (20251226 - Tzuhan) Hex: 3059301306072a8648ce3d020106082a8648ce3d030107034200
+  const SPKI_HEADER = Buffer.from('3059301306072a8648ce3d020106082a8648ce3d030107034200', 'hex');
+
+  const toBuffer32 = (numStr: string) => {
+    let hex = BigInt(numStr).toString(16);
+    if (hex.length % 2 !== 0) hex = '0' + hex;
+    const buf = Buffer.from(hex, 'hex');
+    const padded = Buffer.alloc(32);
+    buf.copy(padded, 32 - buf.length);
+    return padded;
+  };
+
+  const x = toBuffer32(xStr);
+  const y = toBuffer32(yStr);
+
+  // Info: (20251226 - Tzuhan) 0x04 表示 Uncompressed Point
+  const uncompressedPoint = Buffer.concat([Buffer.from([0x04]), x, y]);
+
+  // Info: (20251226 - Tzuhan) 組合 Header + Point
+  return Buffer.concat([SPKI_HEADER, uncompressedPoint]).toString('base64url');
+}

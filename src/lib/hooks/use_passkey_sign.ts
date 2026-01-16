@@ -7,7 +7,7 @@ import {
   hexToBase64Url,
   encodeWebAuthnSignature,
   getWebAuthnSignatureStruct,
-} from '@/lib/auth/passkey_encoding';
+} from '@/lib/auth/crypto_utils';
 
 export interface IPartialUserOp {
   sender: Hex;

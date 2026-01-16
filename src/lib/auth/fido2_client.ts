@@ -118,7 +118,7 @@ export async function verifyLogin(
  * 回傳：P-256 公鑰座標 (x, y) 與 Credential ID
  */
 export async function parsePasskey(registration: RegistrationJSON, challenge: string) {
-  const res = await fetch('/api/v1/auth/parse-passkey', {
+  const res = await fetch('/api/v1/auth/parse_passkey', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ registration, challenge }),

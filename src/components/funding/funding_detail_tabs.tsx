@@ -9,6 +9,8 @@ import { mockNews } from '@/interfaces/news';
 import { mockFundingDetail } from '@/interfaces/funding';
 import Pagination, { PaginationType } from '@/components/common/pagination';
 import CloseBudgetPieChart from '@/components/funding/close_budget_pie_chart';
+import OpenBudgetPieChart from '@/components/funding/open_budget_pie_chart';
+import { FundingStatus } from '@/constants/funding';
 
 enum FundingDetailTab {
   INTRODUCTION = 'Introduction',
@@ -51,7 +53,9 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const introductionData = mockFundingIntroduction.introduction;
   const newsData = mockNews;
   const totalPages = 100;
-  const { budgetSummary } = mockFundingDetail;
+  const { budgetSummary, fundingStatus } = mockFundingDetail;
+
+  // const fundingStatus = FundingStatus.UPCOMING;
 
   // Info: (20260108 - Julian) 點擊按鈕時更新當前頁面，並寫入 URL 參數
   const selectNewsPage = (page: number) => {
@@ -148,9 +152,12 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     </div>
   );
 
-  const budgetAllocationContent = (
-    <CloseBudgetPieChart budgetSummary={budgetSummary} size={180} isLegendLineBreak />
-  );
+  const budgetAllocationContent =
+    fundingStatus === FundingStatus.CLOSED ? (
+      <CloseBudgetPieChart budgetSummary={budgetSummary} size={180} isLegendLineBreak />
+    ) : (
+      <OpenBudgetPieChart budgetSummary={budgetSummary} size={180} />
+    );
 
   const displayedContent =
     currentTab === FundingDetailTab.INTRODUCTION

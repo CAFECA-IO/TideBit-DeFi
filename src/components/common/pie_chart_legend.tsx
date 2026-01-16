@@ -10,7 +10,7 @@ interface IPieChartLegendProps {
 }
 
 const PieChartLegend: React.FC<IPieChartLegendProps> = ({ label, color, value, percentage }) => {
-  const isShowProgressBar = percentage && (
+  const isShowProgressBar = percentage !== undefined && (
     <ProgressBar
       size={ProgressBarSize.XS}
       color={ProgressBarColor.PRIMARY}

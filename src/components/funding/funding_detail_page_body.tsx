@@ -12,7 +12,7 @@ import Breadcrumb from '@/components/common/breadcrumb';
 import { Button } from '@/components/common/button';
 import FundingStat from '@/components/funding/funding_stat';
 import NumericInput from '@/components/common/numeric_input';
-import BudgetPieChart from '@/components/funding/budget_pie_chart';
+import CloseBudgetPieChart from '@/components/funding/close_budget_pie_chart';
 import Countdown from '@/components/common/countdown';
 import FundingDetailTabs from '@/components/funding/funding_detail_tabs';
 import { FundingResult, FundingStatus } from '@/constants/funding';
@@ -163,9 +163,9 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
             </div>
           </div>
         </div>
-
+        {/* Info: (20260116 - Julian) Successful Funding Budget Pie Chart */}
         <div className="flex gap-x-24px">
-          <BudgetPieChart budgetSummary={budgetSummary} />
+          <CloseBudgetPieChart budgetSummary={budgetSummary} size={150} />
         </div>
       </>
     ) : null;

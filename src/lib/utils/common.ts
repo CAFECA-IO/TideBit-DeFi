@@ -95,12 +95,3 @@ export const timestampToString = (timestamp: number | undefined) => {
     dateWithDash, // Info: (20260109 - Julian) e.g., "2026-01-01"
   };
 };
-
-// Info: (20251230 - Julian) 取得 CSS 變數顏色
-export function getCssVariable(variableName: string): string {
-  const computedStyle = getComputedStyle(document.documentElement);
-  const property = computedStyle.getPropertyValue(variableName);
-  const value = property || variableName;
-
-  return value.trim();
-}

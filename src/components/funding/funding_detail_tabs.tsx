@@ -6,7 +6,11 @@ import { mockFundingIntroduction } from '@/interfaces/funding';
 import { MarkdownContent } from '@/components/common/markdown_content';
 import NewsItem from '@/components/news/news_item';
 import { mockNews } from '@/interfaces/news';
+import { mockFundingDetail } from '@/interfaces/funding';
 import Pagination, { PaginationType } from '@/components/common/pagination';
+import CloseBudgetPieChart from '@/components/funding/close_budget_pie_chart';
+import OpenBudgetPieChart from '@/components/funding/open_budget_pie_chart';
+import { FundingStatus } from '@/constants/funding';
 
 enum FundingDetailTab {
   INTRODUCTION = 'Introduction',
@@ -49,6 +53,7 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const introductionData = mockFundingIntroduction.introduction;
   const newsData = mockNews;
   const totalPages = 100;
+  const { budgetSummary, fundingStatus } = mockFundingDetail;
 
   // Info: (20260108 - Julian) 點擊按鈕時更新當前頁面，並寫入 URL 參數
   const selectNewsPage = (page: number) => {
@@ -59,11 +64,6 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     router.push(`?${params.toString()}`);
   };
   const selectReportPage = (page: number) => {
-    // Info: (20260112 - Julian) 保留現有 query
-    const params = new URLSearchParams(searchParams);
-    params.set(reportParamsName, page.toString());
-    // Info: (20260112 - Julian) 更新 URL 和 state
-    router.push(`?${params.toString()}`);
     setCurrentReportPage(page);
   };
 
@@ -150,7 +150,16 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     </div>
   );
 
-  const budgetAllocationContent = <div>Budget Allocation Content</div>;
+  const budgetAllocationContent =
+    fundingStatus === FundingStatus.CLOSED ? (
+      <CloseBudgetPieChart budgetSummary={budgetSummary} size={180} isLegendLineBreak />
+    ) : (
+      <OpenBudgetPieChart
+        total={budgetSummary.totalFundingAmount}
+        data={budgetSummary.breakdown ?? []}
+        size={180}
+      />
+    );
 
   const displayedContent =
     currentTab === FundingDetailTab.INTRODUCTION

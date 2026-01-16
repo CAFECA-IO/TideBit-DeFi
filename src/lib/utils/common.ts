@@ -95,34 +95,3 @@ export const timestampToString = (timestamp: number | undefined) => {
     dateWithDash, // Info: (20260109 - Julian) e.g., "2026-01-01"
   };
 };
-
-// Info: (20251230 - Julian) 取得 CSS 變數顏色
-export function getCssVariable(variableName: string): string {
-  const computedStyle = getComputedStyle(document.documentElement);
-  const property = computedStyle.getPropertyValue(variableName);
-  const value = property || variableName;
-
-  return value.trim();
-}
-
-// Info: (20260116 - Julian) 由於 Tailwind CSS 無法直接使用變數作為 class 名稱，所以需要透過函式映射
-export function getBgColor(token: string) {
-  switch (token) {
-    case '#9b8afb':
-      return 'bg-[#9b8afb]';
-    case '#fd6f8e':
-      return 'bg-[#fd6f8e]';
-    case '#ff883e':
-      return 'bg-[#ff883e]';
-    case '#6cdea0':
-      return 'bg-[#6cdea0]';
-    case '#8098f9':
-      return 'bg-[#8098f9]';
-    case '#f670c7':
-      return 'bg-[#f670c7]';
-    case '#53b1fd':
-      return 'bg-[#53b1fd]';
-    default:
-      return '';
-  }
-}

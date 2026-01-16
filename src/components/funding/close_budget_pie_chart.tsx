@@ -3,15 +3,12 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
-import { getCssVariable, numberWithCommas } from '@/lib/utils/common';
+import { numberWithCommas } from '@/lib/utils/common';
+import { getCssVariable, getBgColor, getPieChartFillColor } from '@/lib/utils/chart';
 import PieChartLegend from '@/components/common/pie_chart_legend';
 import { IChartData } from '@/interfaces/chart';
 import { IFundingBudgetSummary } from '@/interfaces/funding';
-import {
-  PIE_CHART_EMPTY_COLOR_PROPERTY,
-  PIE_CHART_FILL_COLORS_PROPERTIES,
-  PIE_CHART_LABEL_COLOR_PROPERTY,
-} from '@/constants/display';
+import { PIE_CHART_LABEL_COLOR_PROPERTY } from '@/constants/display';
 
 // Info: (20251230 - Julian) 動態載入，避免 SSR 錯誤
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -61,48 +58,13 @@ const CloseBudgetPieChart: React.FC<IBudgetPieChartProps> = ({
   // Info: (20251231 - Julian) 計算去除空白項目的百分比
   const donutPercentage = ((valueWithoutEmpty / totalValue) * 100).toFixed(0);
 
-  // Info: (20251230 - Julian) 根據標籤和索引取得填充顏色
-  function getFillColor(label: string, index: number): string {
-    if (label === 'empty') {
-      // Info: (20251230 - Julian) 空白項目的圓餅顏色使用特定顏色
-      return getCssVariable(PIE_CHART_EMPTY_COLOR_PROPERTY);
-    } else {
-      // Info: (20251230 - Julian) 用模數運算取得顏色索引，確保不會超出陣列範圍
-      const targetIndex = index % PIE_CHART_FILL_COLORS_PROPERTIES.length;
-      // Info: (20251230 - Julian) 根據項目的數量，取出對應的顏色
-      return getCssVariable(PIE_CHART_FILL_COLORS_PROPERTIES[targetIndex]);
-    }
-  }
-
   // Info: (20251230 - Julian) 取得圓餅填充顏色
-  const pieColors = labels.map((label, index) => getFillColor(label, index));
+  const pieColors = labels.map((label, index) => getPieChartFillColor(label, index));
 
   // Info: (20251230 - Julian) 計算百分比
   function calculatePercentage(val: number) {
     const percentage = ((val / totalValue) * 100).toFixed(0);
     return `${percentage}%`;
-  }
-
-  // Info: (20251230 - Julian) 由於 Tailwind CSS 無法直接使用變數作為 class 名稱，所以先用這個方式處理
-  function GetTooltipBgColor(token: string) {
-    switch (token) {
-      case '#9b8afb':
-        return 'bg-[#9b8afb]';
-      case '#fd6f8e':
-        return 'bg-[#fd6f8e]';
-      case '#ff883e':
-        return 'bg-[#ff883e]';
-      case '#6cdea0':
-        return 'bg-[#6cdea0]';
-      case '#8098f9':
-        return 'bg-[#8098f9]';
-      case '#f670c7':
-        return 'bg-[#f670c7]';
-      case '#53b1fd':
-        return 'bg-[#53b1fd]';
-      default:
-        return '';
-    }
   }
 
   // Info: (20251230 - Julian) 自訂提示框樣式
@@ -118,7 +80,7 @@ const CloseBudgetPieChart: React.FC<IBudgetPieChartProps> = ({
     const label = w.config.labels ? w.config.labels[seriesIndex] : '';
     const value = series[seriesIndex];
     const colors = w.config.fill.colors[seriesIndex];
-    const bgColor = GetTooltipBgColor(colors);
+    const bgColor = getBgColor(colors);
     const percentage = ((value / totalValue) * 100).toFixed(0);
 
     // Info: (20251230 - Julian) 不顯示空白項目的提示框
@@ -194,7 +156,7 @@ const CloseBudgetPieChart: React.FC<IBudgetPieChartProps> = ({
       <PieChartLegend
         key={d.label}
         label={d.label}
-        color={getFillColor(d.label, index)}
+        color={getPieChartFillColor(d.label, index)}
         value={d.value}
         percentage={d.legendPercentage}
       />

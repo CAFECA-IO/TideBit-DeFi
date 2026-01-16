@@ -55,8 +55,6 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
   const totalPages = 100;
   const { budgetSummary, fundingStatus } = mockFundingDetail;
 
-  // const fundingStatus = FundingStatus.UPCOMING;
-
   // Info: (20260108 - Julian) 點擊按鈕時更新當前頁面，並寫入 URL 參數
   const selectNewsPage = (page: number) => {
     // Info: (20260108 - Julian) 保留現有 query
@@ -156,7 +154,11 @@ const FundingDetailTabs: React.FC<IFundingDetailTabsProps> = () => {
     fundingStatus === FundingStatus.CLOSED ? (
       <CloseBudgetPieChart budgetSummary={budgetSummary} size={180} isLegendLineBreak />
     ) : (
-      <OpenBudgetPieChart budgetSummary={budgetSummary} size={180} />
+      <OpenBudgetPieChart
+        total={budgetSummary.totalFundingAmount}
+        data={budgetSummary.breakdown ?? []}
+        size={180}
+      />
     );
 
   const displayedContent =

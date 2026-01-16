@@ -24,7 +24,7 @@ export interface IFundingItemUI extends IFundingInfoBrief {
 }
 
 // Info: (20251212 - Julian) 預算明細項目，用於畫圓餅圖
-interface IBudgetBreakdown {
+export interface IBudgetBreakdown {
   title: string;
   totalAmount: number; // Info: (20260109 - Julian) 預算金額
   usedAmount: number; // Info: (20260109 - Julian) 已使用預算金額

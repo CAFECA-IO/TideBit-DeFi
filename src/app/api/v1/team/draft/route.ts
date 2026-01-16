@@ -62,6 +62,9 @@ export async function POST(req: NextRequest) {
           owners: {
             connect: { id: user.id }, // Info: (20260108 - Tzuhan) 綁定當前用戶為 Owner
           },
+          creator: {
+            connect: { id: user.id }, // Info: (20260108 - Tzuhan) 設定 creator 為當前用戶
+          },
         },
       });
     }

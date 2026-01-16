@@ -57,7 +57,7 @@ const RegisterModal: React.FC = () => {
     try {
       const result = await registrationService.signUp(
         inputValue.trim(),
-        (step) => setCurrentStep(step) // 更新 UI 狀態
+        (step) => setCurrentStep(step) // Info: (20260116 - Tzuhan) 更新 UI 狀態
       );
       alert(`Successfully Deployed! Address: ${result.scwAddress}`);
       onClose();

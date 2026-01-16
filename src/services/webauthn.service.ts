@@ -84,7 +84,6 @@ class WebAuthnService {
     // Info: (20251223 - Tzuhan) 驗證通過，簽發 Token
     const dewt = await signDeWT(user);
     await this.repo.updateChallenge(address, '');
-    await this.repo.updateChallenge(address, '');
 
     return {
       dewt,

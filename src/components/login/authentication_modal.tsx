@@ -6,9 +6,8 @@ import { LiaFingerprintSolid } from 'react-icons/lia';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
-import { fido2ClientService, getLoginOptions } from '@/lib/auth/fido2_client';
+import { fido2ClientService, getLoginOptions, verifyLogin } from '@/lib/auth/fido2_client';
 import { useRouter } from 'next/navigation';
-import { ApiCode } from '@/lib/utils/status';
 
 const AuthenticationModal: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,20 +38,10 @@ const AuthenticationModal: React.FC = () => {
       });
 
       // Info: (20260105 - Tzuhan) 3. 驗證並登入
-      const resLogin = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          authentication,
-          challengeToken: token,
-        }),
-      });
-
-      const loginData = await resLogin.json();
-      if (loginData.code !== ApiCode.SUCCESS) throw new Error(loginData.message);
+      const payload = await verifyLogin(token!, authentication);
 
       // Info: (20260105 - Tzuhan) 4. 成功
-      login(loginData.payload.dewt);
+      login(payload.dewt);
       onClose();
       router.push('/funding');
     } catch (error) {

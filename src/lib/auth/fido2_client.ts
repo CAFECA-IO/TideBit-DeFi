@@ -104,13 +104,16 @@ export async function getLoginOptions(
  * 驗證登入簽名並獲取 DeWT (JWT)
  */
 export async function verifyLogin(
-  address: string,
+  token: string,
   authentication: AuthenticationJSON
 ): Promise<ILoginResult> {
   const res = await fetch('/api/v1/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ address, authentication }),
+    body: JSON.stringify({
+      challengeToken: token,
+      authentication,
+    }),
   });
 
   const data = await res.json();

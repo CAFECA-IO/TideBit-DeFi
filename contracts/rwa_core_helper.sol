@@ -6,6 +6,7 @@ import '@erc3643org/erc-3643/contracts/registry/implementation/TrustedIssuersReg
 import '@erc3643org/erc-3643/contracts/registry/implementation/IdentityRegistry.sol';
 import '@erc3643org/erc-3643/contracts/registry/implementation/IdentityRegistryStorage.sol';
 import '@erc3643org/erc-3643/contracts/token/Token.sol';
+import '@erc3643org/erc-3643/contracts/compliance/legacy/DefaultCompliance.sol';
 import '@onchain-id/solidity/contracts/Identity.sol';
 
 contract RwaCoreHelper {

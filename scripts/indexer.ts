@@ -59,49 +59,63 @@ async function main() {
       for (const log of logs) {
         const { scw, owners, threshold, salt, name, imageUrl } = log.args;
 
-        if (!scw || !owners) continue;
+        if (!scw || !owners || owners.length === 0) continue;
 
         console.log(`[Indexer] New Company Detected: ${name} (${scw})`);
 
         try {
-          // Info: (20251230 - Tzuhan) A. 找出所有 Owner 的 User ID
-          // Info: (20251230 - Tzuhan) owners 是 [[x1, y1], [x2, y2]...]
-          const ownerConnectQueries = [];
-
+          // Info: (20251230 - Tzuhan) --- 1. 找出所有 Owner 並確認 Creator ---
+          const ownerUsers = [];
           for (const ownerPubKey of owners) {
             const [x, y] = ownerPubKey;
-            // Info: (20251230 - Tzuhan) 嘗試用公鑰找用戶
             const user = await prisma.user.findFirst({
               where: {
                 pubKeyX: x.toString(),
                 pubKeyY: y.toString(),
               },
             });
-
-            if (user) {
-              ownerConnectQueries.push({ id: user.id });
-            } else {
-              console.warn(`[Indexer] Warning: Owner with pubKey (${x}, ${y}) not found in DB.`);
-            }
+            if (user) ownerUsers.push(user);
           }
 
-          // Info: (20251230 - Tzuhan) B. 寫入 Company 並連結 Owners
+          // Info: (20260116 - Tzuhan) 根據業務邏輯，owners[0] 通常是 Creator
+          const creator = ownerUsers[0];
+
+          if (!creator) {
+            console.error(`❌ [Indexer] 找不到 Creator (第一位 Owner)，跳過公司 ${scw} 的同步`);
+            continue;
+          }
+
+          // Info: (20260116 - Tzuhan) --- 2. 執行 Upsert (符合新 Schema) ---
           await prisma.company.upsert({
             where: { address: scw },
-            update: {},
+            update: {
+              // Info: (20260116 - Tzuhan) 更新時也可以同步更新 Owner 名單與名稱
+              name: name || undefined,
+              imageUrl: imageUrl || undefined,
+              threshold: Number(threshold),
+              owners: {
+                set: ownerUsers.map((u) => ({ id: u.id })), // Info: (20260116 - Tzuhan) 使用 set 確保名單與鏈上一致
+              },
+            },
             create: {
               address: scw,
               name: name || 'Unknown Company',
               imageUrl: imageUrl,
               threshold: Number(threshold),
+              // Info: (20260116 - Tzuhan) 將 uint256 salt 轉為字串儲存，符合新 Schema 的 String 類型
               salt: salt ? salt.toString() : '0',
+              // Info: (20260116 - Tzuhan) 關鍵：補上必填的 creatorId 關聯
+              creatorId: creator.id,
               owners: {
-                connect: ownerConnectQueries,
+                connect: ownerUsers.map((u) => ({ id: u.id })),
               },
+              // Info: (20260116 - Tzuhan) 預設步驟與狀態
+              currentStep: 5,
+              status: 'PENDING',
             },
           });
 
-          console.log(`✅ [Indexer] Synced company ${scw} to DB.`);
+          console.log(`✅ [Indexer] Synced company ${scw} with Creator ${creator.id} to DB.`);
         } catch (err) {
           console.error(`❌ [Indexer] Failed to sync company ${scw}:`, err);
         }

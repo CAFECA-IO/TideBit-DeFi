@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { type Hex, encodeAbiParameters, parseAbiParameters } from 'viem';
 import { publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
-import { fido2ClientService, sendUserOpToBundler } from '@/lib/auth/fido2-client';
+import { fido2ClientService, sendUserOpToBundler } from '@/lib/auth/fido2_client';
 import {
   hexToBase64Url,
   encodeWebAuthnSignature,
   getWebAuthnSignatureStruct,
-} from '@/lib/auth/passkey-encoding';
+} from '@/lib/auth/crypto_utils';
 
 export interface IPartialUserOp {
   sender: Hex;

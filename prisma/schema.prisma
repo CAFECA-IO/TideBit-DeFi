@@ -10,20 +10,20 @@ datasource db {
 }
 
 enum Role {
-  USER      
-  ADMIN     
+  USER
+  ADMIN
 }
 
 enum Status {
-  PENDING   
-  APPROVED  
-  REJECTED  
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model User {
   id               String   @id @default(uuid())
   identityAddress  String?  @map("identity_address") // Info: (20260112 - Tzuhan) RWA Identity Contract (ONCHAINID)
-  address          String   @unique   //  Info: (20260112 - Tzuhan) 用戶的錢包 (address) 是這個 RWA Identity Contract 合約的 Owner
+  address          String   @unique //  Info: (20260112 - Tzuhan) 用戶的錢包 (address) 是這個 RWA Identity Contract 合約的 Owner
   pubKeyX          String?  @map("pub_key_x")
   pubKeyY          String?  @map("pub_key_y")
   credentialId     String?  @unique @map("credential_id")
@@ -35,65 +35,66 @@ model User {
   updatedAt        DateTime @updatedAt
 
   companies        Company[] @relation("CompanyOwners")
+  createdCompanies Company[] @relation("CreatedCompanies")
 
   @@index([address])
 }
 
 model Company {
-  id              String   @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   // Info: (20260108 - Tzuhan) 鏈上地址：
   // 1. 設為 @unique 以確保搜尋效能 (Indexer 用) 並防止重複綁定。
   // 2. 設為 Optional (?) 允許 "Draft/Pending" 狀態下為空。
   // 3. PostgreSQL 允許 Unique 欄位有多個 Null，符合我們「多筆審核中公司」的需求。
-  address         String?  @unique 
-  
-  // Info: (20260108 - Tzuhan) 鏈上參數 (後補)
-  threshold       Int?      
-  salt            String?   
+  address         String? @unique @map("scw_address")
+  identityAddress String? @unique @map("identity_address")
 
-  name            String   // Info: (20260108 - Tzuhan) 顯示名稱 (可能與 Legal Name 不同)
-  imageUrl        String?  @map("image_url") // Info: (20260108 - Tzuhan) Logo
-  
+  // Info: (20260108 - Tzuhan) 鏈上參數 (後補)
+  threshold Int?
+
+  salt      String?
+  creatorId String  @map("creator_id")
+  creator   User    @relation("CreatedCompanies", fields: [creatorId], references: [id])
+
+  name     String // Info: (20260108 - Tzuhan) 顯示名稱 (可能與 Legal Name 不同)
+  imageUrl String? @map("image_url") // Info: (20260108 - Tzuhan) Logo
+
   // Info: (20260108 - Tzuhan) [Step 1] Token Info
-  tokenName       String?  @map("token_name")
-  tokenSymbol     String?  @map("token_symbol")
-  tokenLogoId     String?  @map("token_logo_id")
+  tokenName   String? @map("token_name")
+  tokenSymbol String? @map("token_symbol")
+  tokenLogoId String? @map("token_logo_id")
 
   // Info: (20260108 - Tzuhan) [Step 2] Basic Info
-  legalName       String?  @map("legal_name")
-  taxId           String?  @map("tax_id")
-  country         String?  // Info: (20260108 - Tzuhan) Registered Location
-  representative  String?  @map("representative_name")
-  contactPerson   String?  @map("key_contact_person")
-  phone           String?
-  email           String?
-  website         String?
-  description     String?
+  legalName      String? @map("legal_name")
+  taxId          String? @map("tax_id")
+  country        String? // Info: (20260108 - Tzuhan) Registered Location
+  representative String? @map("representative_name")
+  contactPerson  String? @map("key_contact_person")
+  phone          String?
+  email          String?
+  website        String?
+  description    String?
 
   // Info: (20260108 - Tzuhan) [Step 3] Registration Info
-  legalStructure  String?   @map("legal_structure")
-  registrationNum String?   @map("registration_number")
+  legalStructure   String?   @map("legal_structure")
+  registrationNum  String?   @map("registration_number")
   registrationDate DateTime? @map("registration_date")
-  industry        String?
+  industry         String?
 
   // Info: (20260108 - Tzuhan) [Step 5] Upload Documents
-  docIdType       String?   @map("doc_id_type")
-  docIdFile       String?   @map("doc_id_file")
-  docRegFile      String?   @map("doc_reg_file")
-  docUboFile      String?   @map("doc_ubo_file")
+  docIdType  String? @map("doc_id_type")
+  docIdFile  String? @map("doc_id_file")
+  docRegFile String? @map("doc_reg_file")
+  docUboFile String? @map("doc_ubo_file")
 
   // Info: (20260108 - Tzuhan) UX 狀態
-  currentStep     Int       @default(1)
-  
-  status          Status   @default(PENDING)
+  currentStep Int @default(1)
 
-  owners          User[]   @relation("CompanyOwners")
+  status Status @default(PENDING)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  owners User[] @relation("CompanyOwners")
 
-  // Info: (20260108 - Tzuhan) 優化：
-  // 1. 移除 @@index([address])，因為 @unique 已經建立了索引。
-  // 2. address 是 Indexer 最頻繁查詢的欄位 (Where address = ...)，@unique 已提供 O(1) 查詢效能。
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

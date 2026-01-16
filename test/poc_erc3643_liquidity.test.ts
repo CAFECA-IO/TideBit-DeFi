@@ -32,7 +32,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
       await viem.getWalletClients();
     const publicClient = await viem.getPublicClient();
 
-    // 1. 部署 Registry 相關合約
+    // Info: (20260116 - Tzuhan) 1. 部署 Registry 相關合約
     const claimTopicsRegistry = await viem.deployContract(CONTRACTS.ClaimTopicsRegistry, []);
     const trustedIssuersRegistry = await viem.deployContract(CONTRACTS.TrustedIssuersRegistry, []);
     const identityRegistryStorage = await viem.deployContract(CONTRACTS.IdentityRegistryStorage, [
@@ -46,7 +46,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     ]);
     const compliance = await viem.deployContract(CONTRACTS.DefaultCompliance, []);
 
-    // 2. 部署 Token
+    // Info: (20260116 - Tzuhan) 2. 部署 Token
     const token = await viem.deployContract(CONTRACTS.Token, [
       identityRegistry.address,
       compliance.address,
@@ -56,13 +56,13 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
       identityRegistryStorage.address,
     ]);
 
-    // 3. 系統配置綁定
+    // Info: (20260116 - Tzuhan) 3. 系統配置綁定
     await identityRegistryStorage.write.bindIdentityRegistry([identityRegistry.address]);
     await identityRegistry.write.addAgent([token.address]);
     await compliance.write.addTokenAgent([token.address]);
     await token.write.addAgent([deployer.account.address]);
 
-    // 4. 設定合規規則
+    // Info: (20260116 - Tzuhan) 4. 設定合規規則
     await claimTopicsRegistry.write.addClaimTopic([CLAIM_TOPIC]);
     await trustedIssuersRegistry.write.addTrustedIssuer([
       issuerWallet.account.address,
@@ -97,27 +97,27 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
 
     if (!userAddress) throw new Error('User wallet has no address');
 
-    // 1. 部署用戶的 Identity 合約 (ERC-734/735)
+    // Info: (20260116 - Tzuhan) 1. 部署用戶的 Identity 合約 (ERC-734/735)
     const identity = await viem.deployContract(CONTRACTS.Identity, [
       userAddress,
-      false, // isCompany = false
+      false, // Info: (20260116 - Tzuhan) 是否為企業帳號
     ]);
 
-    // 2. 模擬 KYC: Issuer 簽署 Claim (此處簡化為直接操作)
+    // Info: (20260116 - Tzuhan) 2. 模擬 KYC: Issuer 簽署 Claim (此處簡化為直接操作)
     const claimData = toHex('KYC Verified');
-    const claimSignature = toHex('mock_signature'); // 實際環境需 ECDSA 簽名
+    const claimSignature = toHex('mock_signature'); // Info: (20260116 - Tzuhan) 實際環境需 ECDSA 簽名
 
-    // 3. 將 Claim 加入用戶的 Identity 合約
+    // Info: (20260116 - Tzuhan) 3. 將 Claim 加入用戶的 Identity 合約
     await identity.write.addClaim([
       BigInt(CLAIM_TOPIC),
-      BigInt(1), // Scheme: ECDSA
+      BigInt(1), // Info: (20260116 - Tzuhan) Scheme: ECDSA
       issuerWallet.account.address,
       claimSignature,
       claimData,
-      '', // URI
+      '', // Info: (20260116 - Tzuhan) URI
     ]);
 
-    // 4. 在 IdentityRegistry 中註冊此 Identity
+    // Info: (20260116 - Tzuhan) 4. 在 IdentityRegistry 中註冊此 Identity
     await identityRegistry.write.registerIdentity([
       userAddress,
       identity.address,
@@ -133,20 +133,20 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const fixture = await deployTREXFixture();
     const { token, aliceWallet } = fixture;
 
-    // 1. Setup Alice's Identity
+    // Info: (20260116 - Tzuhan) 1. Setup Alice's Identity
     await setupIdentity(aliceWallet, fixture);
 
-    // 2. Mint Tokens
+    // Info: (20260116 - Tzuhan) 2. Mint Tokens
     const amount = parseEther('1000');
     const aliceAddress = aliceWallet.account.address;
 
     await token.write.mint([aliceAddress, amount]);
 
-    // 3. Verify Balance
+    // Info: (20260116 - Tzuhan) 3. Verify Balance
     const balance = await token.read.balanceOf([aliceAddress]);
     expect(balance).to.equal(amount);
 
-    // 4. Verify Compliance State
+    // Info: (20260116 - Tzuhan) 4. Verify Compliance State
     const isVerified = await token.read.isVerified([aliceAddress]);
 
     expect(isVerified).to.equal(true);
@@ -156,17 +156,17 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const fixture = await deployTREXFixture();
     const { token, aliceWallet, bobWallet } = fixture;
 
-    // 1. Setup Identities
+    // Info: (20260116 - Tzuhan) 1. Setup Identities
     await setupIdentity(aliceWallet, fixture);
     await setupIdentity(bobWallet, fixture);
 
-    // 2. Mint to Alice
+    // Info: (20260116 - Tzuhan) 2. Mint to Alice
     const aliceAddress = aliceWallet.account.address;
     const bobAddress = bobWallet.account.address;
     const mintAmount = parseEther('1000');
     await token.write.mint([aliceAddress, mintAmount]);
 
-    // 3. Alice transfers to Bob
+    // Info: (20260116 - Tzuhan) 3. Alice transfers to Bob
     const tokenAsAlice = await viem.getContractAt('Token', token.address, {
       client: { wallet: aliceWallet },
     });
@@ -174,7 +174,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const transferAmount = parseEther('500');
     await tokenAsAlice.write.transfer([bobAddress, transferAmount]);
 
-    // 4. Verify Balances
+    // Info: (20260116 - Tzuhan) 4. Verify Balances
     const aliceBalance = await token.read.balanceOf([aliceAddress]);
     const bobBalance = await token.read.balanceOf([bobAddress]);
 
@@ -186,20 +186,20 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const fixture = await deployTREXFixture();
     const { token, aliceWallet, carolWallet } = fixture;
 
-    // 1. Only Setup Alice (Carol is NOT verified)
+    // Info: (20260116 - Tzuhan) 1. Only Setup Alice (Carol is NOT verified)
     await setupIdentity(aliceWallet, fixture);
 
-    // 2. Mint to Alice
+    // Info: (20260116 - Tzuhan) 2. Mint to Alice
     const aliceAddress = aliceWallet.account.address;
     const carolAddress = carolWallet.account.address;
     await token.write.mint([aliceAddress, parseEther('1000')]);
 
-    // 3. Alice tries to transfer to Carol
+    // Info: (20260116 - Tzuhan) 3. Alice tries to transfer to Carol
     const tokenAsAlice = await viem.getContractAt('Token', token.address, {
       client: { wallet: aliceWallet },
     });
 
-    // 4. Expect Revert
+    // Info: (20260116 - Tzuhan) 4. Expect Revert
     // Info: (20260114 - User) ERC-3643 Revert string usually "Transfer not possible"
     let errorOccurred = false;
     try {
@@ -218,7 +218,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const fixture = await deployTREXFixture();
     const { token, aliceWallet, carolWallet, bobWallet } = fixture;
 
-    // 1. Setup Alice (Owner) and Bob (Spender/Operator), Carol is Receiver (Unverified)
+    // Info: (20260116 - Tzuhan) 1. Setup Alice (Owner) and Bob (Spender/Operator), Carol is Receiver (Unverified)
     await setupIdentity(aliceWallet, fixture);
     await setupIdentity(bobWallet, fixture);
 
@@ -226,7 +226,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     const bobAddress = bobWallet.account.address;
     const carolAddress = carolWallet.account.address;
 
-    // 2. Mint to Alice & Approve Bob
+    // Info: (20260116 - Tzuhan) 2. Mint to Alice & Approve Bob
     await token.write.mint([aliceAddress, parseEther('1000')]);
 
     const tokenAsAlice = await viem.getContractAt('Token', token.address, {
@@ -234,7 +234,7 @@ describe('TideBit-DeFi POC: ERC-3643 Token Liquidity (Strict TS)', function () {
     });
     await tokenAsAlice.write.approve([bobAddress, parseEther('1000')]);
 
-    // 3. Bob tries to transferFrom Alice to Carol
+    // Info: (20260116 - Tzuhan) 3. Bob tries to transferFrom Alice to Carol
     const tokenAsBob = await viem.getContractAt('Token', token.address, {
       client: { wallet: bobWallet },
     });

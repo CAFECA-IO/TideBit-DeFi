@@ -34,6 +34,7 @@ interface IPieChartProps {
   data: IChartData[];
   size?: number;
   hole?: HoleSize;
+  isLegendLineBreak?: boolean;
 }
 
 interface IPieChartLegendProps {
@@ -69,7 +70,12 @@ const PieChartLegend: React.FC<IPieChartLegendProps> = ({ label, color, value, p
   );
 };
 
-const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.LARGE }) => {
+const PieChart: React.FC<IPieChartProps> = ({
+  data,
+  size = 200,
+  hole = HoleSize.LARGE,
+  isLegendLineBreak = false,
+}) => {
   // Info: (20251230 - Julian) 分別抽出標籤和數據
   const labels = data.map((item) => item.label);
   const series = data.map((item) => item.value);
@@ -237,12 +243,15 @@ const PieChart: React.FC<IPieChartProps> = ({ data, size = 200, hole = HoleSize.
     ));
 
   return (
-    <div className="flex w-full justify-center gap-24px">
+    <div className="flex w-full justify-center gap-x-spacing-lv-8">
       <div id="chart">
         <Chart options={options} series={series} type="donut" width={size} height={size} />
       </div>
 
-      <div id="legend" className="flex flex-col gap-spacing-lv-0">
+      <div
+        id="legend"
+        className={`${isLegendLineBreak ? 'grid w-full grid-flow-col grid-rows-5' : 'flex flex-col'} gap-x-spacing-lv-8 gap-y-spacing-lv-0`}
+      >
         {displayLegend}
       </div>
     </div>

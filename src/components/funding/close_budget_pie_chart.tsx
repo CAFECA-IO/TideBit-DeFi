@@ -7,9 +7,15 @@ import PieChart from '@/components/common/pie_chart';
 
 interface IBudgetPieChartProps {
   budgetSummary: IFundingBudgetSummary;
+  size: number;
+  isLegendLineBreak?: boolean;
 }
 
-const BudgetPieChart: React.FC<IBudgetPieChartProps> = ({ budgetSummary }) => {
+const CloseBudgetPieChart: React.FC<IBudgetPieChartProps> = ({
+  budgetSummary,
+  size,
+  isLegendLineBreak = false,
+}) => {
   const { remainAmount, breakdown } = budgetSummary;
 
   // Info: (20251230 - Julian) 實際支出部分
@@ -30,7 +36,7 @@ const BudgetPieChart: React.FC<IBudgetPieChartProps> = ({ budgetSummary }) => {
   // Info: (20251230 - Julian) 組合圖表數據
   const data: IChartData[] = [...expensePart, emptyPart];
 
-  return <PieChart data={data} size={150} />;
+  return <PieChart data={data} size={size} isLegendLineBreak={isLegendLineBreak} />;
 };
 
-export default BudgetPieChart;
+export default CloseBudgetPieChart;

@@ -238,16 +238,19 @@ export const mockFundingDetail: IFundingInfoDetail = {
   ...mockFundingItems[6],
   budgetSummary: {
     totalFundingAmount: 1000000,
-    expenseAmount: 600000,
-    remainAmount: 400000,
+    expenseAmount: 800000,
+    remainAmount: 200000,
     breakdown: [
       {
         title: 'Research and Development',
-        totalAmount: 300000,
-        usedAmount: 300000,
+        totalAmount: 500000,
+        usedAmount: 500000,
       },
-      { title: 'Marketing', totalAmount: 200000, usedAmount: 45000 },
-      { title: 'Operations', totalAmount: 100000, usedAmount: 0 },
+      { title: 'Marketing', totalAmount: 270000, usedAmount: 210000 },
+      { title: 'Operations', totalAmount: 30000, usedAmount: 0 },
+      { title: 'Customer Support', totalAmount: 55000, usedAmount: 9000 },
+      { title: 'Miscellaneous', totalAmount: 80000, usedAmount: 55000 },
+      { title: 'Legal and Compliance', totalAmount: 12000, usedAmount: 9000 },
     ],
   },
 };

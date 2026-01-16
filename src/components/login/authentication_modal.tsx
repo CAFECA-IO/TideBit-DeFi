@@ -6,7 +6,7 @@ import { LiaFingerprintSolid } from 'react-icons/lia';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
-import { fido2ClientService } from '@/lib/auth/fido2-client';
+import { fido2ClientService } from '@/lib/auth/fido2_client';
 import { useRouter } from 'next/navigation';
 import { ApiCode } from '@/lib/utils/status';
 

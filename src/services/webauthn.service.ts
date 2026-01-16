@@ -6,15 +6,15 @@ import type {
   AuthenticationJSON,
   CredentialInfo,
 } from '@passwordless-id/webauthn/dist/esm/types';
-import { verifyAuthentication, verifyRegistration } from '@/lib/auth/fido2-server';
+import { verifyAuthentication, verifyRegistration } from '@/lib/auth/fido2_server';
 import { signDeWT } from '@/lib/auth/dewt';
 import type { IWebAuthnRepository } from '@/repositories/webauthn.repo';
 import { webAuthnRepo } from '@/repositories/webauthn.repo';
 import { AppError } from '@/lib/utils/error';
 import { ApiCode } from '@/lib/utils/status';
-import { extractXYFromSPKI } from '@/lib/auth/fido2-parse';
+import { extractXYFromSPKI } from '@/lib/auth/passkey_encoding';
 import { randomBytes } from 'crypto';
-import { generateChallengeToken, verifyChallengeToken } from '@/lib/auth/challenge-token';
+import { generateChallengeToken, verifyChallengeToken } from '@/lib/auth/challenge_token';
 import { prisma } from '@/lib/prisma';
 
 interface ILoginResult {
@@ -264,6 +264,7 @@ class WebAuthnService {
               threshold: Number(threshold),
               salt: salt ? salt.toString() : '0',
               owners: { connect: { address: userAddress } },
+              creator: { connect: { address: userAddress } },
             },
           });
         }

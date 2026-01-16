@@ -104,3 +104,34 @@ export function encodeWebAuthnSignature(
     [struct]
   );
 }
+
+export function extractXYFromSPKI(spkiBase64: string) {
+  // Info: (20251205 - Tzuhan) 1. 處理 Base64URL 格式 (將 - 轉為 +, _ 轉為 /): WebAuthn 輸出的通常是 Base64URL，但 Node.js 的 Buffer 容錯率高，為了保險起見，我們標準化它。
+  const base64 = spkiBase64.replace(/-/g, '+').replace(/_/g, '/');
+
+  // Info: (20251205 - Tzuhan) 2. 解碼為 Buffer
+  const buffer = Buffer.from(base64, 'base64');
+
+  /**
+   * Info: (20251205 - Tzuhan) 3. 定位公鑰位置
+   * P-256 的 SPKI Header 固定為 26 bytes。
+   * 第 27 byte (index 26) 通常是 0x04 (代表未壓縮的座標點 format)
+   * 檢查標頭長度與格式標記 (0x04)
+   * 直接找最後的 65 bytes (1 byte prefix + 32 byte X + 32 byte Y)
+   */
+  const keyLength = 65;
+  const start = buffer.length - keyLength;
+
+  if (buffer[start] !== 0x04) {
+    throw new Error('Public key is not in uncompressed format (0x04)');
+  }
+
+  // Info: (20251205 - Tzuhan) 4. 切割 X 和 Y，跳過 0x04，取接下來的 32 bytes 為 X，再接下來 32 bytes 為 Y
+  const xBuffer = buffer.subarray(start + 1, start + 1 + 32);
+  const yBuffer = buffer.subarray(start + 1 + 32, start + 1 + 32 + 32);
+
+  return {
+    x: BigInt('0x' + xBuffer.toString('hex')),
+    y: BigInt('0x' + yBuffer.toString('hex')),
+  };
+}

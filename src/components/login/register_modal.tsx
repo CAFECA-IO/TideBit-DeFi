@@ -11,7 +11,12 @@ import { Button } from '@/components/common/button';
 import { encodeFunctionData, type Hex } from 'viem';
 import { publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
-import { fido2ClientService, parsePasskey, sendUserOpToBundler } from '@/lib/auth/fido2_client';
+import {
+  fido2ClientService,
+  getRegisterChallenge,
+  parsePasskey,
+  sendUserOpToBundler,
+} from '@/lib/auth/fido2_client';
 import { encodeWebAuthnSignature, hexToBase64Url } from '@/lib/auth/crypto_utils';
 
 const RegisterModal: React.FC = () => {
@@ -52,13 +57,7 @@ const RegisterModal: React.FC = () => {
 
       // Info: (20251223 - Tzuhan) --- 步驟 1: 註冊 Passkey (獲取公鑰) ---
       // Info: (20251223 - Tzuhan) ★★★ 關鍵修正：使用瀏覽器原生 API 產生 Challenge (避開 Buffer) ★★★
-      const randomBytes = new Uint8Array(32);
-      window.crypto.getRandomValues(randomBytes);
-      // Info: (20251223 - Tzuhan) 將 bytes 轉為 base64 並手動替換為 base64url 格式
-      const regChallenge = btoa(String.fromCharCode(...Array.from(randomBytes)))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '');
+      const regChallenge = await getRegisterChallenge();
 
       const registration = await fido2ClientService.startRegistration({
         user: username,

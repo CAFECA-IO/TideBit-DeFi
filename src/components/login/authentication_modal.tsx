@@ -6,7 +6,7 @@ import { LiaFingerprintSolid } from 'react-icons/lia';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
-import { fido2ClientService } from '@/lib/auth/fido2_client';
+import { fido2ClientService, getLoginOptions } from '@/lib/auth/fido2_client';
 import { useRouter } from 'next/navigation';
 import { ApiCode } from '@/lib/utils/status';
 
@@ -28,11 +28,7 @@ const AuthenticationModal: React.FC = () => {
     setErrorMsg('');
     try {
       // 1. 取得 Stateless Challenge
-      const res = await fetch('/api/v1/auth/nonce');
-      const data = await res.json();
-      if (data.code !== ApiCode.SUCCESS) throw new Error(data.message);
-
-      const { challenge, token } = data.payload;
+      const { challenge, token } = await getLoginOptions();
 
       // Info: (20260105 - Tzuhan) 2. 喚起 Passkey
       const authentication = await fido2ClientService.startLogin({

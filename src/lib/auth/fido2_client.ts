@@ -73,20 +73,30 @@ export const fido2ClientService = new Fido2ClientService();
 
 // --- Info: (20251223 - Tzuhan) 新增：與後端 API 溝通的輔助函式 ---
 
+export async function getRegisterChallenge(): Promise<string> {
+  const res = await fetch('/api/v1/auth/options?action=register');
+  const data = await res.json();
+  if (data.code !== ApiCode.SUCCESS) throw new Error(data.message);
+  return data.payload.challenge;
+}
+
 /**
  * Info: (20251223 - Tzuhan)
  * 取得登入用的 Challenge (Nonce)
  * 後端會在此時執行 Lazy Sync (查鏈 -> 同步 DB)
  */
-export async function getLoginChallenge(address: string): Promise<string> {
-  const res = await fetch(`/api/v1/auth/nonce?address=${address}`);
+export async function getLoginOptions(
+  address?: string
+): Promise<{ challenge: string; token?: string }> {
+  const url = address
+    ? `/api/v1/auth/options?action=login&address=${address}`
+    : '/api/v1/auth/options?action=login';
+
+  const res = await fetch(url);
   const data = await res.json();
+  if (data.code !== ApiCode.SUCCESS) throw new Error(data.message);
 
-  if (data.code !== ApiCode.SUCCESS) {
-    throw new AppError(data.code, data.message || 'Failed to get login challenge');
-  }
-
-  return data.payload.challenge;
+  return data.payload; // 回傳 { challenge, token? }
 }
 
 /**

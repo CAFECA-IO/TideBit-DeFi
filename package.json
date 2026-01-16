@@ -1,6 +1,6 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+87",
+  "version": "0.9.0+88",
   "private": true,
   "type": "module",
   "scripts": {

@@ -121,6 +121,7 @@ const TermsOfServiceModal: React.FC = () => {
             disabled={isAgreedDisabled}
             onClick={handleAgree}
             className="w-full"
+            variant="info"
           >
             Agree
           </Button>

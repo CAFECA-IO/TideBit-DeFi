@@ -125,7 +125,7 @@ const RegisterModal: React.FC = () => {
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                className="w-full bg-transparent outline-none placeholder:text-text-field-text-placeholder"
+                className="w-full bg-transparent text-text-field-text-active outline-none placeholder:text-text-field-text-placeholder"
                 placeholder="Enter your nickname"
                 aria-label="Nickname entry"
               />

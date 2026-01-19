@@ -3,7 +3,7 @@ import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 
-// Info: (20260116 - Tzuhan) 載入所有必要的 ABI，包含 T-REX v4 權限管理組件
+// Info: (20260116 - Tzuhan) 載入所有必要的 ABI，包含 T-REX v4 權限與合規組件
 const CTR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/ClaimTopicsRegistry.sol/ClaimTopicsRegistry.json');
 const TIR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/TrustedIssuersRegistry.sol/TrustedIssuersRegistry.json');
 const IRS_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistryStorage.sol/IdentityRegistryStorage.json');
@@ -13,6 +13,8 @@ const TOKEN_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/p
 const IR_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/IdentityRegistryProxy.sol/IdentityRegistryProxy.json');
 const AUTHORITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/TREXImplementationAuthority.sol/TREXImplementationAuthority.json');
 const IA_FACTORY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/IAFactory.sol/IAFactory.json');
+const MC_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json');
+const MC_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/ModularComplianceProxy.sol/ModularComplianceProxy.json');
 
 const ERC3643Module = buildModule('ERC3643Module', (m) => {
   // Info: (20260116 - Tzuhan) 取得部署者帳戶與環境變數
@@ -26,32 +28,27 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const irsImpl = m.contract('IRSImpl', IRS_ARTIFACT, []);
   const tirImpl = m.contract('TIRImpl', TIR_ARTIFACT, []);
   const ctrImpl = m.contract('CTRImpl', CTR_ARTIFACT, []);
+  const mcImpl = m.contract('MCImpl', MC_ARTIFACT, []);
 
-  // Info: (20260116 - Tzuhan) --- 2. 部署並初始化基礎註冊表 (修正 Ownable 順序錯誤) ---
-
-  // Claim Topics Registry
+  // Info: (20260119 - Tzuhan) --- 2. 部署並初始化基礎註冊表 (強制順序防止 Ownable 錯誤) ---
   const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, []);
   const initCTR = m.call(claimTopicsRegistry, 'init', [], { id: 'init_ctr' });
-  // 強制 addClaimTopic 在 init 之後執行
   const addTopic = m.call(claimTopicsRegistry, 'addClaimTopic', [CLAIM_TOPIC], {
     id: 'add_topic_101',
     after: [initCTR],
   });
 
-  // Trusted Issuers Registry
   const trustedIssuersRegistry = m.contract('TrustedIssuersRegistry', TIR_ARTIFACT, []);
   const initTIR = m.call(trustedIssuersRegistry, 'init', [], { id: 'init_tir' });
-  // 強制 addTrustedIssuer 在 init 之後執行
-  m.call(trustedIssuersRegistry, 'addTrustedIssuer', [deployer, [CLAIM_TOPIC]], {
-    id: 'add_deployer_as_issuer',
-    after: [initTIR, addTopic], // 同時確保 Topic 已存在
+  const addIssuer = m.call(trustedIssuersRegistry, 'addTrustedIssuer', [deployer, [CLAIM_TOPIC]], {
+    id: 'add_issuer_101',
+    after: [initTIR, addTopic],
   });
 
-  // Identity Registry Storage
   const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, []);
-  m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
+  const initIRS = m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
 
-  // Info: (20260116 - Tzuhan) --- 3. 部署權限管理體系 ---
+  // Info: (20260116 - Tzuhan) --- 3. 部署權限管理體系 (T-REX v4 Authority) ---
   const authorityLogic = m.contract('AuthorityLogic', AUTHORITY_ARTIFACT, [
     false,
     deployer,
@@ -62,6 +59,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
 
   const irAuthority = m.contract('IR_Authority', AUTHORITY_ARTIFACT, [true, deployer, iaFactory]);
 
+  // Info: (20260119 - Tzuhan) 設定版本 (讓 Proxy 部署時 getImplementation 有回傳值)
   const initAuthority = m.call(
     irAuthority,
     'addAndUseTREXVersion',
@@ -73,36 +71,49 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
         irImplementation: irImpl,
         irsImplementation: irsImpl,
         tirImplementation: tirImpl,
-        mcImplementation: '0x0000000000000000000000000000000000000000',
+        mcImplementation: mcImpl,
       },
     ],
     { id: 'init_authority_version' }
   );
 
-  // Info: (20260116 - Tzuhan) --- 4. 部署 NTD 專屬 IdentityRegistry ---
+  // Info: (20260116 - Tzuhan) --- 4. 部署 NTD 專屬 IdentityRegistry (修正依賴順序) ---
   const ntdIdentityRegistry = m.contract(
     'NTD_IdentityRegistry',
     IR_PROXY_ARTIFACT,
     [irAuthority, trustedIssuersRegistry, claimTopicsRegistry, identityRegistryStorage],
-    { after: [initAuthority, initTIR, initCTR, addTopic] }
+    { after: [initAuthority, addIssuer, initIRS] }
   );
 
-  // Info: (20260116 - Tzuhan) --- 5. 部署 NTD 代幣 (TokenProxy) ---
-  const ntdToken = m.contract('NTD_Token', TOKEN_PROXY_ARTIFACT, [
-    tokenImpl,
-    ntdIdentityRegistry,
-    '0x0000000000000000000000000000000000000000',
-    'New Taiwan Dollar',
-    'NTD',
-    18,
-    deployer,
-  ]);
+  // Info: (20260119 - Tzuhan) --- 5. 部署 NTD 專屬合規合約 ---
+  const ntdCompliance = m.contract('NTD_Compliance', MC_PROXY_ARTIFACT, [irAuthority], {
+    id: 'NTD_Compliance',
+  });
 
-  // Info: (20260116 - Tzuhan) --- 6. 設定 Agent ---
+  const ntdMCAsImpl = m.contractAt('ModularCompliance', MC_ARTIFACT, ntdCompliance);
+  const initMC = m.call(ntdMCAsImpl, 'init', [], { id: 'init_ntd_mc' });
+
+  // Info: (20260119 - Tzuhan) --- 6. [修正] 部署 NTD 代幣 (第一參數改用 irAuthority) ---
+  const ntdToken = m.contract(
+    'NTD_Token',
+    TOKEN_PROXY_ARTIFACT,
+    [
+      irAuthority,
+      ntdIdentityRegistry,
+      ntdCompliance, //  Info: (20260119 - Tzuhan) 使用剛部署的合規地址，而非 0x0
+      'New Taiwan Dollar',
+      'NTD',
+      18,
+      deployer,
+    ],
+    { after: [initMC, ntdIdentityRegistry] }
+  );
+
+  // Info: (20260116 - Tzuhan) --- 7. 設定 Agent (API 鑄幣權限) ---
   const ntdTokenAsImpl = m.contractAt('Token', TOKEN_ARTIFACT, ntdToken);
   m.call(ntdTokenAsImpl, 'addAgent', [deployer], { id: 'set_relayer_as_agent' });
 
-  // Info: (20260116 - Tzuhan) --- 7. 部署 ERC-4337 與 Factory ---
+  // Info: (20260116 - Tzuhan) --- 8. 部署 AA 與 Factory ---
   const entryPoint = entryPointAddress
     ? m.contractAt('EntryPointImportHelper', entryPointAddress)
     : m.contract('EntryPointImportHelper');
@@ -115,10 +126,10 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     tokenImpl,
   ]);
 
-  // Info: (20260116 - Tzuhan) 回傳所有關鍵合約地址
   return {
     ntdToken,
     ntdIdentityRegistry,
+    ntdCompliance,
     irAuthority,
     claimTopicsRegistry,
     trustedIssuersRegistry,

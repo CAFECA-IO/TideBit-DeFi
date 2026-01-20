@@ -194,7 +194,7 @@ const Pagination: React.FC<IPaginationProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-spacing-lv-2">
-      <div className="mt-10 flex items-center">
+      <div className="flex items-center">
         {/* Info: (20260108 - Julian) 分頁 */}
         <ul className="flex flex-wrap items-center justify-center gap-1 text-sm font-medium">
           <li>{previousBtn}</li>

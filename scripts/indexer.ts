@@ -94,7 +94,7 @@ async function main() {
               imageUrl: imageUrl || undefined,
               threshold: Number(threshold),
               owners: {
-                set: ownerUsers.map((u) => ({ id: u.id })), // 使用 set 確保名單與鏈上一致
+                set: ownerUsers.map((u) => ({ id: u.id })), // Info: (20260116 - Tzuhan) 使用 set 確保名單與鏈上一致
               },
             },
             create: {

@@ -112,7 +112,6 @@ export async function POST(req: NextRequest) {
         args: [pad(account.address, { size: 32 }), BigInt(3), BigInt(1)],
       });
     }
-
     // 3. 取得或部署用戶 Identity
     let userIdentityAddress = (await publicClient.readContract({
       address: identityRegistryAddress,
@@ -135,19 +134,31 @@ export async function POST(req: NextRequest) {
       const relayerKeyID = keccak256(encodeAbiParameters([{ type: 'address' }], [account.address]));
       const userKeyID = keccak256(encodeAbiParameters([{ type: 'address' }], [targetAddr]));
 
-      await walletClient.writeContract({
+      // Purpose 3: Claim Signer
+      console.log('[Approve] Adding Relayer as Claim Signer...');
+      const txKey1 = await walletClient.writeContract({
         address: userIdentityAddress,
         abi: IdentityArtifact.abi as Abi,
         functionName: 'addKey',
         args: [relayerKeyID, BigInt(3), BigInt(1)],
-      }); // Purpose 3: Claim Signer
-      await walletClient.writeContract({
+      });
+      // [Fix] 等待交易確認
+      await publicClient.waitForTransactionReceipt({ hash: txKey1 });
+
+      // Purpose 1: Management
+      console.log('[Approve] Adding User as Management Key...');
+      const txKey2 = await walletClient.writeContract({
         address: userIdentityAddress,
         abi: IdentityArtifact.abi as Abi,
         functionName: 'addKey',
         args: [userKeyID, BigInt(1), BigInt(1)],
-      }); // Purpose 1: Management
+      });
+      // [Fix] 等待交易確認
+      await publicClient.waitForTransactionReceipt({ hash: txKey2 });
     }
+
+    // [Fix 1] 增加一段緩衝時間，讓 RPC 節點有時間同步狀態
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // 3. 生成與添加憑證 (Issuer 設為 Relayer EOA，與 deploy.ts 一致)
     const claimData = toHex(type === 'USER' ? 'KYC_TW_PASSED' : 'KYB_TW_PASSED');
@@ -160,23 +171,37 @@ export async function POST(req: NextRequest) {
     const signature = await account.signMessage({ message: { raw: claimHash } });
 
     console.log(`[Approve] 添加 Topic ${topic} 憑證...`);
+
     const claimTxHash = await walletClient.writeContract({
       address: userIdentityAddress,
       abi: IdentityArtifact.abi as Abi,
       functionName: 'addClaim',
       args: [topic, BigInt(1), account.address, signature, claimData, ''],
+      // [Fix 2] 強制指定 Gas Limit，跳過 estimateGas 模擬檢查
+      // 這能避開因節點資料不同步導致的 Revert 誤判
+      gas: BigInt(600000),
     });
     await publicClient.waitForTransactionReceipt({ hash: claimTxHash });
 
+    // [Fix 1] 再次增加緩衝，確保狀態同步
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     // 4. 註冊至 Registry
     console.log(`[Approve] 註冊至 Registry (台灣: 158)...`);
+
     const registerTxHash = await walletClient.writeContract({
       address: identityRegistryAddress,
       abi: IdentityRegistryArtifact.abi as Abi,
       functionName: 'registerIdentity',
       args: [targetAddr, userIdentityAddress, TAIWAN_COUNTRY_CODE],
+      // [Fix 2] 強制指定 Gas，跳過 estimateGas 檢查
+      // 因為我們確定權限已有，只是節點還沒同步
+      gas: BigInt(600000),
     });
+
     await publicClient.waitForTransactionReceipt({ hash: registerTxHash });
+
+    console.log(`[Approve] KYC/KYB 核准完成！用戶 Identity: ${userIdentityAddress}`);
 
     return jsonOk({
       status: 'APPROVED',

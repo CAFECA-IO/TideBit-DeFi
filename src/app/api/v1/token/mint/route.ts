@@ -2,35 +2,8 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
-import {
-  createWalletClient,
-  http,
-  createPublicClient,
-  defineChain,
-  parseAbi,
-  parseEther,
-  type Address,
-} from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-
-// Info: (20260120 - Tzuhan) --- 環境變數與常數 ---
-const RELAYER_PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`;
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
-const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
-
-// Info: (20260120 - Tzuhan) --- 定義 iSunCoin 鏈資訊 ---
-const isuncoin = defineChain({
-  id: CHAIN_ID,
-  name: 'iSunCoin Mainnet',
-  network: 'isuncoin',
-  nativeCurrency: { decimals: 18, name: 'iSunCoin', symbol: 'ISC' },
-  rpcUrls: { default: { http: [RPC_URL] }, public: { http: [RPC_URL] } },
-});
-
-// Info: (20260120 - Tzuhan) --- 初始化 Viem Clients ---
-const account = privateKeyToAccount(RELAYER_PRIVATE_KEY);
-const walletClient = createWalletClient({ account, chain: isuncoin, transport: http() });
-const publicClient = createPublicClient({ chain: isuncoin, transport: http() });
+import { parseAbi, parseEther, type Address } from 'viem';
+import { publicClient, walletClient } from '@/lib/viem';
 
 // Info: (20260120 - Tzuhan) --- Zod 驗證 Schema ---
 const mintSchema = z.object({
@@ -42,17 +15,15 @@ const mintSchema = z.object({
 
 // Info: (20260120 - Tzuhan) --- ERC-3643 Token ABI (部分) ---
 const TOKEN_ABI = parseAbi([
-  // 核心鑄造函式
+  // Info: (20260121 - Tzuhan) 核心鑄造函式
   'function mint(address _to, uint256 _amount) external',
-  // 查驗身分狀態 (Optional, 供除錯用)
-  'function isVerified(address _userAddress) external view returns (bool)',
-  // 暫停狀態檢查
+  // Info: (20260121 - Tzuhan) 暫停狀態檢查
   'function paused() external view returns (bool)',
 ]);
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. 解析與驗證請求參數
+    // Info: (20260121 - Tzuhan) 1. 解析與驗證請求參數
     const body = await req.json();
     const result = mintSchema.safeParse(body);
 
@@ -64,8 +35,7 @@ export async function POST(req: NextRequest) {
     const targetAddr = targetAddress as Address;
     const tokenAddr = tokenAddress as Address;
 
-    // Info: (20260120 - Tzuhan) 2. 轉換金額 (假設 token 為 18 位小數)
-    // 若未來有不同小數點位數的 Token，需動態讀取 decimals()
+    // Info: (20260120 - Tzuhan) 2. 轉換金額 (假設 token 為 18 位小數), 若未來有不同小數點位數的 Token，需動態讀取 decimals()
     const mintAmount = parseEther(amount);
 
     console.log(`[Mint API] 準備鑄造 ${amount} tokens 給 ${targetAddress}...`);
@@ -93,14 +63,6 @@ export async function POST(req: NextRequest) {
     });
 
     console.log(`[Mint API] 交易已發送: ${txHash}`);
-
-    // Info: (20260120 - Tzuhan) 6. 等待交易確認 (Optional: 視業務需求決定是否要 sync 等待)
-    // 為了確保入金狀態一致性，這裡選擇等待確認
-    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-    if (receipt.status !== 'success') {
-      return jsonFail(ApiCode.INTERNAL_SERVER_ERROR, '鑄造交易執行失敗 (Reverted)');
-    }
 
     return jsonOk({
       status: 'SUCCESS',

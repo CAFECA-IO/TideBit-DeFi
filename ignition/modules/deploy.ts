@@ -85,6 +85,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     [],
     { id: 'init_ntd_mc' }
   );
+
   const ntdToken = m.contract(
     'NTD_Token',
     TOKEN_PROXY_ARTIFACT,
@@ -95,14 +96,15 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   // 5. Info: (20260119 - Tzuhan) --- [核心修正] 建立全鏈上 Agent 信任鏈 ---
 
   // A. Relayer -> Token Agent (用於 Mint)
-  m.call(
+  // Info: (20260121 - Tzuhan) 將這個操作存為變數，以便後面的 unpause 依賴它
+  const addTokenAgent = m.call(
     m.contractAt('Token', TOKEN_ARTIFACT, ntdToken, { id: 'Token_As_Agent' }),
     'addAgent',
     [deployer],
     { id: 'set_relayer_token_agent' }
   );
 
-  // B. Relayer -> Registry Agent (用於 API 核准)
+  // Info: (20260121 - Tzuhan) B. Relayer -> Registry Agent (用於 API 核准)
   m.call(
     m.contractAt('IdentityRegistry', IR_ARTIFACT, ntdIdentityRegistry, { id: 'IR_As_Agent' }),
     'addAgent',
@@ -110,17 +112,27 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { id: 'set_relayer_registry_agent' }
   );
 
-  // C. [關鍵] Registry -> Storage Agent (讓 Registry 有權寫入 Storage)
+  // Info: (20260121 - Tzuhan)C. [關鍵] Registry -> Storage Agent (讓 Registry 有權寫入 Storage) 使用 bindIdentityRegistry，它會自動將 Registry 加為 Agent
   m.call(
     m.contractAt('IdentityRegistryStorage', IRS_ARTIFACT, identityRegistryStorage, {
-      id: 'IRS_As_Agent',
+      id: 'IRS_For_Binding',
     }),
-    'addAgent',
+    'bindIdentityRegistry',
     [ntdIdentityRegistry],
-    { id: 'set_registry_storage_agent' }
+    { id: 'bind_registry_to_storage' }
   );
 
-  // 6. AA 組件
+  // 6. [ Info: (20260121 - Tzuhan) --- 自動解除 Token 暫停狀態 (Unpause) --- ]
+  const ntdTokenAsImpl = m.contractAt('Token', TOKEN_ARTIFACT, ntdToken, {
+    id: 'Token_Cast_For_Unpause',
+  });
+
+  m.call(ntdTokenAsImpl, 'unpause', [], {
+    id: 'unpause_token_after_deploy',
+    after: [ntdToken, addTokenAgent],
+  });
+
+  // Info: (20260121 - Tzuhan) 7. AA 組件
   const scwFactory = m.contract('SCWFactory', [
     m.contractAt('EntryPointImportHelper', '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6', {
       id: 'EP',

@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // 4. 註冊至 Registry
-    console.log(`[Approve] 註冊至 Registry (台灣: 158)...`);
+    console.log(`[Approve] 註冊至 Registry (台灣: ${TAIWAN_COUNTRY_CODE})...`);
 
     const registerTxHash = await walletClient.writeContract({
       address: identityRegistryAddress,

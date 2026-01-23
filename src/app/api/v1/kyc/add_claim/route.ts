@@ -25,8 +25,19 @@ export async function POST(req: NextRequest) {
       args: [relayerKey, MANAGEMENT_PURPOSE],
     });
 
+    // Info: (20260123 - Fix) 若無權限應直接回傳錯誤，避免後續交易失敗
     if (!hasPermission) {
-      console.error('Relayer 缺少 Management 權限！需先呼叫 addKey');
+      console.error(
+        `Relayer ${account.address} 缺少 Identity ${identityAddress} 的 Management 權限！`
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            'Relayer lacks Management permission on the target Identity. Check if Relayer key was added.',
+        },
+        { status: 403 }
+      );
     }
 
     const claimTopic = BigInt(topic);
@@ -65,6 +76,9 @@ export async function POST(req: NextRequest) {
       functionName: 'addClaim',
       args: [claimTopic, scheme, issuer, signature, data, uri],
       account,
+      // Info: (20260123 - Fix) 強制指定 Gas Limit，跳過 estimateGas 模擬檢查
+      // 避免因節點資料不同步或權限邊緣情況導致的 Execution reverted
+      gas: BigInt(600000),
     });
 
     await publicClient.waitForTransactionReceipt({ hash });

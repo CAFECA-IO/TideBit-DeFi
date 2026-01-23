@@ -6,7 +6,7 @@ import UserDiagnosisPanel, {
 } from '@/components/admin/console/user_diagnosis_panel';
 import IdentityActionPanel from '@/components/admin/console/identity_action_panel';
 import AssetMintingPanel from '@/components/admin/console/asset_minting_panel';
-import { RelayerPermissionPanel } from '@/components/admin/console/relayer_permission_panel';
+import RelayerPermissionPanel from '@/components/admin/console/relayer_permission_panel';
 
 export default function AdminConsolePage() {
   const [status, setStatus] = useState<DiagnosisStatus>('IDLE');

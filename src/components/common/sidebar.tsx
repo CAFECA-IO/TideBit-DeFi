@@ -12,6 +12,7 @@ import { useGlobalCtx } from '@/contexts/global_context';
 import { bigNumberToString } from '@/lib/utils/common';
 import { TBD_URL } from '@/constants/url';
 import { useModalCtx } from '@/contexts/modal_context';
+import { useRouter } from 'next/navigation';
 
 enum SidebarPage {
   CROWDFUNDING = 'Crowdfunding',
@@ -22,6 +23,7 @@ enum SidebarPage {
 
 const Sidebar: React.FC = () => {
   const { isSidebarOpen, sidebarToggleHandler } = useGlobalCtx();
+  const router = useRouter();
 
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
 
@@ -126,6 +128,19 @@ const Sidebar: React.FC = () => {
     </Button>
   );
 
+  const directToAdminButton = (
+    <Button
+      type="button"
+      size="sm"
+      variant="defaultBorderless"
+      className="justify-start text-text-brand-primary hover:text-text-brand-secondary"
+      onClick={() => router.push('/admin')}
+    >
+      <FiPlusSquare size={24} />
+      <p>Admin</p>
+    </Button>
+  );
+
   // ToDo: (20251219 - Julian) During Development
   const body = isSidebarOpen ? (
     <div className="flex flex-col gap-spacing-lv-6">
@@ -162,6 +177,7 @@ const Sidebar: React.FC = () => {
         {/* Info: (20251230 - Tzuhan) 插入 Create Company 按鈕 [New] */}
         <div className="my-2 h-px bg-border-neutral-subtle" /> {/* 分隔線 */}
         {createCompanyButton}
+        {directToAdminButton}
       </div>
     </div>
   ) : null;

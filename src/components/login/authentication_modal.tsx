@@ -43,7 +43,7 @@ const AuthenticationModal: React.FC = () => {
       // Info: (20260105 - Tzuhan) 4. 成功
       login(payload.dewt);
       onClose();
-      router.push('/admin');
+      router.push('/funding');
     } catch (error) {
       console.error(error);
       setErrorMsg('Login failed. Please verify your identity.');

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import hardhatToolboxViemPlugin from '@nomicfoundation/hardhat-toolbox-viem';
-import { HardhatUserConfig, configVariable } from 'hardhat/config';
+import { HardhatUserConfig } from 'hardhat/config';
 
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
 const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
@@ -97,7 +97,7 @@ const config: HardhatUserConfig = {
       type: 'http',
       chainType: 'l1',
       url: RPC_URL,
-      accounts: [configVariable('ISUNCOIN_PRIVATE_KEY')],
+      accounts: process.env.ISUNCOIN_PRIVATE_KEY ? [process.env.ISUNCOIN_PRIVATE_KEY] : [],
       chainId: CHAIN_ID,
     },
     localhost: {

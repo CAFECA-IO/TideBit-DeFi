@@ -23,14 +23,12 @@ const CONTRACTS = {
 } as const;
 
 describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', function () {
-  /**
-   * 基礎設施部署：建立 T-REX 合規體系
-   */
+  // Info: (20260119 - Tzuhan) 基礎設施部署：建立 T-REX 合規體系
   async function deployTREXFixture() {
     const [deployer, aliceWallet, bobWallet, carolWallet] = await viem.getWalletClients();
     const publicClient = await viem.getPublicClient();
 
-    // 1. 部署註冊表相關合約
+    // Info: (20260119 - Tzuhan) 1. 部署註冊表相關合約
     const claimTopicsRegistry = await viem.deployContract(CONTRACTS.ClaimTopicsRegistry, []);
     const trustedIssuersRegistry = await viem.deployContract(CONTRACTS.TrustedIssuersRegistry, []);
     const identityRegistryStorage = await viem.deployContract(CONTRACTS.IdentityRegistryStorage, [
@@ -44,7 +42,7 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
     ]);
     const compliance = await viem.deployContract(CONTRACTS.DefaultCompliance, []);
 
-    // 2. 部署 RWA Token
+    // Info: (20260119 - Tzuhan) 2. 部署 RWA Token
     const token = await viem.deployContract(CONTRACTS.Token, [
       identityRegistry.address,
       compliance.address,
@@ -54,14 +52,14 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
       identityRegistryStorage.address,
     ]);
 
-    // 3. 系統初始化配置：綁定合約關係
+    // Info: (20260119 - Tzuhan) 3. 系統初始化配置：綁定合約關係
     await identityRegistryStorage.write.bindIdentityRegistry([identityRegistry.address]);
     await identityRegistry.write.addAgent([token.address]);
     await compliance.write.addTokenAgent([token.address]);
-    // 讓 deployer 成為代理人以便鑄幣
+    // Info: (20260119 - Tzuhan) 讓 deployer 成為代理人以便鑄幣
     await token.write.addAgent([deployer.account.address]);
 
-    // 4. 設定合規 Topic
+    // Info: (20260119 - Tzuhan) 4. 設定合規 Topic
     await claimTopicsRegistry.write.addClaimTopic([CLAIM_TOPIC_USER]);
 
     return {
@@ -76,6 +74,7 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
   }
 
   /**
+   * Info: (20260119 - Tzuhan)
    * 核心優化：實際呼叫後端 API 進行身分核准
    * 證明「鏈上為真」：API 執行的動作會反映在合約狀態中
    */
@@ -90,7 +89,7 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
       body: JSON.stringify({
         targetAddress,
         tokenAddress,
-        type: 'USER', // 對應 Topic 101
+        type: 'USER', // Info: (20260119 - Tzuhan) 對應 Topic 101
       }),
     });
 
@@ -103,21 +102,21 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
     return result.data;
   }
 
-  // --- 測試案例 ---
+  // Info: (20260119 - Tzuhan) --- 測試案例 ---
 
   it('證明 1：只有通過 API 核准的用戶 (Alice) 才能接收鑄造的代幣', async function () {
     const fixture = await deployTREXFixture();
     const { token, aliceWallet } = fixture;
     const aliceAddr = aliceWallet.account.address;
 
-    // 步驟：呼叫 API 核准 Alice
+    // Info: (20260119 - Tzuhan) 步驟：呼叫 API 核准 Alice
     await approveKycViaApi(aliceWallet, token.address);
 
-    // 執行：鑄造 1000 NTD 給 Alice
+    // Info: (20260119 - Tzuhan) 執行：鑄造 1000 NTD 給 Alice
     const mintAmount = parseEther('1000');
     await token.write.mint([aliceAddr, mintAmount]);
 
-    // 驗證：餘額正確且合約認定其為 Verified
+    // Info: (20260119 - Tzuhan) 驗證：餘額正確且合約認定其為 Verified
     const balance = await token.read.balanceOf([aliceAddr]);
     const isVerified = await token.read.isVerified([aliceAddr]);
 
@@ -131,20 +130,20 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
     const aliceAddr = aliceWallet.account.address;
     const bobAddr = bobWallet.account.address;
 
-    // 步驟 1：API 核准兩人
+    // Info: (20260119 - Tzuhan) 步驟 1：API 核准兩人
     await approveKycViaApi(aliceWallet, token.address);
     await approveKycViaApi(bobWallet, token.address);
 
-    // 步驟 2：分配初始資金
+    // Info: (20260119 - Tzuhan) 步驟 2：分配初始資金
     await token.write.mint([aliceAddr, parseEther('1000')]);
 
-    // 步驟 3：Alice 轉帳給 Bob (鏈上自動檢查 IdentityRegistry)
+    // Info: (20260119 - Tzuhan) 步驟 3：Alice 轉帳給 Bob (鏈上自動檢查 IdentityRegistry)
     const tokenAsAlice = await viem.getContractAt('Token', token.address, {
       client: { wallet: aliceWallet },
     });
     await tokenAsAlice.write.transfer([bobAddr, parseEther('400')]);
 
-    // 驗證：轉帳成功
+    // Info: (20260119 - Tzuhan) 驗證：轉帳成功
     expect(await token.read.balanceOf([aliceAddr])).to.equal(parseEther('600'));
     expect(await token.read.balanceOf([bobAddr])).to.equal(parseEther('400'));
   });
@@ -155,11 +154,11 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
     const aliceAddr = aliceWallet.account.address;
     const carolAddr = carolWallet.account.address;
 
-    // 步驟 1：只核准 Alice
+    // Info: (20260119 - Tzuhan) 步驟 1：只核准 Alice
     await approveKycViaApi(aliceWallet, token.address);
     await token.write.mint([aliceAddr, parseEther('1000')]);
 
-    // 步驟 2：試圖轉帳給未核准的 Carol
+    // Info: (20260119 - Tzuhan) 步驟 2：試圖轉帳給未核准的 Carol
     const tokenAsAlice = await viem.getContractAt('Token', token.address, {
       client: { wallet: aliceWallet },
     });
@@ -168,7 +167,7 @@ describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', fun
       await tokenAsAlice.write.transfer([carolAddr, parseEther('100')]);
       expect.fail('應該要被攔截並 Revert');
     } catch (error) {
-      // ERC-3643 典型的攔截錯誤訊息
+      // Info: (20260119 - Tzuhan) ERC-3643 典型的攔截錯誤訊息
       expect((error as Error).message).to.match(/Transfer not possible|reverted/);
     }
   });

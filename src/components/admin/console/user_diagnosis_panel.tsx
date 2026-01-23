@@ -51,12 +51,60 @@ export default function UserDiagnosisPanel({ onStatusChange }: IProps) {
         args: [inputAddress],
       });
 
-      const hasIdentity =
+      const isLinked =
         identityAddr && identityAddr !== '0x0000000000000000000000000000000000000000';
 
-      if (!hasIdentity) {
-        onStatusChange('UNLINKED', inputAddress);
-        setLoading(false);
+      // 2. 檢查 Relayer 是否受信任 (針對 add_claim 使用的 Relayer)
+      const relayerAddr = '0x5eBeE3dbDCED95DC901e2936B1476b961C32Fa92';
+      const topic = BigInt(101);
+
+      // ONCHAINID 標準 Claim ID 計算: keccak256(abi.encode(issuer, topic))
+      const claimId = keccak256(
+        encodeAbiParameters(parseAbiParameters('address, uint256'), [
+          relayerAddr as `0x${string}`,
+          topic,
+        ])
+      );
+
+      console.log('--- 深度診斷 ---');
+      console.log('Target Identity:', identityAddr);
+      console.log('Expected Claim ID:', claimId);
+
+      try {
+        const claim = await publicClient.readContract({
+          address: identityAddr,
+          abi: ABIS.IDENTITY,
+          functionName: 'getClaim',
+          args: [claimId],
+        });
+        console.log('鏈上憑證內容:', claim);
+      } catch {
+        console.warn('用戶合約內找不到 Topic 101 的憑證');
+      }
+
+      const isTrusted = await publicClient.readContract({
+        address: CONTRACT_ADDRESSES.TRUSTED_ISSUERS_REGISTRY,
+        abi: ABIS.TRUSTED_ISSUERS_REGISTRY,
+        functionName: 'isTrustedIssuer',
+        args: [relayerAddr],
+      });
+
+      const hasTopicAuth = await publicClient.readContract({
+        address: CONTRACT_ADDRESSES.TRUSTED_ISSUERS_REGISTRY,
+        abi: ABIS.TRUSTED_ISSUERS_REGISTRY,
+        functionName: 'hasClaimTopic',
+        args: [relayerAddr, topic],
+      });
+
+      console.log('--- 診斷報告 ---');
+      console.log('Identity Linked:', isLinked);
+      console.log('Relayer Trusted:', isTrusted);
+      console.log('Topic Authorized:', hasTopicAuth);
+
+      if (!isTrusted || !hasTopicAuth) {
+        // Info: 如果 Relayer 不受信任，addClaim 成功也沒用
+        setError(`Relayer 權限不足: Trusted=${isTrusted}, TopicAuth=${hasTopicAuth}`);
+        onStatusChange('MISSING_CLAIMS', inputAddress, identityAddr as string);
         return;
       }
 

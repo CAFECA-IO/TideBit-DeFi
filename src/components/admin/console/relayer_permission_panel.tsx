@@ -10,7 +10,8 @@ const RelayerPermissionPanel: React.FC = () => {
   const [relayerAddress, setRelayerAddress] = useState<Address>(
     '0x5eBeE3dbDCED95DC901e2936B1476b961C32Fa92'
   );
-  const [claimTopic, setClaimTopic] = useState(101);
+  const [claimTopic, setClaimTopic] = useState('101');
+  const [fixing, setFixing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ isTrusted: boolean; hasTopic: boolean } | null>(null);
 
@@ -44,6 +45,29 @@ const RelayerPermissionPanel: React.FC = () => {
     }
   };
 
+  const handleFixPermission = async () => {
+    setFixing(true);
+    try {
+      const res = await fetch('/api/v1/admin/grant_issuer_role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ relayerAddress, topic: claimTopic }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('權限補足成功！');
+        // 重新執行檢查以更新 UI 狀態
+        // handleCheck();
+      } else {
+        alert('修復失敗: ' + result.message);
+      }
+    } catch {
+      alert('請求出錯');
+    } finally {
+      setFixing(false);
+    }
+  };
+
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-xl font-bold text-gray-800">Relayer 權限診斷</h2>
@@ -68,9 +92,9 @@ const RelayerPermissionPanel: React.FC = () => {
             <input
               id="claimTopic"
               aria-label="Claim Topic"
-              type="number"
+              type="text"
               value={claimTopic}
-              onChange={(e) => setClaimTopic(Number(e.target.value))}
+              onChange={(e) => setClaimTopic(e.target.value)}
               className="w-full rounded border p-2 text-sm"
             />
           </div>
@@ -92,6 +116,20 @@ const RelayerPermissionPanel: React.FC = () => {
               <div className="text-xs">Topic Auth</div>
               <div className="text-lg font-bold">{data.hasTopic ? 'PASS' : 'FAIL'}</div>
             </div>
+          </div>
+        )}
+        {data && (!data.isTrusted || !data.hasTopic) && (
+          <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-4">
+            <p className="mb-3 text-sm font-medium text-orange-800">
+              ⚠️ 偵測到 Relayer 權限不足，這將導致 isVerified 永遠回傳 false。
+            </p>
+            <Button
+              onClick={handleFixPermission}
+              disabled={fixing}
+              className="w-full bg-orange-600 text-white hover:bg-orange-700"
+            >
+              {fixing ? '權限授權中...' : '立即補足 Relayer 鏈上權限'}
+            </Button>
           </div>
         )}
       </div>

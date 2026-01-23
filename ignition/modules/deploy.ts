@@ -18,7 +18,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const deployer = m.getAccount(0);
   const CLAIM_TOPIC = BigInt(101);
 
-  // 1. 部署實作
+  // Info: (20260119 - Tzuhan) 1. 部署實作
   const tokenImpl = m.contract('TokenImpl', TOKEN_ARTIFACT, []);
   const irImpl = m.contract('IRImpl', IR_ARTIFACT, []);
   const irsImpl = m.contract('IRSImpl', IRS_ARTIFACT, []);
@@ -26,7 +26,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const ctrImpl = m.contract('CTRImpl', CTR_ARTIFACT, []);
   const mcImpl = m.contract('MCImpl', MC_ARTIFACT, []);
 
-  // 2. 初始化基礎註冊表
+  // Info: (20260119 - Tzuhan) 2. 初始化基礎註冊表
   const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, []);
   const initCTR = m.call(claimTopicsRegistry, 'init', [], { id: 'init_ctr' });
   const addTopic = m.call(claimTopicsRegistry, 'addClaimTopic', [CLAIM_TOPIC], {
@@ -44,7 +44,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, []);
   const initIRS = m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
 
-  // 3. 權限中心
+  // Info: (20260119 - Tzuhan) 3. 權限中心
   const authorityLogic = m.contract('AuthorityLogic', AUTHORITY_ARTIFACT, [
     false,
     deployer,
@@ -69,7 +69,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { id: 'init_authority_version' }
   );
 
-  // 4. 代理合約與合規
+  // Info: (20260119 - Tzuhan) 4. 代理合約與合規
   const ntdIdentityRegistry = m.contract(
     'NTD_IdentityRegistry',
     IR_PROXY_ARTIFACT,
@@ -92,9 +92,9 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { after: [initMC, ntdIdentityRegistry] }
   );
 
-  // 5. Info: (20260119 - Tzuhan) --- [核心修正] 建立全鏈上 Agent 信任鏈 ---
+  // Info: (20260119 - Tzuhan) 5. --- [核心修正] 建立全鏈上 Agent 信任鏈 ---
 
-  // A. Relayer -> Token Agent (用於 Mint)
+  // Info: (20260119 - Tzuhan) A. Relayer -> Token Agent (用於 Mint)
   m.call(
     m.contractAt('Token', TOKEN_ARTIFACT, ntdToken, { id: 'Token_As_Agent' }),
     'addAgent',
@@ -102,7 +102,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { id: 'set_relayer_token_agent' }
   );
 
-  // B. Relayer -> Registry Agent (用於 API 核准)
+  // Info: (20260119 - Tzuhan) B. Relayer -> Registry Agent (用於 API 核准)
   m.call(
     m.contractAt('IdentityRegistry', IR_ARTIFACT, ntdIdentityRegistry, { id: 'IR_As_Agent' }),
     'addAgent',
@@ -110,7 +110,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { id: 'set_relayer_registry_agent' }
   );
 
-  // C. [關鍵] Registry -> Storage Agent (讓 Registry 有權寫入 Storage)
+  // Info: (20260119 - Tzuhan) C. [關鍵] Registry -> Storage Agent (讓 Registry 有權寫入 Storage)
   m.call(
     m.contractAt('IdentityRegistryStorage', IRS_ARTIFACT, identityRegistryStorage, {
       id: 'IRS_As_Agent',
@@ -120,7 +120,7 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     { id: 'set_registry_storage_agent' }
   );
 
-  // 6. AA 組件
+  // Info: (20260119 - Tzuhan) 6. AA 組件
   const scwFactory = m.contract('SCWFactory', [
     m.contractAt('EntryPointImportHelper', '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6', {
       id: 'EP',

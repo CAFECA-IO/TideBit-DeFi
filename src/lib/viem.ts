@@ -1,6 +1,6 @@
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { isuncoin } from './viem-public';
+import { isuncoin } from '@/lib/viem-public';
 import 'dotenv';
 
 // Info: Re-export public configs
@@ -22,9 +22,3 @@ export const walletClient =
   RELAYER_PRIVATE_KEY && account
     ? createWalletClient({ account, chain: isuncoin, transport: http() })
     : null;
-
-// Info: Legacy export for compatibility if needed, but prefer 'walletClient' above
-export const relayerClient = walletClient;
-
-// Info: (20260121 - Tzuhan) 匯出 Relayer 帳戶資訊方便取用地址
-export const relayerAccount = account;

@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { parseAbi } from 'viem';
 import { walletClient, account, publicClient, TAIWAN_COUNTRY_CODE } from '@/lib/viem';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
 import IdentityArtifact from '@/abis/Identity.json';
+import { jsonFail, jsonOk } from '@/lib/utils/response';
+import { ApiCode } from '@/lib/utils/status';
 
 const IR_ABI = parseAbi([
   'function registerIdentity(address user, address identity, uint16 country) external',
@@ -13,10 +15,7 @@ export async function POST(req: NextRequest) {
     const { userAddress, countryCode } = await req.json();
 
     if (!walletClient || !account) {
-      return NextResponse.json(
-        { success: false, message: 'Server wallet not configured' },
-        { status: 500 }
-      );
+      return jsonFail(ApiCode.INTERNAL_SERVER_ERROR, 'Relayer not configured');
     }
 
     // Info: (20260123 - Tzuhan) 1. 部署 Identity 合約
@@ -39,24 +38,23 @@ export async function POST(req: NextRequest) {
 
     // Info: (20260123 - Tzuhan) 2. 將 Identity 註冊到 Registry
     const hashRegister = await walletClient.writeContract({
-      address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY as `0x${string}`, // Info: (20260123 - Tzuhan) 確保 config 變數名稱正確
+      address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY, // Info: (20260123 - Tzuhan) 確保 config 變數名稱正確
       abi: IR_ABI,
       functionName: 'registerIdentity',
       args: [userAddress, identityAddress, parseInt(countryCode || TAIWAN_COUNTRY_CODE)],
       account,
     });
 
+    console.log(`[Compliance] Transaction sent: ${hashRegister}`);
+
     await publicClient.waitForTransactionReceipt({ hash: hashRegister });
 
-    return NextResponse.json({
-      success: true,
-      data: { identityAddress, txHash: hashRegister },
+    return jsonOk({
+      txHash: hashRegister,
+      message: 'User identity registered to ERC-3643 Registry',
     });
   } catch (error) {
     console.error('Deploy Identity Error:', error);
-    return NextResponse.json(
-      { success: false, message: (error as Error).message },
-      { status: 500 }
-    );
+    return jsonFail(ApiCode.INTERNAL_SERVER_ERROR, (error as Error).message);
   }
 }

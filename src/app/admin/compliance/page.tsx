@@ -86,7 +86,7 @@ export default function AdminCompliancePage() {
             <h2 className="text-3xl font-bold text-gray-800">Compliance Engine</h2>
             <p className="mt-1 font-mono text-sm text-gray-500">{complianceAddr}</p>
             <p className="mt-2 inline-block rounded-md bg-blue-50 px-3 py-1 text-sm text-blue-600">
-              Type: SimpleCompliance (Mock)
+              Type: ModularCompliance (ERC-3643 Standard)
             </p>
           </div>
           <div className="text-right">
@@ -111,7 +111,7 @@ export default function AdminCompliancePage() {
           <p className="mb-4 text-sm text-gray-500">
             Test if a transfer would be allowed by the current compliance rules.
             <br />
-            (Since we use SimpleCompliance, this should always pass).
+            (Checks against all bound modules).
           </p>
 
           <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function AdminCompliancePage() {
             <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 py-12 text-center text-gray-400">
               <span className="mb-2 text-4xl">🛡️</span>
               <p className="text-sm">No external modules bound.</p>
-              <p className="mt-1 text-xs text-gray-400">(Running in Simple Mode)</p>
+              <p className="mt-1 text-xs text-gray-400">(No restrictions applied)</p>
             </div>
           )}
         </div>

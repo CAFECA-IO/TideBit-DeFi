@@ -4,7 +4,7 @@ import { createPublicClient, http, defineChain } from 'viem';
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
 const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
 
-export const TAIWAN_COUNTRY_CODE = 158;
+export const TAIWAN_COUNTRY_CODE = 886;
 export const NTD_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_NTD_TOKEN_ADDRESS as `0x${string}`;
 
 // Info: (20260121 - Tzuhan) --- 1. 定義 iSunCoin 鏈 ---

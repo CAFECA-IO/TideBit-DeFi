@@ -1,6 +1,7 @@
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { isuncoin } from './viem-public';
+import 'dotenv';
 
 // Info: Re-export public configs
 export * from './viem-public';

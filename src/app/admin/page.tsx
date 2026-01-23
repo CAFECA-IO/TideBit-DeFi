@@ -1,49 +1,66 @@
 'use client';
 
-import React from 'react';
-import { NTD_TOKEN_ADDRESS, isuncoin } from '@/lib/viem-public';
+import React, { useState } from 'react';
+import UserDiagnosisPanel, {
+  DiagnosisStatus,
+} from '@/components/admin/console/user_diagnosis_panel';
+import IdentityActionPanel from '@/components/admin/console/identity_action_panel';
+import AssetMintingPanel from '@/components/admin/console/asset_minting_panel';
+import { RelayerPermissionPanel } from '@/components/admin/console/relayer_permission_panel';
 
-export default function AdminDashboard() {
+export default function AdminConsolePage() {
+  const [status, setStatus] = useState<DiagnosisStatus>('IDLE');
+  const [targetAddress, setTargetAddress] = useState('');
+  const [identityAddress, setIdentityAddress] = useState('');
+
+  const handleStatusChange = (newStatus: DiagnosisStatus, addr: string, idAddr?: string) => {
+    setStatus(newStatus);
+    setTargetAddress(addr);
+    if (idAddr) setIdentityAddress(idAddr);
+  };
+
+  const refreshDiagnosis = () => {
+    // Info: (20260123 - Tzuhan) 觸發重新診斷的邏輯，這裡簡單重置狀態讓 UserDiagnosisPanel 可以再次點擊
+    // Info: (20260123 - Tzuhan) 實務上可以將 trigger 傳入 Panel
+    alert('操作完成，請重新點擊診斷以更新狀態。');
+    setStatus('IDLE');
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-gray-100 bg-white p-8 shadow-sm">
-        <h2 className="mb-2 text-3xl font-bold text-gray-800">Admin Dashboard</h2>
-        <p className="text-gray-500">Overview of the TideBit-DeFi RWA Smart Contract System.</p>
+    <div className="mx-auto max-w-5xl space-y-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Admin Lifecycle Console</h1>
+        <p className="text-gray-500">一站式管理用戶合規身分與資產發行</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400">
-            Network
-          </h3>
-          <div className="flex items-center gap-2">
-            <div className="size-3 animate-pulse rounded-full bg-green-500"></div>
-            <span className="text-xl font-bold text-gray-900">{isuncoin.name}</span>
-          </div>
-          <p className="mt-2 font-mono text-sm text-gray-500">ID: {isuncoin.id}</p>
-        </div>
+      {/* Info: (20260123 - Tzuhan) 區域一：診斷 */}
+      <UserDiagnosisPanel onStatusChange={handleStatusChange} />
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400">
-            Token Contract
-          </h3>
-          <div className="text-xl font-bold text-gray-900">NTD Token</div>
-          <p className="mt-2 truncate font-mono text-xs text-blue-600" title={NTD_TOKEN_ADDRESS}>
-            {NTD_TOKEN_ADDRESS || 'Not Configured'}
-          </p>
+      {/* Info: (20260123 - Tzuhan) 區域二：合規行動 (僅在紅燈/黃燈時顯示) */}
+      {(status === 'UNLINKED' || status === 'MISSING_CLAIMS') && (
+        <div className="animate-fade-in-down">
+          <IdentityActionPanel
+            status={status}
+            userAddress={targetAddress}
+            identityAddress={identityAddress}
+            onRefresh={refreshDiagnosis}
+          />
         </div>
+      )}
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400">
-            System Status
-          </h3>
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-              Operational
-            </span>
-          </div>
-          <p className="mt-2 text-sm text-gray-500">All systems nominal.</p>
+      {/* Info: (20260123 - Tzuhan) 區域三：資產鑄造 (僅在綠燈時顯示) */}
+      {status === 'VERIFIED' && (
+        <div className="animate-fade-in-up">
+          <AssetMintingPanel targetAddress={targetAddress} />
         </div>
+      )}
+
+      {/* Info: (20260123 - Tzuhan) 區域四：Relayer 權限診斷 (常駐顯示) */}
+      <RelayerPermissionPanel />
+
+      {/* Info: (20260123 - Tzuhan) 狀態指示標籤 (Debug 用或 UX 輔助) */}
+      <div className="fixed bottom-4 right-4 rounded-full bg-slate-800 px-4 py-2 text-xs text-white opacity-50 shadow-lg hover:opacity-100">
+        Current State: {status}
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const tokenAddr = tokenAddress as Address;
     const topic = type === 'USER' ? BigInt(101) : BigInt(102);
 
-    // 1. 動態取得 Registry
+    // Info: (20260119 - Tzuhan) 1. 動態取得 Registry
     const identityRegistryAddress = (await publicClient.readContract({
       address: tokenAddr,
       abi: [
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       });
       const rec = await publicClient.waitForTransactionReceipt({ hash: tx });
       relayerIdentityAddress = rec.contractAddress!;
-      // 賦予 Relayer 簽署權 (Purpose 3)
+      // Info: (20260119 - Tzuhan) 賦予 Relayer 簽署權 (Purpose 3)
       await walletClient.writeContract({
         address: relayerIdentityAddress,
         abi: IdentityArtifact.abi as Abi,
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 3. 取得或部署用戶 Identity
+    // Info: (20260119 - Tzuhan) 3. 取得或部署用戶 Identity
     let userIdentityAddress = (await publicClient.readContract({
       address: identityRegistryAddress,
       abi: IdentityRegistryArtifact.abi as Abi,
@@ -140,16 +140,16 @@ export async function POST(req: NextRequest) {
         abi: IdentityArtifact.abi as Abi,
         functionName: 'addKey',
         args: [relayerKeyID, BigInt(3), BigInt(1)],
-      }); // Purpose 3: Claim Signer
+      }); // Info: (20260119 - Tzuhan) Purpose 3: Claim Signer
       await walletClient.writeContract({
         address: userIdentityAddress,
         abi: IdentityArtifact.abi as Abi,
         functionName: 'addKey',
         args: [userKeyID, BigInt(1), BigInt(1)],
-      }); // Purpose 1: Management
+      }); // Info: (20260119 - Tzuhan) Purpose 1: Management
     }
 
-    // 3. 生成與添加憑證 (Issuer 設為 Relayer EOA，與 deploy.ts 一致)
+    // Info: (20260119 - Tzuhan) 3. 生成與添加憑證 (Issuer 設為 Relayer EOA，與 deploy.ts 一致)
     const claimData = toHex(type === 'USER' ? 'KYC_TW_PASSED' : 'KYB_TW_PASSED');
     const claimHash = keccak256(
       encodeAbiParameters(
@@ -168,7 +168,7 @@ export async function POST(req: NextRequest) {
     });
     await publicClient.waitForTransactionReceipt({ hash: claimTxHash });
 
-    // 4. 註冊至 Registry
+    // Info: (20260119 - Tzuhan) 4. 註冊至 Registry
     console.log(`[Approve] 註冊至 Registry (台灣: 158)...`);
     const registerTxHash = await walletClient.writeContract({
       address: identityRegistryAddress,

@@ -1,9 +1,9 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
-import { parseAbi, parseEther, type Address } from 'viem';
-import { publicClient, walletClient } from '@/lib/viem';
+import { parseAbi, parseUnits, type Address } from 'viem';
+import { publicClient, walletClient, account } from '@/lib/viem';
 
 // Info: (20260120 - Tzuhan) --- Zod 驗證 Schema ---
 const mintSchema = z.object({
@@ -19,6 +19,7 @@ const TOKEN_ABI = parseAbi([
   'function mint(address _to, uint256 _amount) external',
   // Info: (20260121 - Tzuhan) 暫停狀態檢查
   'function paused() external view returns (bool)',
+  'function decimals() external view returns (uint8)',
 ]);
 
 export async function POST(req: NextRequest) {
@@ -31,12 +32,26 @@ export async function POST(req: NextRequest) {
       return jsonFail(ApiCode.VALIDATION_ERROR, result.error.message);
     }
 
+    // Check if Relayer is configured
+    if (!account || !walletClient) {
+      return NextResponse.json(
+        { code: 503, message: 'Relayer not configured (Missing Private Key)' },
+        { status: 503 }
+      );
+    }
+
     const { targetAddress, tokenAddress, amount } = result.data;
     const targetAddr = targetAddress as Address;
     const tokenAddr = tokenAddress as Address;
 
+    const decimals = await publicClient.readContract({
+      address: tokenAddr,
+      abi: TOKEN_ABI,
+      functionName: 'decimals',
+    });
+
     // Info: (20260120 - Tzuhan) 2. 轉換金額 (假設 token 為 18 位小數), 若未來有不同小數點位數的 Token，需動態讀取 decimals()
-    const mintAmount = parseEther(amount);
+    const mintAmount = parseUnits(amount, decimals);
 
     console.log(`[Mint API] 準備鑄造 ${amount} tokens 給 ${targetAddress}...`);
 
@@ -63,6 +78,12 @@ export async function POST(req: NextRequest) {
     });
 
     console.log(`[Mint API] 交易已發送: ${txHash}`);
+
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+    if (receipt.status !== 'success') {
+      return jsonFail(ApiCode.INTERNAL_SERVER_ERROR, '鑄造交易執行失敗 (Reverted)');
+    }
 
     return jsonOk({
       status: 'SUCCESS',

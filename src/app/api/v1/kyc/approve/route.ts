@@ -1,42 +1,11 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
-import {
-  createWalletClient,
-  http,
-  createPublicClient,
-  toHex,
-  keccak256,
-  encodeAbiParameters,
-  defineChain,
-  type Abi,
-  type Address,
-  pad,
-  Hex,
-} from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { toHex, keccak256, encodeAbiParameters, type Abi, type Address, pad, Hex } from 'viem';
 import IdentityArtifact from '@/abis/Identity.json';
 import IdentityRegistryArtifact from '@/abis/IdentityRegistry.json';
-
-// Info: (20260114 - Tzuhan) --- 環境變數與常數 ---
-const RELAYER_PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`;
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
-const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
-const TAIWAN_COUNTRY_CODE = 158;
-
-// Info: (20260114 - Tzuhan) --- 1. 定義 iSunCoin 鏈資訊 ---
-const isuncoin = defineChain({
-  id: CHAIN_ID,
-  name: 'iSunCoin Mainnet',
-  network: 'isuncoin',
-  nativeCurrency: { decimals: 18, name: 'iSunCoin', symbol: 'ISC' },
-  rpcUrls: { default: { http: [RPC_URL] }, public: { http: [RPC_URL] } },
-});
-
-const account = privateKeyToAccount(RELAYER_PRIVATE_KEY);
-const walletClient = createWalletClient({ account, chain: isuncoin, transport: http() });
-const publicClient = createPublicClient({ chain: isuncoin, transport: http() });
+import { account, publicClient, walletClient, TAIWAN_COUNTRY_CODE } from '@/lib/viem';
 
 const approveSchema = z.object({
   targetAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, '無效的錢包地址'),
@@ -49,6 +18,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const result = approveSchema.safeParse(body);
     if (!result.success) return jsonFail(ApiCode.VALIDATION_ERROR, result.error.message);
+
+    // Check if Relayer is configured
+    if (!account || !walletClient) {
+      return NextResponse.json(
+        { code: 503, message: 'Relayer not configured (Missing Private Key)' },
+        { status: 503 }
+      );
+    }
 
     const { targetAddress, tokenAddress, type } = result.data;
     const targetAddr = targetAddress as Address;

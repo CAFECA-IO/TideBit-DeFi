@@ -12,7 +12,6 @@ const IR_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/prox
 const AUTHORITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/TREXImplementationAuthority.sol/TREXImplementationAuthority.json');
 const IA_FACTORY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/IAFactory.sol/IAFactory.json');
 const MC_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json');
-const MC_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/ModularComplianceProxy.sol/ModularComplianceProxy.json');
 
 const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const deployer = m.getAccount(0);
@@ -76,21 +75,16 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
     [irAuthority, trustedIssuersRegistry, claimTopicsRegistry, identityRegistryStorage],
     { after: [initAuthority, addIssuer, initIRS] }
   );
-  const ntdCompliance = m.contract('NTD_Compliance', MC_PROXY_ARTIFACT, [irAuthority], {
-    id: 'NTD_Compliance',
+
+  const ntdCompliance = m.contract('SimpleCompliance', [], {
+    id: 'SimpleCompliance',
   });
-  const initMC = m.call(
-    m.contractAt('ModularCompliance', MC_ARTIFACT, ntdCompliance, { id: 'MC_Instance' }),
-    'init',
-    [],
-    { id: 'init_ntd_mc' }
-  );
 
   const ntdToken = m.contract(
     'NTD_Token',
     TOKEN_PROXY_ARTIFACT,
     [irAuthority, ntdIdentityRegistry, ntdCompliance, 'New Taiwan Dollar', 'NTD', 18, deployer],
-    { after: [initMC, ntdIdentityRegistry] }
+    { after: [ntdCompliance, ntdIdentityRegistry] }
   );
 
   // 5. Info: (20260119 - Tzuhan) --- [核心修正] 建立全鏈上 Agent 信任鏈 ---

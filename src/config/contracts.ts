@@ -53,6 +53,7 @@ export const ABIS = {
     'function identity(address _userAddress) external view returns (address)',
     'function topicsRegistry() external view returns (address)',
     'function trustedIssuersRegistry() external view returns (address)',
+    'function getIdentity(address _userAddress) view returns (address)',
   ]),
 
   // Info: (20260123 - Tzuhan) --- RWA Trusted Issuers Registry ---

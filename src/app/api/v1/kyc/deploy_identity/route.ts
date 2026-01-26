@@ -1,14 +1,9 @@
 import { NextRequest } from 'next/server';
-import { parseAbi } from 'viem';
 import { walletClient, account, publicClient, TAIWAN_COUNTRY_CODE } from '@/lib/viem';
-import { CONTRACT_ADDRESSES } from '@/config/contracts';
+import { ABIS, CONTRACT_ADDRESSES } from '@/config/contracts';
 import IdentityArtifact from '@/abis/Identity.json';
 import { jsonFail, jsonOk } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
-
-const IR_ABI = parseAbi([
-  'function registerIdentity(address user, address identity, uint16 country) external',
-]);
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +34,7 @@ export async function POST(req: NextRequest) {
     // Info: (20260123 - Tzuhan) 2. 將 Identity 註冊到 Registry
     const hashRegister = await walletClient.writeContract({
       address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY, // Info: (20260123 - Tzuhan) 確保 config 變數名稱正確
-      abi: IR_ABI,
+      abi: ABIS.IDENTITY_REGISTRY,
       functionName: 'registerIdentity',
       args: [userAddress, identityAddress, parseInt(countryCode || TAIWAN_COUNTRY_CODE)],
       account,

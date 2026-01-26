@@ -1,16 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { publicClient } from '@/lib/viem';
+import { account, KYC_TOPIC_ID, publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
 import { Address } from 'viem';
 
 const RelayerPermissionPanel: React.FC = () => {
-  const [relayerAddress, setRelayerAddress] = useState<Address>(
-    '0x5eBeE3dbDCED95DC901e2936B1476b961C32Fa92'
-  );
-  const [claimTopic, setClaimTopic] = useState('101');
+  const [relayerAddress, setRelayerAddress] = useState<Address>(account?.address as Address);
+  const [claimTopic, setClaimTopic] = useState(KYC_TOPIC_ID);
   const [fixing, setFixing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ isTrusted: boolean; hasTopic: boolean } | null>(null);
@@ -92,9 +90,9 @@ const RelayerPermissionPanel: React.FC = () => {
             <input
               id="claimTopic"
               aria-label="Claim Topic"
-              type="text"
-              value={claimTopic}
-              onChange={(e) => setClaimTopic(e.target.value)}
+              type="number"
+              value={claimTopic.toString()}
+              onChange={(e) => setClaimTopic(BigInt(e.target.value))}
               className="w-full rounded border p-2 text-sm"
             />
           </div>

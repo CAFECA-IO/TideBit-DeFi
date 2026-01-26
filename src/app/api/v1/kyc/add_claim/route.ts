@@ -76,19 +76,13 @@ export async function POST(req: NextRequest) {
       functionName: 'addClaim',
       args: [claimTopic, scheme, issuer, signature, data, uri],
       account,
-      // Info: (20260123 - Fix) 強制指定 Gas Limit，跳過 estimateGas 模擬檢查
-      // 避免因節點資料不同步或權限邊緣情況導致的 Execution reverted
-      gas: BigInt(600000),
     });
 
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
-    console.log(`${JSON.stringify(receipt)}`);
-
     if (receipt.status !== 'success') {
       throw new Error('Add claim transaction failed');
     }
-
+    console.log(`Claim added in tx: ${hash}`);
     return NextResponse.json({ success: true, txHash: hash });
   } catch (error) {
     console.error('Add Claim Error Details:', error);

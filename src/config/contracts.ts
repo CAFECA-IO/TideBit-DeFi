@@ -83,5 +83,6 @@ export const ABIS = {
     'function pause() external',
     'function unpause() external',
     'function forcedTransfer(address from, address to, uint256 amount) external returns (bool)',
+    'function compliance() external view returns (address)',
   ]),
 };

@@ -81,7 +81,13 @@ export async function POST(req: NextRequest) {
       gas: BigInt(600000),
     });
 
-    await publicClient.waitForTransactionReceipt({ hash });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+    if (receipt.status !== 'success') {
+      throw new Error('Add claim transaction failed');
+    }
+
+    console.log(`${JSON.stringify(receipt)}`);
 
     return NextResponse.json({ success: true, txHash: hash });
   } catch (error) {

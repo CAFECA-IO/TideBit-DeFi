@@ -47,7 +47,14 @@ export async function POST(req: NextRequest) {
 
     console.log(`[Compliance] Transaction sent: ${hashRegister}`);
 
-    await publicClient.waitForTransactionReceipt({ hash: hashRegister });
+    const receiptRegister = await publicClient.waitForTransactionReceipt({ hash: hashRegister });
+
+    if (receiptRegister.status !== 'success') {
+      throw new Error('Identity registration transaction failed');
+    }
+    console.log(
+      `[Compliance] Identity registered for user ${userAddress} with identity ${identityAddress}`
+    );
 
     return jsonOk({
       txHash: hashRegister,

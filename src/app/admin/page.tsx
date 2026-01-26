@@ -7,6 +7,7 @@ import UserDiagnosisPanel, {
 import IdentityActionPanel from '@/components/admin/console/identity_action_panel';
 import AssetMintingPanel from '@/components/admin/console/asset_minting_panel';
 import RelayerPermissionPanel from '@/components/admin/console/relayer_permission_panel';
+import ComplianceCheckPanel from '@/components/admin/console/compliance_check_panel';
 
 export default function AdminConsolePage() {
   const [status, setStatus] = useState<DiagnosisStatus>('IDLE');
@@ -47,6 +48,9 @@ export default function AdminConsolePage() {
           />
         </div>
       )}
+
+      {/* 👇 2. 新增區域：合規檢測面板 (常駐顯示，方便隨時貼 Hash 檢查) */}
+      <ComplianceCheckPanel defaultAddress={targetAddress} />
 
       {/* Info: (20260123 - Tzuhan) 區域三：資產鑄造 (僅在綠燈時顯示) */}
       {status === 'VERIFIED' && (

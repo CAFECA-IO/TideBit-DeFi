@@ -23,7 +23,7 @@ export type RegistrationStep =
 
 export class RegistrationService {
   /**
-   * Info: (20260116 - Tzuhan) 
+   * Info: (20260116 - Tzuhan)
    * 核心註冊流程：結合 WebAuthn 與 ERC-4337 部署
    * @param username 用戶暱稱
    * @param onStepChange 狀態回呼，用於更新 UI

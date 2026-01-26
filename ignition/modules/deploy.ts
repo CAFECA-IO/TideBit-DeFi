@@ -1,9 +1,7 @@
 import { buildModule } from '@nomicfoundation/hardhat-ignition/modules';
 import { createRequire } from 'module';
-
 const require = createRequire(import.meta.url);
 
-// Info: (20260115 - Tzuhan) 載入所有必要的 ABI
 const CTR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/ClaimTopicsRegistry.sol/ClaimTopicsRegistry.json');
 const TIR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/TrustedIssuersRegistry.sol/TrustedIssuersRegistry.json');
 const IRS_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistryStorage.sol/IdentityRegistryStorage.json');
@@ -11,98 +9,125 @@ const IR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/i
 const TOKEN_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json');
 const TOKEN_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/TokenProxy.sol/TokenProxy.json');
 const IR_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/IdentityRegistryProxy.sol/IdentityRegistryProxy.json');
+const AUTHORITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/TREXImplementationAuthority.sol/TREXImplementationAuthority.json');
+const IA_FACTORY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/IAFactory.sol/IAFactory.json');
+const MC_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json');
+const MC_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/ModularComplianceProxy.sol/ModularComplianceProxy.json');
 
 const ERC3643Module = buildModule('ERC3643Module', (m) => {
   const deployer = m.getAccount(0);
   const CLAIM_TOPIC = BigInt(101);
 
-  // Info: (20260115 - Tzuhan) --- 1. 部署基礎註冊表 (Registries) ---
-  const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, [], {
-    id: 'ClaimTopicsRegistry_Deployed',
-  });
-  m.call(claimTopicsRegistry, 'init', []);
-  m.call(claimTopicsRegistry, 'addClaimTopic', [CLAIM_TOPIC], { id: 'add_claim_topic_kyc' });
+  // Info: (20260119 - Tzuhan) 1. 部署實作
+  const tokenImpl = m.contract('TokenImpl', TOKEN_ARTIFACT, []);
+  const irImpl = m.contract('IRImpl', IR_ARTIFACT, []);
+  const irsImpl = m.contract('IRSImpl', IRS_ARTIFACT, []);
+  const tirImpl = m.contract('TIRImpl', TIR_ARTIFACT, []);
+  const ctrImpl = m.contract('CTRImpl', CTR_ARTIFACT, []);
+  const mcImpl = m.contract('MCImpl', MC_ARTIFACT, []);
 
-  const trustedIssuersRegistry = m.contract('TrustedIssuersRegistry', TIR_ARTIFACT, [], {
-    id: 'TrustedIssuersRegistry_Deployed',
-  });
-  m.call(trustedIssuersRegistry, 'init', []);
-  m.call(trustedIssuersRegistry, 'addTrustedIssuer', [deployer, [CLAIM_TOPIC]], {
-    id: 'add_trusted_issuer_deployer',
+  // Info: (20260119 - Tzuhan) 2. 初始化基礎註冊表
+  const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, []);
+  const initCTR = m.call(claimTopicsRegistry, 'init', [], { id: 'init_ctr' });
+  const addTopic = m.call(claimTopicsRegistry, 'addClaimTopic', [CLAIM_TOPIC], {
+    id: 'add_topic_101',
+    after: [initCTR],
   });
 
-  const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, [], {
-    id: 'IdentityRegistryStorage_Deployed',
+  const trustedIssuersRegistry = m.contract('TrustedIssuersRegistry', TIR_ARTIFACT, []);
+  const initTIR = m.call(trustedIssuersRegistry, 'init', [], { id: 'init_tir' });
+  const addIssuer = m.call(trustedIssuersRegistry, 'addTrustedIssuer', [deployer, [CLAIM_TOPIC]], {
+    id: 'add_issuer_101',
+    after: [initTIR, addTopic],
   });
-  m.call(identityRegistryStorage, 'init', []);
 
-  // Info: (20260115 - Tzuhan) --- 2. 部署代幣實作合規組件 ---
-  const tokenImpl = m.contract('Token', TOKEN_ARTIFACT, [], { id: 'Token_Implementation' });
-  const irImpl = m.contract('IdentityRegistry', IR_ARTIFACT, [], { id: 'IR_Implementation' });
+  const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, []);
+  const initIRS = m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
 
-  // Info: (20260115 - Tzuhan) --- 3. [新增] 部署 NTD 專屬的 IdentityRegistry ---
-  // Info: (20260115 - Tzuhan) 先部署 Proxy，再初始化
+  // Info: (20260119 - Tzuhan) 3. 權限中心
+  const authorityLogic = m.contract('AuthorityLogic', AUTHORITY_ARTIFACT, [
+    false,
+    deployer,
+    '0x0000000000000000000000000000000000000000',
+  ]);
+  const iaFactory = m.contract('IAFactory', IA_FACTORY_ARTIFACT, [authorityLogic]);
+  const irAuthority = m.contract('IR_Authority', AUTHORITY_ARTIFACT, [true, deployer, iaFactory]);
+  const initAuthority = m.call(
+    irAuthority,
+    'addAndUseTREXVersion',
+    [
+      { major: 1, minor: 0, patch: 0 },
+      {
+        tokenImplementation: tokenImpl,
+        ctrImplementation: ctrImpl,
+        irImplementation: irImpl,
+        irsImplementation: irsImpl,
+        tirImplementation: tirImpl,
+        mcImplementation: mcImpl,
+      },
+    ],
+    { id: 'init_authority_version' }
+  );
+
+  // Info: (20260119 - Tzuhan) 4. 代理合約與合規
   const ntdIdentityRegistry = m.contract(
-    'IdentityRegistryProxy',
+    'NTD_IdentityRegistry',
     IR_PROXY_ARTIFACT,
-    [
-      irImpl, // Info: (20260115 - Tzuhan) 實作合約
-    ],
-    { id: 'NTD_IdentityRegistry' }
+    [irAuthority, trustedIssuersRegistry, claimTopicsRegistry, identityRegistryStorage],
+    { after: [initAuthority, addIssuer, initIRS] }
   );
-
-  m.call(
-    ntdIdentityRegistry,
+  const ntdCompliance = m.contract('NTD_Compliance', MC_PROXY_ARTIFACT, [irAuthority], {
+    id: 'NTD_Compliance',
+  });
+  const initMC = m.call(
+    m.contractAt('ModularCompliance', MC_ARTIFACT, ntdCompliance, { id: 'MC_Instance' }),
     'init',
-    [trustedIssuersRegistry, claimTopicsRegistry, identityRegistryStorage],
-    { id: 'init_ntd_ir' }
+    [],
+    { id: 'init_ntd_mc' }
   );
-
-  // Info: (20260115 - Tzuhan) --- 4. [新增] 部署 NTD 代幣 (作為受控的 ERC-3643) ---
-  // Info: (20260115 - Tzuhan) 設定 NTD 參數：名稱 "New Taiwan Dollar", 代號 "NTD", 精度 18, ONCHAINID 為部署者
   const ntdToken = m.contract(
-    'TokenProxy',
+    'NTD_Token',
     TOKEN_PROXY_ARTIFACT,
-    [
-      tokenImpl, // Info: (20260115 - Tzuhan) 實作合約
-      ntdIdentityRegistry, // Info: (20260115 - Tzuhan) 關聯剛部署的 IR
-      '0x0000000000000000000000000000000000000000', // Info: (20260115 - Tzuhan) Compliance (暫無特定規則)
-      'New Taiwan Dollar',
-      'NTD',
-      18,
-      deployer, // Info: (20260115 - Tzuhan) ONCHAINID
-    ],
-    { id: 'NTD_Token' }
+    [irAuthority, ntdIdentityRegistry, ntdCompliance, 'New Taiwan Dollar', 'NTD', 18, deployer],
+    { after: [initMC, ntdIdentityRegistry] }
   );
 
-  // Info: (20260115 - Tzuhan) --- 5. [核心] 將 Relayer 設為 Agent ---
-  // Info: (20260115 - Tzuhan) 這樣 API 才能透過 Relayer 的私鑰對用戶進行 Mint 操作
-  m.call(ntdToken, 'addAgent', [deployer], { id: 'set_relayer_as_agent' });
+  // Info: (20260119 - Tzuhan) 5. --- [核心修正] 建立全鏈上 Agent 信任鏈 ---
 
-  // Info: (20260115 - Tzuhan) --- 6. 部署 Factory 與 ERC-4337 組件 ---
-  const companyAssetsFactory = m.contract('CompanyAssetsFactory', [
-    trustedIssuersRegistry,
-    claimTopicsRegistry,
-    tokenImpl,
+  // Info: (20260119 - Tzuhan) A. Relayer -> Token Agent (用於 Mint)
+  m.call(
+    m.contractAt('Token', TOKEN_ARTIFACT, ntdToken, { id: 'Token_As_Agent' }),
+    'addAgent',
+    [deployer],
+    { id: 'set_relayer_token_agent' }
+  );
+
+  // Info: (20260119 - Tzuhan) B. Relayer -> Registry Agent (用於 API 核准)
+  m.call(
+    m.contractAt('IdentityRegistry', IR_ARTIFACT, ntdIdentityRegistry, { id: 'IR_As_Agent' }),
+    'addAgent',
+    [deployer],
+    { id: 'set_relayer_registry_agent' }
+  );
+
+  // Info: (20260119 - Tzuhan) C. [關鍵] Registry -> Storage Agent (讓 Registry 有權寫入 Storage)
+  m.call(
+    m.contractAt('IdentityRegistryStorage', IRS_ARTIFACT, identityRegistryStorage, {
+      id: 'IRS_As_Agent',
+    }),
+    'addAgent',
+    [ntdIdentityRegistry],
+    { id: 'set_registry_storage_agent' }
+  );
+
+  // Info: (20260119 - Tzuhan) 6. AA 組件
+  const scwFactory = m.contract('SCWFactory', [
+    m.contractAt('EntryPointImportHelper', '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6', {
+      id: 'EP',
+    }),
   ]);
 
-  const entryPointAddress = process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS;
-
-  const entryPoint = entryPointAddress
-    ? m.contractAt('EntryPoint', entryPointAddress) // Info: (20260115 - Tzuhan) 優先使用現有地址
-    : m.contract('EntryPointImportHelper');
-  const scwFactory = m.contract('SCWFactory', [entryPoint]);
-
-  return {
-    claimTopicsRegistry,
-    trustedIssuersRegistry,
-    identityRegistryStorage,
-    ntdToken,
-    ntdIdentityRegistry,
-    companyAssetsFactory,
-    entryPoint,
-    scwFactory,
-  };
+  return { ntdToken, ntdIdentityRegistry, irAuthority, identityRegistryStorage, scwFactory };
 });
 
 export default ERC3643Module;

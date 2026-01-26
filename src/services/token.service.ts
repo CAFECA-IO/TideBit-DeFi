@@ -33,7 +33,7 @@ type ActionResponse = {
 };
 
 // Info: (20260126 - Luphia) 部署整個 TWD 系統
-export async function deploySystem(name: string, symbol: string, decimals: number): Promise<ActionResponse> {
+export async function deploySystem(name: string = 'New Taiwan Dollar', symbol: string = 'TWD', decimals: number = 18): Promise<ActionResponse> {
   try {
     console.log('--- 開始由 Web 介面觸發部署 ---');
 

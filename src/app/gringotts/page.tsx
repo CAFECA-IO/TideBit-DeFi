@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { createPublicClient, http, parseAbi, formatUnits } from 'viem';
 import { mainnet } from 'viem/chains';
 import BalanceChecker from '@/components/token/balance_checker';
@@ -271,15 +270,15 @@ export default function GringottsPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1">
               <label htmlFor="token-name" className="text-xs text-slate-400">Token Name</label>
-              <input id="token-name" type="text" value={deployParams.name} onChange={e => setDeployParams({ ...deployParams, name: e.target.value })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" />
+              <input id="token-name" type="text" value={deployParams.name} onChange={e => setDeployParams({ ...deployParams, name: e.target.value })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" aria-label="Token Name" />
             </div>
             <div className="space-y-1">
               <label htmlFor="token-symbol" className="text-xs text-slate-400">Symbol</label>
-              <input id="token-symbol" type="text" value={deployParams.symbol} onChange={e => setDeployParams({ ...deployParams, symbol: e.target.value })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" />
+              <input id="token-symbol" type="text" value={deployParams.symbol} onChange={e => setDeployParams({ ...deployParams, symbol: e.target.value })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" aria-label="Token Symbol" />
             </div>
             <div className="space-y-1">
               <label htmlFor="token-decimals" className="text-xs text-slate-400">Decimals</label>
-              <input id="token-decimals" type="number" value={deployParams.decimals} onChange={e => setDeployParams({ ...deployParams, decimals: Number(e.target.value) })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" />
+              <input id="token-decimals" type="number" value={deployParams.decimals} onChange={e => setDeployParams({ ...deployParams, decimals: Number(e.target.value) })} className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-pink-500" aria-label="Token Decimals" />
             </div>
           </div>
           <button onClick={handleDeploy} disabled={isDeploying} className="mt-4 w-full rounded bg-pink-600 px-4 py-2 font-bold text-white transition hover:bg-pink-500 disabled:opacity-50">
@@ -288,18 +287,26 @@ export default function GringottsPage() {
           {deployStatus && <div className="mt-2 font-mono text-xs text-yellow-300">{deployStatus}</div>}
         </section>
 
+        {/* Info: (20260126 - Luphia) Loading State */}
+        {isLoadingData && (
+          <div className="flex items-center justify-center py-12">
+            <div className="size-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
+            <span className="ml-3 font-mono text-sm text-indigo-400">Fetching chain data...</span>
+          </div>
+        )}
+
         {/* Info: (20260126 - Luphia) Conditional Sections */}
-        {data && (
+        {!isLoadingData && data && (
           <>
             {/* Info: (20260126 - Luphia) Minting Section (Replaces AdminPanel for compactness/integration) */}
             <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
               <h2 className="mb-4 text-xl font-semibold text-indigo-400">Mint Facet</h2>
               <div className="flex flex-col gap-3 md:flex-row">
                 <label htmlFor="mint-recipient" className="sr-only">Recipient Address</label>
-                <input id="mint-recipient" type="text" placeholder="Recipient (0x...)" value={mintTarget} onChange={e => setMintTarget(e.target.value)} className="flex-1 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white" />
+                <input id="mint-recipient" type="text" placeholder="Recipient (0x...)" value={mintTarget} onChange={e => setMintTarget(e.target.value)} className="flex-1 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white" aria-label="Mint Recipient Address" />
 
                 <label htmlFor="mint-amount" className="sr-only">Amount</label>
-                <input id="mint-amount" type="number" placeholder="Amount" value={mintAmount} onChange={e => setMintAmount(e.target.value)} className="w-32 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white" />
+                <input id="mint-amount" type="number" placeholder="Amount" value={mintAmount} onChange={e => setMintAmount(e.target.value)} className="w-32 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white" aria-label="Mint Amount" />
 
                 <button onClick={handleMint} disabled={isMinting || !mintTarget} className="rounded bg-indigo-600 px-6 py-2 font-bold text-white transition hover:bg-indigo-500 disabled:opacity-50">
                   {isMinting ? 'Minting' : 'Mint'}

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { publicClient } from '@/lib/viem'; 
-import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts'; 
+import { publicClient } from '@/lib/viem';
+import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { parseAbi } from 'viem'; // 引入 parseAbi 用於臨時定義 Compliance 介面
 
 interface IProps {
@@ -11,7 +11,7 @@ interface IProps {
 
 // Info: (20260126 - Tzuhan) 定義 Compliance 合約的進階查詢介面
 const COMPLIANCE_ABI = parseAbi([
-  'function modules() external view returns (address[])',
+  'function getModules() external view returns (address[])',
   'function getTokenBound() external view returns (address)',
 ]);
 
@@ -19,15 +19,15 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   const [txHash, setTxHash] = useState('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const [checkAddr, setCheckAddr] = useState(defaultAddress);
-  
+
   // 基礎合規狀態
   const [complianceAddr, setComplianceAddr] = useState<string>('');
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
-  
+
   // 進階合規診斷 (New)
   const [boundToken, setBoundToken] = useState<string>('');
   const [installedModules, setInstalledModules] = useState<string[]>([]);
-  
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -40,10 +40,10 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
     setLoading(true);
     setTxStatus('查詢中...');
     try {
-      const receipt = await publicClient.waitForTransactionReceipt({ 
-        hash: txHash as `0x${string}` 
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash as `0x${string}`,
       });
-      
+
       if (receipt.status === 'success') {
         setTxStatus(`✅ 交易成功 (Block: ${receipt.blockNumber})`);
       } else {
@@ -62,24 +62,24 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
     setLoading(true);
     setBoundToken('');
     setInstalledModules([]);
-    
+
     try {
       // A. 查詢 Token 目前綁定的 Compliance 合約
-      const compAddress = await publicClient.readContract({
+      const compAddress = (await publicClient.readContract({
         address: CONTRACT_ADDRESSES.NTD_TOKEN,
         abi: ABIS.NTD_TOKEN, // 確保 config/contracts.ts 裡有 compliance()
         functionName: 'compliance',
-      }) as string;
+      })) as string;
       setComplianceAddr(compAddress);
 
       // B. 查詢用戶是否通過驗證
       if (checkAddr) {
-        const verified = await publicClient.readContract({
+        const verified = (await publicClient.readContract({
           address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
           abi: ABIS.IDENTITY_REGISTRY,
           functionName: 'isVerified',
           args: [checkAddr as `0x${string}`],
-        }) as boolean;
+        })) as boolean;
         setIsVerified(verified);
       }
 
@@ -97,11 +97,10 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
         const modules = await publicClient.readContract({
           address: compAddress as `0x${string}`,
           abi: COMPLIANCE_ABI,
-          functionName: 'modules',
+          functionName: 'getModules',
         });
         setInstalledModules([...modules]);
       }
-
     } catch (err) {
       console.error(err);
       alert('讀取合約失敗，請確認 ABI 設定與網路連線');
@@ -137,7 +136,9 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
             </button>
           </div>
           {txStatus && (
-            <div className={`mt-3 rounded border p-2 text-sm font-medium ${txStatus.includes('成功') ? 'border-green-200 bg-green-50 text-green-700' : 'border-red-200 bg-red-50 text-red-700'}`}>
+            <div
+              className={`mt-3 rounded border p-2 text-sm font-medium ${txStatus.includes('成功') ? 'border-green-200 bg-green-50 text-green-700' : 'border-red-200 bg-red-50 text-red-700'}`}
+            >
               {txStatus}
             </div>
           )}
@@ -155,14 +156,14 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
               {loading ? '讀取中...' : '⟳ 刷新狀態'}
             </button>
           </h3>
-          
+
           <div className="mb-3 flex gap-2">
-             <input 
-               value={checkAddr} 
-               onChange={(e) => setCheckAddr(e.target.value)}
-               className="w-full rounded border p-2 text-sm focus:border-indigo-500 focus:outline-none"
-               placeholder="目標用戶地址 (SCW) 0x..."
-             />
+            <input
+              value={checkAddr}
+              onChange={(e) => setCheckAddr(e.target.value)}
+              className="w-full rounded border p-2 text-sm focus:border-indigo-500 focus:outline-none"
+              placeholder="目標用戶地址 (SCW) 0x..."
+            />
           </div>
 
           <div className="space-y-3 text-sm">
@@ -171,13 +172,15 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
               <div className="flex justify-between py-1">
                 <span className="text-gray-500">Identity Verified:</span>
                 <span className={`font-bold ${isVerified ? 'text-green-600' : 'text-red-600'}`}>
-                  {isVerified === null ? '---' : (isVerified ? '✅ 通過 (Verified)' : '❌ 未通過')}
+                  {isVerified === null ? '---' : isVerified ? '✅ 通過 (Verified)' : '❌ 未通過'}
                 </span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-gray-500">Token Compliance:</span>
                 <span className="font-mono text-xs text-gray-800" title={complianceAddr}>
-                  {complianceAddr ? `${complianceAddr.slice(0, 6)}...${complianceAddr.slice(-4)}` : '尚未讀取'}
+                  {complianceAddr
+                    ? `${complianceAddr.slice(0, 6)}...${complianceAddr.slice(-4)}`
+                    : '尚未讀取'}
                 </span>
               </div>
             </div>
@@ -185,14 +188,20 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
             {/* 新功能：進階合規檢查 */}
             {complianceAddr && (
               <div className="rounded bg-indigo-50 p-2">
-                <div className="mb-1 text-xs font-bold text-indigo-800">Compliance Contract Details:</div>
-                
+                <div className="mb-1 text-xs font-bold text-indigo-800">
+                  Compliance Contract Details:
+                </div>
+
                 {/* 1. 雙向綁定檢查 */}
                 <div className="flex justify-between py-1">
                   <span className="text-gray-600">Reverse Bind (Token):</span>
-                  <span className={`font-mono text-xs ${boundToken === CONTRACT_ADDRESSES.NTD_TOKEN ? 'text-green-600' : 'text-red-600'}`}>
-                    {boundToken 
-                      ? (boundToken === CONTRACT_ADDRESSES.NTD_TOKEN ? '✅ Match' : '❌ Mismatch') 
+                  <span
+                    className={`font-mono text-xs ${boundToken === CONTRACT_ADDRESSES.NTD_TOKEN ? 'text-green-600' : 'text-red-600'}`}
+                  >
+                    {boundToken
+                      ? boundToken === CONTRACT_ADDRESSES.NTD_TOKEN
+                        ? '✅ Match'
+                        : '❌ Mismatch'
                       : 'Checking...'}
                   </span>
                 </div>
@@ -207,7 +216,9 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
                       ))}
                     </ul>
                   ) : (
-                    <div className="text-xs italic text-gray-400">No modules installed (Allow All?)</div>
+                    <div className="text-xs italic text-gray-400">
+                      No modules installed (Allow All?)
+                    </div>
                   )}
                 </div>
               </div>

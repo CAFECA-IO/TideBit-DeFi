@@ -83,11 +83,11 @@ export async function POST(req: NextRequest) {
 
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
+    console.log(`${JSON.stringify(receipt)}`);
+
     if (receipt.status !== 'success') {
       throw new Error('Add claim transaction failed');
     }
-
-    console.log(`${JSON.stringify(receipt)}`);
 
     return NextResponse.json({ success: true, txHash: hash });
   } catch (error) {

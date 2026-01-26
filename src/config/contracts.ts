@@ -3,20 +3,20 @@ import { Address, parseAbi } from 'viem';
 export const ORIGIN = process.env.NEXT_PUBLIC_ORIGIN;
 export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
 
-// Info: (20260114 - Tzuhan) ERC-4337 & RWA System Addresses
+// Info: (20260124 - Tzuhan) ERC-4337 & RWA System Addresses from latest deployment
 export const CONTRACT_ADDRESSES = {
   ENTRY_POINT: (process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS ||
-    '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6') as Address,
+    '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6') as Address, //
   FACTORY: (process.env.NEXT_PUBLIC_SCW_FACTORY_ADDRESS ||
-    '0xB493582d9889055E8dcA9Fc9203b54b7A013b95c') as Address,
+    '0x25BE87658F7F9709397518Bd97586895A0722B33') as Address, //
   NTD_TOKEN: (process.env.NEXT_PUBLIC_NTD_TOKEN_ADDRESS ||
-    '0xBa7D8546208F6d6c77C3e74A2022F5cE2b624492') as Address,
+    '0x2F2a4B453C5494AcaDf7C5fAE4A174426ADb4f7e') as Address, //
   IDENTITY_REGISTRY: (process.env.NEXT_PUBLIC_IDENTITY_REGISTRY_ADDRESS ||
-    '0x7f9c7f7b4D1b4a1c39402c65c14A3fC2CE590Dbb') as Address,
+    '0x4B19C6290500f87eb6F93267F59E588012FAdF1d') as Address, //
   TRUSTED_ISSUERS_REGISTRY: (process.env.NEXT_PUBLIC_TRUSTED_ISSUERS_REGISTRY_ADDRESS ||
-    '0x7E3Ac4534d1cBB89647149c3E50D0bce735E7a9F') as Address,
+    '0xe55d4A970E360eFCD7953532E77C717574a1B295') as Address, //
   CLAIM_TOPICS_REGISTRY: (process.env.NEXT_PUBLIC_CLAIM_TOPICS_REGISTRY_ADDRESS ||
-    '0x48f44d4649CE39905A4009c81aB71F5fDD0Ef6d5') as Address,
+    '0x663607D7c2b139D27472B475440aE3866166e311') as Address, //
 } as const;
 
 export const ABIS = {
@@ -46,14 +46,14 @@ export const ABIS = {
     'function isValidSignature(bytes32 hash, bytes memory signature) public view returns (bytes4)',
   ]),
 
-  // Info: (20251230 - Tzuhan) --- RWA Identity Registry ---
+  // Info: (20260126 - Tzuhan) --- RWA Identity Registry ---
   IDENTITY_REGISTRY: parseAbi([
     'function registerIdentity(address _userAddress, address _identity, uint16 _country) external',
     'function isVerified(address _userAddress) external view returns (bool)',
-    'function identity(address _userAddress) external view returns (address)',
+    'function identity(address _userAddress) external view returns (address)', //
     'function topicsRegistry() external view returns (address)',
     'function trustedIssuersRegistry() external view returns (address)',
-    'function getIdentity(address _userAddress) view returns (address)',
+    // 'function getIdentity(address _userAddress) view returns (address)', // Removed: Not found on ABI
   ]),
 
   // Info: (20260123 - Tzuhan) --- RWA Trusted Issuers Registry ---
@@ -85,5 +85,6 @@ export const ABIS = {
     'function unpause() external',
     'function forcedTransfer(address from, address to, uint256 amount) external returns (bool)',
     'function compliance() external view returns (address)',
+    'function identityRegistry() external view returns (address)',
   ]),
 };

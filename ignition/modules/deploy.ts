@@ -8,8 +8,6 @@ const TIR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/
 const IRS_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistryStorage.sol/IdentityRegistryStorage.json');
 const IR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistry.sol/IdentityRegistry.json');
 const TOKEN_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json');
-const TOKEN_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/TokenProxy.sol/TokenProxy.json');
-const IR_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/IdentityRegistryProxy.sol/IdentityRegistryProxy.json');
 const AUTHORITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/TREXImplementationAuthority.sol/TREXImplementationAuthority.json');
 const IA_FACTORY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/authority/IAFactory.sol/IAFactory.json');
 const MC_PROXY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/proxy/ModularComplianceProxy.sol/ModularComplianceProxy.json');
@@ -86,9 +84,9 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   // =========================================================
 
   // Info: (20260124 - Tzuhan) A. Identity Registry Proxy
+  // Info: (20260124 - Tzuhan) A. Identity Registry Proxy (Updated to NTDIdentityRegistryProxy)
   const ntdIdentityRegistry = m.contract(
-    'NTD_IdentityRegistry',
-    IR_PROXY_ARTIFACT,
+    'NTDIdentityRegistryProxy',
     [irAuthority, trustedIssuersRegistry, claimTopicsRegistry, identityRegistryStorage],
     { after: [initAuthority, addIssuer, initIRS] }
   );
@@ -100,9 +98,9 @@ const ERC3643Module = buildModule('ERC3643Module', (m) => {
   });
 
   // Info: (20260124 - Tzuhan) C. Token Proxy
+  // Info: (20260124 - Tzuhan) C. Token Proxy (Updated to NTDTokenProxy)
   const ntdToken = m.contract(
-    'NTD_Token',
-    TOKEN_PROXY_ARTIFACT,
+    'NTDTokenProxy',
     [irAuthority, ntdIdentityRegistry, ntdCompliance, 'New Taiwan Dollar', 'NTD', 18, deployer],
     { after: [ntdCompliance, ntdIdentityRegistry] }
   );

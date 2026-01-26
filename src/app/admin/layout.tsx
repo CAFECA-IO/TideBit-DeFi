@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 const NAV_ITEMS = [
   { name: 'Dashboard', href: '/admin' },
   { name: 'Token', href: '/admin/token' },
-  { name: 'Identity Registry', href: '/admin/identity' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -142,7 +142,31 @@ async function verify() {
       printResult('Compliance Contract Found', false);
     }
 
-    const userAddress = '0x903752eFF817DCac83062760B50b9D50E3Ad022c';
+    // --- Verify EIP-1967 Implementation Slot ---
+    // Slot: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+    const IMPLEMENTATION_SLOT =
+      '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc';
+
+    const tokenImplSlot = await client.getStorageAt({
+      address: ADDR_TOKEN,
+      slot: IMPLEMENTATION_SLOT,
+    });
+    printResult(
+      'Token Proxy Implementation Slot (EIP-1967)',
+      tokenImplSlot !== undefined &&
+        tokenImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      `Value: ${tokenImplSlot}`
+    );
+
+    const irImplSlot = await client.getStorageAt({ address: ADDR_IR, slot: IMPLEMENTATION_SLOT });
+    printResult(
+      'IdentityRegistry Proxy Implementation Slot (EIP-1967)',
+      irImplSlot !== undefined &&
+        irImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      `Value: ${irImplSlot}`
+    );
+
+    const userAddress = '0x92599A8b79642C178fF6278636dCe8b3BF8a551b';
 
     const identityContract = await publicClient.readContract({
       address: ADDR_IR,
@@ -154,7 +178,7 @@ async function verify() {
 
     // 在 verify_trex.ts 中加入這段進行診斷
     try {
-      const userAddress = '0x903752eFF817DCac83062760B50b9D50E3Ad022c';
+      const userAddress = '0x92599A8b79642C178fF6278636dCe8b3BF8a551b';
 
       // 使用 simulateContract 捕捉詳細報錯
       await client.simulateContract({

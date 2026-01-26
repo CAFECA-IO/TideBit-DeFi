@@ -90,7 +90,8 @@ const Pagination: React.FC<IPaginationProps> = ({
         onBlur={handlePageInputBlur}
         onKeyDown={handlePageInputKeyDown}
         onWheel={(e) => e.currentTarget.blur()} // Info: (20260108 - Julian) 防止滾動改變數值
-        className="hide-arrows w-30px bg-transparent text-center font-medium text-text-field-text-active outline-none"
+        className="size-30px bg-transparent text-center font-medium text-text-field-text-active outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        aria-label="Jump to page"
       />
     </div>
   );
@@ -103,11 +104,10 @@ const Pagination: React.FC<IPaginationProps> = ({
         <li key={page} className="flex items-center">
           <button
             onClick={() => selectPage(page)}
-            className={`flex size-40px items-center justify-center rounded-full ${
-              activePage === page
+            className={`flex size-40px items-center justify-center rounded-full ${activePage === page
                 ? 'bg-pagination-active text-pagination-text-active'
                 : 'text-pagination-text-default hover:bg-pagination-hover'
-            }`}
+              }`}
           >
             {page}
           </button>
@@ -152,6 +152,7 @@ const Pagination: React.FC<IPaginationProps> = ({
       // Info: (20260108 - Julian) 總頁數為 0 或 當前頁數為第一頁時，按鈕 disabled
       disabled={totalPages === 0 || activePage === 1 ? true : false}
       className="flex size-40px items-center justify-center text-base text-pagination-text-default hover:text-pagination-text-active disabled:text-pagination-text-disable"
+      aria-label="Previous Page"
     >
       <RiArrowLeftSLine size={20} />
     </button>
@@ -164,6 +165,7 @@ const Pagination: React.FC<IPaginationProps> = ({
       // Info: (20260108 - Julian) 總頁數為 0 或 當前頁數為最後一頁時，按鈕 disabled
       disabled={totalPages === 0 || activePage === totalPages ? true : false}
       className="flex size-40px items-center justify-center text-base text-pagination-text-default hover:text-pagination-text-active disabled:text-pagination-text-disable"
+      aria-label="Next Page"
     >
       <RiArrowRightSLine size={20} />
     </button>

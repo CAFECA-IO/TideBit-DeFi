@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import AdminUserInfo from '@/components/admin/admin_user_info';
 import AdminDashboardOverview from '@/components/admin/dashboard_overview';
-import TokenOperations from '@/components/admin/token_operations';
-import UserManagement from '@/components/admin/user_management';
+import AdminUserManagement from '@/components/admin/user_management';
+import UserCompanyManagement from '@/components/admin/user_company_management'; // Info: (20260127) New Component
+import AdminTokenOperations from '@/components/admin/token_operations';
 import RegistrySettings from '@/components/admin/registry_settings';
 import { useRouter } from 'next/navigation';
 
@@ -69,13 +70,13 @@ export default function AdminConsolePage() {
           {activeTab === 'DASHBOARD' && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <TokenOperations />
-                <UserManagement />
+                <AdminTokenOperations />
+                <AdminUserManagement />
               </div>
             </div>
           )}
-          {activeTab === 'USERS' && <UserManagement />}
-          {activeTab === 'TOKEN' && <TokenOperations />}
+          {activeTab === 'USERS' && <UserCompanyManagement />}
+          {activeTab === 'TOKEN' && <AdminTokenOperations />}
           {activeTab === 'SETTINGS' && <RegistrySettings />}
         </div>
       </div>

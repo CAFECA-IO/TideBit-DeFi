@@ -64,6 +64,7 @@ model Company {
   tokenName   String? @map("token_name")
   tokenSymbol String? @map("token_symbol")
   tokenLogoId String? @map("token_logo_id")
+  tokenAddress String? @map("token_address")
 
   // Info: (20260108 - Tzuhan) [Step 2] Basic Info
   legalName      String? @map("legal_name")

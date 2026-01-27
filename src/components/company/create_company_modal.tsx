@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-// import Image from 'next/image';
+import Image from 'next/image';
 import { RxCross2 } from 'react-icons/rx';
 import { FaRegFilePdf, FaRegImage, FaCloudUploadAlt } from 'react-icons/fa';
 import { useModalCtx } from '@/contexts/modal_context';
@@ -57,8 +57,7 @@ const CreateCompanyModal = () => {
 
   // Info: (20260108 - Tzuhan) 通用輸入框樣式
   const inputContainerStyle = (hasError: boolean) =>
-    `flex items-center rounded-radius-s border ${
-      hasError ? 'border-text-state-error' : 'border-text-field-outline-default'
+    `flex items-center rounded-radius-s border ${hasError ? 'border-text-state-error' : 'border-text-field-outline-default'
     } bg-text-field-surface-default px-spacing-lv-4 py-spacing-lv-3`;
 
   const inputStyle =
@@ -79,7 +78,7 @@ const CreateCompanyModal = () => {
         <div className="relative size-100px overflow-hidden rounded-full border border-dashed border-border-neutral-strong bg-surface-neutral-container-lv1">
           {formData.tokenLogoId ? (
             // ToDo: (20260109 - Tzuhan) 若是 File ID 需轉換為完整 URL，這邊假設 Hook 已處理或後端回傳完整 URL
-            <img src={formData.tokenLogoId} alt="Token Logo" className="object-cover" />
+            <Image src={formData.tokenLogoId} alt="Token Logo" className="object-cover" fill />
           ) : (
             <div className="flex size-full flex-col items-center justify-center text-text-neutral-tertiary">
               <FaRegImage size={24} />
@@ -195,7 +194,7 @@ const CreateCompanyModal = () => {
           <DropdownMenu
             options={PHONE_PREFIX_OPTIONS}
             activeOption={'+886'}
-            selectOption={() => {}} // Info: (20260108 - Tzuhan) 簡化：暫不處理 prefix 狀態
+            selectOption={() => { }} // Info: (20260108 - Tzuhan) 簡化：暫不處理 prefix 狀態
             aria-label="Phone Prefix"
           />
         </div>

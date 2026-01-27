@@ -46,6 +46,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.backup
 
 # vercel
 .vercel
@@ -57,4 +58,8 @@ next-env.d.ts
 # log file
 */logs/*
 
+# generated
 src/generated
+
+# eslint
+.eslintcache

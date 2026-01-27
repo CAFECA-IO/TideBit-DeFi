@@ -1,5 +1,5 @@
 # Info: (20250730 - Tzuhan) 1. 檢查 staged 檔案格式
-npx lint-staged
+npm run lint
 
 # Info: (20250730 - Tzuhan) 2. 跑單元測試
 npm test

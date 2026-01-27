@@ -141,6 +141,19 @@ const Sidebar: React.FC = () => {
     </Button>
   );
 
+  const createGrinGottsButton = (
+    <Button
+      type="button"
+      size="sm"
+      variant="defaultBorderless"
+      className="justify-start text-text-brand-primary hover:text-text-brand-secondary"
+      onClick={() => router.push('/gringotts')}
+    >
+      <FiPlusSquare size={24} />
+      <p>GrinGotts</p>
+    </Button>
+  );
+
   // ToDo: (20251219 - Julian) During Development
   const body = isSidebarOpen ? (
     <div className="flex flex-col gap-spacing-lv-6">
@@ -178,15 +191,15 @@ const Sidebar: React.FC = () => {
         <div className="my-2 h-px bg-border-neutral-subtle" /> {/* 分隔線 */}
         {createCompanyButton}
         {directToAdminButton}
+        {createGrinGottsButton}
       </div>
     </div>
   ) : null;
 
   return (
     <div
-      className={`${
-        isSidebarOpen ? 'w-220px px-spacing-lv-4' : 'w-50px px-spacing-lv-2'
-      } fixed z-sidebar flex h-full flex-col gap-spacing-lv-6 bg-navigation-surface-background pb-spacing-lv-2 pt-spacing-lv-7 transition-all duration-300 ease-in-out`}
+      className={`${isSidebarOpen ? 'w-220px px-spacing-lv-4' : 'w-50px px-spacing-lv-2'
+        } fixed z-sidebar flex h-full flex-col gap-spacing-lv-6 bg-navigation-surface-background pb-spacing-lv-2 pt-spacing-lv-7 transition-all duration-300 ease-in-out`}
     >
       {header}
       {body}

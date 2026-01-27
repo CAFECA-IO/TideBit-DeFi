@@ -110,7 +110,7 @@ export default function UserCompanyManagement() {
                         ) : (
                             users.map((user) => (
                                 <tr key={user.id} className="bg-slate-950/50 hover:bg-slate-900">
-                                    <td className="px-6 py-4">
+                                    <td aria-label='user' className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-bold text-white">{user.name || 'Unnamed User'}</span>
                                             <span className="font-mono text-xs text-slate-500" title={user.address}>
@@ -210,28 +210,28 @@ export default function UserCompanyManagement() {
                         <h3 className="mb-4 text-lg font-bold text-white">Mint Company Token</h3>
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="recipient-address" className="mb-1 block text-sm text-slate-400">Recipient Address</label>
+    
                                 <input
                                     id="recipient-address"
+                                    aria-label="Recipient Address"
                                     name="recipient-address"
                                     className="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-white placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none"
                                     placeholder="0x..."
                                     value={mintModal.recipient}
                                     onChange={(e) => setMintModal(prev => ({ ...prev, recipient: e.target.value }))}
-                                    aria-label="Recipient Address"
                                 />
                             </div>
                             <div>
                                 <label htmlFor="mint-amount" className="mb-1 block text-sm text-slate-400">Amount</label>
                                 <input
                                     id="mint-amount"
+                                    aria-label="Mint Amount"
                                     name="mint-amount"
                                     type="number"
                                     className="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-white placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none"
                                     placeholder="Amount"
                                     value={mintModal.amount}
                                     onChange={(e) => setMintModal(prev => ({ ...prev, amount: Number(e.target.value) }))}
-                                    aria-label="Amount"
                                 />
                             </div>
                             <div className="flex justify-end gap-2 pt-2">

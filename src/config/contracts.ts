@@ -49,11 +49,13 @@ export const ABIS = {
   // Info: (20260126 - Tzuhan) --- RWA Identity Registry ---
   IDENTITY_REGISTRY: parseAbi([
     'function registerIdentity(address _userAddress, address _identity, uint16 _country) external',
+    'function deleteIdentity(address _userAddress) external',
+    'function updateIdentity(address _userAddress, address _identity) external',
+    'function updateCountry(address _userAddress, uint16 _country) external',
     'function isVerified(address _userAddress) external view returns (bool)',
-    'function identity(address _userAddress) external view returns (address)', //
+    'function identity(address _userAddress) external view returns (address)',
     'function topicsRegistry() external view returns (address)',
     'function trustedIssuersRegistry() external view returns (address)',
-    // 'function getIdentity(address _userAddress) view returns (address)', // Removed: Not found on ABI
   ]),
 
   // Info: (20260123 - Tzuhan) --- RWA Trusted Issuers Registry ---
@@ -68,6 +70,16 @@ export const ABIS = {
     'function isTrustedIssuer(address _issuer) external view returns (bool)',
   ]),
 
+  // Info: (20260127 - Tzuhan) --- RWA Modular Compliance ---
+  MODULAR_COMPLIANCE: parseAbi([
+    'function bindToken(address _token) external',
+    'function unbindToken(address _token) external',
+    'function addModule(address _module) external',
+    'function removeModule(address _module) external',
+    'function isModuleBound(address _module) external view returns (bool)',
+    'function getModules() external view returns (address[])',
+  ]),
+
   // Info: (20251230 - Tzuhan) --- RWA Identity (ONCHAINID) ---
   IDENTITY: parseAbi([
     'function addClaim(uint256 topic, uint256 scheme, address issuer, bytes signature, bytes data, string uri) external returns (bytes32)',
@@ -75,16 +87,33 @@ export const ABIS = {
     'function keyHasPurpose(bytes32 _key, uint256 _purpose) external view returns (bool)',
   ]),
 
+  // Info: (20260123 - Tzuhan) --- RWA Claim Topics Registry ---
+  CLAIM_TOPICS_REGISTRY: parseAbi([
+    'function addClaimTopic(uint256 _claimTopic) external',
+    'function removeClaimTopic(uint256 _claimTopic) external',
+    'function getClaimTopics() external view returns (uint256[])',
+  ]),
+
   // Info: (20251230 - Tzuhan) --- NTD Token ---
   NTD_TOKEN: parseAbi([
     'function mint(address to, uint256 amount) external',
-    'function burn(uint256 amount) external',
-    'function balanceOf(address account) view returns (uint256)',
-    'function decimals() view returns (uint8)',
+    'function burn(address userAddress, uint256 amount) external',
+    'function forcedTransfer(address from, address to, uint256 amount) external returns (bool)',
+    'function freezePartialTokens(address userAddress, uint256 amount) external',
+    'function unfreezePartialTokens(address userAddress, uint256 amount) external',
+    'function setAddressFrozen(address userAddress, bool freeze) external',
+    'function isFrozen(address userAddress) external view returns (bool)',
+    'function getFrozenTokens(address userAddress) external view returns (uint256)',
     'function pause() external',
     'function unpause() external',
-    'function forcedTransfer(address from, address to, uint256 amount) external returns (bool)',
+    'function paused() external view returns (bool)',
+    'function balanceOf(address account) view returns (uint256)',
+    'function decimals() view returns (uint8)',
+    'function name() view returns (string)',
+    'function symbol() view returns (string)',
+    'function totalSupply() view returns (uint256)',
     'function compliance() external view returns (address)',
     'function identityRegistry() external view returns (address)',
   ]),
 };
+

@@ -90,6 +90,7 @@ const CreateCompanyModal = () => {
             accept="image/*"
             className="absolute inset-0 cursor-pointer opacity-0"
             aria-label="Upload Token Logo"
+            onClick={(e) => (e.currentTarget.value = '')}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) handleUpload(file, 'tokenLogoId');

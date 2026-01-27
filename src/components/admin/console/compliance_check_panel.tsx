@@ -110,7 +110,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   };
 
   return (
-    <div className="animate-fade-in-up rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
         🔍 合規與交易檢測 (Compliance Debugger)
       </h2>
@@ -120,7 +120,10 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
         <div className="rounded-md bg-gray-50 p-4">
           <h3 className="mb-2 font-semibold text-gray-700">1. 交易狀態 (Tx Status)</h3>
           <div className="flex gap-2">
+            <label htmlFor="compliance-tx-hash" className="sr-only">Tx Hash</label>
             <input
+              id="compliance-tx-hash"
+              aria-label="Tx Hash"
               type="text"
               placeholder="貼上 Tx Hash (0x...)"
               value={txHash}
@@ -158,7 +161,10 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
           </h3>
 
           <div className="mb-3 flex gap-2">
+            <label htmlFor="compliance-check-address" className="sr-only">目標用戶地址</label>
             <input
+              id="compliance-check-address"
+              aria-label="target Address"
               value={checkAddr}
               onChange={(e) => setCheckAddr(e.target.value)}
               className="w-full rounded border p-2 text-sm focus:border-indigo-500 focus:outline-none"

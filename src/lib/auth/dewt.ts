@@ -36,7 +36,9 @@ async function loadKeys(): Promise<ILoadedKeys> {
   }
 
   try {
-    const privateKey = await importPKCS8(PEM_PRIVATE_KEY, DEWT_ALG, { extractable: true });
+    // Info: (20260127 - Tzuhan) Fix potential issue with .env newline escaping
+    const sanitizedKey = PEM_PRIVATE_KEY.replace(/\\n/g, '\n');
+    const privateKey = await importPKCS8(sanitizedKey, DEWT_ALG, { extractable: true });
     const privateJwk = await exportJWK(privateKey);
     const publicJwk: JWK = {
       kty: privateJwk.kty,

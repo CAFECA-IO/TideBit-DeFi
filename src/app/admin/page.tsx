@@ -1,70 +1,83 @@
 'use client';
 
 import React, { useState } from 'react';
-import UserDiagnosisPanel, {
-  DiagnosisStatus,
-} from '@/components/admin/console/user_diagnosis_panel';
-import IdentityActionPanel from '@/components/admin/console/identity_action_panel';
-import AssetMintingPanel from '@/components/admin/console/asset_minting_panel';
-import RelayerPermissionPanel from '@/components/admin/console/relayer_permission_panel';
-import ComplianceCheckPanel from '@/components/admin/console/compliance_check_panel';
+import AdminUserInfo from '@/components/admin/admin_user_info';
+import AdminDashboardOverview from '@/components/admin/dashboard_overview';
+import TokenOperations from '@/components/admin/token_operations';
+import UserManagement from '@/components/admin/user_management';
+import RegistrySettings from '@/components/admin/registry_settings';
+import { useRouter } from 'next/navigation';
+
+enum Tab {
+  DASHBOARD = 'DASHBOARD',
+  USERS = 'USERS',
+  TOKEN = 'TOKEN',
+  SETTINGS = 'SETTINGS',
+}
 
 export default function AdminConsolePage() {
-  const [status, setStatus] = useState<DiagnosisStatus>('IDLE');
-  const [targetAddress, setTargetAddress] = useState('');
-  const [identityAddress, setIdentityAddress] = useState('');
-
-  const handleStatusChange = (newStatus: DiagnosisStatus, addr: string, idAddr?: string) => {
-    setStatus(newStatus);
-    setTargetAddress(addr);
-    if (idAddr) setIdentityAddress(idAddr);
-  };
-
-  const refreshDiagnosis = () => {
-    // Info: (20260123 - Tzuhan) 觸發重新診斷的邏輯，這裡簡單重置狀態讓 UserDiagnosisPanel 可以再次點擊
-    // Info: (20260123 - Tzuhan) 實務上可以將 trigger 傳入 Panel
-    alert('操作完成，請重新點擊診斷以更新狀態。');
-    setStatus('IDLE');
-  };
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.DASHBOARD);
+  const router = useRouter()
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Lifecycle Console</h1>
-        <p className="text-gray-500">一站式管理用戶合規身分與資產發行</p>
-      </div>
+    <div className="min-h-screen bg-slate-950 text-white">
+      <div className="mx-auto max-w-6xl px-4 py-8">
 
-      {/* Info: (20260123 - Tzuhan) 區域一：診斷 */}
-      <UserDiagnosisPanel onStatusChange={handleStatusChange} />
-
-      {/* Info: (20260123 - Tzuhan) 區域二：合規行動 (僅在紅燈/黃燈時顯示) */}
-      {(status === 'UNLINKED' || status === 'MISSING_CLAIMS') && (
-        <div className="animate-fade-in-down">
-          <IdentityActionPanel
-            status={status}
-            userAddress={targetAddress}
-            identityAddress={identityAddress}
-            onRefresh={refreshDiagnosis}
-          />
+        {/* Header with Navigation */}
+        <div className="mb-6 flex flex-col items-start justify-between gap-4 border-b border-slate-800 pb-6 md:flex-row md:items-center">
+          <div>
+            <h1 className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-3xl font-bold text-transparent">
+              Admin Console
+            </h1>
+            <p className="mt-1 text-slate-400">ERC-3643 Token Management System</p>
+          </div>
+          <button
+            onClick={() => router.push('/funding')}
+            className="w-full rounded bg-slate-800 px-4 py-2 text-center text-sm font-bold text-slate-300 transition hover:bg-slate-700 md:w-auto"
+          >
+            ← Back to App
+          </button>
         </div>
-      )}
 
-      {/* 👇 2. 新增區域：合規檢測面板 (常駐顯示，方便隨時貼 Hash 檢查) */}
-      <ComplianceCheckPanel defaultAddress={targetAddress} />
+        <AdminUserInfo />
 
-      {/* Info: (20260123 - Tzuhan) 區域三：資產鑄造 (僅在綠燈時顯示) */}
-      {status === 'VERIFIED' && (
-        <div className="animate-fade-in-up">
-          <AssetMintingPanel targetAddress={targetAddress} />
+        <AdminDashboardOverview />
+
+        {/* Tab Navigation */}
+        <div className="mb-8 inline-flex space-x-1 rounded-lg bg-slate-900/50 p-1">
+          {[
+            { id: 'DASHBOARD', label: 'Overview' },
+            { id: 'USERS', label: 'User Management' },
+            { id: 'TOKEN', label: 'Token Operations' },
+            { id: 'SETTINGS', label: 'Registry Settings' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as Tab)}
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === tab.id
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      )}
 
-      {/* Info: (20260123 - Tzuhan) 區域四：Relayer 權限診斷 (常駐顯示) */}
-      <RelayerPermissionPanel />
-
-      {/* Info: (20260123 - Tzuhan) 狀態指示標籤 (Debug 用或 UX 輔助) */}
-      <div className="fixed bottom-4 right-4 rounded-full bg-slate-800 px-4 py-2 text-xs text-white opacity-50 shadow-lg hover:opacity-100">
-        Current State: {status}
+        {/* Content Area */}
+        <div className="min-h-500px">
+          {activeTab === 'DASHBOARD' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <TokenOperations />
+                <UserManagement />
+              </div>
+            </div>
+          )}
+          {activeTab === 'USERS' && <UserManagement />}
+          {activeTab === 'TOKEN' && <TokenOperations />}
+          {activeTab === 'SETTINGS' && <RegistrySettings />}
+        </div>
       </div>
     </div>
   );

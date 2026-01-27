@@ -1,26 +1,15 @@
-import { createWalletClient, http, createPublicClient } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 import { userOperationSchema } from '@/validators';
 import { ABIS } from '@/config/contracts';
-
-const RELAYER_PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}` | undefined;
-const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL;
+import { publicClient } from '@/lib/viem-public';
+import { account, walletClient } from '@/lib/viem';
 
 export class BundlerService {
   public async sendUserOp(userOpJson: unknown, entryPointAddress: string) {
-    if (!RELAYER_PRIVATE_KEY || !rpcUrl) {
-      throw new Error('Server configuration error: Missing env variables');
-    }
-
     const userOp = userOperationSchema.parse(userOpJson);
 
-    // Info: (20251118 - Tzuhan) 設定 Viem 客戶端連接至 isuncoin_mainnet
-    const publicClient = createPublicClient({ transport: http(rpcUrl) });
-    const relayerAccount = privateKeyToAccount(RELAYER_PRIVATE_KEY);
-    const relayerClient = createWalletClient({
-      account: relayerAccount,
-      transport: http(rpcUrl),
-    });
+    if (!walletClient || !account) {
+      throw new Error('Relayer wallet not configured');
+    }
     /**
      * Info: (20251121 - Tzuhan) [資金流向] Relayer 發送交易「平台墊付」。
      * Relayer 使用自己的私鑰 (RELAYER_PRIVATE_KEY) 發送以太坊交易，
@@ -48,11 +37,11 @@ export class BundlerService {
     ];
 
     // Info: (20251118 - Tzuhan) "beneficiary" 是代付 Gas 並收取費用的地址
-    const beneficiary = relayerAccount.address;
+    const beneficiary = account.address;
 
     // Info: (20251204 - Tzuhan) 模擬並發送交易到 EntryPoint.handleOps
     const { request } = await publicClient.simulateContract({
-      account: relayerAccount,
+      account: account,
       address: entryPointAddress as `0x${string}`,
       abi: ABIS.ENTRY_POINT,
       functionName: 'handleOps',
@@ -61,7 +50,7 @@ export class BundlerService {
     });
 
     // Info: (20251204 - Tzuhan) 發送交易
-    const txHash = await relayerClient.writeContract(request);
+    const txHash = await walletClient.writeContract(request);
 
     // Info: (20251204 - Tzuhan) 等待交易被打包並回傳結果
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import UserCompanyManagement from '@/components/admin/user_company_management';
 
 export default function CompaniesPage() {

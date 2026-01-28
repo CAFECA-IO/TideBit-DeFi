@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import AdminUserInfo from '@/components/admin/admin_user_info';
 import MyAssetOverview from '@/components/admin/my_asset_overview';
 import { useRouter } from 'next/navigation';

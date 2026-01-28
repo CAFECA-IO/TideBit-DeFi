@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import RegistrySettings from '@/components/admin/registry_settings';
 
 export default function RegistrySettingsPage() {

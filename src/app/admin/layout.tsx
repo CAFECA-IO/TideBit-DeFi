@@ -1,4 +1,3 @@
-import React from 'react';
 import Header from '@/components/common/header';
 import Footer from '@/components/common/footer';
 import AdminSidebar from '@/components/admin/sidebar';

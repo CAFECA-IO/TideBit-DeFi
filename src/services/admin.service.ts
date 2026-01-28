@@ -15,7 +15,7 @@ import IDENTITY_ARTIFACT from '@erc3643org/erc-3643/artifacts/@onchain-id/solidi
 export interface IAdminUser {
   id: string;
   name: string | null;
-  email: string | null; // Note: Email is on Company in current schema, but User usually has one too. Checking Schema: User doesn't have email. Using Name/Address.
+  email: string | null; // Info: (20260128 - Tzuhan) Note: Email is on Company in current schema, but User usually has one too. Checking Schema: User doesn't have email. Using Name/Address.
   address: string;
   role: string;
   identityAddress: string | null;
@@ -146,7 +146,7 @@ export async function getUsersWithCompanies(
   }
 }
 
-// Info: (20260128) Company-Centric Fetch
+// Info: (20260128 - Tzuhan) Company-Centric Fetch
 export interface IAdminCompany {
   id: string;
   name: string;

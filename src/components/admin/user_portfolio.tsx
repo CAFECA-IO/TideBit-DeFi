@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/common/button';
 import { getUserPortfolio, IPortfolioItem, IPortfolioHistory } from '@/services/admin.service';
 import { formatUnits } from 'viem';
 import {
-  // FiCopy,
   FiExternalLink,
   FiArrowRight,
 } from 'react-icons/fi';
@@ -25,7 +24,7 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
   } | null>(null);
   const [error, setError] = useState('');
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!address || !address.startsWith('0x')) {
       setError('Invalid address format');
       return;
@@ -42,28 +41,22 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [address]);
 
   useEffect(() => {
     if (initialAddress && !enableSearch) {
       handleSearch();
     }
-  }, [initialAddress, enableSearch]);
-
-  // const copyToClipboard = (text: string) => {
-  //     navigator.clipboard.writeText(text);
-  //     // Could add toast here
-  // };
+  }, [initialAddress, enableSearch, handleSearch]);
 
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
-        {/* <h2 className="mb-4 text-xl font-bold text-white">User Portfolio {enableSearch ? '' : '(My Assets)'}</h2> */}
-
-        {/* Search Bar */}
+        {/* Info: (20260128 - Tzuhan) Search Bar */}
         {enableSearch && (
           <div className="flex gap-4">
             <input
+              aria-label="Search Address"
               placeholder="Enter User Address (0x...)"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -83,7 +76,7 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
 
       {portfolio && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Balances */}
+          {/* Info: (20260128 - Tzuhan) Balances */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-slate-200">Token Balances</h3>
             <div className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
@@ -143,7 +136,7 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
             </div>
           </div>
 
-          {/* History */}
+          {/* Info: (20260128 - Tzuhan) History */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-slate-200">Recent Activity</h3>
             <div className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
@@ -184,10 +177,11 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
                         </div>
                       </div>
                       <a
-                        href={`https://amoy.polygonscan.com/tx/${tx.hash}`} // Assume Amoy or customize
+                        href={`https://amoy.polygonscan.com/tx/${tx.hash}`} // Info: (20260128 - Tzuhan) Assume Amoy or customize
                         target="_blank"
                         rel="noreferrer"
                         className="text-slate-500 hover:text-white"
+                        aria-label="View on Explorer"
                       >
                         <FiExternalLink />
                       </a>

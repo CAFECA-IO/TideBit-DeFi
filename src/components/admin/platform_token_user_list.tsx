@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getPlatformTokenUsers } from '@/services/admin.service';
 import { Button } from '@/components/common/button';
+import ConfirmModal from '@/components/common/confirm_modal';
 import { FiCopy, FiLock, FiUnlock } from 'react-icons/fi';
 import { formatUnits } from 'viem';
 
@@ -23,6 +24,34 @@ export default function PlatformTokenUserList() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showAlert = useCallback((title: string, message: string, onConfirm: () => void) => {
+        setModalConfig({
+            isOpen: true,
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                closeModal();
+            }
+        });
+    }, []);
+
     const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
@@ -32,11 +61,11 @@ export default function PlatformTokenUserList() {
             setTotalPages(data.totalPages);
         } catch (error) {
             console.error(error);
-            alert('Failed to fetch platform token users');
+            showAlert('Error', 'Failed to fetch platform token users', () => { });
         } finally {
             setLoading(false);
         }
-    }, [page]);
+    }, [page, showAlert]);
 
     useEffect(() => {
         fetchUsers();
@@ -48,6 +77,13 @@ export default function PlatformTokenUserList() {
 
     return (
         <div className="space-y-6">
+            <ConfirmModal
+                isOpen={modalConfig.isOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={closeModal}
+            />
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-white">Platform Token Holders</h2>
                 <Button onClick={fetchUsers} disabled={loading} variant="outline" size="sm">
@@ -78,7 +114,7 @@ export default function PlatformTokenUserList() {
                         ) : (
                             users.map((user) => (
                                 <tr key={user.id} className="bg-slate-950/50 hover:bg-slate-900">
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4" aria-label="User Details">
                                         <div className="flex flex-col gap-1">
                                             <span className="font-bold text-white">{user.name || 'Unnamed User'}</span>
                                             <div className="flex items-center gap-1 font-mono text-xs text-slate-500">
@@ -89,7 +125,9 @@ export default function PlatformTokenUserList() {
                                                     onClick={() => handleCopy(user.address)}
                                                     className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
                                                     title="Copy Address"
+                                                    aria-label="Copy Address"
                                                 >
+                                                    <span className="sr-only">Copy Address</span>
                                                     <FiCopy size={12} />
                                                 </button>
                                             </div>
@@ -143,7 +181,7 @@ export default function PlatformTokenUserList() {
                 </table>
             </div>
 
-            {/* Pagination */}
+            {/* Info: (20260129 - Tzuhan) Pagination */}
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
                 <div className="flex gap-2">

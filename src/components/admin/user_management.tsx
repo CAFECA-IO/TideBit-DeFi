@@ -7,6 +7,7 @@ import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
 import { FiCopy } from 'react-icons/fi';
 import { deployUserIdentity } from '@/services/admin.service';
+import ConfirmModal from '@/components/common/confirm_modal';
 
 export type UserStatus =
   | 'IDLE'
@@ -23,6 +24,34 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isDeploying, setIsDeploying] = useState(false);
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
+  };
 
   const IR_ABI = ABIS.IDENTITY_REGISTRY;
 
@@ -82,32 +111,37 @@ export default function UserManagement() {
   };
 
   const handleRegisterIdentity = async () => {
-    if (!confirm(`Deploy Identity for ${inputAddress}?`)) return;
-    setIsDeploying(true);
-    try {
-      const res = await deployUserIdentity(inputAddress);
-      if (res && res.success) {
-        alert('Identity Deployed Successfully!');
-        handleDiagnose(); // Refresh status
-      } else {
-        alert(`Deployment Failed: ${res?.message}`);
+    showAlert('Confirm Deployment', `Deploy Identity for ${inputAddress}?`, async () => {
+      setIsDeploying(true);
+      try {
+        const res = await deployUserIdentity(inputAddress);
+        if (res && res.success) {
+          showAlert('Success', 'Identity Deployed Successfully!', () => { handleDiagnose(); });
+        } else {
+          showAlert('Error', `Deployment Failed: ${res?.message}`, () => { });
+        }
+      } catch (error) {
+        console.error(error);
+        showAlert('Error', 'An unexpected error occurred.', () => { });
+      } finally {
+        setIsDeploying(false);
       }
-    } catch (error) {
-      console.error(error);
-      alert('An unexpected error occurred.');
-    } finally {
-      setIsDeploying(false);
-    }
+    });
   };
 
   const handleAddClaim = async () => {
-    alert(
-      'Claim issuance requires off-chain signature generation. Please use the issuance script.'
-    );
+    showAlert('Info', 'Claim issuance requires off-chain signature generation. Please use the issuance script.', () => { });
   };
 
   return (
     <div className="space-y-6">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       <div className="rounded-lg border border-slate-800 bg-slate-900 p-6 shadow-sm">
         <h3 className="mb-4 font-bold text-slate-200">User Diagnosis & Management</h3>
 

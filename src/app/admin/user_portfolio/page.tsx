@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import UserPortfolio from '@/components/admin/user_portfolio';
 
 export default function UserPortfolioPage() {

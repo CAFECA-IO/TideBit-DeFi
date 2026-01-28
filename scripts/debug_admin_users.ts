@@ -8,7 +8,7 @@ async function main() {
     console.log('Target User:', targetUser);
 
     try {
-        // 1. Check Identity
+        // Info: (20260129 - Tzuhan) 1. Check Identity
         const id = await publicClient.readContract({
             address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
             abi: ABIS.IDENTITY_REGISTRY,
@@ -17,7 +17,7 @@ async function main() {
         });
         console.log('Identity Contract Address:', id);
 
-        // 2. Check Verification
+        // Info: (20260129 - Tzuhan) 2. Check Verification
         const isVerified = await publicClient.readContract({
             address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
             abi: ABIS.IDENTITY_REGISTRY,
@@ -27,7 +27,7 @@ async function main() {
         console.log('Is Verified:', isVerified);
 
 
-        // 3. Check for User in DB
+        // Info: (20260129 - Tzuhan) 3. Check for User in DB
         const { prisma } = await import('../src/lib/prisma');
         const user = await prisma.user.findFirst({
             where: { address: { equals: getAddress(targetUser), mode: 'insensitive' } }

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useAuth } from '@/contexts/auth_context';
 import UserPortfolio from '@/components/admin/user_portfolio';
 

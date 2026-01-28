@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import ConfirmModal from '@/components/common/confirm_modal';
 import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
@@ -10,6 +11,34 @@ export default function SystemStatusCard() {
     const { user: adminUser } = useAuth();
     const [isPaused, setIsPaused] = useState<boolean | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showAlert = (title: string, message: string, onConfirm: () => void) => {
+        setModalConfig({
+            isOpen: true,
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                closeModal();
+            }
+        });
+    };
 
     const fetchStatus = async () => {
         try {
@@ -32,7 +61,7 @@ export default function SystemStatusCard() {
     }, []);
 
     const handleTogglePause = async () => {
-        if (!adminUser) return alert('请先登入 Admin 钱包');
+        if (!adminUser) return showAlert('Error', '请先登入 Admin 钱包', () => { });
         if (isPaused === null) return;
 
         setIsLoading(true);
@@ -41,14 +70,13 @@ export default function SystemStatusCard() {
             const res = await action(CONTRACT_ADDRESSES.NTD_TOKEN);
 
             if (res.success) {
-                alert(res.message);
-                fetchStatus(); // Info: (20260127 - Tzuhan) Refresh immediately
+                showAlert('Success', res.message, () => { fetchStatus(); });
             } else {
-                alert('操作失败: ' + res.message);
+                showAlert('Error', '操作失败: ' + res.message, () => { });
             }
         } catch (e) {
             console.error(e);
-            alert('Error: ' + (e as Error).message);
+            showAlert('Error', 'Error: ' + (e as Error).message, () => { });
         } finally {
             setIsLoading(false);
         }
@@ -56,6 +84,13 @@ export default function SystemStatusCard() {
 
     return (
         <div className="rounded-lg border border-slate-800 bg-slate-900 p-4 transition-all hover:border-slate-700">
+            <ConfirmModal
+                isOpen={modalConfig.isOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={closeModal}
+            />
             <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-slate-400">System Status</h3>
                 {adminUser && isPaused !== null && (

@@ -61,7 +61,7 @@ export default function TokenOperations({
         setModalConfig(prev => ({ ...prev, isOpen: false }));
     };
 
-    const showConfirm = (title: string, message: string, onConfirm: () => void) => {
+    const showAlert = (title: string, message: string, onConfirm: () => void) => {
         setModalConfig({
             isOpen: true,
             title,
@@ -73,13 +73,13 @@ export default function TokenOperations({
         });
     };
 
-    const TOKEN_ABI = ABIS.NTD_TOKEN; // Note: Company tokens verify standard ERC20 + Compliance, assumed compatible ABI
+    const TOKEN_ABI = ABIS.NTD_TOKEN; // Info: (20260129 - Tzuhan) Company tokens verify standard ERC20 + Compliance, assumed compatible ABI
 
     const handleExecute = async (action: 'MINT' | 'BURN' | 'FREEZE' | 'UNFREEZE' | 'TRANSFER' | 'USER_TRANSFER') => {
-        if (!adminUser) return alert('請先登入 Admin 錢包');
+        if (!adminUser) return showAlert('Error', '請先登入 Admin 錢包', () => { });
 
-        // Basic Validation
-        if (!tokenAddress) return alert('Token Address is required');
+        // Info: (20260129 - Tzuhan) Basic Validation
+        if (!tokenAddress) return showAlert('Error', 'Token Address is required', () => { });
 
         setIsLoading(true);
         setStatusMessage('Processing...');
@@ -91,14 +91,12 @@ export default function TokenOperations({
                 res = await mintToAddress(tokenAddress, targetAddress, Number(amount));
 
                 if (!res.success && res.message.includes('Identity')) {
-                    // ... Identity Logic (Kept mostly same, using tokenAddress)
+                    // Info: (20260129 - Tzuhan) Identity Logic (Kept mostly same, using tokenAddress)
                     setIsLoading(false);
-                    showConfirm('Identity Required', '鑄造失敗，該用戶可能尚未註冊 Identity。是否嘗試立即註冊該用戶？', async () => {
+                    showAlert('Identity Required', '鑄造失敗，該用戶可能尚未註冊 Identity。是否嘗試立即註冊該用戶？', async () => {
                         setIsLoading(true);
                         setStatusMessage('Registering User Identity...');
-                        const regResult = await registerUser(tokenAddress, targetAddress); // Note: registerUser needs to support token param if logic depends on it
-                        // Actually registerUser in token.service uses NTD specific logic? Let's check. 
-                        // Assuming registerUser registers Identity in the common Registry. Token addr just for context?
+                        const regResult = await registerUser(tokenAddress, targetAddress); // Info: (20260129 - Tzuhan) registerUser needs to support token param if logic depends on it
 
                         if (regResult.success) {
                             setStatusMessage('Identity Registered. Retrying Mint...');
@@ -106,16 +104,16 @@ export default function TokenOperations({
                             // ... handle retry result
                             if (retryResult.success) {
                                 setStatusMessage(`Success: ${retryResult.message}`);
-                                alert('操作成功！\n' + retryResult.message);
+                                showAlert('Success', '操作成功！\n' + retryResult.message, () => { });
                                 setAmount('');
                                 checkBalance();
                             } else {
                                 setStatusMessage(`Retry Failed: ${retryResult.message}`);
-                                alert('重試失敗: ' + retryResult.message);
+                                showAlert('Error', '重試失敗: ' + retryResult.message, () => { });
                             }
                         } else {
                             setStatusMessage(`Registration Failed: ${regResult.message}`);
-                            alert('註冊失敗: ' + regResult.message);
+                            showAlert('Error', '註冊失敗: ' + regResult.message, () => { });
                         }
                         setIsLoading(false);
                     });
@@ -134,21 +132,21 @@ export default function TokenOperations({
                 if (!sourceAddress || !targetAddress || !amount) return;
                 res = await forcedTransfer(tokenAddress, sourceAddress, targetAddress, Number(amount));
             } else if (action === 'USER_TRANSFER') {
-                if (!adminUser || !adminUser.address || !adminUser.pubKeyX || !adminUser.pubKeyY) return alert('User not fully logged in or missing Passkey');
+                if (!adminUser || !adminUser.address || !adminUser.pubKeyX || !adminUser.pubKeyY) return showAlert('Error', 'User not fully logged in or missing Passkey', () => { });
                 if (!targetAddress || !amount) return;
 
                 setStatusMessage('Building UserOperation...');
                 const amountWei = (Number(amount) * 10 ** 18).toString();
-                // Note: buildTransferUserOp needs to support Token Address too.
-                // Currently it hardcodes NTD inside! I need to update buildTransferUserOp as well.
+                // Info: (20260129 - Tzuhan) buildTransferUserOp needs to support Token Address too.
+                // Info: (20260129 - Tzuhan) Currently it hardcodes NTD inside! I need to update buildTransferUserOp as well.
                 const userOp = await buildTransferUserOp(adminUser.address as `0x${string}`, targetAddress as `0x${string}`, amountWei, tokenAddress as `0x${string}`);
 
 
-                // 1. Get UserOp Hash (Challenge)
+                // Info: (20260129 - Tzuhan) 1. Get UserOp Hash (Challenge)
                 setStatusMessage('Calculating UserOp Hash...');
                 const entryPointAbi = ABIS.ENTRY_POINT;
 
-                // Info: Convert JSON strings to BigInts for viem contract call
+                // Info: (20260129 - Tzuhan) Convert JSON strings to BigInts for viem contract call
                 const userOpStruct = {
                     sender: userOp.sender as `0x${string}`,
                     nonce: BigInt(userOp.nonce),
@@ -170,7 +168,7 @@ export default function TokenOperations({
                     args: [userOpStruct]
                 }) as `0x${string}`;
 
-                // 2. Sign with FIDO2
+                // Info: (20260129 - Tzuhan) 2. Sign with FIDO2
                 setStatusMessage('Please sign with Passkey...');
                 const challengeBase64 = hexToBase64Url(userOpHash);
 
@@ -180,7 +178,7 @@ export default function TokenOperations({
                     timeout: 60000,
                 });
 
-                // 3. Encode Signature
+                // Info: (20260129 - Tzuhan) 3. Encode Signature
                 const signature = encodeWebAuthnSignature(
                     authentication,
                     BigInt(adminUser.pubKeyX),
@@ -188,7 +186,7 @@ export default function TokenOperations({
                 );
                 userOp.signature = signature;
 
-                // 4. Send to Bundler
+                // Info: (20260129 - Tzuhan) 4. Send to Bundler
                 setStatusMessage('Sending to Bundler...');
                 const bundleRes = await sendUserOpToBundler(userOp, CONTRACT_ADDRESSES.ENTRY_POINT);
 
@@ -223,20 +221,18 @@ export default function TokenOperations({
 
             if (res?.success) {
                 setStatusMessage(`Success: ${res.message}`);
-                // alert('操作成功！\n' + res.message); // Disabling alert for USER_TRANSFER success to show UI instead
-                if (action !== 'USER_TRANSFER') alert('操作成功！\n' + res.message);
+                if (action !== 'USER_TRANSFER') showAlert('Success', '操作成功！\n' + res.message, () => { });
                 setAmount('');
                 if (['MINT', 'BURN', 'FREEZE', 'UNFREEZE'].includes(action)) checkBalance();
             } else {
                 setStatusMessage(`Failed: ${res?.message}`);
-                alert('操作失敗: ' + res?.message);
+                showAlert('Error', '操作失敗: ' + res?.message, () => { });
             }
 
         } catch (e) {
             console.error(e);
             setStatusMessage(`Error: ${(e as Error).message}`);
-            // alert(`操作失敗: ${(e as Error).message}`); // Disabling alert for USER_TRANSFER error to show UI instead
-            if (action !== 'USER_TRANSFER') alert(`操作失敗: ${(e as Error).message}`);
+            if (action !== 'USER_TRANSFER') showAlert('Error', `操作失敗: ${(e as Error).message}`, () => { });
         } finally {
             setIsLoading(false);
         }
@@ -264,7 +260,7 @@ export default function TokenOperations({
         } catch (e) {
             console.error(e);
             setBalance('Error');
-            setFrozenBalance('Error'); // Standard ERC20 might fail getFrozenTokens
+            setFrozenBalance('Error'); // Info: (20260129 - Tzuhan) Standard ERC20 might fail getFrozenTokens
         }
     }
 
@@ -296,11 +292,12 @@ export default function TokenOperations({
 
             <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
 
-                {/* Global Token Selection */}
+                {/* Info: (20260129 - Tzuhan) Global Token Selection */}
                 <div className="mb-6">
                     <label htmlFor="token-ops-token-address" className="mb-1 block text-xs font-medium text-slate-400">Token Address</label>
                     <input
                         id="token-ops-token-address"
+                        aria-label="Token Address"
                         placeholder="Token Address (0x...)"
                         value={tokenAddress}
                         onChange={(e) => setTokenAddress(e.target.value)}
@@ -440,6 +437,7 @@ export default function TokenOperations({
                         <label htmlFor="token-ops-transfer-from" className="sr-only">From Address</label>
                         <input
                             id="token-ops-transfer-from"
+                            aria-label="From Address"
                             placeholder="From Address (0x...)"
                             value={sourceAddress}
                             onChange={(e) => setSourceAddress(e.target.value)}
@@ -449,6 +447,7 @@ export default function TokenOperations({
                         <label htmlFor="token-ops-transfer-to" className="sr-only">To Address</label>
                         <input
                             id="token-ops-transfer-to"
+                            aria-label="To Address"
                             placeholder="To Address (0x...)"
                             value={targetAddress}
                             onChange={(e) => setTargetAddress(e.target.value)}
@@ -458,6 +457,7 @@ export default function TokenOperations({
                         <label htmlFor="token-ops-transfer-amount" className="sr-only">Amount</label>
                         <input
                             id="token-ops-transfer-amount"
+                            aria-label="Amount"
                             type="number"
                             placeholder="Amount"
                             value={amount}
@@ -483,6 +483,7 @@ export default function TokenOperations({
                         <label htmlFor="token-ops-user-to" className="sr-only">To Address</label>
                         <input
                             id="token-ops-user-to"
+                            aria-label="To Address"
                             placeholder="To Address (0x...)"
                             value={targetAddress}
                             onChange={(e) => setTargetAddress(e.target.value)}
@@ -492,6 +493,7 @@ export default function TokenOperations({
                         <label htmlFor="token-ops-user-amount" className="sr-only">Amount</label>
                         <input
                             id="token-ops-user-amount"
+                            aria-label="Amount"
                             type="number"
                             placeholder="Amount"
                             value={amount}

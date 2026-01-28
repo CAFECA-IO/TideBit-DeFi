@@ -234,12 +234,12 @@ export async function registerUser(tokenAddress: string, userAddress: string): P
   }
 }
 
-// Info: (20260127 - Admin) 強制轉帳
+// Info: (20260128 - Tzuhan) 強制轉帳
 export async function forcedTransfer(tokenAddress: string, from: string, to: string, amount: number): Promise<ActionResponse> {
   try {
     const validFrom = getAddress(from);
     const validTo = getAddress(to);
-    const amountBigInt = BigInt(Math.floor(amount * 10 ** 18)); // Ensure integer
+    const amountBigInt = BigInt(Math.floor(amount * 10 ** 18)); // Info: (20260128 - Tzuhan) Ensure integer
 
     const tokenAbi = parseAbi([
       'function forcedTransfer(address, address, uint256) external returns (bool)',
@@ -258,7 +258,7 @@ export async function forcedTransfer(tokenAddress: string, from: string, to: str
     return { success: true, message: `強制轉帳成功: ${tx}`, data: { tx } };
   } catch (error) {
     console.error('強制轉帳失敗:', error);
-    // Info: (20260128) Error Analysis
+    // Info: (20260128 - Tzuhan) Error Analysis
     let reason = (error as Error).message;
     if (reason.includes('Identity')) reason = 'Identity Invalid or Missing';
     else if (reason.includes('Compliance')) reason = 'Compliance Check Failed (e.g. Limit exceeded, Blacklisted)';
@@ -268,7 +268,7 @@ export async function forcedTransfer(tokenAddress: string, from: string, to: str
   }
 }
 
-// Info: (20260127 - Admin) 銷毀代幣
+// Info: (20260128 - Tzuhan) 銷毀代幣
 export async function burn(tokenAddress: string, from: string, amount: number): Promise<ActionResponse> {
   try {
     const validFrom = getAddress(from);
@@ -293,7 +293,7 @@ export async function burn(tokenAddress: string, from: string, amount: number): 
   }
 }
 
-// Info: (20260127 - Admin) 凍結/解凍代幣
+// Info: (20260128 - Tzuhan) 凍結/解凍代幣
 export async function freeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
   return toggleFreeze(tokenAddress, target, amount, true);
 }
@@ -327,7 +327,7 @@ async function toggleFreeze(tokenAddress: string, target: string, amount: number
   }
 }
 
-// Info: (20260127 - Admin) 暫停/恢復系統
+// Info: (20260128 - Tzuhan) 暫停/恢復系統
 export async function pause(tokenAddress: string): Promise<ActionResponse> {
   return togglePause(tokenAddress, true);
 }

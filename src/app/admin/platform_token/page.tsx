@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import AdminDashboardOverview from '@/components/admin/dashboard_overview';
 import AdminUserManagement from '@/components/admin/user_management';
 import PlatformTokenUserList from '@/components/admin/platform_token_user_list';

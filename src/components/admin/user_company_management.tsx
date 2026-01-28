@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getAdminCompanies, deployCompanyToken, deployUserIdentity, type IAdminCompany } from '@/services/admin.service';
 import { Button } from '@/components/common/button';
+import ConfirmModal from '@/components/common/confirm_modal';
 import { FiCopy, FiActivity, FiUserCheck, FiAlertCircle } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 
@@ -14,6 +15,34 @@ export default function UserCompanyManagement() {
     const [totalPages, setTotalPages] = useState(1);
     const [deploying, setDeploying] = useState<string | null>(null);
 
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showAlert = (title: string, message: string, onConfirm: () => void) => {
+        setModalConfig({
+            isOpen: true,
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                closeModal();
+            }
+        });
+    };
+
     const fetchCompanies = useCallback(async () => {
         setLoading(true);
         try {
@@ -22,7 +51,6 @@ export default function UserCompanyManagement() {
             setTotalPages(data.totalPages);
         } catch (error) {
             console.error(error);
-            // alert('Failed to fetch companies'); 
         } finally {
             setLoading(false);
         }
@@ -37,41 +65,41 @@ export default function UserCompanyManagement() {
     }, [fetchCompanies]);
 
     const handleDeployIdentity = async (userAddress: string) => {
-        if (!confirm(`Deploy Identity for ${userAddress}?`)) return;
-        setDeploying(userAddress);
-        try {
-            const res = await deployUserIdentity(userAddress);
-            if (res && res.success) {
-                alert('Identity Deployed Successfully!');
-                fetchCompanies();
-            } else {
-                alert(`Deployment Failed: ${res?.message}`);
+        showAlert('Confirm Deployment', `Deploy Identity for ${userAddress}?`, async () => {
+            setDeploying(userAddress);
+            try {
+                const res = await deployUserIdentity(userAddress);
+                if (res && res.success) {
+                    showAlert('Success', 'Identity Deployed Successfully!', () => { fetchCompanies(); });
+                } else {
+                    showAlert('Error', `Deployment Failed: ${res?.message}`, () => { });
+                }
+            } catch (error) {
+                console.error(error);
+                showAlert('Error', 'An unexpected error occurred.', () => { });
+            } finally {
+                setDeploying(null);
             }
-        } catch (error) {
-            console.error(error);
-            alert('An unexpected error occurred.');
-        } finally {
-            setDeploying(null);
-        }
+        });
     };
 
     const handleDeployToken = async (companyId: string) => {
-        if (!confirm('Are you sure you want to deploy a token for this company?')) return;
-        setDeploying(companyId);
-        try {
-            const res = await deployCompanyToken(companyId);
-            if (res.success) {
-                alert('Token Deployed Successfully!');
-                fetchCompanies();
-            } else {
-                alert(`Deployment Failed: ${res.message}`);
+        showAlert('Confirm Deployment', 'Are you sure you want to deploy a token for this company?', async () => {
+            setDeploying(companyId);
+            try {
+                const res = await deployCompanyToken(companyId);
+                if (res.success) {
+                    showAlert('Success', 'Token Deployed Successfully!', () => { fetchCompanies(); });
+                } else {
+                    showAlert('Error', `Deployment Failed: ${res.message}`, () => { });
+                }
+            } catch (error) {
+                console.error(error);
+                showAlert('Error', 'An unexpected error occurred.', () => { });
+            } finally {
+                setDeploying(null);
             }
-        } catch (error) {
-            console.error(error);
-            alert('An unexpected error occurred.');
-        } finally {
-            setDeploying(null);
-        }
+        });
     };
 
     const navigateToOperations = (tokenAddress: string) => {
@@ -87,6 +115,13 @@ export default function UserCompanyManagement() {
 
     return (
         <div className="space-y-6">
+            <ConfirmModal
+                isOpen={modalConfig.isOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={closeModal}
+            />
             <h2 className="text-xl font-bold text-white">Registered Companies</h2>
 
             <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900">
@@ -111,7 +146,7 @@ export default function UserCompanyManagement() {
                         ) : (
                             companies.map((comp) => (
                                 <tr key={comp.id} className="bg-slate-950/50 hover:bg-slate-900">
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4" aria-label="Company Details">
                                         <div className="flex flex-col">
                                             <span className="text-lg font-bold text-white">{comp.name}</span>
                                             <span className="text-xs text-slate-500">{comp.legalName}</span>
@@ -131,7 +166,7 @@ export default function UserCompanyManagement() {
                                                     <span title={comp.tokenAddress}>
                                                         {comp.tokenAddress.slice(0, 6)}...{comp.tokenAddress.slice(-4)}
                                                     </span>
-                                                    <button onClick={() => handleCopy(comp.tokenAddress!)} className="hover:text-white"><FiCopy size={10} /></button>
+                                                    <button onClick={() => handleCopy(comp.tokenAddress!)} className="hover:text-white" aria-label="Copy Address"><span className="sr-only">Copy Address</span><FiCopy size={10} /></button>
                                                 </div>
                                             </div>
                                         ) : comp.tokenName ? (
@@ -182,7 +217,7 @@ export default function UserCompanyManagement() {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex flex-col items-end gap-2">
-                                            {/* Action: Deploy Token */}
+                                            {/* Info: (20260128 - Tzuhan) Action: Deploy Token */}
                                             {!comp.tokenAddress && comp.tokenName && (
                                                 <Button
                                                     size="sm"
@@ -194,7 +229,7 @@ export default function UserCompanyManagement() {
                                                 </Button>
                                             )}
 
-                                            {/* Action: Token Operations */}
+                                            {/* Info: (20260128 - Tzuhan) Action: Token Operations */}
                                             {comp.tokenAddress && (
                                                 <Button
                                                     size="sm"

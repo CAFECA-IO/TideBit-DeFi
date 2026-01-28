@@ -8,7 +8,7 @@ import COMPLIANCE_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/compli
 import IDENTITY_ARTIFACT from '@erc3643org/erc-3643/artifacts/@onchain-id/solidity/contracts/Identity.sol/Identity.json';
 import TOKEN_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json';
 
-// Info: Blockchain Setup
+// Info: (20260127 - Tzuhan) Blockchain Setup
 const chainId = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
 const targetChain = defineChain({
     id: chainId,
@@ -17,20 +17,22 @@ const targetChain = defineChain({
     rpcUrls: { default: { http: [process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com'] } },
 });
 
-// Info: Initialize Clients
+// Info: (20260127 - Tzuhan) Initialize Clients
 const account = privateKeyToAccount(process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`);
 const client = createPublicClient({ chain: targetChain, transport: http() });
 const wallet = createWalletClient({ account, chain: targetChain, transport: http() });
 
-// Info: Response Type
+// Info: (20260127 - Tzuhan) Response Type
 type ActionResponse = {
     success: boolean;
     message: string;
     data?: unknown;
 };
 
-// Info: Deploy Company Token
-// This function deploys a new Token and Compliance, but links to an EXISTING Identity Registry system.
+/**
+ * Info: (20260127 - Tzuhan) Deploy Company Token
+ * This function deploys a new Token and Compliance, but links to an EXISTING Identity Registry system.
+ */
 export async function deployCompanyToken(
     name: string,
     symbol: string,
@@ -41,11 +43,14 @@ export async function deployCompanyToken(
         console.log(`--- Starting Company Token Deployment: ${name} (${symbol}) ---`);
         console.log(`Using Shared Identity Registry: ${identityRegistry}`);
 
-        // Validate addresses
+        // Info: (20260127 - Tzuhan) Validate addresses
         const IR_ADDRESS = getAddress(identityRegistry);
 
-        // 1. Deploy ModularCompliance (One per token usually, or could be shared if logic is identical, but safer to have one per token for modular rules)
-        // We will deploy a new one for flexibility.
+        /**
+         * Info: (20260127 - Tzuhan) 1. Deploy ModularCompliance
+         * One per token usually, or could be shared if logic is identical, but safer to have one per token for modular rules
+         * We will deploy a new one for flexibility.
+         */
         const compHash = await wallet.deployContract({
             abi: COMPLIANCE_ARTIFACT.abi,
             bytecode: COMPLIANCE_ARTIFACT.bytecode as `0x${string}`,
@@ -55,8 +60,10 @@ export async function deployCompanyToken(
         await wallet.writeContract({ address: COMP_ADDRESS, abi: COMPLIANCE_ARTIFACT.abi, functionName: 'init', args: [] });
         console.log(`ModularCompliance deployed at: ${COMP_ADDRESS}`);
 
-        // 2. Deploy Issuer Identity
-        // The issuer is the entity controlling this token. We'll make the platform admin the owner for now.
+        /**
+         * Info: (20260127 - Tzuhan) 2. Deploy Issuer Identity
+         * The issuer is the entity controlling this token. We'll make the platform admin the owner for now.
+         */
         const ioiHash = await wallet.deployContract({
             abi: IDENTITY_ARTIFACT.abi,
             bytecode: IDENTITY_ARTIFACT.bytecode as `0x${string}`,
@@ -66,7 +73,7 @@ export async function deployCompanyToken(
         const IOI_ADDRESS = ioiReceipt.contractAddress!;
         console.log(`Issuer Identity deployed at: ${IOI_ADDRESS}`);
 
-        // 3. Deploy Token
+        // Info: (20260127 - Tzuhan) 3. Deploy Token
         const tokenHash = await wallet.deployContract({
             abi: TOKEN_ARTIFACT.abi,
             bytecode: TOKEN_ARTIFACT.bytecode as `0x${string}`,
@@ -82,7 +89,7 @@ export async function deployCompanyToken(
             'function batchMint(address[] _toList, uint256[] _amounts) external'
         ]);
 
-        // 4. Initialize Token using the SHARED Identity Registry
+        // Info: (20260127 - Tzuhan) 4. Initialize Token using the SHARED Identity Registry
         await wallet.writeContract({
             address: TOKEN_ADDRESS,
             abi: TOKEN_ABI,
@@ -90,11 +97,11 @@ export async function deployCompanyToken(
             args: [IR_ADDRESS, COMP_ADDRESS, name, symbol, decimals, IOI_ADDRESS]
         });
 
-        // 5. Bind Compliance to Token
+        // Info: (20260127 - Tzuhan) 5. Bind Compliance to Token
         const COMPLIANCE_ABI = parseAbi(['function bindToken(address) external']);
         await wallet.writeContract({ address: COMP_ADDRESS, abi: COMPLIANCE_ABI, functionName: 'bindToken', args: [TOKEN_ADDRESS] });
 
-        // 6. Add Platform Admin as Agent to Token (to allow minting/burning if logic requires agent)
+        // Info: (20260127 - Tzuhan) 6. Add Platform Admin as Agent to Token (to allow minting/burning if logic requires agent)
         await wallet.writeContract({ address: TOKEN_ADDRESS, abi: TOKEN_ABI, functionName: 'addAgent', args: [account.address] });
 
         return {
@@ -104,7 +111,7 @@ export async function deployCompanyToken(
                 token: TOKEN_ADDRESS,
                 compliance: COMP_ADDRESS,
                 issuerIdentity: IOI_ADDRESS,
-                identityRegistry: IR_ADDRESS // Return the shared one
+                identityRegistry: IR_ADDRESS // Info: (20260127 - Tzuhan) Return the shared one
             }
         };
     } catch (error) {
@@ -113,13 +120,13 @@ export async function deployCompanyToken(
     }
 }
 
-// Info: Mint Token
+// Info: (20260127 - Tzuhan) Mint Token
 export async function mintToAddress(tokenAddress: string, to: string, amount: number): Promise<ActionResponse> {
     try {
         const validTo = getAddress(to);
-        const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18); // Assuming 18 always for now, can improve later
-        // NOTE: This assumes the user 'to' already has a valid identity in the Shared Identity Registry.
+        const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18); // Info: (20260127 - Tzuhan) Assuming 18 always for now, can improve later
 
+        // Info: (20260127 - Tzuhan) This assumes the user 'to' already has a valid identity in the Shared Identity Registry.
         const tokenAbi = parseAbi([
             'function batchMint(address[], uint256[]) external',
         ]);
@@ -139,7 +146,7 @@ export async function mintToAddress(tokenAddress: string, to: string, amount: nu
     }
 }
 
-// Info: Burn Token
+// Info: (20260127 - Tzuhan) Burn Token
 export async function burn(tokenAddress: string, from: string, amount: number): Promise<ActionResponse> {
     try {
         const validFrom = getAddress(from);
@@ -161,7 +168,7 @@ export async function burn(tokenAddress: string, from: string, amount: number): 
     }
 }
 
-// Info: Freeze/Unfreeze
+// Info: (20260127 - Tzuhan) Freeze/Unfreeze
 export async function freeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
     return toggleFreeze(tokenAddress, target, amount, true);
 }
@@ -191,7 +198,7 @@ async function toggleFreeze(tokenAddress: string, target: string, amount: number
     }
 }
 
-// Info: Pause/Unpause
+// Info: (20260127 - Tzuhan) Pause/Unpause
 export async function pause(tokenAddress: string): Promise<ActionResponse> {
     return togglePause(tokenAddress, true);
 }
@@ -219,9 +226,11 @@ async function togglePause(tokenAddress: string, isPause: boolean): Promise<Acti
     }
 }
 
-// Info: Register User to Shared Registry (Wrapper)
-// This actually registers the user to the Identity Registry associated with the token.
-// Since we are using a shared registry, this updates the global registry state.
+/**
+ * Info: (20260127 - Tzuhan) Register User to Shared Registry (Wrapper)
+ * This actually registers the user to the Identity Registry associated with the token.
+ * Since we are using a shared registry, this updates the global registry state.
+ */
 export async function registerUser(tokenAddress: string, userAddress: string): Promise<ActionResponse> {
     try {
         const tokenAbi = parseAbi(['function identityRegistry() view returns (address)']);
@@ -231,7 +240,7 @@ export async function registerUser(tokenAddress: string, userAddress: string): P
             functionName: 'identityRegistry'
         });
 
-        // Deploy User Identity
+        // Info: (20260127 - Tzuhan) Deploy User Identity
         const uoiHash = await wallet.deployContract({
             abi: IDENTITY_ARTIFACT.abi,
             bytecode: IDENTITY_ARTIFACT.bytecode as `0x${string}`,
@@ -240,15 +249,17 @@ export async function registerUser(tokenAddress: string, userAddress: string): P
         const uoiReceipt = await client.waitForTransactionReceipt({ hash: uoiHash });
         const userIdentityAddress = uoiReceipt.contractAddress!;
 
-        // Register
-        // Note: The caller (ISUNCOIN_PRIVATE_KEY account) must be an Agent of the Registry to do this.
-        // If the Shared Registry was deployed by the same account, it should be fine.
+        /**
+         * Info: (20260127 - Tzuhan) Register
+         * The caller (ISUNCOIN_PRIVATE_KEY account) must be an Agent of the Registry to do this.
+         * If the Shared Registry was deployed by the same account, it should be fine.
+         */
         const regAbi = parseAbi(['function registerIdentity(address, address, uint16) external']);
         const tx = await wallet.writeContract({
             address: registryAddress as `0x${string}`,
             abi: regAbi,
             functionName: 'registerIdentity',
-            args: [userAddress as `0x${string}`, userIdentityAddress, 158] // 158 = TW
+            args: [userAddress as `0x${string}`, userIdentityAddress, 158] // Info: (20260127 - Tzuhan) 158 = TW
         });
 
         await client.waitForTransactionReceipt({ hash: tx });

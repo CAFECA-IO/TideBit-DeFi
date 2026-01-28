@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
-import { walletClient, account, publicClient } from '@/lib/viem';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';

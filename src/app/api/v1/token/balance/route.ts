@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
 import { parseAbi, formatEther, type Address } from 'viem';
-import { NTD_TOKEN_ADDRESS, publicClient } from '@/lib/viem';
+import { NTD_TOKEN_ADDRESS, publicClient } from '@/lib/viem_public';
 
 // Info: (20260127 - Tzuhan) --- 驗證 Schema ---
 const balanceSchema = z.object({

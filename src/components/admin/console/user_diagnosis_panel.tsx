@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { isAddress, keccak256, encodeAbiParameters, parseAbiParameters } from 'viem';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/contexts/auth_context';
@@ -40,7 +40,7 @@ export default function UserDiagnosisPanel({ onStatusChange }: IProps) {
     onStatusChange('ANALYZING', inputAddress);
 
     try {
-      // 1. 檢查 Registry 中是否有紀錄
+      // Info: (20260127 - Tzuhan) 1. 檢查 Registry 中是否有紀錄
       const identityAddr = (await publicClient.readContract({
         address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
         abi: ABIS.IDENTITY_REGISTRY,
@@ -51,7 +51,7 @@ export default function UserDiagnosisPanel({ onStatusChange }: IProps) {
       const isLinked =
         identityAddr && identityAddr !== '0x0000000000000000000000000000000000000000';
 
-      // [關鍵修正點]：如果是新用戶 (0x0 地址)，必須立刻中斷，不能執行後續的合約呼叫
+      // Info: (20260127 - Tzuhan)[關鍵修正點]：如果是新用戶 (0x0 地址)，必須立刻中斷，不能執行後續的合約呼叫
       if (!isLinked) {
         console.log('偵測到新用戶，尚未連結身分合約');
         onStatusChange('UNLINKED', inputAddress);
@@ -59,19 +59,19 @@ export default function UserDiagnosisPanel({ onStatusChange }: IProps) {
         return;
       }
 
-      // 2. 檢查 Relayer 是否受信任 (針對 Topic 101)
+      // Info: (20260127 - Tzuhan) 2. 檢查 Relayer 是否受信任 (針對 Topic 101)
       const relayerAddr = '0x5eBeE3dbDCED95DC901e2936B1476b961C32Fa92';
-      const topic = BigInt(101); // 已校正為 101
+      const topic = BigInt(101); // Info: (20260127 - Tzuhan) 已校正為 101
 
-      // 3. 檢查 Admin 對該 Identity 的管理權限 (避免 Zombie Contract)
+      // Info: (20260127 - Tzuhan) 3. 檢查 Admin 對該 Identity 的管理權限 (避免 Zombie Contract)
       const relayerKey = keccak256(
         encodeAbiParameters(parseAbiParameters('address'), [relayerAddr as `0x${string}`])
       );
       const hasPermission = (await publicClient.readContract({
-        address: identityAddr, // 此時 identityAddr 確定不是 0x0
+        address: identityAddr, // Info: (20260127 - Tzuhan) 此時 identityAddr 確定不是 0x0
         abi: ABIS.IDENTITY,
         functionName: 'keyHasPurpose',
-        args: [relayerKey, BigInt(1)], // Purpose 1 = MANAGEMENT
+        args: [relayerKey, BigInt(1)], // Info: (20260127 - Tzuhan) Purpose 1 = MANAGEMENT
       })) as boolean;
 
       if (!hasPermission) {
@@ -104,7 +104,7 @@ export default function UserDiagnosisPanel({ onStatusChange }: IProps) {
         return;
       }
 
-      // 4. 檢查最終驗證狀態
+      // Info: (20260127 - Tzuhan) 4. 檢查最終驗證狀態
       const isVerified = (await publicClient.readContract({
         address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
         abi: ABIS.IDENTITY_REGISTRY,

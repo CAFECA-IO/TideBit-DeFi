@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { publicClient } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { parseAbi } from 'viem'; // Info: (20260127 - Tzuhan) 引入 parseAbi 用於臨時定義 Compliance 介面
 
@@ -14,6 +14,8 @@ const COMPLIANCE_ABI = parseAbi([
   'function getModules() external view returns (address[])',
   'function getTokenBound() external view returns (address)',
 ]);
+
+import ConfirmModal from '@/components/common/confirm_modal';
 
 export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   const [txHash, setTxHash] = useState('');
@@ -29,6 +31,26 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   const [installedModules, setInstalledModules] = useState<string[]>([]);
 
   const [loading, setLoading] = useState(false);
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isAlert: true,
+  });
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      isAlert: true,
+    });
+  };
 
   useEffect(() => {
     if (defaultAddress) setCheckAddr(defaultAddress);
@@ -103,7 +125,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
       }
     } catch (err) {
       console.error(err);
-      alert('讀取合約失敗，請確認 ABI 設定與網路連線');
+      showAlert('錯誤', '讀取合約失敗，請確認 ABI 設定與網路連線');
     } finally {
       setLoading(false);
     }
@@ -232,6 +254,16 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        confirmText="OK"
+        isAlert={modal.isAlert}
+      />
     </div>
   );
 }

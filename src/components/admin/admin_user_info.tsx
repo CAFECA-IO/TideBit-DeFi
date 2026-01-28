@@ -24,7 +24,7 @@ export default function AdminUserInfo() {
   return (
     <div className="mb-8 rounded-lg border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
       <div className="flex flex-col gap-6 md:flex-row md:items-start">
-        {/* User Profile Section */}
+        {/* Info: (20260127 - Tzuhan) User Profile Section */}
         <div className="flex-1 space-y-4">
           <div className="flex items-center gap-4">
             <div className="flex size-16 items-center justify-center rounded-full bg-indigo-500/20 text-2xl font-bold text-indigo-400">
@@ -47,7 +47,7 @@ export default function AdminUserInfo() {
           </div>
         </div>
 
-        {/* Companies Section */}
+        {/* Info: (20260127 - Tzuhan) Companies Section */}
         <div className="flex-1 border-t border-slate-800 pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
           <h3 className="mb-3 text-sm font-semibold text-slate-400">Associated Companies</h3>
           {loading ? (

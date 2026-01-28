@@ -1,4 +1,4 @@
-import { publicClient } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { parseAbiItem } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
 import type {
@@ -34,7 +34,7 @@ interface IParsedPublicKey {
 }
 
 class WebAuthnService {
-  constructor(private readonly repo: IWebAuthnRepository) {}
+  constructor(private readonly repo: IWebAuthnRepository) { }
 
   public async generateLoginOptions(address: string): Promise<string> {
     const user = await this.ensureUserSynced(address);

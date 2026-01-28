@@ -45,7 +45,7 @@ export default function UserCompanyManagement() {
             const res = await deployCompanyToken(companyId);
             if (res.success) {
                 alert('Token Deployed Successfully!');
-                fetchUsers(); // Refresh list
+                fetchUsers(); // Info: (20260127 - Tzuhan) Refresh list
             } else {
                 alert(`Deployment Failed: ${res.message}`);
             }
@@ -61,7 +61,7 @@ export default function UserCompanyManagement() {
         setMintModal({
             visible: true,
             companyId,
-            recipient: userAddress, // Default to owner address
+            recipient: userAddress, // Info: (20260127 - Tzuhan) Default to owner address
             amount: 0,
         });
     };
@@ -73,7 +73,7 @@ export default function UserCompanyManagement() {
             if (res.success) {
                 alert('Tokens Minted Successfully!');
                 setMintModal(prev => ({ ...prev, visible: false }));
-                fetchUsers();
+                fetchUsers(); // Info: (20260127 - Tzuhan) Refresh list
             } else {
                 alert(`Minting Failed: ${res.message}`);
             }
@@ -182,7 +182,7 @@ export default function UserCompanyManagement() {
                 </table>
             </div>
 
-            {/* Pagination */}
+            {/* Info: (20260127 - Tzuhan) Pagination */}
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
                 <div className="flex gap-2">
@@ -203,14 +203,14 @@ export default function UserCompanyManagement() {
                 </div>
             </div>
 
-            {/* Info: (20260127) Mint Modal */}
+            {/* Info: (20260127 - Tzuhan) Mint Modal */}
             {mintModal.visible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                     <div className="w-full max-w-md rounded-lg border border-slate-700 bg-slate-900 p-6 shadow-xl">
                         <h3 className="mb-4 text-lg font-bold text-white">Mint Company Token</h3>
                         <div className="space-y-4">
                             <div>
-    
+
                                 <input
                                     id="recipient-address"
                                     aria-label="Recipient Address"

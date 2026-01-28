@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { account, KYC_TOPIC_ID, publicClient } from '@/lib/viem';
+import { Address } from 'viem';
+import { account } from '@/lib/viem';
+import { KYC_TOPIC_ID, publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
-import { Address } from 'viem';
+import ConfirmModal from '@/components/common/confirm_modal';
 
 const RelayerPermissionPanel: React.FC = () => {
   const [relayerAddress, setRelayerAddress] = useState<Address>(account?.address as Address);
@@ -13,10 +15,30 @@ const RelayerPermissionPanel: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ isTrusted: boolean; hasTopic: boolean } | null>(null);
 
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isAlert: true,
+  });
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      isAlert: true,
+    });
+  };
+
   const handleCheck = async () => {
     setLoading(true);
     try {
-      // 直接從配置讀取，不再呼叫 IDENTITY_REGISTRY.trustedIssuersRegistry()
+      // Info: (20260128 - Tzuhan) 直接從配置讀取，不再呼叫 IDENTITY_REGISTRY.trustedIssuersRegistry()
       const tirAddress = CONTRACT_ADDRESSES.TRUSTED_ISSUERS_REGISTRY;
 
       const [isTrusted, hasTopic] = await Promise.all([
@@ -37,7 +59,7 @@ const RelayerPermissionPanel: React.FC = () => {
       setData({ isTrusted: isTrusted as boolean, hasTopic: hasTopic as boolean });
     } catch (error) {
       console.error('Check Permission Error:', error);
-      alert('檢查失敗，請確認 TrustedIssuersRegistry 地址是否正確。');
+      showAlert('檢查失敗', '請確認 TrustedIssuersRegistry 地址是否正確。');
     } finally {
       setLoading(false);
     }
@@ -53,14 +75,14 @@ const RelayerPermissionPanel: React.FC = () => {
       });
       const result = await res.json();
       if (result.success) {
-        alert('權限補足成功！');
-        // 重新執行檢查以更新 UI 狀態
+        showAlert('成功', '權限補足成功！');
+        // Info: (20260128 - Tzuhan) 重新執行檢查以更新 UI 狀態
         // handleCheck();
       } else {
-        alert('修復失敗: ' + result.message);
+        showAlert('修復失敗', result.message);
       }
     } catch {
-      alert('請求出錯');
+      showAlert('錯誤', '請求出錯');
     } finally {
       setFixing(false);
     }
@@ -131,8 +153,17 @@ const RelayerPermissionPanel: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        confirmText="OK"
+        isAlert={modal.isAlert}
+      />
     </div>
   );
 };
-
 export default RelayerPermissionPanel;

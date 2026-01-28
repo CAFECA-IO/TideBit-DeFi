@@ -2,7 +2,8 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
-import { walletClient, publicClient, NTD_TOKEN_ADDRESS } from '@/lib/viem';
+import { publicClient, NTD_TOKEN_ADDRESS } from '@/lib/viem_public';
+import { walletClient } from '@/lib/viem';
 import { parseAbi, keccak256, toBytes } from 'viem';
 
 // Info: (20260123 - Tzuhan) 定義 MINTER_ROLE 的 Hash

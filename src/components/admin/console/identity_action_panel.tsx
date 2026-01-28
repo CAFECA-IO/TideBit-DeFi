@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { DiagnosisStatus } from './user_diagnosis_panel';
-import { KYC_TOPIC_ID, TAIWAN_COUNTRY_CODE } from '@/lib/viem-public';
+import { KYC_TOPIC_ID, TAIWAN_COUNTRY_CODE } from '@/lib/viem_public';
 
 interface IProps {
   status: DiagnosisStatus;
@@ -11,6 +11,8 @@ interface IProps {
   identityAddress?: string;
   onRefresh: () => void;
 }
+
+import ConfirmModal from '@/components/common/confirm_modal';
 
 export default function IdentityActionPanel({
   status,
@@ -21,6 +23,26 @@ export default function IdentityActionPanel({
   const [loading, setLoading] = useState(false);
   const [countryCode, setCountryCode] = useState(`${TAIWAN_COUNTRY_CODE}`); // Info: (20260127 - Tzuhan) 預設台灣國碼
   const [topic, setTopic] = useState(`${KYC_TOPIC_ID}`); // Info: (20260127 - Tzuhan) 根據 deploy.ts 預設為 101
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isAlert: true,
+  });
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      isAlert: true,
+    });
+  };
 
   // Info: (20260127 - Tzuhan) 執行：部署身分合約 + registerIdentity
   const handleDeployAndLink = async () => {
@@ -33,13 +55,13 @@ export default function IdentityActionPanel({
       });
       const data = await res.json();
       if (data.success) {
-        alert('身分合約已部署並成功連結至 Registry！');
+        showAlert('成功', '身分合約已部署並成功連結至 Registry！');
         onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
-        alert('部署失敗: ' + data.message);
+        showAlert('部署失敗', data.message);
       }
     } catch {
-      alert('請求錯誤');
+      showAlert('錯誤', '請求錯誤');
     } finally {
       setLoading(false);
     }
@@ -56,13 +78,13 @@ export default function IdentityActionPanel({
       });
       const data = await res.json();
       if (data.success) {
-        alert('KYC 憑證 (Topic 101) 核發成功！');
+        showAlert('成功', 'KYC 憑證 (Topic 101) 核發成功！');
         onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
-        alert('核發失敗: ' + data.message);
+        showAlert('核發失敗', data.message);
       }
     } catch {
-      alert('請求錯誤');
+      showAlert('錯誤', '請求錯誤');
     } finally {
       setLoading(false);
     }
@@ -72,14 +94,12 @@ export default function IdentityActionPanel({
 
   return (
     <div
-      className={`rounded-xl border p-6 shadow-sm ${
-        status === 'MISSING_CLAIMS' ? 'border-yellow-200 bg-yellow-50' : 'border-red-200 bg-red-50'
-      }`}
+      className={`rounded-xl border p-6 shadow-sm ${status === 'MISSING_CLAIMS' ? 'border-yellow-200 bg-yellow-50' : 'border-red-200 bg-red-50'
+        }`}
     >
       <h2
-        className={`mb-4 text-xl font-bold ${
-          status === 'MISSING_CLAIMS' ? 'text-yellow-800' : 'text-red-800'
-        }`}
+        className={`mb-4 text-xl font-bold ${status === 'MISSING_CLAIMS' ? 'text-yellow-800' : 'text-red-800'
+          }`}
       >
         2. 合規修復行動 (分步操作)
       </h2>
@@ -147,6 +167,16 @@ export default function IdentityActionPanel({
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        confirmText="OK"
+        isAlert={modal.isAlert}
+      />
     </div>
   );
 }

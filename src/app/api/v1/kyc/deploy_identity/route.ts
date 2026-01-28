@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
-import { walletClient, account, publicClient, TAIWAN_COUNTRY_CODE } from '@/lib/viem';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient, TAIWAN_COUNTRY_CODE } from '@/lib/viem_public';
 import { ABIS, CONTRACT_ADDRESSES } from '@/config/contracts';
 import IdentityArtifact from '@/abis/Identity.json';
 import { jsonFail, jsonOk } from '@/lib/utils/response';

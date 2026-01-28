@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { isAddress, Address } from 'viem';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
 
 export type UserStatus =
   | 'IDLE'
   | 'ANALYZING'
-  | 'ZERO_ADDRESS' // Not a wallet
-  | 'NO_IDENTITY' // Valid wallet but no identity
-  | 'UNVERIFIED' // Identity exists but missing claims
-  | 'VERIFIED'; // Fully compliant
+  | 'ZERO_ADDRESS' // Info: (20260127 - Tzuhan) Not a wallet
+  | 'NO_IDENTITY' // Info: (20260127 - Tzuhan) Valid wallet but no identity
+  | 'UNVERIFIED' // Info: (20260127 - Tzuhan) Identity exists but missing claims
+  | 'VERIFIED'; // Info: (20260127 - Tzuhan) Fully compliant
 
 export default function UserManagement() {
   const [inputAddress, setInputAddress] = useState('');
@@ -34,7 +34,7 @@ export default function UserManagement() {
     setIdentityAddress('');
 
     try {
-      // 1. Check if Identity exists
+      // Info: (20260127 - Tzuhan) 1. Check if Identity exists
       const idAddr = await publicClient.readContract({
         address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
         abi: IR_ABI,
@@ -50,7 +50,7 @@ export default function UserManagement() {
 
       setIdentityAddress(idAddr);
 
-      // 2. Check Verification Status
+      // Info: (20260127 - Tzuhan) 2. Check Verification Status
       const isVerified = await publicClient.readContract({
         address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
         abi: IR_ABI,
@@ -64,7 +64,7 @@ export default function UserManagement() {
         return;
       }
 
-      // 3. If unverified, find why (check topics)
+      // Info: (20260127 - Tzuhan) 3. If unverified, find why (check topics)
       setStatus('UNVERIFIED');
     } catch (e) {
       console.error(e);
@@ -110,24 +110,24 @@ export default function UserManagement() {
           </Button>
         </div>
 
-        {/* Status Display */}
+        {/* Info: (20260127 - Tzuhan) Status Display */}
         {status !== 'IDLE' && status !== 'ANALYZING' && (
           <div
             className={`rounded border p-4 ${status === 'VERIFIED'
-                ? 'border-green-800 bg-green-900/20'
-                : status === 'NO_IDENTITY'
-                  ? 'border-red-800 bg-red-900/20'
-                  : 'border-yellow-800 bg-yellow-900/20'
+              ? 'border-green-800 bg-green-900/20'
+              : status === 'NO_IDENTITY'
+                ? 'border-red-800 bg-red-900/20'
+                : 'border-yellow-800 bg-yellow-900/20'
               }`}
           >
             <div className="mb-2 flex items-center gap-2">
               <span className="font-bold text-slate-300">Status:</span>
               <span
                 className={`rounded px-2 py-1 text-xs font-bold ${status === 'VERIFIED'
-                    ? 'bg-green-900 text-green-300'
-                    : status === 'NO_IDENTITY'
-                      ? 'bg-red-900 text-red-300'
-                      : 'bg-yellow-900 text-yellow-300'
+                  ? 'bg-green-900 text-green-300'
+                  : status === 'NO_IDENTITY'
+                    ? 'bg-red-900 text-red-300'
+                    : 'bg-yellow-900 text-yellow-300'
                   }`}
               >
                 {status}
@@ -141,7 +141,7 @@ export default function UserManagement() {
               </div>
             )}
 
-            {/* Actions based on Status */}
+            {/* Info: (20260127 - Tzuhan) Actions based on Status */}
             <div className="mt-4 flex gap-2">
               {status === 'NO_IDENTITY' && (
                 <Button

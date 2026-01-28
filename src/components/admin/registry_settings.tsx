@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Address, encodeFunctionData } from 'viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
 import { usePasskeySign, IPartialUserOp } from '@/lib/hooks/use_passkey_sign';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
 
 export default function RegistrySettings() {
@@ -60,7 +60,7 @@ export default function RegistrySettings() {
     try {
       if (action === 'ADD_ISSUER') {
         if (!inputAddress) return;
-        // Default topic 101 for identity verification
+        // Info: (20260127 - Tzuhan) Default topic 101 for identity verification
         const topics = [BigInt(101)];
         callData = encodeFunctionData({
           abi: TIR_ABI,
@@ -129,7 +129,7 @@ export default function RegistrySettings() {
       alert('交易請求已送出！');
       setInputAddress('');
       setInputTopic('');
-      // Optimistic update or refresh
+      // Info: (20260127 - Tzuhan) Optimistic update or refresh
       setTimeout(fetchRegistryData, 5000);
     } catch (e) {
       console.error(e);
@@ -143,8 +143,8 @@ export default function RegistrySettings() {
         <button
           onClick={() => setActiveTab('ISSUERS')}
           className={`rounded-t-lg px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'ISSUERS'
-              ? 'border-b-2 border-indigo-500 bg-slate-800 text-indigo-400'
-              : 'text-slate-500 hover:text-slate-300'
+            ? 'border-b-2 border-indigo-500 bg-slate-800 text-indigo-400'
+            : 'text-slate-500 hover:text-slate-300'
             }`}
         >
           Trusted Issuers
@@ -152,8 +152,8 @@ export default function RegistrySettings() {
         <button
           onClick={() => setActiveTab('TOPICS')}
           className={`rounded-t-lg px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'TOPICS'
-              ? 'border-b-2 border-indigo-500 bg-slate-800 text-indigo-400'
-              : 'text-slate-500 hover:text-slate-300'
+            ? 'border-b-2 border-indigo-500 bg-slate-800 text-indigo-400'
+            : 'text-slate-500 hover:text-slate-300'
             }`}
         >
           Claim Topics

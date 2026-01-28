@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
 import { parseAbi, parseUnits, type Address } from 'viem';
-import { publicClient, walletClient, account } from '@/lib/viem';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 
 // Info: (20260120 - Tzuhan) --- Zod 驗證 Schema ---
 const mintSchema = z.object({

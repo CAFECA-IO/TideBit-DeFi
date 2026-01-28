@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { isAddress } from 'viem';
 // Info: Import safe public config for Read-Only operations
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 
 export default function KycPage() {
   const [identityAddress, setIdentityAddress] = useState('');

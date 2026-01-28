@@ -3,7 +3,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { createRequire } from 'module';
 import dotenv from 'dotenv';
 import path from 'path';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 
 // Info: (20260127 - Tzuhan) Force load .env from root
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -161,7 +161,7 @@ async function verify() {
     printResult(
       'Token Proxy Implementation Slot (EIP-1967)',
       tokenImplSlot !== undefined &&
-        tokenImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      tokenImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
       `Value: ${tokenImplSlot}`
     );
 
@@ -169,7 +169,7 @@ async function verify() {
     printResult(
       'IdentityRegistry Proxy Implementation Slot (EIP-1967)',
       irImplSlot !== undefined &&
-        irImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      irImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
       `Value: ${irImplSlot}`
     );
 

@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 export interface IAdminUser {
     id: string;
     name: string | null;
-    email: string | null; // Note: Email is on Company in current schema, but User usually has one too. Checking Schema: User doesn't have email. Using Name/Address.
+    email: string | null; // Info: (20260128 - Tzuhan) Email is on Company in current schema, but User usually has one too. Checking Schema: User doesn't have email. Using Name/Address.
     address: string;
     role: string;
     companies: {
@@ -46,14 +46,14 @@ export async function getUsersWithCompanies(page: number = 1, limit: number = 5)
         ]);
 
         const mappedUsers: IAdminUser[] = users.map(user => {
-            // Merge companies and createdCompanies
+            // Info: (20260128 - Tzuhan) Merge companies and createdCompanies
             const allCompanies = [...user.companies, ...user.createdCompanies];
             const uniqueCompanies = Array.from(new Map(allCompanies.map(c => [c.id, c])).values());
 
             return {
                 id: user.id,
                 name: user.name,
-                email: null, // Schema doesn't have email on User
+                email: null, // Info: (20260128 - Tzuhan) Schema doesn't have email on User
                 address: user.address,
                 role: user.role,
                 companies: uniqueCompanies.map(c => ({
@@ -91,8 +91,8 @@ export async function deployCompanyToken(companyId: string) {
         if (company.tokenAddress) throw new Error('Token already deployed');
         if (!company.tokenName || !company.tokenSymbol) throw new Error('Missing token info');
 
-        // Deploy Token System
-        // Note: deploySystem currently uses hardcoded decimals (18).
+        // Info: (20260128 - Tzuhan) Deploy Token System
+        // Info: (20260128 - Tzuhan) deploySystem currently uses hardcoded decimals (18).
         const res = await deploySystem(company.tokenName, company.tokenSymbol, 18);
 
         if (!res.success || !res.data) {
@@ -104,7 +104,7 @@ export async function deployCompanyToken(companyId: string) {
 
         if (!tokenAddress) throw new Error('Deployment success but missing token address');
 
-        // Update Company
+        // Info: (20260128 - Tzuhan) Update Company
         await prisma.company.update({
             where: { id: companyId },
             data: {
@@ -130,7 +130,7 @@ export async function mintCompanyToken(companyId: string, recipientAddress: stri
         if (!company) throw new Error('Company not found');
         if (!company.tokenAddress) throw new Error('Token not deployed');
 
-        // Note: admin.service runs on server, so we can import services that use private keys
+        // Info: (20260128 - Tzuhan) admin.service runs on server, so we can import services that use private keys
         const { mintToAddress } = await import('@/services/token.service');
 
         const res = await mintToAddress(company.tokenAddress, recipientAddress, amount);

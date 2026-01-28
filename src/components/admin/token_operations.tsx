@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
 import { mintToAddress, burn, freeze, unfreeze } from '@/services/token.service';
 
@@ -12,7 +12,7 @@ export default function TokenOperations() {
     const { user: adminUser } = useAuth();
     const [activeTab, setActiveTab] = useState<'BALANCE' | 'MINT' | 'BURN' | 'FREEZE'>('BALANCE');
 
-    // Form States
+    // Info: (20260127 - Tzuhan) Form States
     const [targetAddress, setTargetAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [balance, setBalance] = useState<string | null>(null);

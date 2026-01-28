@@ -1,4 +1,3 @@
-// src/components/admin/console/identity_action_panel.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -20,10 +19,10 @@ export default function IdentityActionPanel({
   onRefresh,
 }: IProps) {
   const [loading, setLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState(`${TAIWAN_COUNTRY_CODE}`); // 預設台灣國碼
-  const [topic, setTopic] = useState(`${KYC_TOPIC_ID}`); // 根據 deploy.ts 預設為 101
+  const [countryCode, setCountryCode] = useState(`${TAIWAN_COUNTRY_CODE}`); // Info: (20260127 - Tzuhan) 預設台灣國碼
+  const [topic, setTopic] = useState(`${KYC_TOPIC_ID}`); // Info: (20260127 - Tzuhan) 根據 deploy.ts 預設為 101
 
-  // 執行：部署身分合約 + registerIdentity
+  // Info: (20260127 - Tzuhan) 執行：部署身分合約 + registerIdentity
   const handleDeployAndLink = async () => {
     setLoading(true);
     try {
@@ -35,7 +34,7 @@ export default function IdentityActionPanel({
       const data = await res.json();
       if (data.success) {
         alert('身分合約已部署並成功連結至 Registry！');
-        onRefresh(); // 觸發重新診斷
+        onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
         alert('部署失敗: ' + data.message);
       }
@@ -46,7 +45,7 @@ export default function IdentityActionPanel({
     }
   };
 
-  // 執行：核發 Topic 101 憑證
+  // Info: (20260127 - Tzuhan) 執行：核發 Topic 101 憑證
   const handleIssueClaim = async () => {
     setLoading(true);
     try {
@@ -58,7 +57,7 @@ export default function IdentityActionPanel({
       const data = await res.json();
       if (data.success) {
         alert('KYC 憑證 (Topic 101) 核發成功！');
-        onRefresh(); // 觸發重新診斷
+        onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
         alert('核發失敗: ' + data.message);
       }
@@ -85,7 +84,7 @@ export default function IdentityActionPanel({
         2. 合規修復行動 (分步操作)
       </h2>
 
-      {/* 情況 A: 尚未註冊 (UNLINKED) */}
+      {/* Info: (20260127 - Tzuhan) 情況 A: 尚未註冊 (UNLINKED) */}
       {status === 'UNLINKED' && (
         <div className="space-y-4">
           <p className="text-sm text-red-700">此地址尚未連結身分合約。請執行「部署並註冊」流程。</p>
@@ -114,7 +113,7 @@ export default function IdentityActionPanel({
         </div>
       )}
 
-      {/* 情況 B: 缺少憑證 (MISSING_CLAIMS) */}
+      {/* Info: (20260127 - Tzuhan) 情況 B: 缺少憑證 (MISSING_CLAIMS) */}
       {status === 'MISSING_CLAIMS' && (
         <div className="space-y-4">
           <p className="text-sm text-yellow-800">

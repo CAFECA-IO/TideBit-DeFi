@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { parseAbi } from 'viem'; // Info: (20260127 - Tzuhan) 引入 parseAbi 用於臨時定義 Compliance 介面
 import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
-import { parseAbi } from 'viem'; // Info: (20260127 - Tzuhan) 引入 parseAbi 用於臨時定義 Compliance 介面
+import ConfirmModal from '@/components/common/confirm_modal';
 
 interface IProps {
   defaultAddress?: string;
@@ -14,8 +15,6 @@ const COMPLIANCE_ABI = parseAbi([
   'function getModules() external view returns (address[])',
   'function getTokenBound() external view returns (address)',
 ]);
-
-import ConfirmModal from '@/components/common/confirm_modal';
 
 export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   const [txHash, setTxHash] = useState('');

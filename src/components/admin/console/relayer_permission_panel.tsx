@@ -14,7 +14,6 @@ const RelayerPermissionPanel: React.FC = () => {
   const [fixing, setFixing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ isTrusted: boolean; hasTopic: boolean } | null>(null);
-
   const [modal, setModal] = useState({
     isOpen: false,
     title: '',
@@ -166,4 +165,5 @@ const RelayerPermissionPanel: React.FC = () => {
     </div>
   );
 };
+
 export default RelayerPermissionPanel;

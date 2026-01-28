@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/common/button';
-import { DiagnosisStatus } from './user_diagnosis_panel';
+import ConfirmModal from '@/components/common/confirm_modal';
+import { DiagnosisStatus } from '@/components/admin/console/user_diagnosis_panel';
 import { KYC_TOPIC_ID, TAIWAN_COUNTRY_CODE } from '@/lib/viem_public';
 
 interface IProps {
@@ -11,8 +12,6 @@ interface IProps {
   identityAddress?: string;
   onRefresh: () => void;
 }
-
-import ConfirmModal from '@/components/common/confirm_modal';
 
 export default function IdentityActionPanel({
   status,

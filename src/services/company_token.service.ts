@@ -1,26 +1,17 @@
 'use server';
 
 // Info: (20260127) Handle company token deployment sharing a common Identity Registry
-import { createPublicClient, createWalletClient, http, parseAbi, defineChain, getAddress } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { parseAbi, getAddress } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
+import { publicClient as client, walletClient, account } from '@/lib/viem';
 import COMPLIANCE_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json';
+
+if (!walletClient || !account) {
+    throw new Error('Server wallet not configured (ISUNCOIN_PRIVATE_KEY missing)');
+}
+const wallet = walletClient;
 import IDENTITY_ARTIFACT from '@erc3643org/erc-3643/artifacts/@onchain-id/solidity/contracts/Identity.sol/Identity.json';
 import TOKEN_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json';
-
-// Info: Blockchain Setup
-const chainId = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
-const targetChain = defineChain({
-    id: chainId,
-    name: 'TargetChain',
-    nativeCurrency: { name: 'Token', symbol: 'TOK', decimals: 18 },
-    rpcUrls: { default: { http: [process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com'] } },
-});
-
-// Info: Initialize Clients
-const account = privateKeyToAccount(process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`);
-const client = createPublicClient({ chain: targetChain, transport: http() });
-const wallet = createWalletClient({ account, chain: targetChain, transport: http() });
 
 // Info: Response Type
 type ActionResponse = {
@@ -60,7 +51,7 @@ export async function deployCompanyToken(
         const ioiHash = await wallet.deployContract({
             abi: IDENTITY_ARTIFACT.abi,
             bytecode: IDENTITY_ARTIFACT.bytecode as `0x${string}`,
-            args: [account.address, false]
+            args: [account!.address, false]
         });
         const ioiReceipt = await client.waitForTransactionReceipt({ hash: ioiHash });
         const IOI_ADDRESS = ioiReceipt.contractAddress!;
@@ -95,7 +86,7 @@ export async function deployCompanyToken(
         await wallet.writeContract({ address: COMP_ADDRESS, abi: COMPLIANCE_ABI, functionName: 'bindToken', args: [TOKEN_ADDRESS] });
 
         // 6. Add Platform Admin as Agent to Token (to allow minting/burning if logic requires agent)
-        await wallet.writeContract({ address: TOKEN_ADDRESS, abi: TOKEN_ABI, functionName: 'addAgent', args: [account.address] });
+        await wallet.writeContract({ address: TOKEN_ADDRESS, abi: TOKEN_ABI, functionName: 'addAgent', args: [account!.address] });
 
         return {
             success: true,

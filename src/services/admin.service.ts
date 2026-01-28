@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { deploySystem } from '@/services/token.service';
+import { deployCompanyToken as deploySystem, mintToAddress } from '@/services/company_token.service';
 import { revalidatePath } from 'next/cache';
 
 export interface IAdminUser {
@@ -129,9 +129,6 @@ export async function mintCompanyToken(companyId: string, recipientAddress: stri
 
         if (!company) throw new Error('Company not found');
         if (!company.tokenAddress) throw new Error('Token not deployed');
-
-        // Note: admin.service runs on server, so we can import services that use private keys
-        const { mintToAddress } = await import('@/services/token.service');
 
         const res = await mintToAddress(company.tokenAddress, recipientAddress, amount);
 

@@ -6,7 +6,8 @@ import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
 import { publicClient } from '@/lib/viem-public';
 import { Button } from '@/components/common/button';
-import { mintToAddress, burn, freeze, unfreeze } from '@/services/token.service';
+import ConfirmModal from '@/components/common/confirm_modal';
+import { mintToAddress, burn, freeze, unfreeze, registerUser } from '@/services/token.service';
 
 export default function TokenOperations() {
     const { user: adminUser } = useAuth();
@@ -19,6 +20,35 @@ export default function TokenOperations() {
     const [frozenBalance, setFrozenBalance] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+
+    // Info: (20260127) Confirmation Modal State
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showConfirm = (title: string, message: string, onConfirm: () => void) => {
+        setModalConfig({
+            isOpen: true,
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                closeModal();
+            }
+        });
+    };
 
     const TOKEN_ABI = ABIS.NTD_TOKEN;
 
@@ -34,6 +64,35 @@ export default function TokenOperations() {
             if (action === 'MINT') {
                 if (!targetAddress || !amount) return;
                 res = await mintToAddress(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+
+                // Info: (20260127) Handle Identity miss
+                if (!res.success && res.message.includes('Identity')) {
+                    setIsLoading(false); // Stop loading to show modal
+                    showConfirm('Identity Required', '鑄造失敗，該用戶可能尚未註冊 Identity。是否嘗試立即註冊該用戶？', async () => {
+                        setIsLoading(true); // Restart loading
+                        setStatusMessage('Registering User Identity...');
+
+                        const regResult = await registerUser(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress);
+                        if (regResult.success) {
+                            setStatusMessage('Identity Registered. Retrying Mint...');
+                            const retryResult = await mintToAddress(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+                            if (retryResult.success) {
+                                setStatusMessage(`Success: ${retryResult.message}`);
+                                alert('操作成功！\n' + retryResult.message);
+                                setAmount('');
+                                checkBalance();
+                            } else {
+                                setStatusMessage(`Retry Failed: ${retryResult.message}`);
+                                alert('重試失敗: ' + retryResult.message);
+                            }
+                        } else {
+                            setStatusMessage(`Registration Failed: ${regResult.message}`);
+                            alert('註冊失敗: ' + regResult.message);
+                        }
+                        setIsLoading(false);
+                    });
+                    return; // Early return to avoid standard error handling
+                }
             } else if (action === 'BURN') {
                 if (!targetAddress || !amount) return;
                 res = await burn(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
@@ -94,6 +153,13 @@ export default function TokenOperations() {
 
     return (
         <div className="space-y-6">
+            <ConfirmModal
+                isOpen={modalConfig.isOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={closeModal}
+            />
             <div className="flex space-x-2 border-b border-slate-800 pb-2">
                 {(['BALANCE', 'MINT', 'BURN', 'FREEZE'] as const).map((tab) => (
                     <button

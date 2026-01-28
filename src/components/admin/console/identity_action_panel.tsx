@@ -1,10 +1,10 @@
-// src/components/admin/console/identity_action_panel.tsx
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/common/button';
-import { DiagnosisStatus } from './user_diagnosis_panel';
-import { KYC_TOPIC_ID, TAIWAN_COUNTRY_CODE } from '@/lib/viem-public';
+import ConfirmModal from '@/components/common/confirm_modal';
+import { DiagnosisStatus } from '@/components/admin/console/user_diagnosis_panel';
+import { KYC_TOPIC_ID, TAIWAN_COUNTRY_CODE } from '@/lib/viem_public';
 
 interface IProps {
   status: DiagnosisStatus;
@@ -20,10 +20,30 @@ export default function IdentityActionPanel({
   onRefresh,
 }: IProps) {
   const [loading, setLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState(`${TAIWAN_COUNTRY_CODE}`); // 預設台灣國碼
-  const [topic, setTopic] = useState(`${KYC_TOPIC_ID}`); // 根據 deploy.ts 預設為 101
+  const [countryCode, setCountryCode] = useState(`${TAIWAN_COUNTRY_CODE}`); // Info: (20260127 - Tzuhan) 預設台灣國碼
+  const [topic, setTopic] = useState(`${KYC_TOPIC_ID}`); // Info: (20260127 - Tzuhan) 根據 deploy.ts 預設為 101
 
-  // 執行：部署身分合約 + registerIdentity
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isAlert: true,
+  });
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      isAlert: true,
+    });
+  };
+
+  // Info: (20260127 - Tzuhan) 執行：部署身分合約 + registerIdentity
   const handleDeployAndLink = async () => {
     setLoading(true);
     try {
@@ -34,19 +54,19 @@ export default function IdentityActionPanel({
       });
       const data = await res.json();
       if (data.success) {
-        alert('身分合約已部署並成功連結至 Registry！');
-        onRefresh(); // 觸發重新診斷
+        showAlert('成功', '身分合約已部署並成功連結至 Registry！');
+        onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
-        alert('部署失敗: ' + data.message);
+        showAlert('部署失敗', data.message);
       }
     } catch {
-      alert('請求錯誤');
+      showAlert('錯誤', '請求錯誤');
     } finally {
       setLoading(false);
     }
   };
 
-  // 執行：核發 Topic 101 憑證
+  // Info: (20260127 - Tzuhan) 執行：核發 Topic 101 憑證
   const handleIssueClaim = async () => {
     setLoading(true);
     try {
@@ -57,13 +77,13 @@ export default function IdentityActionPanel({
       });
       const data = await res.json();
       if (data.success) {
-        alert('KYC 憑證 (Topic 101) 核發成功！');
-        onRefresh(); // 觸發重新診斷
+        showAlert('成功', 'KYC 憑證 (Topic 101) 核發成功！');
+        onRefresh(); // Info: (20260127 - Tzuhan) 觸發重新診斷
       } else {
-        alert('核發失敗: ' + data.message);
+        showAlert('核發失敗', data.message);
       }
     } catch {
-      alert('請求錯誤');
+      showAlert('錯誤', '請求錯誤');
     } finally {
       setLoading(false);
     }
@@ -73,19 +93,17 @@ export default function IdentityActionPanel({
 
   return (
     <div
-      className={`rounded-xl border p-6 shadow-sm ${
-        status === 'MISSING_CLAIMS' ? 'border-yellow-200 bg-yellow-50' : 'border-red-200 bg-red-50'
-      }`}
+      className={`rounded-xl border p-6 shadow-sm ${status === 'MISSING_CLAIMS' ? 'border-yellow-200 bg-yellow-50' : 'border-red-200 bg-red-50'
+        }`}
     >
       <h2
-        className={`mb-4 text-xl font-bold ${
-          status === 'MISSING_CLAIMS' ? 'text-yellow-800' : 'text-red-800'
-        }`}
+        className={`mb-4 text-xl font-bold ${status === 'MISSING_CLAIMS' ? 'text-yellow-800' : 'text-red-800'
+          }`}
       >
         2. 合規修復行動 (分步操作)
       </h2>
 
-      {/* 情況 A: 尚未註冊 (UNLINKED) */}
+      {/* Info: (20260127 - Tzuhan) 情況 A: 尚未註冊 (UNLINKED) */}
       {status === 'UNLINKED' && (
         <div className="space-y-4">
           <p className="text-sm text-red-700">此地址尚未連結身分合約。請執行「部署並註冊」流程。</p>
@@ -114,7 +132,7 @@ export default function IdentityActionPanel({
         </div>
       )}
 
-      {/* 情況 B: 缺少憑證 (MISSING_CLAIMS) */}
+      {/* Info: (20260127 - Tzuhan) 情況 B: 缺少憑證 (MISSING_CLAIMS) */}
       {status === 'MISSING_CLAIMS' && (
         <div className="space-y-4">
           <p className="text-sm text-yellow-800">
@@ -148,6 +166,16 @@ export default function IdentityActionPanel({
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        confirmText="OK"
+        isAlert={modal.isAlert}
+      />
     </div>
   );
 }

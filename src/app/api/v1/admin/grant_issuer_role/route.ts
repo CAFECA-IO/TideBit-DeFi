@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
-import { walletClient, account, publicClient } from '@/lib/viem';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { jsonOk, jsonFail } from '@/lib/utils/response';
 import { ApiCode } from '@/lib/utils/status';
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
     const tirAddress = CONTRACT_ADDRESSES.TRUSTED_ISSUERS_REGISTRY;
     const claimTopic = BigInt(topic);
 
-    // 1. 先檢查該 Relayer 是否已經是 Trusted Issuer
+    // Info: (20260127 - Tzuhan) 1. 先檢查該 Relayer 是否已經是 Trusted Issuer
     const isAlreadyTrusted = await publicClient.readContract({
       address: tirAddress,
       abi: ABIS.TRUSTED_ISSUERS_REGISTRY,
@@ -25,8 +26,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (isAlreadyTrusted) {
-      // 情況 A：發行者已存在，使用更新邏輯 (覆蓋或新增 Topic)
-      // 注意：這會設定該發行者「僅擁有」傳入的這個 Topic
+      /**
+       * Info: (20260127 - Tzuhan) 情況 A：發行者已存在，使用更新邏輯 (覆蓋或新增 Topic)
+       * 注意：這會設定該發行者「僅擁有」傳入的這個 Topic
+       */
       console.log(`[Admin] Relayer 已存在，執行 updateIssuerClaimTopics...`);
       hash = await walletClient.writeContract({
         address: tirAddress,
@@ -36,7 +39,7 @@ export async function POST(req: NextRequest) {
         account,
       });
     } else {
-      // 情況 B：全新發行者，使用新增邏輯
+      // Info: (20260127 - Tzuhan) 情況 B：全新發行者，使用新增邏輯
       console.log(`[Admin] 執行 addTrustedIssuer...`);
       hash = await walletClient.writeContract({
         address: tirAddress,

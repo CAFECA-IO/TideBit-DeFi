@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 
 export default function Header() {
@@ -9,7 +8,7 @@ export default function Header() {
             <Link href="/" className="text-xl font-bold tracking-wider text-blue-400">
                 TideBit<span className="text-white">Admin</span>
             </Link>
-            {/* Add user menu or nav items here if needed later */}
+            {/* Info: (20260127 - Tzuhan)Add user menu or nav items here if needed later */}
         </header>
     );
 }

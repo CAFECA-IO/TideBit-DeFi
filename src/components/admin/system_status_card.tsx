@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
 import { pause, unpause } from '@/services/token.service';
@@ -26,7 +26,7 @@ export default function SystemStatusCard() {
 
     useEffect(() => {
         fetchStatus();
-        // Optional: Poll every 10 seconds to keep status fresh
+        // Info: (20260127 - Tzuhan) Optional: Poll every 10 seconds to keep status fresh
         const interval = setInterval(fetchStatus, 10000);
         return () => clearInterval(interval);
     }, []);
@@ -42,7 +42,7 @@ export default function SystemStatusCard() {
 
             if (res.success) {
                 alert(res.message);
-                fetchStatus(); // Refresh immediately
+                fetchStatus(); // Info: (20260127 - Tzuhan) Refresh immediately
             } else {
                 alert('操作失败: ' + res.message);
             }

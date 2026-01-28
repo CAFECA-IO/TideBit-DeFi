@@ -5,7 +5,7 @@ import { parseUnits, encodeFunctionData, Address } from 'viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
 import { usePasskeySign, IPartialUserOp } from '@/lib/hooks/use_passkey_sign';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
 
 interface IProps {
@@ -15,12 +15,34 @@ interface IProps {
 const TOKEN_ABI = ABIS.NTD_TOKEN || [];
 const SCW_ABI = ABIS.SCW || [];
 
+import ConfirmModal from '@/components/common/confirm_modal';
+
 export default function AssetMintingPanel({ targetAddress }: IProps) {
   const { user: adminUser } = useAuth();
   const { signAndSendUserOp, isSigning, status } = usePasskeySign();
 
   const [amount, setAmount] = useState('');
   const [refNo, setRefNo] = useState('');
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isAlert: true,
+  });
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      isAlert: true,
+    });
+  };
 
   const handleMint = async () => {
     if (!adminUser || !amount || !targetAddress) return;
@@ -71,12 +93,12 @@ export default function AssetMintingPanel({ targetAddress }: IProps) {
         y: BigInt(adminUser.pubKeyY),
       });
 
-      alert(`鑄造成功！金額: ${amount}, 單號: ${refNo}`);
+      showAlert('成功', `鑄造成功！金額: ${amount}, 單號: ${refNo}`);
       setAmount('');
       setRefNo('');
     } catch (e) {
       console.error(e);
-      alert(`鑄造失敗: ${(e as Error).message}`);
+      showAlert('錯誤', `鑄造失敗: ${(e as Error).message}`);
     }
   };
 
@@ -145,6 +167,16 @@ export default function AssetMintingPanel({ targetAddress }: IProps) {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        onConfirm={closeModal}
+        onCancel={closeModal}
+        confirmText="OK"
+        isAlert={modal.isAlert}
+      />
     </div>
   );
 }

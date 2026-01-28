@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
-import { publicClient } from '@/lib/viem-public';
-import SystemStatusCard from './system_status_card';
+import { publicClient } from '@/lib/viem_public';
+import SystemStatusCard from '@/components/admin/system_status_card';
 
 export default function AdminDashboardOverview() {
   const [stats, setStats] = useState({
     totalSupply: 'Loading...',
-    totalUsers: 'Unknown', // IRS doesn't exposure total users easily without events, mock for now or count events
+    totalUsers: 'Unknown', // Info: (20260127 - Tzuhan) IRS doesn't exposure total users easily without events, mock for now or count events
     tokenName: '',
     tokenSymbol: '',
   });
@@ -35,7 +35,7 @@ export default function AdminDashboardOverview() {
 
         setStats({
           totalSupply: formatUnits(totalSupply, 18),
-          totalUsers: 'N/A', // Requires event indexing
+          totalUsers: 'N/A', // Info: (20260127 - Tzuhan) Requires event indexing
           tokenName: name,
           tokenSymbol: symbol,
         });

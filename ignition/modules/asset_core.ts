@@ -13,28 +13,23 @@ const IDENTITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/@onchain-id/so
 const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
     const deployer = m.getAccount(0);
 
-    // =========================================================
-    // 1. Deploy Registries
-    // =========================================================
-
-    // A. Claim Topics Registry
+    // Info: (20260127 - Tzuhan) 1. Deploy Registries
+    // Info: (20260127 - Tzuhan) A. Claim Topics Registry
     const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, []);
     const initCTR = m.call(claimTopicsRegistry, 'init', [], { id: 'init_ctr' });
 
-    // B. Trusted Issuers Registry
+    // Info: (20260127 - Tzuhan) B. Trusted Issuers Registry
     const trustedIssuersRegistry = m.contract('TrustedIssuersRegistry', TIR_ARTIFACT, []);
     const initTIR = m.call(trustedIssuersRegistry, 'init', [], { id: 'init_tir' });
 
-    // C. Identity Registry Storage
+    // Info: (20260127 - Tzuhan) C. Identity Registry Storage
     const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, []);
     const initIRS = m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
 
-    // =========================================================
-    // 2. Deploy Identity Registry
-    // =========================================================
+    // Info: (20260127 - Tzuhan) 2. Deploy Identity Registry
     const identityRegistry = m.contract('IdentityRegistry', IR_ARTIFACT, []);
 
-    // Initialize IdentityRegistry with links to other registries
+    // Info: (20260127 - Tzuhan) Initialize IdentityRegistry with links to other registries
     const initIR = m.call(identityRegistry, 'init', [
         trustedIssuersRegistry,
         claimTopicsRegistry,
@@ -44,23 +39,17 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
         after: [initTIR, initCTR, initIRS]
     });
 
-    // =========================================================
-    // 3. Deploy Modular Compliance
-    // =========================================================
+    // Info: (20260127 - Tzuhan) 3. Deploy Modular Compliance
     const modularCompliance = m.contract('ModularCompliance', MC_ARTIFACT, []);
     const initMC = m.call(modularCompliance, 'init', [], { id: 'init_mc' });
 
-    // =========================================================
-    // 4. Deploy Issuer Identity (Required for Token)
-    // =========================================================
+    // Info: (20260127 - Tzuhan) 4. Deploy Issuer Identity (Required for Token)
     const issuerIdentity = m.contract('IssuerIdentity', IDENTITY_ARTIFACT, [deployer, false]);
 
-    // =========================================================
-    // 5. Deploy Token
-    // =========================================================
+    // Info: (20260127 - Tzuhan) 5. Deploy Token
     const token = m.contract('Token', TOKEN_ARTIFACT, []);
 
-    // Initialize Token
+    // Info: (20260127 - Tzuhan) Initialize Token
     const initToken = m.call(token, 'init', [
         identityRegistry,
         modularCompliance,
@@ -73,23 +62,20 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
         after: [initIR, initMC, issuerIdentity]
     });
 
-    // =========================================================
-    // 6. Setup Bindings & Agents
-    // =========================================================
-
-    // A. Bind Storage -> Registry
+    // Info: (20260127 - Tzuhan) 6. Setup Bindings & Agents
+    // Info: (20260127 - Tzuhan) A. Bind Storage -> Registry
     m.call(identityRegistryStorage, 'bindIdentityRegistry', [identityRegistry], {
         id: 'bind_irs_to_ir',
         after: [initIRS, identityRegistry]
     });
 
-    // C. Add Deployer as Token Agent (to allow minting)
+    // Info: (20260127 - Tzuhan) C. Add Deployer as Token Agent (to allow minting)
     m.call(token, 'addAgent', [deployer], {
         id: 'add_token_agent',
         after: [initToken]
     });
 
-    // D. Add Deployer as Identity Registry Agent (to allow registering identities)
+    // Info: (20260127 - Tzuhan) D. Add Deployer as Identity Registry Agent (to allow registering identities)
     m.call(identityRegistry, 'addAgent', [deployer], {
         id: 'add_ir_agent',
         after: [initIR]

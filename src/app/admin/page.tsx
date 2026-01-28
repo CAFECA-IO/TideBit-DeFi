@@ -10,7 +10,7 @@ export default function AdminConsolePage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Info: (20260128 - Tzuhan) Header */}
       <div className="flex flex-col items-start justify-between gap-4 border-b border-slate-800 pb-6 md:flex-row md:items-center">
         <div>
           <h1 className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-3xl font-bold text-transparent">
@@ -26,10 +26,10 @@ export default function AdminConsolePage() {
         </button>
       </div>
 
-      {/* Admin User Info (Address, Identity, Companies) */}
+      {/* Info: (20260128 - Tzuhan) Admin User Info (Address, Identity, Companies) */}
       <AdminUserInfo />
 
-      {/* My Assets (Portfolio View for Admin) */}
+      {/* Info: (20260128 - Tzuhan) My Assets (Portfolio View for Admin) */}
       <MyAssetOverview />
     </div>
   );

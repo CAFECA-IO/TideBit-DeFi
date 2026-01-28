@@ -1,4 +1,4 @@
-import { publicClient } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { parseAbiItem } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
 import type {
@@ -34,7 +34,7 @@ interface IParsedPublicKey {
 }
 
 class WebAuthnService {
-  constructor(private readonly repo: IWebAuthnRepository) {}
+  constructor(private readonly repo: IWebAuthnRepository) { }
 
   public async generateLoginOptions(address: string): Promise<string> {
     const user = await this.ensureUserSynced(address);
@@ -149,7 +149,7 @@ class WebAuthnService {
       } catch (dbError) {
         console.warn('[Sync] DB Write Failed (Offline Mode). Returning ephemeral user.', dbError);
         return {
-          id: 'ephemeral_id', // 臨時 ID
+          id: 'ephemeral_id', // Info: (20260127 - Tzuhan) 臨時 ID
           address,
           pubKeyX: pubKeyX.toString(),
           pubKeyY: pubKeyY.toString(),

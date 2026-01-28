@@ -1,6 +1,6 @@
 import { userOperationSchema } from '@/validators';
 import { ABIS } from '@/config/contracts';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { account, walletClient } from '@/lib/viem';
 
 export class BundlerService {

@@ -3,26 +3,26 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { createRequire } from 'module';
 import dotenv from 'dotenv';
 import path from 'path';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 
-// Force load .env from root
+// Info: (20260127 - Tzuhan) Force load .env from root
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const require = createRequire(import.meta.url);
 
-// --- 1. Load Artifacts ---
+// Info: (20260127 - Tzuhan) --- 1. Load Artifacts ---
 const TOKEN_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json');
 const IR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/IdentityRegistry.sol/IdentityRegistry.json');
 const TIR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/TrustedIssuersRegistry.sol/TrustedIssuersRegistry.json');
 const CTR_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/registry/implementation/ClaimTopicsRegistry.sol/ClaimTopicsRegistry.json');
 const MC_ARTIFACT = require('@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json');
 
-// --- 2. Configuration ---
+// Info: (20260127 - Tzuhan) --- 2. Configuration ---
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com';
 const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
 const PRIVATE_KEY = process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`;
 
-// Contract Addresses
+// Info: (20260127 - Tzuhan) Contract Addresses
 const ADDR_TOKEN = process.env.NEXT_PUBLIC_NTD_TOKEN_ADDRESS as `0x${string}`;
 const ADDR_IR = process.env.NEXT_PUBLIC_IDENTITY_REGISTRY_ADDRESS as `0x${string}`;
 const ADDR_TIR = process.env.NEXT_PUBLIC_TRUSTED_ISSUERS_REGISTRY_ADDRESS as `0x${string}`;
@@ -48,7 +48,7 @@ const chain = defineChain({
 
 const client = createPublicClient({ chain, transport: http() });
 
-// --- 3. Helpers ---
+// Info: (20260127 - Tzuhan) --- 3. Helpers ---
 function printResult(label: string, pass: boolean, info?: string) {
   if (pass) {
     console.log(`✅ ${label} ${info ? `(${info})` : ''}`);
@@ -61,10 +61,10 @@ async function verify() {
   console.log('\n� Starting T-REX Configuration Verification...\n');
 
   try {
-    // --- Verify Token ---
+    // Info: (20260127 - Tzuhan) --- Verify Token ---
     const token = getContract({ address: ADDR_TOKEN, abi: TOKEN_ARTIFACT.abi, client });
 
-    // Check Config: Token -> IdentityRegistry
+    // Info: (20260127 - Tzuhan) Check Config: Token -> IdentityRegistry
     const irOnToken = await token.read.identityRegistry();
     const cleanIROnToken = (irOnToken as string).toLowerCase();
     printResult(
@@ -73,38 +73,41 @@ async function verify() {
       `Expected: ${ADDR_IR}, Got: ${irOnToken}`
     );
 
-    // Check Paused
+    // Info: (20260127 - Tzuhan) Check Paused
     const isPaused = await token.read.paused();
     printResult('Token Unpaused', isPaused === false, isPaused ? 'Paused' : 'Active');
 
-    // Check Agent (Deployer)
+    // Info: (20260127 - Tzuhan) Check Agent (Deployer)
     const isAgentToken = await token.read.isAgent([account.address]);
     printResult('Deployer is Token Agent', isAgentToken as boolean);
 
-    // --- Verify Identity Registry ---
+    // Info: (20260127 - Tzuhan) --- Verify Identity Registry ---
     const ir = getContract({ address: ADDR_IR, abi: IR_ARTIFACT.abi, client });
 
-    // Check Config: IR -> TIR
+    // Info: (20260127 - Tzuhan) Check Config: IR -> TIR
     const tirOnIR = await ir.read.issuersRegistry();
     printResult(
       'IR -> TrustedIssuersRegistry Link',
       (tirOnIR as string).toLowerCase() === ADDR_TIR.toLowerCase()
     );
 
-    // Check Config: IR -> CTR
+    // Info: (20260127 - Tzuhan) Check Config: IR -> CTR
     const ctrOnIR = await ir.read.topicsRegistry();
     printResult(
       'IR -> ClaimTopicsRegistry Link',
       (ctrOnIR as string).toLowerCase() === ADDR_CTR.toLowerCase()
     );
 
-    // Check Config: IR -> Compliance (Implicitly bound via Token? No IR doesn't know compliance directly usually unless proxied or queried logic)
-    // Actually IR interacts with Storage.
-    // Let's check Agent on IR.
+    /**
+     * Info: (20260127 - Tzuhan) Check Config:
+     * IR -> Compliance (Implicitly bound via Token? No IR doesn't know compliance directly usually unless proxied or queried logic)
+     * Actually IR interacts with Storage.
+     * Let's check Agent on IR.
+     */
     const isAgentIR = await ir.read.isAgent([account.address]);
     printResult('Deployer is IdentityRegistry Agent', isAgentIR as boolean);
 
-    // --- Verify Trusted Issuers Registry ---
+    // Info: (20260127 - Tzuhan) --- Verify Trusted Issuers Registry ---
     const tir = getContract({ address: ADDR_TIR, abi: TIR_ARTIFACT.abi, client });
     const isTrusted = await tir.read.isTrustedIssuer([account.address]);
     printResult('Deployer is Trusted Issuer', isTrusted as boolean);
@@ -115,14 +118,16 @@ async function verify() {
       printResult('Deployer has Topic 101', hasTopic101);
     }
 
-    // --- Verify Claim Topics Registry ---
+    // Info: (20260127 - Tzuhan) --- Verify Claim Topics Registry ---
     const ctr = getContract({ address: ADDR_CTR, abi: CTR_ARTIFACT.abi, client });
     const topics = await ctr.read.getClaimTopics();
     const topicExists = (topics as bigint[]).some((t) => t === CLAIM_TOPIC);
     printResult('Claim Topic 101 Exists', topicExists);
 
-    // --- Verify Compliance ---
-    // Get Compliance info from Token
+    /**
+     * Info: (20260127 - Tzuhan) --- Verify Compliance ---
+     * Get Compliance info from Token
+     */
     const complianceAddr = await token.read.compliance();
     console.log(`ℹ️  Compliance Contract: ${complianceAddr}`);
 
@@ -142,8 +147,10 @@ async function verify() {
       printResult('Compliance Contract Found', false);
     }
 
-    // --- Verify EIP-1967 Implementation Slot ---
-    // Slot: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+    /**
+     * Info: (20260127 - Tzuhan) --- Verify EIP-1967 Implementation Slot ---
+     * Slot: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+     */
     const IMPLEMENTATION_SLOT =
       '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc';
 
@@ -154,7 +161,7 @@ async function verify() {
     printResult(
       'Token Proxy Implementation Slot (EIP-1967)',
       tokenImplSlot !== undefined &&
-        tokenImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      tokenImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
       `Value: ${tokenImplSlot}`
     );
 
@@ -162,7 +169,7 @@ async function verify() {
     printResult(
       'IdentityRegistry Proxy Implementation Slot (EIP-1967)',
       irImplSlot !== undefined &&
-        irImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
+      irImplSlot !== '0x0000000000000000000000000000000000000000000000000000000000000000',
       `Value: ${irImplSlot}`
     );
 
@@ -176,11 +183,11 @@ async function verify() {
     });
     console.log('用戶 Identity 合約地址:', identityContract);
 
-    // 在 verify_trex.ts 中加入這段進行診斷
+    // Info: (20260127 - Tzuhan) 在 verify_trex.ts 中加入這段進行診斷
     try {
       const userAddress = '0x92599A8b79642C178fF6278636dCe8b3BF8a551b';
 
-      // 使用 simulateContract 捕捉詳細報錯
+      // Info: (20260127 - Tzuhan) 使用 simulateContract 捕捉詳細報錯
       await client.simulateContract({
         address: ADDR_IR,
         abi: IR_ARTIFACT.abi,
@@ -191,7 +198,7 @@ async function verify() {
       console.log('✅ isVerified 模擬執行成功');
     } catch (error) {
       console.log('\n🔥 診斷資訊 - isVerified 為何 Revert:');
-      // Viem 會在 error.shortMessage 中顯示合約拋出的具體錯誤名稱
+      // Info: (20260127 - Tzuhan) Viem 會在 error.shortMessage 中顯示合約拋出的具體錯誤名稱
       console.error((error as Error).message);
     }
   } catch (error) {

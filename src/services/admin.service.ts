@@ -6,7 +6,7 @@ import {
   mintToAddress,
 } from '@/services/company_token.service';
 import { revalidatePath } from 'next/cache';
-import { publicClient } from '@/lib/viem-public';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { walletClient, account } from '@/lib/viem';
 import { getAddress, parseAbi, type Address } from 'viem';
@@ -60,17 +60,17 @@ export async function getUsersWithCompanies(
 
     const mappedUsers: IAdminUser[] = await Promise.all(
       users.map(async (user) => {
-        // Merge companies and createdCompanies
+        // Info: (20260128 - Tzuhan) Merge companies and createdCompanies
         const allCompanies = [...user.companies, ...user.createdCompanies];
         const uniqueCompanies = Array.from(new Map(allCompanies.map((c) => [c.id, c])).values());
 
-        // Fetch Identity Status
+        // Info: (20260128 - Tzuhan) Fetch Identity Status
         let identityAddress: string | null = null;
         let isVerified = false;
 
         try {
           if (user.address && user.address.startsWith('0x')) {
-            // Debug Log
+            // Info: (20260128 - Tzuhan) Debug Log
             if (user.address.toLowerCase() === '0x0b64f7089d070a2a262e5a49da5f97c5d32ed61d') {
               console.log('--- Debugging User 0x0b64... ---');
             }
@@ -116,7 +116,7 @@ export async function getUsersWithCompanies(
         return {
           id: user.id,
           name: user.name,
-          email: null, // Schema doesn't have email on User
+          email: null, // Info: (20260128 - Tzuhan) Schema doesn't have email on User
           address: user.address,
           role: user.role,
           identityAddress,
@@ -171,7 +171,7 @@ export async function getAdminCompanies(
   try {
     const skip = (page - 1) * limit;
 
-    // Fetch Companies with Owners
+    // Info: (20260128 - Tzuhan) Fetch Companies with Owners
     const [companies, total] = await Promise.all([
       prisma.company.findMany({
         skip,
@@ -186,7 +186,7 @@ export async function getAdminCompanies(
 
     const mappedCompanies = await Promise.all(
       companies.map(async (company) => {
-        // Map Owners and check their identities
+        // Info: (20260128 - Tzuhan) Map Owners and check their identities
         const ownersData = await Promise.all(
           company.owners.map(async (owner) => {
             let identityAddress: string | null = null;
@@ -265,8 +265,8 @@ export async function deployCompanyToken(companyId: string) {
     if (company.tokenAddress) throw new Error('Token already deployed');
     if (!company.tokenName || !company.tokenSymbol) throw new Error('Missing token info');
 
-    // Deploy Token System
-    // Note: deploySystem currently uses hardcoded decimals (18).
+    // Info: (20260128 - Tzuhan) Deploy Token System
+    // Info: (20260128 - Tzuhan) deploySystem currently uses hardcoded decimals (18).
     const res = await deploySystem(company.tokenName, company.tokenSymbol, 18);
 
     if (!res.success || !res.data) {
@@ -278,7 +278,7 @@ export async function deployCompanyToken(companyId: string) {
 
     if (!tokenAddress) throw new Error('Deployment success but missing token address');
 
-    // Update Company
+    // Info: (20260128 - Tzuhan) Update Company
     await prisma.company.update({
       where: { id: companyId },
       data: {
@@ -328,7 +328,7 @@ export async function deployUserIdentity(userAddress: string) {
     }
 
     const registryAddress = CONTRACT_ADDRESSES.IDENTITY_REGISTRY;
-    // 1. Check if already has identity (Double check)
+    // Info: (20260128 - Tzuhan) 1. Check if already has identity (Double check)
     const currentId = await publicClient.readContract({
       address: registryAddress,
       abi: ABIS.IDENTITY_REGISTRY,
@@ -394,8 +394,8 @@ export async function getUserPortfolio(userAddress: string) {
   try {
     const formattedAddress = getAddress(userAddress);
 
-    // 1. Get All Tokens (System + Companies)
-    // System Token (NTD)
+    // Info: (20260128 - Tzuhan) 1. Get All Tokens (System + Companies)
+    // Info: (20260128 - Tzuhan) System Token (NTD)
     const tokens = [
       {
         name: 'New Taiwan Dollar',
@@ -405,7 +405,7 @@ export async function getUserPortfolio(userAddress: string) {
       },
     ];
 
-    // Company Tokens
+    // Info: (20260128 - Tzuhan) Company Tokens
     const companies = await prisma.company.findMany({
       where: {
         tokenAddress: { not: null },
@@ -428,8 +428,8 @@ export async function getUserPortfolio(userAddress: string) {
       }
     });
 
-    // 2. Fetch Balances
-    // Use Promise.all
+    // Info: (20260128 - Tzuhan) 2. Fetch Balances
+    // Info: (20260128 - Tzuhan) Use Promise.all
     const balances: IPortfolioItem[] = await Promise.all(
       tokens.map(async (t) => {
         try {
@@ -443,7 +443,7 @@ export async function getUserPortfolio(userAddress: string) {
             tokenName: t.name,
             tokenSymbol: t.symbol,
             tokenAddress: t.address,
-            balance: bal.toString(), // Wei
+            balance: bal.toString(),
             decimals: 18,
             isSystemToken: t.isSystem,
           };
@@ -461,10 +461,10 @@ export async function getUserPortfolio(userAddress: string) {
       })
     );
 
-    // 3. Fetch History (Recent)
+    // Info: (20260128 - Tzuhan) 3. Fetch History (Recent)
     const history: IPortfolioHistory[] = [];
 
-    // Parallel fetch events
+    // Info: (20260128 - Tzuhan) Parallel fetch events
     await Promise.all(
       tokens.map(async (t) => {
         try {
@@ -508,7 +508,7 @@ export async function getUserPortfolio(userAddress: string) {
       })
     );
 
-    // Sort combined history
+    // Info: (20260128 - Tzuhan) Sort combined history
     history.sort((a, b) => Number(b.blockNumber) - Number(a.blockNumber));
 
     return {
@@ -528,9 +528,11 @@ export async function getPlatformTokenUsers(
   try {
     const skip = (page - 1) * limit;
 
-    // 1. Fetch Users from Database (Primary Source)
-    // Info: (20260128) We fetch from DB first to ensure we display known users.
-    // Events might be incomplete or slow to index on some nodes.
+    /**
+     * Info: (20260128 - Tzuhan) 1. Fetch Users from Database (Primary Source)
+     * We fetch from DB first to ensure we display known users.
+     * Events might be incomplete or slow to index on some nodes.
+     */
     const [dbUsers, total] = await Promise.all([
       prisma.user.findMany({
         skip,
@@ -545,43 +547,43 @@ export async function getPlatformTokenUsers(
       prisma.user.count(),
     ]);
 
-    // 2. Fetch On-Chain Details for these users
+    // Info: (20260128 - Tzuhan) 2. Fetch On-Chain Details for these users
     const usersWithDetails = await Promise.all(
       dbUsers.map(async (user) => {
         try {
           const formattedAddress = getAddress(user.address);
 
-          // Parallel Fetch: Contract Data
+          // Info: (20260128 - Tzuhan) Parallel Fetch: Contract Data
           const [idResult, verifiedResult, balanceResult, frozenResult, isFrozenResult] = await Promise.all([
-            // Identity
+            // Info: (20260128 - Tzuhan) Identity
             publicClient.readContract({
               address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
               abi: ABIS.IDENTITY_REGISTRY,
               functionName: 'identity',
               args: [formattedAddress],
             }),
-            // Verified
+            // Info: (20260128 - Tzuhan) Verified
             publicClient.readContract({
               address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
               abi: ABIS.IDENTITY_REGISTRY,
               functionName: 'isVerified',
               args: [formattedAddress],
             }),
-            // Balance
+            // Info: (20260128 - Tzuhan) Balance
             publicClient.readContract({
               address: CONTRACT_ADDRESSES.NTD_TOKEN,
               abi: ABIS.NTD_TOKEN,
               functionName: 'balanceOf',
               args: [formattedAddress],
             }),
-            // Frozen Amount
+            // Info: (20260128 - Tzuhan) Frozen Amount
             publicClient.readContract({
               address: CONTRACT_ADDRESSES.NTD_TOKEN,
               abi: ABIS.NTD_TOKEN,
               functionName: 'getFrozenTokens',
               args: [formattedAddress],
             }),
-            // Frozen Status
+            // Info: (20260128 - Tzuhan) Frozen Status
             publicClient.readContract({
               address: CONTRACT_ADDRESSES.NTD_TOKEN,
               abi: ABIS.NTD_TOKEN,
@@ -621,8 +623,11 @@ export async function getPlatformTokenUsers(
       })
     );
 
-    // Info: (optional) Filter here if we ONLY want to show users with identity/balance.
-    // But allowing all gives better visibility into "Inactive" users.
+    /**
+     * Info: (20260128 - Tzuhan)
+     * Filter here if we ONLY want to show users with identity/balance.
+     * But allowing all gives better visibility into "Inactive" users.
+     */
 
     return {
       users: usersWithDetails,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { keccak256, encodeAbiParameters, parseAbiParameters, stringToHex } from 'viem';
-import { walletClient, account, publicClient } from '@/lib/viem';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { ABIS } from '@/config/contracts';
 
 export async function POST(req: NextRequest) {

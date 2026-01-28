@@ -14,7 +14,7 @@ export interface IUserData {
         status: string;
         legalName: string | null;
         country: string | null;
-        address: string | null; // SCW Address
+        address: string | null; // Info: (20260127 - Tzuhan) SCW Address
         tokenSymbol: string | null;
     }[];
 }
@@ -26,14 +26,14 @@ export async function getUserData(address: string): Promise<IUserData | null> {
         const user = await prisma.user.findUnique({
             where: { address },
             include: {
-                companies: true, // Fetch companies where user is an owner
-                createdCompanies: true // Fetch companies created by user
+                companies: true, // Info: (20260127 - Tzuhan) Fetch companies where user is an owner
+                createdCompanies: true // Info: (20260127 - Tzuhan) Fetch companies created by user
             }
         });
 
         if (!user) return null;
 
-        // Merge companies and createdCompanies, remove duplicates by ID
+        // Info: (20260127 - Tzuhan) Merge companies and createdCompanies, remove duplicates by ID
         const allCompanies = [...user.companies, ...user.createdCompanies];
         const uniqueCompanies = Array.from(new Map(allCompanies.map(c => [c.id, c])).values());
 

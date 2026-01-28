@@ -75,10 +75,13 @@ export default function UserCompanyManagement() {
     };
 
     const navigateToOperations = (tokenAddress: string) => {
-        // Navigate to Token Operations with token address pre-filled (via URL params if supported or state)
-        // Since we moved to a separate page, we can pass query param ?token=...
-        // But the TokenOperations component needs to read it. 
-        // For now, note that TokenOperations page might not read params yet, but I'll add it later or just link.
+        /**
+         * Info: (20260128 - Tzuhan)
+         * Navigate to Token Operations with token address pre-filled (via URL params if supported or state)
+         * Since we moved to a separate page, we can pass query param ?token=...
+         * But the TokenOperations component needs to read it. 
+         * For now, note that TokenOperations page might not read params yet, but I'll add it later or just link.
+         */
         router.push(`/admin/token_operations?token=${tokenAddress}`);
     };
 
@@ -211,7 +214,7 @@ export default function UserCompanyManagement() {
                 </table>
             </div>
 
-            {/* Pagination settings identical to before... */}
+            {/* Info: (20260128 - Tzuhan) Pagination settings identical to before... */}
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
                 <div className="flex gap-2">

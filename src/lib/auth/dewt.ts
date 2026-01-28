@@ -145,7 +145,7 @@ export const getIdentityFromDeWT = async (
     credentialId: null,
     currentChallenge: null,
     identityAddress: null,
-    createdAt: new Date(0), // 1970-01-01 代表未知
+    createdAt: new Date(0), // Info: (20260127 - Tzuhan) 1970-01-01 代表未知
     updatedAt: new Date(0),
   } as User;
 };

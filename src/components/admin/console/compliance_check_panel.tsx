@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { publicClient } from '@/lib/viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
-import { parseAbi } from 'viem'; // 引入 parseAbi 用於臨時定義 Compliance 介面
+import { parseAbi } from 'viem'; // Info: (20260127 - Tzuhan) 引入 parseAbi 用於臨時定義 Compliance 介面
 
 interface IProps {
   defaultAddress?: string;
@@ -20,11 +20,11 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const [checkAddr, setCheckAddr] = useState(defaultAddress);
 
-  // 基礎合規狀態
+  // Info: (20260127 - Tzuhan) 基礎合規狀態
   const [complianceAddr, setComplianceAddr] = useState<string>('');
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
-  // 進階合規診斷 (New)
+  // Info: (20260127 - Tzuhan) 進階合規診斷 (New)
   const [boundToken, setBoundToken] = useState<string>('');
   const [installedModules, setInstalledModules] = useState<string[]>([]);
 
@@ -34,7 +34,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
     if (defaultAddress) setCheckAddr(defaultAddress);
   }, [defaultAddress]);
 
-  // 功能 1: 檢查交易 Hash 狀態
+  // Info: (20260127 - Tzuhan) 功能 1: 檢查交易 Hash 狀態
   const checkTransaction = async () => {
     if (!txHash) return;
     setLoading(true);
@@ -57,14 +57,14 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
     }
   };
 
-  // 功能 2 & 3 & 4: 完整合規性檢查 (Token -> Compliance -> Modules)
+  // Info: (20260127 - Tzuhan) 功能 2 & 3 & 4: 完整合規性檢查 (Token -> Compliance -> Modules)
   const checkComplianceStatus = async () => {
     setLoading(true);
     setBoundToken('');
     setInstalledModules([]);
 
     try {
-      // A. 查詢 Token 目前綁定的 Compliance 合約
+      // Info: (20260127 - Tzuhan) A. 查詢 Token 目前綁定的 Compliance 合約
       const compAddress = (await publicClient.readContract({
         address: CONTRACT_ADDRESSES.NTD_TOKEN,
         abi: ABIS.NTD_TOKEN, // 確保 config/contracts.ts 裡有 compliance()
@@ -72,7 +72,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
       })) as string;
       setComplianceAddr(compAddress);
 
-      // B. 查詢用戶是否通過驗證
+      // Info: (20260127 - Tzuhan) B. 查詢用戶是否通過驗證
       if (checkAddr) {
         const verified = (await publicClient.readContract({
           address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
@@ -83,9 +83,9 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
         setIsVerified(verified);
       }
 
-      // C. (新功能) 進階診斷：反查 Compliance 合約詳情
+      // Info: (20260127 - Tzuhan) C. (新功能) 進階診斷：反查 Compliance 合約詳情
       if (compAddress && compAddress !== '0x0000000000000000000000000000000000000000') {
-        // C-1. 反向確認：Compliance 認為它綁定的是哪個 Token?
+        // Info: (20260127 - Tzuhan) C-1. 反向確認：Compliance 認為它綁定的是哪個 Token?
         const tokenBound = await publicClient.readContract({
           address: compAddress as `0x${string}`,
           abi: COMPLIANCE_ABI,
@@ -93,7 +93,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
         });
         setBoundToken(tokenBound);
 
-        // C-2. 查詢模組：目前安裝了哪些規則模組 (Modules)?
+        // Info: (20260127 - Tzuhan) C-2. 查詢模組：目前安裝了哪些規則模組 (Modules)?
         const modules = await publicClient.readContract({
           address: compAddress as `0x${string}`,
           abi: COMPLIANCE_ABI,
@@ -116,7 +116,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
       </h2>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* 左側：交易狀態查詢 */}
+        {/* Info: (20260127 - Tzuhan) 左側：交易狀態查詢 */}
         <div className="rounded-md bg-gray-50 p-4">
           <h3 className="mb-2 font-semibold text-gray-700">1. 交易狀態 (Tx Status)</h3>
           <div className="flex gap-2">
@@ -147,7 +147,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
           )}
         </div>
 
-        {/* 右側：合規性檢查 (包含新功能) */}
+        {/* Info: (20260127 - Tzuhan) 右側：合規性檢查 (包含新功能) */}
         <div className="rounded-md bg-gray-50 p-4">
           <h3 className="mb-2 flex justify-between font-semibold text-gray-700">
             <span>2. 鏈上合規診斷 (On-Chain)</span>
@@ -173,7 +173,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
           </div>
 
           <div className="space-y-3 text-sm">
-            {/* 基礎檢查 */}
+            {/* Info: (20260127 - Tzuhan) 基礎檢查 */}
             <div className="border-b pb-2">
               <div className="flex justify-between py-1">
                 <span className="text-gray-500">Identity Verified:</span>
@@ -191,14 +191,14 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
               </div>
             </div>
 
-            {/* 新功能：進階合規檢查 */}
+            {/* Info: (20260127 - Tzuhan) 新功能：進階合規檢查 */}
             {complianceAddr && (
               <div className="rounded bg-indigo-50 p-2">
                 <div className="mb-1 text-xs font-bold text-indigo-800">
                   Compliance Contract Details:
                 </div>
 
-                {/* 1. 雙向綁定檢查 */}
+                {/* Info: (20260127 - Tzuhan) 1. 雙向綁定檢查 */}
                 <div className="flex justify-between py-1">
                   <span className="text-gray-600">Reverse Bind (Token):</span>
                   <span
@@ -212,7 +212,7 @@ export default function ComplianceCheckPanel({ defaultAddress = '' }: IProps) {
                   </span>
                 </div>
 
-                {/* 2. 安裝模組列表 */}
+                {/* Info: (20260127 - Tzuhan) 2. 安裝模組列表 */}
                 <div className="mt-1">
                   <div className="text-gray-600">Active Modules ({installedModules.length}):</div>
                   {installedModules.length > 0 ? (

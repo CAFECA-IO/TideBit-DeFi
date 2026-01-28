@@ -1,5 +1,5 @@
-import { publicClient } from '../src/lib/viem-public';
-import { CONTRACT_ADDRESSES, ABIS } from '../src/config/contracts';
+import { publicClient } from '@/lib/viem_public';
+import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { getAddress } from 'viem';
 
 async function main() {

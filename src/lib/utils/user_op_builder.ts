@@ -1,6 +1,6 @@
 import { UserOperationJson } from "@/validators";
 import { encodeFunctionData, parseAbi, Address, toHex } from "viem";
-import { publicClient } from "@/lib/viem-public";
+import { publicClient } from "@/lib/viem_public";
 import { CONTRACT_ADDRESSES, ABIS } from "@/config/contracts";
 
 /**

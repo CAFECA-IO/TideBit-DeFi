@@ -53,8 +53,8 @@ export async function buildTransferUserOp(
     const callGasLimit = BigInt(200_000); // Token transfer + overhead
     const verificationGasLimit = BigInt(1_000_000); // Signature verification (P-256 is heavy, bumping significantly)
     const preVerificationGas = BigInt(300_000); // Bumped for safety with large signatures
-    const maxFeePerGas = BigInt(2_000_000_000); // 2 Gwei
-    const maxPriorityFeePerGas = BigInt(1_000_000_000); // 1 Gwei
+    const maxFeePerGas = BigInt(0);
+    const maxPriorityFeePerGas = BigInt(0);
 
     return {
         sender: sender,

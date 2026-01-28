@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/common/button';
 import { getUserPortfolio, IPortfolioItem, IPortfolioHistory } from '@/services/admin.service';
 import { formatUnits } from 'viem';
@@ -11,11 +11,13 @@ import {
 } from 'react-icons/fi';
 
 interface IUserPortfolioProps {
-  onRequestTransfer: (targetAddress: string, tokenAddress?: string) => void;
+  initialAddress?: string;
+  enableSearch?: boolean;
+  onRequestTransfer?: (targetAddress: string, tokenAddress?: string) => void;
 }
 
-export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps) {
-  const [address, setAddress] = useState('');
+export default function UserPortfolio({ initialAddress = '', enableSearch = true, onRequestTransfer }: IUserPortfolioProps) {
+  const [address, setAddress] = useState(initialAddress);
   const [isLoading, setIsLoading] = useState(false);
   const [portfolio, setPortfolio] = useState<{
     balances: IPortfolioItem[];
@@ -42,6 +44,12 @@ export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps
     }
   };
 
+  useEffect(() => {
+    if (initialAddress && !enableSearch) {
+      handleSearch();
+    }
+  }, [initialAddress, enableSearch]);
+
   // const copyToClipboard = (text: string) => {
   //     navigator.clipboard.writeText(text);
   //     // Could add toast here
@@ -50,24 +58,26 @@ export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
-        <h2 className="mb-4 text-xl font-bold text-white">User Portfolio</h2>
+        <h2 className="mb-4 text-xl font-bold text-white">User Portfolio {enableSearch ? '' : '(My Assets)'}</h2>
 
         {/* Search Bar */}
-        <div className="flex gap-4">
-          <input
-            placeholder="Enter User Address (0x...)"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="flex-1 rounded border border-slate-700 bg-slate-800 px-4 py-2 text-white outline-none focus:border-blue-500"
-          />
-          <Button
-            onClick={handleSearch}
-            disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-500"
-          >
-            {isLoading ? 'Loading...' : 'Search'}
-          </Button>
-        </div>
+        {enableSearch && (
+          <div className="flex gap-4">
+            <input
+              placeholder="Enter User Address (0x...)"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="flex-1 rounded border border-slate-700 bg-slate-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+            />
+            <Button
+              onClick={handleSearch}
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              {isLoading ? 'Loading...' : 'Search'}
+            </Button>
+          </div>
+        )}
         {error && <p className="mt-2 text-red-400">{error}</p>}
       </div>
 
@@ -112,8 +122,9 @@ export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                         <button
-                          onClick={() => onRequestTransfer(address, token.tokenAddress)}
-                          className="inline-flex items-center text-indigo-400 hover:text-indigo-300"
+                          onClick={() => onRequestTransfer?.(address, token.tokenAddress)}
+                          disabled={!onRequestTransfer}
+                          className={`inline-flex items-center ${onRequestTransfer ? 'text-indigo-400 hover:text-indigo-300' : 'cursor-not-allowed text-slate-600'}`}
                         >
                           Transfer <FiArrowRight className="ml-1" />
                         </button>
@@ -149,11 +160,10 @@ export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`flex size-8 items-center justify-center rounded-full ${
-                            tx.to.toLowerCase() === address.toLowerCase()
-                              ? 'bg-green-900/30 text-green-500'
-                              : 'bg-red-900/30 text-red-500'
-                          }`}
+                          className={`flex size-8 items-center justify-center rounded-full ${tx.to.toLowerCase() === address.toLowerCase()
+                            ? 'bg-green-900/30 text-green-500'
+                            : 'bg-red-900/30 text-red-500'
+                            }`}
                         >
                           {tx.to.toLowerCase() === address.toLowerCase() ? 'IN' : 'OUT'}
                         </div>

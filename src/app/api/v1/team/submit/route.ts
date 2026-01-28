@@ -46,8 +46,8 @@ export async function POST(req: NextRequest) {
       abi: SCWFactoryArtifact.abi,
       functionName: 'getCompanyAddress',
       args: [
-        [[BigInt(pubKeyX), BigInt(pubKeyY)]], // owners: array of [x, y]
-        BigInt(1), // threshold: 1
+        [[BigInt(pubKeyX), BigInt(pubKeyY)]], // Info: (20260127 - Tzuhan) owners: array of [x, y]
+        BigInt(1), // Info: (20260127 - Tzuhan) threshold: 1
         BigInt(salt),
       ],
     })) as Address;

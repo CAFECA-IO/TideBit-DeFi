@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth_context';
-import { getUserData, UserData } from '@/services/user.service';
+import { getUserData, IUserData } from '@/services/user.service';
 
 export default function AdminUserInfo() {
   const { user } = useAuth();
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

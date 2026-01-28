@@ -58,7 +58,7 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
-        <h2 className="mb-4 text-xl font-bold text-white">User Portfolio {enableSearch ? '' : '(My Assets)'}</h2>
+        {/* <h2 className="mb-4 text-xl font-bold text-white">User Portfolio {enableSearch ? '' : '(My Assets)'}</h2> */}
 
         {/* Search Bar */}
         {enableSearch && (

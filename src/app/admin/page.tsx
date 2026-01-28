@@ -24,7 +24,7 @@ export default function AdminConsolePage() {
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-6xl px-4 py-8">
 
-        {/* Header with Navigation */}
+        {/* Info: (20260127 - Tzuhan) Header with Navigation */}
         <div className="mb-6 flex flex-col items-start justify-between gap-4 border-b border-slate-800 pb-6 md:flex-row md:items-center">
           <div>
             <h1 className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-3xl font-bold text-transparent">
@@ -44,7 +44,7 @@ export default function AdminConsolePage() {
 
         <AdminDashboardOverview />
 
-        {/* Tab Navigation */}
+        {/* Info: (20260127 - Tzuhan) Tab Navigation */}
         <div className="mb-8 inline-flex space-x-1 rounded-lg bg-slate-900/50 p-1">
           {[
             { id: 'DASHBOARD', label: 'Overview' },
@@ -65,7 +65,7 @@ export default function AdminConsolePage() {
           ))}
         </div>
 
-        {/* Content Area */}
+        {/* Info: (20260127 - Tzuhan) Content Area */}
         <div className="min-h-500px">
           {activeTab === 'DASHBOARD' && (
             <div className="space-y-6">

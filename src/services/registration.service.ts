@@ -1,5 +1,5 @@
 import { encodeFunctionData, type Hex } from 'viem';
-import { publicClient } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import {
   fido2ClientService,

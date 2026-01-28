@@ -8,7 +8,7 @@ export const teamStep1Schema = z.object({
     .min(1, 'Token Symbol is required')
     .max(10, 'Symbol is too long (max 10 characters)')
     .regex(/^[A-Z0-9]+$/, 'Symbol must be uppercase letters or numbers'),
-  tokenLogoId: z.string().min(1, 'Token Logo is required'), // Info: (20260108 - Tzuhan) 前端上傳後取得的 File ID
+  tokenLogoId: z.string().optional().or(z.literal('')), // Info: (20260108 - Tzuhan) 前端上傳後取得的 File ID
 });
 
 // Info: (20260108 - Tzuhan) Step 2: Basic Information

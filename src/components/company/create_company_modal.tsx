@@ -90,6 +90,7 @@ const CreateCompanyModal = () => {
             accept="image/*"
             className="absolute inset-0 cursor-pointer opacity-0"
             aria-label="Upload Token Logo"
+            onClick={(e) => (e.currentTarget.value = '')}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) handleUpload(file, 'tokenLogoId');
@@ -250,6 +251,7 @@ const CreateCompanyModal = () => {
           activeOption={formData.legalStructure || LEGAL_STRUCTURE_OPTIONS[0]}
           selectOption={(val) => updateField('legalStructure', val)}
         />
+        {errors.legalStructure && <p className={errorStyle}>{errors.legalStructure}</p>}
       </div>
 
       <div>
@@ -297,6 +299,7 @@ const CreateCompanyModal = () => {
           activeOption={formData.industry || INDUSTRY_OPTIONS[0]}
           selectOption={(val) => updateField('industry', val)}
         />
+        {errors.industry && <p className={errorStyle}>{errors.industry}</p>}
       </div>
     </div>
   );
@@ -462,7 +465,7 @@ const CreateCompanyModal = () => {
                   {isSubmitting ? 'Saving...' : 'Save & Next'}
                 </Button>
               ) : (
-                <Button onClick={handleSubmit} disabled={isSubmitting || isUploading}>
+                <Button onClick={() => handleSubmit(onClose)} disabled={isSubmitting || isUploading}>
                   {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </Button>
               )}

@@ -40,17 +40,15 @@ export async function POST(req: NextRequest) {
     const salt = keccak256(toHex(company.id));
 
     // Info: (20260116 - Tzuhan) 3. 呼叫 SCWFactory 預測 CompanySCW 地址
-    // Info: (20260116 - Tzuhan) 重要：這裡的 getAddress 內部必須使用 CompanySCW 的 Bytecode
-    // Info: (20260116 - Tzuhan) 或是 Factory 有區分 getCompanyAddress 與 getPersonalAddress
+    // Info: (20260127 - Tzuhan) Fix: Use getCompanyAddress for companies
     const predictedAddress = (await publicClient.readContract({
       address: SCW_FACTORY_ADDRESS,
       abi: SCWFactoryArtifact.abi,
-      functionName: 'getAddress',
+      functionName: 'getCompanyAddress',
       args: [
-        BigInt(pubKeyX),
-        BigInt(pubKeyY),
+        [[BigInt(pubKeyX), BigInt(pubKeyY)]], // Info: (20260127 - Tzuhan) owners: array of [x, y]
+        BigInt(1), // Info: (20260127 - Tzuhan) threshold: 1
         BigInt(salt),
-        true, // Info: (20260116 - Tzuhan) 假設增加 isCompany 標籤來區分 Bytecode，防止與 PersonalSCW 碰撞
       ],
     })) as Address;
 

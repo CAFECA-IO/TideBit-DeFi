@@ -233,3 +233,93 @@ export async function registerUser(tokenAddress: string, userAddress: string): P
     return { success: false, message: (error as Error).message };
   }
 }
+
+// Info: (20260127 - Admin) 銷毀代幣
+export async function burn(tokenAddress: string, from: string, amount: number): Promise<ActionResponse> {
+  try {
+    const validFrom = getAddress(from);
+    const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18);
+
+    const tokenAbi = parseAbi([
+      'function burn(address, uint256) external',
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: 'burn',
+      args: [validFrom, amountBigInt]
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `銷毀交易已確認: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error('銷毀失敗:', error);
+    return { success: false, message: `銷毀失敗: ${(error as Error).message}` };
+  }
+}
+
+// Info: (20260127 - Admin) 凍結/解凍代幣
+export async function freeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
+  return toggleFreeze(tokenAddress, target, amount, true);
+}
+
+export async function unfreeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
+  return toggleFreeze(tokenAddress, target, amount, false);
+}
+
+async function toggleFreeze(tokenAddress: string, target: string, amount: number, isFreeze: boolean): Promise<ActionResponse> {
+  try {
+    const validTarget = getAddress(target);
+    const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18);
+    const functionName = isFreeze ? 'freezePartialTokens' : 'unfreezePartialTokens';
+
+    const tokenAbi = parseAbi([
+      `function ${functionName}(address, uint256) external`,
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: functionName,
+      args: [validTarget, amountBigInt]
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `${isFreeze ? '凍結' : '解凍'}交易已確認: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error(`${isFreeze ? '凍結' : '解凍'}失敗:`, error);
+    return { success: false, message: `${isFreeze ? '凍結' : '解凍'}失敗: ${(error as Error).message}` };
+  }
+}
+
+// Info: (20260127 - Admin) 暫停/恢復系統
+export async function pause(tokenAddress: string): Promise<ActionResponse> {
+  return togglePause(tokenAddress, true);
+}
+
+export async function unpause(tokenAddress: string): Promise<ActionResponse> {
+  return togglePause(tokenAddress, false);
+}
+
+async function togglePause(tokenAddress: string, isPause: boolean): Promise<ActionResponse> {
+  try {
+    const functionName = isPause ? 'pause' : 'unpause';
+    const tokenAbi = parseAbi([
+      `function ${functionName}() external`,
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: functionName,
+      args: []
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `系統已${isPause ? '暫停' : '恢復'}: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error(`系統${isPause ? '暫停' : '恢復'}失敗:`, error);
+    return { success: false, message: `系統${isPause ? '暫停' : '恢復'}失敗: ${(error as Error).message}` };
+  }
+}

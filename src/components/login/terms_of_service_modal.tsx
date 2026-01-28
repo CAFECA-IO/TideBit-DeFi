@@ -56,7 +56,12 @@ const TermsOfServiceModal: React.FC = () => {
       const totalScrollableHeight = scrollHeight - clientHeight;
 
       // Info: (20251216 - Julian) 計算閱讀百分比
-      const progress = (scrollTop / totalScrollableHeight) * 100;
+      let progress = (scrollTop / totalScrollableHeight) * 100;
+
+      // Info: (20260127 - Antigravity) Fix: Allow tolerance for floating point errors (e.g. sub-pixel rendering)
+      if (Math.abs(scrollHeight - clientHeight - scrollTop) < 2) {
+        progress = 100;
+      }
 
       // Info: (20251216 - Julian) 限制進度只會增加，不會減少
       setReadingProgress((prev) => Math.max(prev, progress));

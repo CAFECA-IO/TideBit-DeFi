@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { parseAbiItem } from 'viem';
-import { publicClient } from '@/lib/viem';
+import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
 import { webAuthnRepo } from '@/repositories/webauthn.repo';
 import { prisma } from '@/lib/prisma';

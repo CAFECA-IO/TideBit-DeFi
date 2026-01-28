@@ -32,7 +32,7 @@ const initialFormData: Partial<SubmitTeamInput> = {
   // Info: (20260108 - Tzuhan) Step 3
   legalStructure: 'Company Limited by Shares',
   registrationNum: '',
-  industry: '',
+  industry: 'Technology',
   // Info: (20260108 - Tzuhan) Step 5
   docIdType: 'National ID', // Info: (20260108 - Tzuhan) Zod Enum 預設值
   docIdFile: '',
@@ -189,7 +189,7 @@ export function useCreateTeam() {
   }, [currentStep]);
 
   // Info: (20260108 - Tzuhan) 最終送出 (Step 5)
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (onSuccess?: () => void) => {
     if (!validateCurrentStep()) return;
     if (!companyId) {
       alert('Error: Missing Company ID. Please refresh and try again.');
@@ -207,6 +207,7 @@ export function useCreateTeam() {
       await teamService.submitApplication(companyId, fullValidation.data);
 
       alert('Application submitted successfully!');
+      if (onSuccess) onSuccess(); // Info: (20260127 - Tzuhan) Call success callback (e.g., close modal)
       router.push('/funding'); // Info: (20260108 - Tzuhan) 成功後跳轉
     } catch (error) {
       console.error(error);

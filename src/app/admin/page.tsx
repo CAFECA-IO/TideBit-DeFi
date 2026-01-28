@@ -4,21 +4,37 @@ import React, { useState } from 'react';
 import AdminUserInfo from '@/components/admin/admin_user_info';
 import AdminDashboardOverview from '@/components/admin/dashboard_overview';
 import AdminUserManagement from '@/components/admin/user_management';
-import UserCompanyManagement from '@/components/admin/user_company_management'; // Info: (20260127) New Component
+import UserCompanyManagement from '@/components/admin/user_company_management';
 import AdminTokenOperations from '@/components/admin/token_operations';
 import RegistrySettings from '@/components/admin/registry_settings';
 import { useRouter } from 'next/navigation';
+import UserPortfolio from '@/components/admin/user_portfolio';
 
 enum Tab {
   DASHBOARD = 'DASHBOARD',
   USERS = 'USERS',
   TOKEN = 'TOKEN',
   SETTINGS = 'SETTINGS',
+  PORTFOLIO = 'PORTFOLIO',
 }
 
 export default function AdminConsolePage() {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DASHBOARD);
-  const router = useRouter()
+  const router = useRouter();
+
+  // Info: (20260128) State to pass params from Portfolio to TokenOperations
+  const [transferParams, setTransferParams] = useState<{
+    targetAddress: string;
+    tokenAddress: string;
+  } | null>(null);
+
+  const handleRequestTransfer = (targetAddress: string, tokenAddress?: string) => {
+    setTransferParams({
+      targetAddress,
+      tokenAddress: tokenAddress || '',
+    });
+    setActiveTab(Tab.TOKEN);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -48,6 +64,7 @@ export default function AdminConsolePage() {
         <div className="mb-8 inline-flex space-x-1 rounded-lg bg-slate-900/50 p-1">
           {[
             { id: 'DASHBOARD', label: 'Overview' },
+            { id: 'PORTFOLIO', label: 'User Portfolio' },
             { id: 'USERS', label: 'User Management' },
             { id: 'TOKEN', label: 'Token Operations' },
             { id: 'SETTINGS', label: 'Registry Settings' }
@@ -76,8 +93,18 @@ export default function AdminConsolePage() {
             </div>
           )}
           {activeTab === 'USERS' && <UserCompanyManagement />}
-          {activeTab === 'TOKEN' && <AdminTokenOperations />}
+          {activeTab === 'TOKEN' && (
+            <AdminTokenOperations
+              key={transferParams ? `${transferParams.targetAddress}-${transferParams.tokenAddress}` : 'default'}
+              initialTargetAddress={transferParams?.targetAddress}
+              initialTokenAddress={transferParams?.tokenAddress}
+              initialTab={transferParams ? 'USER_TRANSFER' : 'BALANCE'}
+            />
+          )}
           {activeTab === 'SETTINGS' && <RegistrySettings />}
+          {activeTab === 'PORTFOLIO' && (
+            <UserPortfolio onRequestTransfer={handleRequestTransfer} />
+          )}
         </div>
       </div>
     </div>

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { getUsersWithCompanies, deployCompanyToken, mintCompanyToken, type IAdminUser } from '@/services/admin.service';
+import { getUsersWithCompanies, deployCompanyToken, mintCompanyToken, deployUserIdentity, type IAdminUser } from '@/services/admin.service';
 import { Button } from '@/components/common/button';
+import { FiCopy } from 'react-icons/fi';
 
 export default function UserCompanyManagement() {
     const [users, setUsers] = useState<IAdminUser[]>([]);
@@ -34,9 +35,33 @@ export default function UserCompanyManagement() {
         }
     }, [page]);
 
+    const handleCopy = (text: string) => {
+        navigator.clipboard.writeText(text);
+        // Optional: toast notification
+    };
+
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
+
+    const handleDeployIdentity = async (userAddress: string) => {
+        if (!confirm(`Deploy Identity for ${userAddress}?`)) return;
+        setDeploying(userAddress);
+        try {
+            const res = await deployUserIdentity(userAddress);
+            if (res.success) {
+                alert('Identity Deployed Successfully!');
+                fetchUsers();
+            } else {
+                alert(`Deployment Failed: ${res.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An unexpected error occurred.');
+        } finally {
+            setDeploying(null);
+        }
+    };
 
     const handleDeploy = async (companyId: string) => {
         if (!confirm('Are you sure you want to deploy a token for this company?')) return;
@@ -111,11 +136,48 @@ export default function UserCompanyManagement() {
                             users.map((user) => (
                                 <tr key={user.id} className="bg-slate-950/50 hover:bg-slate-900">
                                     <td aria-label='user' className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-white">{user.name || 'Unnamed User'}</span>
-                                            <span className="font-mono text-xs text-slate-500" title={user.address}>
-                                                {user.address.slice(0, 6)}...{user.address.slice(-4)}
-                                            </span>
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold text-white">{user.name || 'Unnamed User'}</span>
+                                                {user.isVerified ? (
+                                                    <span className="rounded border border-green-800 bg-green-900/50 px-1.5 py-0.5 text-[10px] font-bold text-green-400">
+                                                        VERIFIED
+                                                    </span>
+                                                ) : user.identityAddress ? (
+                                                    <span className="rounded border border-yellow-800 bg-yellow-900/50 px-1.5 py-0.5 text-[10px] font-bold text-yellow-400">
+                                                        UNVERIFIED
+                                                    </span>
+                                                ) : (
+                                                    <span className="rounded border border-red-800 bg-red-900/50 px-1.5 py-0.5 text-[10px] font-bold text-red-400">
+                                                        NO ID
+                                                    </span>
+                                                )}
+                                            </div>
+
+
+                                            <div className="flex items-center gap-1 font-mono text-xs text-slate-500">
+                                                <span title={user.address}>
+                                                    {user.address.slice(0, 6)}...{user.address.slice(-4)}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleCopy(user.address)}
+                                                    className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                                                    title="Copy Address"
+                                                >
+                                                    <FiCopy size={12} />
+                                                </button>
+                                            </div>
+                                            {!user.identityAddress && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    disabled={!!deploying}
+                                                    onClick={() => handleDeployIdentity(user.address)}
+                                                    className="mt-1 h-6 w-fit border-blue-800 px-2 text-[10px] text-blue-400 hover:bg-blue-900/30"
+                                                >
+                                                    {deploying === user.address ? 'Deploying...' : 'Deploy Identity'}
+                                                </Button>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-xs font-semibold">
@@ -141,15 +203,24 @@ export default function UserCompanyManagement() {
                                                             </div>
                                                             <div className="flex items-center">
                                                                 {comp.tokenAddress ? (
-                                                                    <div className="flex gap-2">
-                                                                        <span className="font-mono text-xs text-green-500" title={comp.tokenAddress}>
-                                                                            Deployed ✅
-                                                                        </span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="flex items-center gap-1 rounded border border-green-900/30 bg-green-900/20 px-2 py-1">
+                                                                            <span className="font-mono text-xs text-green-500" title={comp.tokenAddress}>
+                                                                                {comp.tokenAddress.slice(0, 6)}...{comp.tokenAddress.slice(-4)}
+                                                                            </span>
+                                                                            <button
+                                                                                onClick={() => handleCopy(comp.tokenAddress!)}
+                                                                                className="ml-1 text-green-500/70 hover:text-green-400"
+                                                                                title="Copy Token Address"
+                                                                            >
+                                                                                <FiCopy size={12} />
+                                                                            </button>
+                                                                        </div>
                                                                         <Button
                                                                             size="sm"
                                                                             variant="outline"
                                                                             onClick={() => openMintModal(comp.id, user.address)}
-                                                                            className="h-6 border-green-600 px-2 text-xs text-green-500 hover:bg-green-900/30"
+                                                                            className="h-7 border-green-600 px-2 text-xs text-green-500 hover:bg-green-900/30"
                                                                         >
                                                                             Mint
                                                                         </Button>
@@ -210,7 +281,7 @@ export default function UserCompanyManagement() {
                         <h3 className="mb-4 text-lg font-bold text-white">Mint Company Token</h3>
                         <div className="space-y-4">
                             <div>
-    
+
                                 <input
                                     id="recipient-address"
                                     aria-label="Recipient Address"

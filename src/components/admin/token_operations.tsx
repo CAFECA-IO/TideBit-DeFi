@@ -41,6 +41,12 @@ export default function TokenOperations({
     const [frozenBalance, setFrozenBalance] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+    const [txResult, setTxResult] = useState<{
+        success: boolean;
+        hash?: string;
+        error?: string;
+        details?: string;
+    } | null>(null);
 
     // Info: (20260127) Confirmation Modal State
     const [modalConfig, setModalConfig] = useState<{
@@ -190,16 +196,39 @@ export default function TokenOperations({
                 setStatusMessage('Sending to Bundler...');
                 const bundleRes = await sendUserOpToBundler(userOp, CONTRACT_ADDRESSES.ENTRY_POINT);
 
-                if (bundleRes.status === 'success' || bundleRes.transactionHash) {
-                    res = { success: true, message: `Tx Hash: ${bundleRes.transactionHash}` };
+                if (bundleRes.success) {
+                    if (bundleRes.payload?.transactionHash) {
+                        res = { success: true, message: `Tx Hash: ${bundleRes.payload.transactionHash}` };
+                        setTxResult({
+                            success: true,
+                            hash: bundleRes.payload.transactionHash,
+                        });
+                    } else if (bundleRes.payload?.error) {
+                        const errorMsg = bundleRes.payload.error;
+                        const details = bundleRes.payload.details || 'No details provided';
+                        setTxResult({
+                            success: false,
+                            error: errorMsg,
+                            details: typeof details === 'object' ? JSON.stringify(details, null, 2) : details,
+                        });
+                        throw new Error(errorMsg);
+                    } else {
+                        throw new Error('Unknown Bundle Response');
+                    }
                 } else {
-                    throw new Error(bundleRes.error || bundleRes.message || 'Bundler Error');
+                    const errorMsg = bundleRes.message || 'Bundler Error';
+                    setTxResult({
+                        success: false,
+                        error: errorMsg,
+                    });
+                    throw new Error(errorMsg);
                 }
             }
 
             if (res?.success) {
                 setStatusMessage(`Success: ${res.message}`);
-                alert('操作成功！\n' + res.message);
+                // alert('操作成功！\n' + res.message); // Disabling alert for USER_TRANSFER success to show UI instead
+                if (action !== 'USER_TRANSFER') alert('操作成功！\n' + res.message);
                 setAmount('');
                 if (['MINT', 'BURN', 'FREEZE', 'UNFREEZE'].includes(action)) checkBalance();
             } else {
@@ -210,7 +239,8 @@ export default function TokenOperations({
         } catch (e) {
             console.error(e);
             setStatusMessage(`Error: ${(e as Error).message}`);
-            alert(`操作失敗: ${(e as Error).message}`);
+            // alert(`操作失敗: ${(e as Error).message}`); // Disabling alert for USER_TRANSFER error to show UI instead
+            if (action !== 'USER_TRANSFER') alert(`操作失敗: ${(e as Error).message}`);
         } finally {
             setIsLoading(false);
         }
@@ -257,7 +287,7 @@ export default function TokenOperations({
                 {(['BALANCE', 'MINT', 'BURN', 'FREEZE', 'TRANSFER', 'USER_TRANSFER'] as const).map((tab) => (
                     <button
                         key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => { setActiveTab(tab); setTxResult(null); }}
                         className={`rounded-t-lg px-4 py-2 text-sm font-medium transition-colors ${activeTab === tab
                             ? 'border-b-2 border-blue-500 bg-slate-800 text-blue-400'
                             : 'text-slate-500 hover:text-slate-300'
@@ -476,6 +506,37 @@ export default function TokenOperations({
                         <Button onClick={() => handleExecute('USER_TRANSFER')} disabled={isLoading} className="w-full bg-teal-600 hover:bg-teal-500">
                             {isLoading ? 'Sign & Transfer' : 'Sign & Transfer'}
                         </Button>
+
+                        {txResult && (
+                            <div className={`mt-4 rounded p-4 border ${txResult.success ? 'border-green-800 bg-green-900/20' : 'border-red-800 bg-red-900/20'}`}>
+                                <h4 className={`font-bold ${txResult.success ? 'text-green-400' : 'text-red-400'}`}>
+                                    {txResult.success ? 'Transfer Successful' : 'Transfer Failed'}
+                                </h4>
+
+                                {txResult.hash && (
+                                    <div className="mt-2 text-sm text-slate-300">
+                                        <span className="block font-medium text-slate-500">Transaction Hash:</span>
+                                        <span className="font-mono break-all">{txResult.hash}</span>
+                                    </div>
+                                )}
+
+                                {txResult.error && (
+                                    <div className="mt-2 text-sm text-red-300">
+                                        <span className="block font-medium text-red-500">Error:</span>
+                                        {txResult.error}
+                                    </div>
+                                )}
+
+                                {txResult.details && (
+                                    <div className="mt-2 text-xs text-slate-300">
+                                        <span className="block font-medium text-slate-500">Receipt / Details:</span>
+                                        <pre className="mt-1 overflow-x-auto whitespace-pre-wrap font-mono bg-slate-950 p-2 rounded">
+                                            {txResult.details}
+                                        </pre>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
 

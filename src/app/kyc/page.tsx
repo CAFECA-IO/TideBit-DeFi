@@ -11,7 +11,7 @@ export default function KycPage() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
 
-  // 1. Check Identity Contract (Read via RPC)
+  // Info: (20260127 - Tzuhan) 1. Check Identity Contract (Read via RPC)
   const checkIdentity = async () => {
     if (!isAddress(identityAddress)) {
       setFeedback('Invalid Identity Address');
@@ -19,7 +19,7 @@ export default function KycPage() {
     }
     setLoading(true);
     try {
-      // Simple check: get code to ensure contract exists
+      // Info: (20260127 - Tzuhan) Simple check: get code to ensure contract exists
       const code = await publicClient.getCode({ address: identityAddress });
       if (!code || code === '0x') {
         setFeedback(`No contract found at ${identityAddress}`);
@@ -33,7 +33,7 @@ export default function KycPage() {
     }
   };
 
-  // 2. Add Claim (Write via Relayer API)
+  // Info: (20260127 - Tzuhan) 2. Add Claim (Write via Relayer API)
   const handleAddClaim = async () => {
     if (!isAddress(identityAddress)) {
       setFeedback('Invalid Identity Contract Address.');
@@ -76,7 +76,7 @@ export default function KycPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8 text-gray-900">
       <div className="mx-auto max-w-4xl space-y-8">
-        {/* Header */}
+        {/* Info: (20260127 - Tzuhan) Header */}
         <div className="flex items-center justify-between border-b border-gray-200 pb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Compliance & KYC Management</h1>
@@ -86,7 +86,7 @@ export default function KycPage() {
           </div>
         </div>
 
-        {/* Connector Card */}
+        {/* Info: (20260127 - Tzuhan) Connector Card */}
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Identity Status Check</h2>
           <div className="flex gap-4">
@@ -119,10 +119,10 @@ export default function KycPage() {
           )}
         </div>
 
-        {/* Claim Management Section */}
+        {/* Info: (20260127 - Tzuhan) Claim Management Section */}
         {identityAddress && isAddress(identityAddress) && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Add Claim */}
+            {/* Info: (20260127 - Tzuhan) Add Claim */}
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold">Add Claim (Agent)</h2>
               <div className="space-y-4">
@@ -154,7 +154,7 @@ export default function KycPage() {
               </div>
             </div>
 
-            {/* Inspect Identity */}
+            {/* Info: (20260127 - Tzuhan) Inspect Identity */}
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold">Contract Details</h2>
               <div className="space-y-2 text-sm">

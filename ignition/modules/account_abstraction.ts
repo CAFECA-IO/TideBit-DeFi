@@ -1,9 +1,7 @@
 import { buildModule } from '@nomicfoundation/hardhat-ignition/modules';
 
 const AccountAbstractionModule = buildModule('AccountAbstractionModule', (m) => {
-    // =========================================================
-    // AA Components (SCW Factory)
-    // =========================================================
+    // Info: (20260127 - Tzuhan) AA Components (SCW Factory)
     const entryPointAddress = process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS;
 
     const entryPoint = entryPointAddress

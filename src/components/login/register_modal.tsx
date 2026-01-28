@@ -8,12 +8,41 @@ import { RxCross2 } from 'react-icons/rx';
 import { useGlobalCtx } from '@/contexts/global_context';
 import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
+import ConfirmModal from '@/components/common/confirm_modal';
 import { registrationService, RegistrationStep } from '@/services/registration.service';
 
 const RegisterModal: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('IDLE');
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
+  };
 
   const stepTextMap: Record<RegistrationStep, string> = {
     IDLE: 'Sign Up',
@@ -59,11 +88,11 @@ const RegisterModal: React.FC = () => {
         inputValue.trim(),
         (step) => setCurrentStep(step) // Info: (20260116 - Tzuhan) 更新 UI 狀態
       );
-      alert(`Successfully Deployed! Address: ${result.scwAddress}`);
+      showAlert('Success', `Successfully Deployed! Address: ${result.scwAddress}`, () => { });
       onClose();
     } catch (error) {
       console.error('Sign up failed:', error);
-      alert(`Sign up failed: ${(error as Error).message}`);
+      showAlert('Error', `Sign up failed: ${(error as Error).message}`, () => { });
     } finally {
       setIsLoading(false);
       setCurrentStep('IDLE');
@@ -74,11 +103,10 @@ const RegisterModal: React.FC = () => {
     <button
       type="button"
       onClick={termsOfServiceModalVisibilityHandler}
-      className={`${
-        isReviewedTerms
-          ? 'text-button-state-outline-on-success-default hover:text-button-state-outline-on-success-hover'
-          : 'text-button-state-outline-on-info-default hover:text-button-state-outline-on-info-hover'
-      } flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold`}
+      className={`${isReviewedTerms
+        ? 'text-button-state-outline-on-success-default hover:text-button-state-outline-on-success-hover'
+        : 'text-button-state-outline-on-info-default hover:text-button-state-outline-on-info-hover'
+        } flex items-center gap-spacing-lv-2 py-spacing-lv-6 font-bold`}
     >
       {isReviewedTerms ? <FaRegCircleCheck size={24} /> : <FaRegCircle size={24} />}
       <p>Before You Register, Please Review the Agreement</p>
@@ -89,6 +117,13 @@ const RegisterModal: React.FC = () => {
 
   return (
     <div className="fixed z-masking flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       <div className="flex flex-col items-stretch overflow-hidden rounded-radius-m bg-modal-surface-background">
         {/* Info: (20251217 - Julian) Modal Header */}
         <div className="ml-auto p-spacing-lv-4">

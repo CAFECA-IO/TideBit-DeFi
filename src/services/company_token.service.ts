@@ -1,28 +1,20 @@
 'use server';
 
 // Info: (20260127) Handle company token deployment sharing a common Identity Registry
-import { createPublicClient, createWalletClient, http, parseAbi, defineChain, getAddress } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { parseAbi, getAddress } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
+import { walletClient, account } from '@/lib/viem';
+import { publicClient as client } from '@/lib/viem_public';
 import COMPLIANCE_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/compliance/modular/ModularCompliance.sol/ModularCompliance.json';
+
+if (!walletClient || !account) {
+    throw new Error('Server wallet not configured (ISUNCOIN_PRIVATE_KEY missing)');
+}
+const wallet = walletClient;
 import IDENTITY_ARTIFACT from '@erc3643org/erc-3643/artifacts/@onchain-id/solidity/contracts/Identity.sol/Identity.json';
 import TOKEN_ARTIFACT from '@erc3643org/erc-3643/artifacts/contracts/token/Token.sol/Token.json';
 
-// Info: (20260127 - Tzuhan) Blockchain Setup
-const chainId = parseInt(process.env.NEXT_PUBLIC_ISUNCOIN_CHAIN_ID || '8017');
-const targetChain = defineChain({
-    id: chainId,
-    name: 'TargetChain',
-    nativeCurrency: { name: 'Token', symbol: 'TOK', decimals: 18 },
-    rpcUrls: { default: { http: [process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.isuncoin.com'] } },
-});
-
-// Info: (20260127 - Tzuhan) Initialize Clients
-const account = privateKeyToAccount(process.env.ISUNCOIN_PRIVATE_KEY as `0x${string}`);
-const client = createPublicClient({ chain: targetChain, transport: http() });
-const wallet = createWalletClient({ account, chain: targetChain, transport: http() });
-
-// Info: (20260127 - Tzuhan) Response Type
+// Info: (20260128 - Tzuhan) Response Type
 type ActionResponse = {
     success: boolean;
     message: string;
@@ -30,7 +22,7 @@ type ActionResponse = {
 };
 
 /**
- * Info: (20260127 - Tzuhan) Deploy Company Token
+ * Info: (20260128 - Tzuhan) Deploy Company Token
  * This function deploys a new Token and Compliance, but links to an EXISTING Identity Registry system.
  */
 export async function deployCompanyToken(
@@ -43,7 +35,7 @@ export async function deployCompanyToken(
         console.log(`--- Starting Company Token Deployment: ${name} (${symbol}) ---`);
         console.log(`Using Shared Identity Registry: ${identityRegistry}`);
 
-        // Info: (20260127 - Tzuhan) Validate addresses
+        // Info: (20260128 - Tzuhan) Validate addresses
         const IR_ADDRESS = getAddress(identityRegistry);
 
         /**
@@ -67,7 +59,7 @@ export async function deployCompanyToken(
         const ioiHash = await wallet.deployContract({
             abi: IDENTITY_ARTIFACT.abi,
             bytecode: IDENTITY_ARTIFACT.bytecode as `0x${string}`,
-            args: [account.address, false]
+            args: [account!.address, false]
         });
         const ioiReceipt = await client.waitForTransactionReceipt({ hash: ioiHash });
         const IOI_ADDRESS = ioiReceipt.contractAddress!;
@@ -101,8 +93,8 @@ export async function deployCompanyToken(
         const COMPLIANCE_ABI = parseAbi(['function bindToken(address) external']);
         await wallet.writeContract({ address: COMP_ADDRESS, abi: COMPLIANCE_ABI, functionName: 'bindToken', args: [TOKEN_ADDRESS] });
 
-        // Info: (20260127 - Tzuhan) 6. Add Platform Admin as Agent to Token (to allow minting/burning if logic requires agent)
-        await wallet.writeContract({ address: TOKEN_ADDRESS, abi: TOKEN_ABI, functionName: 'addAgent', args: [account.address] });
+        // Info: (20260128 - Tzuhan) 6. Add Platform Admin as Agent to Token (to allow minting/burning if logic requires agent)
+        await wallet.writeContract({ address: TOKEN_ADDRESS, abi: TOKEN_ABI, functionName: 'addAgent', args: [account!.address] });
 
         return {
             success: true,

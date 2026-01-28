@@ -67,6 +67,34 @@ export function useCreateTeam() {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = useCallback((title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
+  }, []);
+
   // Info: (20260108 - Tzuhan) [Strict] 使用泛型 K 確保 value 的型別正確對應 field
   // K extends keyof SubmitTeamInput: 限制 field 必須是表單欄位名稱
   // value: SubmitTeamInput[K]: 限制 value 必須是該欄位定義的型別 (string | number | Date | ...)
@@ -97,12 +125,12 @@ export function useCreateTeam() {
       } catch (error) {
         console.error(error);
         const msg = error instanceof Error ? error.message : 'Unknown upload error';
-        alert(`Upload failed: ${msg}`);
+        showAlert('Error', `Upload failed: ${msg}`, () => { });
       } finally {
         setIsUploading(false);
       }
     },
-    [updateField]
+    [updateField, showAlert]
   );
 
   // Info: (20260108 - Tzuhan) 驗證當前步驟資料
@@ -174,11 +202,11 @@ export function useCreateTeam() {
       }
     } catch (error) {
       console.error('Failed to save progress:', error);
-      alert('Failed to save progress. Please try again.');
+      showAlert('Error', 'Failed to save progress. Please try again.', () => { });
     } finally {
       setIsSubmitting(false);
     }
-  }, [companyId, currentStep, formData, validateCurrentStep]);
+  }, [companyId, currentStep, formData, validateCurrentStep, showAlert]);
 
   // Info: (20260108 - Tzuhan) 上一步
   const handleBack = useCallback(() => {
@@ -192,7 +220,7 @@ export function useCreateTeam() {
   const handleSubmit = useCallback(async (onSuccess?: () => void) => {
     if (!validateCurrentStep()) return;
     if (!companyId) {
-      alert('Error: Missing Company ID. Please refresh and try again.');
+      showAlert('Error', 'Error: Missing Company ID. Please refresh and try again.', () => { });
       return;
     }
 
@@ -200,23 +228,24 @@ export function useCreateTeam() {
     try {
       const fullValidation = submitTeamSchema.safeParse(formData);
       if (!fullValidation.success) {
-        alert('Please ensure all fields are filled correctly.');
+        showAlert('Error', 'Please ensure all fields are filled correctly.', () => { });
         return;
       }
 
       await teamService.submitApplication(companyId, fullValidation.data);
 
-      alert('Application submitted successfully!');
-      if (onSuccess) onSuccess(); // Info: (20260127 - Tzuhan) Call success callback (e.g., close modal)
-      router.push('/funding'); // Info: (20260108 - Tzuhan) 成功後跳轉
+      showAlert('Success', 'Application submitted successfully!', () => {
+        if (onSuccess) onSuccess(); // Info: (20260127 - Tzuhan) Call success callback (e.g., close modal)
+        router.push('/funding'); // Info: (20260108 - Tzuhan) 成功後跳轉
+      });
     } catch (error) {
       console.error(error);
       const msg = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Submission failed: ${msg}`);
+      showAlert('Error', `Submission failed: ${msg}`, () => { });
     } finally {
       setIsSubmitting(false);
     }
-  }, [companyId, formData, router, validateCurrentStep]);
+  }, [companyId, formData, router, validateCurrentStep, showAlert]);
 
   // Info: (20260108 - Tzuhan) 暫存並離開 (Save & Leave)
   const handleSaveAndLeave = useCallback(async () => {
@@ -250,5 +279,7 @@ export function useCreateTeam() {
     handleBack,
     handleSubmit,
     handleSaveAndLeave,
+    modalConfig,
+    closeModal,
   };
 }

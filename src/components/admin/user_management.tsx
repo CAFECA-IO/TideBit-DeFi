@@ -5,6 +5,9 @@ import { isAddress, Address } from 'viem';
 import { publicClient } from '@/lib/viem_public';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { Button } from '@/components/common/button';
+import { FiCopy } from 'react-icons/fi';
+import { deployUserIdentity } from '@/services/admin.service';
+import ConfirmModal from '@/components/common/confirm_modal';
 
 export type UserStatus =
   | 'IDLE'
@@ -20,8 +23,41 @@ export default function UserManagement() {
   const [identityAddress, setIdentityAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isDeploying, setIsDeploying] = useState(false);
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
+  };
 
   const IR_ABI = ABIS.IDENTITY_REGISTRY;
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
 
   const handleDiagnose = async () => {
     if (!isAddress(inputAddress)) {
@@ -75,19 +111,37 @@ export default function UserManagement() {
   };
 
   const handleRegisterIdentity = async () => {
-    alert(
-      'Identity Deployment is complex to do via single transaction. Please use the CLI for initial Identity deployment or use the designated API.'
-    );
+    showAlert('Confirm Deployment', `Deploy Identity for ${inputAddress}?`, async () => {
+      setIsDeploying(true);
+      try {
+        const res = await deployUserIdentity(inputAddress);
+        if (res && res.success) {
+          showAlert('Success', 'Identity Deployed Successfully!', () => { handleDiagnose(); });
+        } else {
+          showAlert('Error', `Deployment Failed: ${res?.message}`, () => { });
+        }
+      } catch (error) {
+        console.error(error);
+        showAlert('Error', 'An unexpected error occurred.', () => { });
+      } finally {
+        setIsDeploying(false);
+      }
+    });
   };
 
   const handleAddClaim = async () => {
-    alert(
-      'Claim issuance requires off-chain signature generation. Please use the issuance script.'
-    );
+    showAlert('Info', 'Claim issuance requires off-chain signature generation. Please use the issuance script.', () => { });
   };
 
   return (
     <div className="space-y-6">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       <div className="rounded-lg border border-slate-800 bg-slate-900 p-6 shadow-sm">
         <h3 className="mb-4 font-bold text-slate-200">User Diagnosis & Management</h3>
 
@@ -135,9 +189,16 @@ export default function UserManagement() {
             </div>
 
             {identityAddress && (
-              <div className="mb-2 text-sm text-slate-400">
+              <div className="mb-2 flex items-center gap-2 text-sm text-slate-400">
                 <span className="font-semibold">Identity Contract: </span>
                 <span className="font-mono text-slate-300">{identityAddress}</span>
+                <button
+                  onClick={() => handleCopy(identityAddress)}
+                  className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                  title="Copy Address"
+                >
+                  <FiCopy size={14} />
+                </button>
               </div>
             )}
 
@@ -146,10 +207,10 @@ export default function UserManagement() {
               {status === 'NO_IDENTITY' && (
                 <Button
                   onClick={handleRegisterIdentity}
-                  disabled={true}
-                  className="cursor-not-allowed bg-blue-600 opacity-50"
+                  disabled={isDeploying}
+                  className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50"
                 >
-                  Deploy & Register Identity (CLI Only)
+                  {isDeploying ? 'Deploying...' : 'Deploy & Register Identity'}
                 </Button>
               )}
               {status === 'UNVERIFIED' && (

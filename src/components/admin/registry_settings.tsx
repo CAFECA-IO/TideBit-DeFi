@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/auth_context';
 import { usePasskeySign, IPartialUserOp } from '@/lib/hooks/use_passkey_sign';
 import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
+import ConfirmModal from '@/components/common/confirm_modal';
 
 export default function RegistrySettings() {
   const { user: adminUser } = useAuth();
@@ -18,6 +19,34 @@ export default function RegistrySettings() {
 
   const [trustedIssuers, setTrustedIssuers] = useState<Address[]>([]);
   const [claimTopics, setClaimTopics] = useState<bigint[]>([]);
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
+  };
 
   const TIR_ABI = ABIS.TRUSTED_ISSUERS_REGISTRY;
   const CTR_ABI = ABIS.CLAIM_TOPICS_REGISTRY;
@@ -53,7 +82,7 @@ export default function RegistrySettings() {
   const handleAction = async (
     action: 'ADD_ISSUER' | 'REMOVE_ISSUER' | 'ADD_TOPIC' | 'REMOVE_TOPIC'
   ) => {
-    if (!adminUser) return alert('請先登入 Admin 錢包');
+    if (!adminUser) return showAlert('Error', '請先登入 Admin 錢包', () => { });
     let callData: `0x${string}` = '0x';
     let targetContract: Address = '0x';
 
@@ -126,19 +155,26 @@ export default function RegistrySettings() {
         y: BigInt(adminUser.pubKeyY),
       });
 
-      alert('交易請求已送出！');
+      showAlert('Success', '交易請求已送出！', () => { });
       setInputAddress('');
       setInputTopic('');
       // Info: (20260127 - Tzuhan) Optimistic update or refresh
       setTimeout(fetchRegistryData, 5000);
     } catch (e) {
       console.error(e);
-      alert(`操作失敗: ${(e as Error).message}`);
+      showAlert('Error', `操作失敗: ${(e as Error).message}`, () => { });
     }
   };
 
   return (
     <div className="space-y-6">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       <div className="flex space-x-2 border-b border-slate-800 pb-2">
         <button
           onClick={() => setActiveTab('ISSUERS')}

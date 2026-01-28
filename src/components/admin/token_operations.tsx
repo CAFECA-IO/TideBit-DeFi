@@ -1,30 +1,85 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES, ABIS } from '@/config/contracts';
 import { useAuth } from '@/contexts/auth_context';
 import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
-import { mintToAddress, burn, freeze, unfreeze } from '@/services/token.service';
+import ConfirmModal from '@/components/common/confirm_modal';
+import { mintToAddress, burn, freeze, unfreeze, registerUser, forcedTransfer } from '@/services/token.service';
+import { buildTransferUserOp } from '@/lib/utils/user_op_builder';
+import { fido2ClientService, sendUserOpToBundler } from '@/lib/auth/fido2_client';
+import { encodeWebAuthnSignature, hexToBase64Url } from '@/lib/auth/crypto_utils';
 
-export default function TokenOperations() {
+interface ITokenOperationsProps {
+    initialTargetAddress?: string;
+    initialFromAddress?: string;
+    initialTokenAddress?: string;
+    initialTab?: 'BALANCE' | 'MINT' | 'BURN' | 'FREEZE' | 'TRANSFER' | 'USER_TRANSFER';
+}
+
+export default function TokenOperations({
+    initialTargetAddress = '',
+    initialFromAddress = '',
+    initialTokenAddress = CONTRACT_ADDRESSES.NTD_TOKEN,
+    initialTab = 'BALANCE'
+}: ITokenOperationsProps) {
     const { user: adminUser } = useAuth();
-    const [activeTab, setActiveTab] = useState<'BALANCE' | 'MINT' | 'BURN' | 'FREEZE'>('BALANCE');
+    const [activeTab, setActiveTab] = useState<'BALANCE' | 'MINT' | 'BURN' | 'FREEZE' | 'TRANSFER' | 'USER_TRANSFER'>(initialTab);
 
-    // Info: (20260127 - Tzuhan) Form States
-    const [targetAddress, setTargetAddress] = useState('');
+    // Info: (20260128 - Luphia) Form States
+    const [targetAddress, setTargetAddress] = useState(initialTargetAddress);
+    const [sourceAddress, setSourceAddress] = useState(initialFromAddress);
+    const [tokenAddress, setTokenAddress] = useState(initialTokenAddress); // New Token Address State
     const [amount, setAmount] = useState('');
     const [balance, setBalance] = useState<string | null>(null);
     const [frozenBalance, setFrozenBalance] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+    const [txResult, setTxResult] = useState<{
+        success: boolean;
+        hash?: string;
+        error?: string;
+        details?: string;
+    } | null>(null);
 
-    const TOKEN_ABI = ABIS.NTD_TOKEN;
+    // Info: (20260127) Confirmation Modal State
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
 
-    const handleExecute = async (action: 'MINT' | 'BURN' | 'FREEZE' | 'UNFREEZE') => {
-        // Info: (20260127 - Admin) 雖然伺服器端有私鑰，但前端仍應檢查是否有登入，避免誤觸
-        if (!adminUser) return alert('請先登入 Admin 錢包');
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showAlert = (title: string, message: string, onConfirm: () => void) => {
+        setModalConfig({
+            isOpen: true,
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                closeModal();
+            }
+        });
+    };
+
+    const TOKEN_ABI = ABIS.NTD_TOKEN; // Info: (20260129 - Tzuhan) Company tokens verify standard ERC20 + Compliance, assumed compatible ABI
+
+    const handleExecute = async (action: 'MINT' | 'BURN' | 'FREEZE' | 'UNFREEZE' | 'TRANSFER' | 'USER_TRANSFER') => {
+        if (!adminUser) return showAlert('Error', '請先登入 Admin 錢包', () => { });
+
+        // Info: (20260129 - Tzuhan) Basic Validation
+        if (!tokenAddress) return showAlert('Error', 'Token Address is required', () => { });
 
         setIsLoading(true);
         setStatusMessage('Processing...');
@@ -33,49 +88,168 @@ export default function TokenOperations() {
             let res;
             if (action === 'MINT') {
                 if (!targetAddress || !amount) return;
-                res = await mintToAddress(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+                res = await mintToAddress(tokenAddress, targetAddress, Number(amount));
+
+                if (!res.success && res.message.includes('Identity')) {
+                    // Info: (20260129 - Tzuhan) Identity Logic (Kept mostly same, using tokenAddress)
+                    setIsLoading(false);
+                    showAlert('Identity Required', '鑄造失敗，該用戶可能尚未註冊 Identity。是否嘗試立即註冊該用戶？', async () => {
+                        setIsLoading(true);
+                        setStatusMessage('Registering User Identity...');
+                        const regResult = await registerUser(tokenAddress, targetAddress); // Info: (20260129 - Tzuhan) registerUser needs to support token param if logic depends on it
+
+                        if (regResult.success) {
+                            setStatusMessage('Identity Registered. Retrying Mint...');
+                            const retryResult = await mintToAddress(tokenAddress, targetAddress, Number(amount));
+                            // ... handle retry result
+                            if (retryResult.success) {
+                                setStatusMessage(`Success: ${retryResult.message}`);
+                                showAlert('Success', '操作成功！\n' + retryResult.message, () => { });
+                                setAmount('');
+                                checkBalance();
+                            } else {
+                                setStatusMessage(`Retry Failed: ${retryResult.message}`);
+                                showAlert('Error', '重試失敗: ' + retryResult.message, () => { });
+                            }
+                        } else {
+                            setStatusMessage(`Registration Failed: ${regResult.message}`);
+                            showAlert('Error', '註冊失敗: ' + regResult.message, () => { });
+                        }
+                        setIsLoading(false);
+                    });
+                    return;
+                }
             } else if (action === 'BURN') {
                 if (!targetAddress || !amount) return;
-                res = await burn(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+                res = await burn(tokenAddress, targetAddress, Number(amount));
             } else if (action === 'FREEZE') {
                 if (!targetAddress || !amount) return;
-                res = await freeze(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+                res = await freeze(tokenAddress, targetAddress, Number(amount));
             } else if (action === 'UNFREEZE') {
                 if (!targetAddress || !amount) return;
-                res = await unfreeze(CONTRACT_ADDRESSES.NTD_TOKEN, targetAddress, Number(amount));
+                res = await unfreeze(tokenAddress, targetAddress, Number(amount));
+            } else if (action === 'TRANSFER') {
+                if (!sourceAddress || !targetAddress || !amount) return;
+                res = await forcedTransfer(tokenAddress, sourceAddress, targetAddress, Number(amount));
+            } else if (action === 'USER_TRANSFER') {
+                if (!adminUser || !adminUser.address || !adminUser.pubKeyX || !adminUser.pubKeyY) return showAlert('Error', 'User not fully logged in or missing Passkey', () => { });
+                if (!targetAddress || !amount) return;
+
+                setStatusMessage('Building UserOperation...');
+                const amountWei = (Number(amount) * 10 ** 18).toString();
+                // Info: (20260129 - Tzuhan) buildTransferUserOp needs to support Token Address too.
+                // Info: (20260129 - Tzuhan) Currently it hardcodes NTD inside! I need to update buildTransferUserOp as well.
+                const userOp = await buildTransferUserOp(adminUser.address as `0x${string}`, targetAddress as `0x${string}`, amountWei, tokenAddress as `0x${string}`);
+
+
+                // Info: (20260129 - Tzuhan) 1. Get UserOp Hash (Challenge)
+                setStatusMessage('Calculating UserOp Hash...');
+                const entryPointAbi = ABIS.ENTRY_POINT;
+
+                // Info: (20260129 - Tzuhan) Convert JSON strings to BigInts for viem contract call
+                const userOpStruct = {
+                    sender: userOp.sender as `0x${string}`,
+                    nonce: BigInt(userOp.nonce),
+                    initCode: userOp.initCode as `0x${string}`,
+                    callData: userOp.callData as `0x${string}`,
+                    callGasLimit: BigInt(userOp.callGasLimit),
+                    verificationGasLimit: BigInt(userOp.verificationGasLimit),
+                    preVerificationGas: BigInt(userOp.preVerificationGas),
+                    maxFeePerGas: BigInt(userOp.maxFeePerGas),
+                    maxPriorityFeePerGas: BigInt(userOp.maxPriorityFeePerGas),
+                    paymasterAndData: userOp.paymasterAndData as `0x${string}`,
+                    signature: userOp.signature as `0x${string}`,
+                };
+
+                const userOpHash = await publicClient.readContract({
+                    address: CONTRACT_ADDRESSES.ENTRY_POINT,
+                    abi: entryPointAbi,
+                    functionName: 'getUserOpHash',
+                    args: [userOpStruct]
+                }) as `0x${string}`;
+
+                // Info: (20260129 - Tzuhan) 2. Sign with FIDO2
+                setStatusMessage('Please sign with Passkey...');
+                const challengeBase64 = hexToBase64Url(userOpHash);
+
+                const authentication = await fido2ClientService.startLogin({
+                    challenge: challengeBase64,
+                    allowCredentials: [],
+                    timeout: 60000,
+                });
+
+                // Info: (20260129 - Tzuhan) 3. Encode Signature
+                const signature = encodeWebAuthnSignature(
+                    authentication,
+                    BigInt(adminUser.pubKeyX),
+                    BigInt(adminUser.pubKeyY)
+                );
+                userOp.signature = signature;
+
+                // Info: (20260129 - Tzuhan) 4. Send to Bundler
+                setStatusMessage('Sending to Bundler...');
+                const bundleRes = await sendUserOpToBundler(userOp, CONTRACT_ADDRESSES.ENTRY_POINT);
+
+                if (bundleRes.success) {
+                    if (bundleRes.payload?.transactionHash) {
+                        res = { success: true, message: `Tx Hash: ${bundleRes.payload.transactionHash}` };
+                        setTxResult({
+                            success: true,
+                            hash: bundleRes.payload.transactionHash,
+                        });
+                    } else if (bundleRes.payload?.error) {
+                        const errorMsg = bundleRes.payload.error;
+                        const details = bundleRes.payload.details || 'No details provided';
+                        setTxResult({
+                            success: false,
+                            error: errorMsg,
+                            details: typeof details === 'object' ? JSON.stringify(details, null, 2) : details,
+                        });
+                        throw new Error(errorMsg);
+                    } else {
+                        throw new Error('Unknown Bundle Response');
+                    }
+                } else {
+                    const errorMsg = bundleRes.message || 'Bundler Error';
+                    setTxResult({
+                        success: false,
+                        error: errorMsg,
+                    });
+                    throw new Error(errorMsg);
+                }
             }
 
             if (res?.success) {
                 setStatusMessage(`Success: ${res.message}`);
-                alert('操作成功！\n' + res.message);
+                if (action !== 'USER_TRANSFER') showAlert('Success', '操作成功！\n' + res.message, () => { });
                 setAmount('');
                 if (['MINT', 'BURN', 'FREEZE', 'UNFREEZE'].includes(action)) checkBalance();
             } else {
                 setStatusMessage(`Failed: ${res?.message}`);
-                alert('操作失敗: ' + res?.message);
+                showAlert('Error', '操作失敗: ' + res?.message, () => { });
             }
 
         } catch (e) {
             console.error(e);
             setStatusMessage(`Error: ${(e as Error).message}`);
-            alert(`操作失敗: ${(e as Error).message}`);
+            if (action !== 'USER_TRANSFER') showAlert('Error', `操作失敗: ${(e as Error).message}`, () => { });
         } finally {
             setIsLoading(false);
         }
     };
 
     const checkBalance = async () => {
-        if (!targetAddress) return;
+        if (!targetAddress || !tokenAddress) return;
         try {
             const [bal, frozen] = await Promise.all([
                 publicClient.readContract({
-                    address: CONTRACT_ADDRESSES.NTD_TOKEN,
+                    address: tokenAddress as `0x${string}`,
                     abi: TOKEN_ABI,
                     functionName: 'balanceOf',
                     args: [targetAddress as `0x${string}`],
                 }),
                 publicClient.readContract({
-                    address: CONTRACT_ADDRESSES.NTD_TOKEN,
+                    address: tokenAddress as `0x${string}`,
                     abi: TOKEN_ABI,
                     functionName: 'getFrozenTokens',
                     args: [targetAddress as `0x${string}`],
@@ -86,7 +260,7 @@ export default function TokenOperations() {
         } catch (e) {
             console.error(e);
             setBalance('Error');
-            setFrozenBalance('Error');
+            setFrozenBalance('Error'); // Info: (20260129 - Tzuhan) Standard ERC20 might fail getFrozenTokens
         }
     }
 
@@ -94,11 +268,18 @@ export default function TokenOperations() {
 
     return (
         <div className="space-y-6">
+            <ConfirmModal
+                isOpen={modalConfig.isOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={closeModal}
+            />
             <div className="flex space-x-2 border-b border-slate-800 pb-2">
-                {(['BALANCE', 'MINT', 'BURN', 'FREEZE'] as const).map((tab) => (
+                {(['BALANCE', 'MINT', 'BURN', 'FREEZE', 'TRANSFER', 'USER_TRANSFER'] as const).map((tab) => (
                     <button
                         key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => { setActiveTab(tab); setTxResult(null); }}
                         className={`rounded-t-lg px-4 py-2 text-sm font-medium transition-colors ${activeTab === tab
                             ? 'border-b-2 border-blue-500 bg-slate-800 text-blue-400'
                             : 'text-slate-500 hover:text-slate-300'
@@ -110,6 +291,20 @@ export default function TokenOperations() {
             </div>
 
             <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+
+                {/* Info: (20260129 - Tzuhan) Global Token Selection */}
+                <div className="mb-6">
+                    <label htmlFor="token-ops-token-address" className="mb-1 block text-xs font-medium text-slate-400">Token Address</label>
+                    <input
+                        id="token-ops-token-address"
+                        aria-label="Token Address"
+                        placeholder="Token Address (0x...)"
+                        value={tokenAddress}
+                        onChange={(e) => setTokenAddress(e.target.value)}
+                        className={`${inputClass} font-mono text-xs`}
+                    />
+                </div>
+
                 {activeTab === 'BALANCE' && (
                     <div className="space-y-4">
                         <h3 className="font-bold text-slate-200">Data Query</h3>
@@ -231,6 +426,115 @@ export default function TokenOperations() {
                                 Unfreeze
                             </Button>
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'TRANSFER' && (
+                    <div className="space-y-4">
+                        <h3 className="font-bold text-indigo-400">Forced Transfer</h3>
+                        <p className="text-sm text-slate-500">Force move tokens between addresses. Requires Agent Role.</p>
+
+                        <label htmlFor="token-ops-transfer-from" className="sr-only">From Address</label>
+                        <input
+                            id="token-ops-transfer-from"
+                            aria-label="From Address"
+                            placeholder="From Address (0x...)"
+                            value={sourceAddress}
+                            onChange={(e) => setSourceAddress(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <label htmlFor="token-ops-transfer-to" className="sr-only">To Address</label>
+                        <input
+                            id="token-ops-transfer-to"
+                            aria-label="To Address"
+                            placeholder="To Address (0x...)"
+                            value={targetAddress}
+                            onChange={(e) => setTargetAddress(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <label htmlFor="token-ops-transfer-amount" className="sr-only">Amount</label>
+                        <input
+                            id="token-ops-transfer-amount"
+                            aria-label="Amount"
+                            type="number"
+                            placeholder="Amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <Button onClick={() => handleExecute('TRANSFER')} disabled={isLoading} className="w-full bg-indigo-600 hover:bg-indigo-500">
+                            {isLoading ? 'Processing...' : 'Transfer Tokens'}
+                        </Button>
+                    </div>
+                )}
+
+                {activeTab === 'USER_TRANSFER' && (
+                    <div className="space-y-4">
+                        <h3 className="font-bold text-teal-400">User Transfer (FIDO2)</h3>
+                        <p className="text-sm text-slate-500">Transfer your own tokens using Passkey signature. (Gas paid by Relayer)</p>
+
+                        <div className="rounded border border-teal-900/30 bg-teal-900/10 p-3">
+                            <p className="text-xs text-teal-500">Sender (You): {adminUser?.address || 'Not Logged In'}</p>
+                        </div>
+
+                        <label htmlFor="token-ops-user-to" className="sr-only">To Address</label>
+                        <input
+                            id="token-ops-user-to"
+                            aria-label="To Address"
+                            placeholder="To Address (0x...)"
+                            value={targetAddress}
+                            onChange={(e) => setTargetAddress(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <label htmlFor="token-ops-user-amount" className="sr-only">Amount</label>
+                        <input
+                            id="token-ops-user-amount"
+                            aria-label="Amount"
+                            type="number"
+                            placeholder="Amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <Button onClick={() => handleExecute('USER_TRANSFER')} disabled={isLoading} className="w-full bg-teal-600 hover:bg-teal-500">
+                            {isLoading ? 'Sign & Transfer' : 'Sign & Transfer'}
+                        </Button>
+
+                        {txResult && (
+                            <div className={`mt-4 rounded border p-4 ${txResult.success ? 'border-green-800 bg-green-900/20' : 'border-red-800 bg-red-900/20'}`}>
+                                <h4 className={`font-bold ${txResult.success ? 'text-green-400' : 'text-red-400'}`}>
+                                    {txResult.success ? 'Transfer Successful' : 'Transfer Failed'}
+                                </h4>
+
+                                {txResult.hash && (
+                                    <div className="mt-2 text-sm text-slate-300">
+                                        <span className="block font-medium text-slate-500">Transaction Hash:</span>
+                                        <span className="break-all font-mono">{txResult.hash}</span>
+                                    </div>
+                                )}
+
+                                {txResult.error && (
+                                    <div className="mt-2 text-sm text-red-300">
+                                        <span className="block font-medium text-red-500">Error:</span>
+                                        {txResult.error}
+                                    </div>
+                                )}
+
+                                {txResult.details && (
+                                    <div className="mt-2 text-xs text-slate-300">
+                                        <span className="block font-medium text-slate-500">Receipt / Details:</span>
+                                        <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-slate-950 p-2 font-mono">
+                                            {txResult.details}
+                                        </pre>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
 

@@ -17,6 +17,8 @@ export const CONTRACT_ADDRESSES = {
     '0x2083c0c2ECd93EF6D185ce69cFFf8EF54cAd5aEE') as Address, //
   CLAIM_TOPICS_REGISTRY: (process.env.NEXT_PUBLIC_CLAIM_TOPICS_REGISTRY_ADDRESS ||
     '0x176D9F5FA35859B9Cbab9b1B0660D5379f6dE3A2') as Address, //
+  IDENTITY_IMPLEMENTATION: (process.env.NEXT_PUBLIC_IDENTITY_IMPLEMENTATION_ADDRESS ||
+    '0x5046Fe6DF05eE8034fE320E3bEDac3207bF16B2d') as Address, //
 } as const;
 
 export const ABIS = {
@@ -25,7 +27,7 @@ export const ABIS = {
     'struct UserOperation { address sender; uint256 nonce; bytes initCode; bytes callData; uint256 callGasLimit; uint256 verificationGasLimit; uint256 preVerificationGas; uint256 maxFeePerGas; uint256 maxPriorityFeePerGas; bytes paymasterAndData; bytes signature; }',
     'function handleOps(UserOperation[] calldata ops, address payable beneficiary)',
     'function getNonce(address sender, uint192 key) external view returns (uint256 nonce)',
-    'function getUserOpHash((address sender, uint256 nonce, bytes initCode, bytes callData, uint256 callGasLimit, uint256 verificationGasLimit, uint256 preVerificationGas, uint256 maxFeePerGas, uint256 maxPriorityFeePerGas, bytes paymasterAndData, bytes signature) userOp) external view returns (bytes32)',
+    'function getUserOpHash(UserOperation userOp) external view returns (bytes32)',
     'function getSenderAddress(bytes calldata initCode) external view returns (address)',
     'error FailedOp(uint256 opIndex, string reason)',
   ]),
@@ -56,6 +58,8 @@ export const ABIS = {
     'function identity(address _userAddress) external view returns (address)',
     'function topicsRegistry() external view returns (address)',
     'function trustedIssuersRegistry() external view returns (address)',
+    'event IdentityRegistered(address indexed investorAddress, address indexed identity, uint16 country)',
+    'event IdentityRemoved(address indexed investorAddress, address indexed identity)',
   ]),
 
   // Info: (20260123 - Tzuhan) --- RWA Trusted Issuers Registry ---

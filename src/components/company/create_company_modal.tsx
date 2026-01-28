@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 import { RxCross2 } from 'react-icons/rx';
 import { FaRegFilePdf, FaRegImage, FaCloudUploadAlt } from 'react-icons/fa';
@@ -8,6 +7,7 @@ import { useModalCtx } from '@/contexts/modal_context';
 import { Button } from '@/components/common/button';
 import DropdownMenu from '@/components/common/dropdown_menu';
 import ProgressBar, { ProgressBarColor, ProgressBarSize } from '@/components/common/progress_bar';
+import ConfirmModal from '@/components/common/confirm_modal';
 import { useCreateTeam } from '@/lib/hooks/use_create_team'; // Info: (20260108 - Tzuhan) 引入我們剛寫好的 Hook
 
 // Info: (20260108 - Tzuhan) 定義下拉選單選項
@@ -48,6 +48,8 @@ const CreateCompanyModal = () => {
     handleBack,
     handleSubmit,
     handleSaveAndLeave,
+    modalConfig,
+    closeModal,
   } = useCreateTeam();
 
   if (!isModalVisible) return null;
@@ -417,6 +419,13 @@ const CreateCompanyModal = () => {
 
   return (
     <div className="fixed inset-0 z-[999] flex size-full min-h-screen flex-col items-center justify-center bg-surface-neutral-mask-subtle p-50px backdrop-blur-lg">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       <div className="flex w-500px flex-col overflow-hidden rounded-radius-m bg-modal-surface-background shadow-xl">
         {/* Info: (20260109 - Tzuhan) Header with Progress */}
         <div className="relative bg-surface-neutral-container-lv1 pt-6">

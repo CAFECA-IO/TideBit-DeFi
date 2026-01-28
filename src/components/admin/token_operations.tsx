@@ -508,7 +508,7 @@ export default function TokenOperations({
                         </Button>
 
                         {txResult && (
-                            <div className={`mt-4 rounded p-4 border ${txResult.success ? 'border-green-800 bg-green-900/20' : 'border-red-800 bg-red-900/20'}`}>
+                            <div className={`mt-4 rounded border p-4 ${txResult.success ? 'border-green-800 bg-green-900/20' : 'border-red-800 bg-red-900/20'}`}>
                                 <h4 className={`font-bold ${txResult.success ? 'text-green-400' : 'text-red-400'}`}>
                                     {txResult.success ? 'Transfer Successful' : 'Transfer Failed'}
                                 </h4>
@@ -516,7 +516,7 @@ export default function TokenOperations({
                                 {txResult.hash && (
                                     <div className="mt-2 text-sm text-slate-300">
                                         <span className="block font-medium text-slate-500">Transaction Hash:</span>
-                                        <span className="font-mono break-all">{txResult.hash}</span>
+                                        <span className="break-all font-mono">{txResult.hash}</span>
                                     </div>
                                 )}
 
@@ -530,7 +530,7 @@ export default function TokenOperations({
                                 {txResult.details && (
                                     <div className="mt-2 text-xs text-slate-300">
                                         <span className="block font-medium text-slate-500">Receipt / Details:</span>
-                                        <pre className="mt-1 overflow-x-auto whitespace-pre-wrap font-mono bg-slate-950 p-2 rounded">
+                                        <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-slate-950 p-2 font-mono">
                                             {txResult.details}
                                         </pre>
                                     </div>

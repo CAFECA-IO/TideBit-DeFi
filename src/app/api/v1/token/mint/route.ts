@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       return jsonFail(ApiCode.VALIDATION_ERROR, result.error.message);
     }
 
-    // Check if Relayer is configured
+    // Info: (20260127 - Tzuhan) Check if Relayer is configured
     if (!account || !walletClient) {
       return NextResponse.json(
         { code: 503, message: 'Relayer not configured (Missing Private Key)' },
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Info: (20260120 - Tzuhan) 5. 發送鑄造交易
-    // 使用 Relayer (Agent) 的私鑰簽署並發送
+    // Info: (20260127 - Tzuhan) 使用 Relayer (Agent) 的私鑰簽署並發送
     const txHash = await walletClient.writeContract({
       address: tokenAddr,
       abi: TOKEN_ABI,

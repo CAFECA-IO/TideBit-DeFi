@@ -86,11 +86,11 @@ export default function UserManagement() {
     setIsDeploying(true);
     try {
       const res = await deployUserIdentity(inputAddress);
-      if (res.success) {
+      if (res && res.success) {
         alert('Identity Deployed Successfully!');
         handleDiagnose(); // Refresh status
       } else {
-        alert(`Deployment Failed: ${res.message}`);
+        alert(`Deployment Failed: ${res?.message}`);
       }
     } catch (error) {
       console.error(error);

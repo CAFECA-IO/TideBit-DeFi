@@ -49,11 +49,11 @@ export default function UserCompanyManagement() {
         setDeploying(userAddress);
         try {
             const res = await deployUserIdentity(userAddress);
-            if (res.success) {
+            if (res && res.success) {
                 alert('Identity Deployed Successfully!');
                 fetchUsers();
             } else {
-                alert(`Deployment Failed: ${res.message}`);
+                alert(`Deployment Failed: ${res?.message}`);
             }
         } catch (error) {
             console.error(error);

@@ -50,10 +50,10 @@ export async function buildTransferUserOp(
     // 4. Gas Estimation (Simplified)
     // In a real bundler, we might use eth_estimateUserOperationGas
     // Here we use safe defaults for a token transfer
-    const callGasLimit = BigInt(100_000); // Token transfer + overhead
-    const verificationGasLimit = BigInt(150_000); // Signature verification (P-256 is heavy)
-    const preVerificationGas = BigInt(50_000);
-    const maxFeePerGas = BigInt(2_000_000_000); // 2 Gwei (Polygon/Amoy default often higher, but this is a private chain?)
+    const callGasLimit = BigInt(200_000); // Token transfer + overhead
+    const verificationGasLimit = BigInt(1_000_000); // Signature verification (P-256 is heavy, bumping significantly)
+    const preVerificationGas = BigInt(300_000); // Bumped for safety with large signatures
+    const maxFeePerGas = BigInt(2_000_000_000); // 2 Gwei
     const maxPriorityFeePerGas = BigInt(1_000_000_000); // 1 Gwei
 
     return {

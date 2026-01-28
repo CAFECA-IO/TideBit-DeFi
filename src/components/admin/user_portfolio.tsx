@@ -149,7 +149,7 @@ export default function UserPortfolio({ onRequestTransfer }: IUserPortfolioProps
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                          className={`flex size-8 items-center justify-center rounded-full ${
                             tx.to.toLowerCase() === address.toLowerCase()
                               ? 'bg-green-900/30 text-green-500'
                               : 'bg-red-900/30 text-red-500'

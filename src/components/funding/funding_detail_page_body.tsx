@@ -12,6 +12,7 @@ import Breadcrumb from '@/components/common/breadcrumb';
 import { Button } from '@/components/common/button';
 import FundingStat from '@/components/funding/funding_stat';
 import NumericInput from '@/components/common/numeric_input';
+import ConfirmModal from '@/components/common/confirm_modal';
 import CloseBudgetPieChart from '@/components/funding/close_budget_pie_chart';
 import Countdown from '@/components/common/countdown';
 import FundingDetailTabs from '@/components/funding/funding_detail_tabs';
@@ -34,6 +35,34 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   const saveFundingValue = (value: number) => {
     setFundingValue(value);
+  };
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => { },
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showAlert = (title: string, message: string, onConfirm: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        closeModal();
+      }
+    });
   };
 
   // Info: (20251224 - Julian) 若找不到對應的 fundingId，顯示錯誤訊息
@@ -72,7 +101,7 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   const commitOrder = () => {
     // ToDo: (20251229 - Julian) Commit Order Logic
-    alert('Commit Order: ' + totalCost);
+    showAlert('Info', 'Commit Order: ' + totalCost, () => { });
   };
 
   // Info: (20251224 - Julian) 用於 Breadcrumb
@@ -220,6 +249,13 @@ const FundingDetailPageBody: React.FC<IFundingDetailPageBodyProps> = ({ fundingI
 
   return (
     <Layout className="flex flex-col">
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+      />
       {/* Info: (20251224 - Julian) Page Header */}
       {header}
       {/* Info: (20251224 - Julian) Page Main */}

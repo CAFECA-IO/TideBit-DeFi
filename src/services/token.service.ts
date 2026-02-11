@@ -233,3 +233,127 @@ export async function registerUser(tokenAddress: string, userAddress: string): P
     return { success: false, message: (error as Error).message };
   }
 }
+
+// Info: (20260128 - Tzuhan) 強制轉帳
+export async function forcedTransfer(tokenAddress: string, from: string, to: string, amount: number): Promise<ActionResponse> {
+  try {
+    const validFrom = getAddress(from);
+    const validTo = getAddress(to);
+    const amountBigInt = BigInt(Math.floor(amount * 10 ** 18)); // Info: (20260128 - Tzuhan) Ensure integer
+
+    const tokenAbi = parseAbi([
+      'function forcedTransfer(address, address, uint256) external returns (bool)',
+    ]);
+
+    console.log(`Executing forcedTransfer: ${validFrom} -> ${validTo} (${amount})`);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: 'forcedTransfer',
+      args: [validFrom, validTo, amountBigInt]
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `強制轉帳成功: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error('強制轉帳失敗:', error);
+    // Info: (20260128 - Tzuhan) Error Analysis
+    let reason = (error as Error).message;
+    if (reason.includes('Identity')) reason = 'Identity Invalid or Missing';
+    else if (reason.includes('Compliance')) reason = 'Compliance Check Failed (e.g. Limit exceeded, Blacklisted)';
+    else if (reason.includes('Balance')) reason = 'Insufficient Balance';
+
+    return { success: false, message: `強制轉帳失敗: ${reason}` };
+  }
+}
+
+// Info: (20260128 - Tzuhan) 銷毀代幣
+export async function burn(tokenAddress: string, from: string, amount: number): Promise<ActionResponse> {
+  try {
+    const validFrom = getAddress(from);
+    const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18);
+
+    const tokenAbi = parseAbi([
+      'function burn(address, uint256) external',
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: 'burn',
+      args: [validFrom, amountBigInt]
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `銷毀交易已確認: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error('銷毀失敗:', error);
+    return { success: false, message: `銷毀失敗: ${(error as Error).message}` };
+  }
+}
+
+// Info: (20260128 - Tzuhan) 凍結/解凍代幣
+export async function freeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
+  return toggleFreeze(tokenAddress, target, amount, true);
+}
+
+export async function unfreeze(tokenAddress: string, target: string, amount: number): Promise<ActionResponse> {
+  return toggleFreeze(tokenAddress, target, amount, false);
+}
+
+async function toggleFreeze(tokenAddress: string, target: string, amount: number, isFreeze: boolean): Promise<ActionResponse> {
+  try {
+    const validTarget = getAddress(target);
+    const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18);
+    const functionName = isFreeze ? 'freezePartialTokens' : 'unfreezePartialTokens';
+
+    const tokenAbi = parseAbi([
+      `function ${functionName}(address, uint256) external`,
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: functionName,
+      args: [validTarget, amountBigInt]
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `${isFreeze ? '凍結' : '解凍'}交易已確認: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error(`${isFreeze ? '凍結' : '解凍'}失敗:`, error);
+    return { success: false, message: `${isFreeze ? '凍結' : '解凍'}失敗: ${(error as Error).message}` };
+  }
+}
+
+// Info: (20260128 - Tzuhan) 暫停/恢復系統
+export async function pause(tokenAddress: string): Promise<ActionResponse> {
+  return togglePause(tokenAddress, true);
+}
+
+export async function unpause(tokenAddress: string): Promise<ActionResponse> {
+  return togglePause(tokenAddress, false);
+}
+
+async function togglePause(tokenAddress: string, isPause: boolean): Promise<ActionResponse> {
+  try {
+    const functionName = isPause ? 'pause' : 'unpause';
+    const tokenAbi = parseAbi([
+      `function ${functionName}() external`,
+    ]);
+
+    const tx = await wallet.writeContract({
+      address: getAddress(tokenAddress),
+      abi: tokenAbi,
+      functionName: functionName,
+      args: []
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `系統已${isPause ? '暫停' : '恢復'}: ${tx}`, data: { tx } };
+  } catch (error) {
+    console.error(`系統${isPause ? '暫停' : '恢復'}失敗:`, error);
+    return { success: false, message: `系統${isPause ? '暫停' : '恢復'}失敗: ${(error as Error).message}` };
+  }
+}

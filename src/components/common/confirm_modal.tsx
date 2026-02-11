@@ -8,12 +8,25 @@ interface IConfirmModalProps {
   title: string;
   message: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   isLoading?: boolean;
+  confirmText?: string;
+  cancelText?: string;
+  isAlert?: boolean;
 }
 
 // Info: (20260126 - Luphia) 通用確認對話框
-const ConfirmModal: React.FC<IConfirmModalProps> = ({ isOpen, title, message, onConfirm, onCancel, isLoading }) => {
+const ConfirmModal: React.FC<IConfirmModalProps> = ({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  isLoading,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  isAlert = false,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -23,19 +36,21 @@ const ConfirmModal: React.FC<IConfirmModalProps> = ({ isOpen, title, message, on
         <p className="mb-6 text-sm text-slate-300">{message}</p>
 
         <div className="flex justify-end gap-3">
-          <button
-            onClick={onCancel}
-            disabled={isLoading}
-            className="rounded px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
-          >
-            Cancel
-          </button>
+          {!isAlert && (
+            <button
+              onClick={onCancel}
+              disabled={isLoading}
+              className="rounded px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+            >
+              {cancelText}
+            </button>
+          )}
           <Button
             onClick={onConfirm}
             disabled={isLoading}
             className="rounded bg-pink-600 px-4 py-2 text-sm font-bold text-white hover:bg-pink-500"
           >
-            {isLoading ? 'Processing...' : 'Confirm'}
+            {isLoading ? 'Processing...' : confirmText}
           </Button>
         </div>
       </div>

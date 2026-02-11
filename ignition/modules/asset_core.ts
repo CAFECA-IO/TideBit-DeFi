@@ -13,10 +13,7 @@ const IDENTITY_ARTIFACT = require('@erc3643org/erc-3643/artifacts/@onchain-id/so
 const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
     const deployer = m.getAccount(0);
 
-    // =========================================================
     // Info: (20260210 - Tzuhan) 1. Deploy Registries
-    // =========================================================
-
     // Info: (20260210 - Tzuhan) A. Claim Topics Registry
     const claimTopicsRegistry = m.contract('ClaimTopicsRegistry', CTR_ARTIFACT, []);
     const initCTR = m.call(claimTopicsRegistry, 'init', [], { id: 'init_ctr' });
@@ -29,9 +26,7 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
     const identityRegistryStorage = m.contract('IdentityRegistryStorage', IRS_ARTIFACT, []);
     const initIRS = m.call(identityRegistryStorage, 'init', [], { id: 'init_irs' });
 
-    // =========================================================
     // Info: (20260210 - Tzuhan) 2. Deploy Identity Registry
-    // =========================================================
     const identityRegistry = m.contract('IdentityRegistry', IR_ARTIFACT, []);
 
     // Info: (20260210 - Tzuhan) Initialize IdentityRegistry with links to other registries
@@ -44,19 +39,13 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
         after: [initTIR, initCTR, initIRS]
     });
 
-    // =========================================================
     // Info: (20260210 - Tzuhan) 3. Deploy Modular Compliance
-    // =========================================================
     const complianceNTD = m.contract('ModularCompliance', MC_ARTIFACT, [], { id: 'Compliance_NTD' });
     const initMCNTD = m.call(complianceNTD, 'init', [], { id: 'initMCNTD' });
-    // =========================================================
     // Info: (20260210 - Tzuhan) 4. Deploy Issuer Identity (Required for Token)
-    // =========================================================
     const issuerIdentity = m.contract('IssuerIdentity', IDENTITY_ARTIFACT, [deployer, false]);
 
-    // =========================================================
     // Info: (20260210 - Tzuhan) 5. Deploy Asset Token (NTD)
-    // =========================================================
     const token = m.contract('Token', TOKEN_ARTIFACT, [], { id: 'Token_NTD' }); // Info: (20260210 - Tzuhan) 加入 ID 區分
 
     // Info: (20260210 - Tzuhan) Initialize NTD Token
@@ -72,16 +61,13 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
         after: [initIR, initMCNTD, issuerIdentity]
     });
 
-    // =========================================================
-    // Info: (20260210 - Tzuhan) 5.5 Deploy Debit Token (Liability)
-    // =========================================================
+    // Info: (20260210 - Tzuhan) 6 Deploy Debit Token (Liability)
     const complianceDebit = m.contract('ModularCompliance', MC_ARTIFACT, [], { id: 'Compliance_Debit' });
     const initMCDebit = m.call(complianceDebit, 'init', [], { id: 'initMCDebit' });
     // Info: (20260210 - Tzuhan) 注意：這裡使用相同的 TOKEN_ARTIFACT，但部署為不同的實例
     const debitToken = m.contract('Token', TOKEN_ARTIFACT, [], { id: 'Token_DEBT' });
 
-    // Info: (20260210 - Tzuhan) Initialize Debit Token
-    // Info: (20260210 - Tzuhan) 共用 identityRegistry 和 modularCompliance，確保相同的合規標準
+    // Info: (20260210 - Tzuhan) Initialize Debit Token，共用 identityRegistry 和 modularCompliance，確保相同的合規標準
     const initDebitToken = m.call(debitToken, 'init', [
         identityRegistry,
         complianceDebit,
@@ -94,18 +80,14 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
         after: [initIR, initMCDebit, issuerIdentity]
     });
 
-    // =========================================================
-    // Info: (20260210 - Tzuhan) 6. Setup Bindings & Agents
-    // =========================================================
-
+    // Info: (20260210 - Tzuhan) 7. Setup Bindings & Agents
     // Info: (20260210 - Tzuhan) A. Bind Storage -> Registry
     m.call(identityRegistryStorage, 'bindIdentityRegistry', [identityRegistry], {
         id: 'bind_irs_to_ir',
         after: [initIRS, identityRegistry]
     });
 
-    // Info: (20260210 - Tzuhan) B. Bind Tokens to Compliance (Optional but recommended for strict checks)
-    // Info: (20260210 - Tzuhan) 讓 Compliance 合約知道這兩個 Token 綁定於它
+    // Info: (20260210 - Tzuhan) B. 讓 Compliance 合約知道這兩個 Token 綁定於它
     m.call(complianceNTD, 'bindToken', [token], {
         id: 'bind_ntd_compliance',
         after: [initMCNTD, initToken]
@@ -116,7 +98,7 @@ const AssetCoreModule = buildModule('AssetCoreModule', (m) => {
     });
 
     // Info: (20260210 - Tzuhan) C. Add Deployer as Token Agent (to allow minting)
-    // Info: (20260210 - Tzuhan) 未來這裡應該也要加入 ClearingService 的地址作為 Agent
+    // ToDo: (20260210 - Tzuhan) 未來這裡應該也要加入 ClearingService 的地址作為 Agent
     m.call(token, 'addAgent', [deployer], {
         id: 'add_token_agent',
         after: [initToken]

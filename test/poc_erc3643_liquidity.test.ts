@@ -9,17 +9,12 @@ const CLAIM_TOPIC_USER = BigInt(101);
 const API_URL = 'http://localhost:3000/api/v1/kyc/approve';
 
 const CONTRACTS = {
-  ClaimTopicsRegistry:
-    '@erc3643org/erc-3643/contracts/registry/implementation/ClaimTopicsRegistry.sol:ClaimTopicsRegistry',
-  TrustedIssuersRegistry:
-    '@erc3643org/erc-3643/contracts/registry/implementation/TrustedIssuersRegistry.sol:TrustedIssuersRegistry',
-  IdentityRegistryStorage:
-    '@erc3643org/erc-3643/contracts/registry/implementation/IdentityRegistryStorage.sol:IdentityRegistryStorage',
-  IdentityRegistry:
-    '@erc3643org/erc-3643/contracts/registry/implementation/IdentityRegistry.sol:IdentityRegistry',
-  DefaultCompliance:
-    '@erc3643org/erc-3643/contracts/compliance/legacy/DefaultCompliance.sol:DefaultCompliance',
-  Token: '@erc3643org/erc-3643/contracts/token/Token.sol:Token',
+  ClaimTopicsRegistry: 'ClaimTopicsRegistry',
+  TrustedIssuersRegistry: 'TrustedIssuersRegistry',
+  IdentityRegistryStorage: 'IdentityRegistryStorage',
+  IdentityRegistry: 'IdentityRegistry',
+  DefaultCompliance: 'DefaultCompliance',
+  Token: 'Token',
 } as const;
 
 describe('TideBit-DeFi POC: ERC-3643 合規流通性測試 (API 整合版)', function () {

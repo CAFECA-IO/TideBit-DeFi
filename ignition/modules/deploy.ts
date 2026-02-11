@@ -1,15 +1,26 @@
 import { buildModule } from '@nomicfoundation/hardhat-ignition/modules';
-import AccountAbstractionModule from './account_abstraction';
 import AssetCoreModule from './asset_core';
+import AccountAbstractionModule from './account_abstraction';
 
 const DeployModule = buildModule('DeployModule', (m) => {
-  const { token, identityRegistry, compliance, identityRegistryStorage, claimTopicsRegistry, trustedIssuersRegistry, issuerIdentity } = m.useModule(AssetCoreModule);
+  const {
+    token,
+    identityRegistry,
+    complianceNTD,
+    complianceDebit,
+    identityRegistryStorage,
+    claimTopicsRegistry,
+    trustedIssuersRegistry,
+    issuerIdentity
+  } = m.useModule(AssetCoreModule);
+
   const { entryPoint, scwFactory } = m.useModule(AccountAbstractionModule);
 
   return {
     token,
     identityRegistry,
-    compliance,
+    complianceNTD,
+    complianceDebit,
     identityRegistryStorage,
     claimTopicsRegistry,
     trustedIssuersRegistry,

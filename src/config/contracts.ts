@@ -8,17 +8,23 @@ export const CONTRACT_ADDRESSES = {
   ENTRY_POINT: (process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS ||
     '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6') as Address, //
   FACTORY: (process.env.NEXT_PUBLIC_SCW_FACTORY_ADDRESS ||
-    '0xcc2b52781a70c67f3a382C44041a373455A1C4b3') as Address, //
+    '0x59e486F5D1599dd9eEe587fB8663Ad45f579a469') as Address, //
   NTD_TOKEN: (process.env.NEXT_PUBLIC_NTD_TOKEN_ADDRESS ||
-    '0xf11Ca41aa6eA2547C558903bdD6FbC5c57d0A83D') as Address, //
+    '0xb3ce18F4fB5f64A32b5417B5590B36667A4d8dE7') as Address, //
+  DEBIT_TOKEN: (process.env.NEXT_PUBLIC_DEBIT_TOKEN_ADDRESS ||
+    '0x1E7d4784138B50E83D002136386eFfFFD604d6C2') as Address, //
+  COMPLIANCE_NTD: (process.env.NEXT_PUBLIC_COMPLIANCE_NTD_ADDRESS ||
+    '0xC3e8B5a09d33dBbCFa8cDB41EE1B1b80be0858C7') as Address, //
+  COMPLIANCE_DEBIT: (process.env.NEXT_PUBLIC_COMPLIANCE_DEBIT_ADDRESS ||
+    '0x48332a0dBFffdcb004e893deCbe1C02bAff3874D') as Address, //  
   IDENTITY_REGISTRY: (process.env.NEXT_PUBLIC_IDENTITY_REGISTRY_ADDRESS ||
-    '0x7C7Dfbe7145aeF9685B25e8ffD2135974e510EC2') as Address, //
+    '0x50C2F95FA33f1Cfc8A8f2b102E70F8051d3DAd00') as Address, //
   TRUSTED_ISSUERS_REGISTRY: (process.env.NEXT_PUBLIC_TRUSTED_ISSUERS_REGISTRY_ADDRESS ||
-    '0x2083c0c2ECd93EF6D185ce69cFFf8EF54cAd5aEE') as Address, //
+    '0x610E94F7CDcBbb03a8D0872496D29B9c459b889c') as Address, //
   CLAIM_TOPICS_REGISTRY: (process.env.NEXT_PUBLIC_CLAIM_TOPICS_REGISTRY_ADDRESS ||
-    '0x176D9F5FA35859B9Cbab9b1B0660D5379f6dE3A2') as Address, //
+    '0x8088D1664983E2F7BF0c714F15F85b23293D559B') as Address, //
   IDENTITY_IMPLEMENTATION: (process.env.NEXT_PUBLIC_IDENTITY_IMPLEMENTATION_ADDRESS ||
-    '0x5046Fe6DF05eE8034fE320E3bEDac3207bF16B2d') as Address, //
+    '0xBEF4aA1bBd233aA22D397381D3308ED9be157C8E') as Address, //
 } as const;
 
 export const ABIS = {
@@ -118,6 +124,22 @@ export const ABIS = {
     'function totalSupply() view returns (uint256)',
     'function compliance() external view returns (address)',
     'function identityRegistry() external view returns (address)',
+  ]),
+  // Info: (20260210 - Tzuhan) --- Debt Token (Liability) ---
+  DEBIT_TOKEN: parseAbi([
+    // Info: (20260210 - Tzuhan) Agent 需要用 mint 來產生負債 (借記)
+    'function mint(address to, uint256 amount) external',
+    // Info: (20260210 - Tzuhan) Agent 需要用 burn 來清償負債 (貸記/沖銷)
+    'function burn(address userAddress, uint256 amount) external',
+    // Info: (20260210 - Tzuhan) 強制轉帳用於特殊清算 (雖然 Debt 通常不可轉讓，但 Agent 可能需要移動它)
+    'function forcedTransfer(address from, address to, uint256 amount) external returns (bool)',
+    'function balanceOf(address account) view returns (uint256)',
+    // Info: (20260210 - Tzuhan) 即使被凍結，Agent 仍需能操作
+    'function isFrozen(address userAddress) external view returns (bool)',
+    'function setAddressFrozen(address userAddress, bool freeze) external',
+    // Info: (20260210 - Tzuhan) 連結的合規與身分 (與 NTD 共用)
+    'function identityRegistry() external view returns (address)',
+    'function compliance() external view returns (address)',
   ]),
 };
 

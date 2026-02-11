@@ -1,6 +1,6 @@
 {
   "name": "tidebit-defi",
-  "version": "0.9.0+127",
+  "version": "0.9.0+128",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "dev": "next dev",
     "sc:clean": "npx hardhat clean",
     "sc:compile": "npx hardhat compile",
-    "sc:deploy:all:isuncoin_mainnet": "npx hardhat ignition deploy ./ignition/modules/deploy.ts --network isuncoin_mainnet",
+    "sc:deploy:all:isuncoin_mainnet": "npx hardhat ignition deploy ./ignition/modules/deploy.ts --network isuncoin_mainnet --reset",
     "sc:deploy:aa:isuncoin_mainnet": "npx hardhat ignition deploy ./ignition/modules/account_abstraction.ts --network isuncoin_mainnet",
     "sc:deploy:asset:isuncoin_mainnet": "npx hardhat ignition deploy ./ignition/modules/asset_core.ts --network isuncoin_mainnet",
     "build": "prisma generate && next build",

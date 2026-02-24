@@ -8,23 +8,27 @@ export const CONTRACT_ADDRESSES = {
   ENTRY_POINT: (process.env.NEXT_PUBLIC_ENTRY_POINT_ADDRESS ||
     '0x1e51E13D511016aB69C0F58c4282784eA5401Cf6') as Address, //
   FACTORY: (process.env.NEXT_PUBLIC_SCW_FACTORY_ADDRESS ||
-    '0x59e486F5D1599dd9eEe587fB8663Ad45f579a469') as Address, //
+    '0x59e486F5D1599dd9eEe587fB8663Ad45f579a469') as Address,
   NTD_TOKEN: (process.env.NEXT_PUBLIC_NTD_TOKEN_ADDRESS ||
-    '0xb3ce18F4fB5f64A32b5417B5590B36667A4d8dE7') as Address, //
+    '0xb3ce18F4fB5f64A32b5417B5590B36667A4d8dE7') as Address,
   DEBIT_TOKEN: (process.env.NEXT_PUBLIC_DEBIT_TOKEN_ADDRESS ||
-    '0x1E7d4784138B50E83D002136386eFfFFD604d6C2') as Address, //
+    '0x1E7d4784138B50E83D002136386eFfFFD604d6C2') as Address,
   COMPLIANCE_NTD: (process.env.NEXT_PUBLIC_COMPLIANCE_NTD_ADDRESS ||
-    '0xC3e8B5a09d33dBbCFa8cDB41EE1B1b80be0858C7') as Address, //
+    '0xC3e8B5a09d33dBbCFa8cDB41EE1B1b80be0858C7') as Address,
   COMPLIANCE_DEBIT: (process.env.NEXT_PUBLIC_COMPLIANCE_DEBIT_ADDRESS ||
-    '0x48332a0dBFffdcb004e893deCbe1C02bAff3874D') as Address, //  
+    '0x48332a0dBFffdcb004e893deCbe1C02bAff3874D') as Address,
   IDENTITY_REGISTRY: (process.env.NEXT_PUBLIC_IDENTITY_REGISTRY_ADDRESS ||
-    '0x50C2F95FA33f1Cfc8A8f2b102E70F8051d3DAd00') as Address, //
+    '0x50C2F95FA33f1Cfc8A8f2b102E70F8051d3DAd00') as Address,
   TRUSTED_ISSUERS_REGISTRY: (process.env.NEXT_PUBLIC_TRUSTED_ISSUERS_REGISTRY_ADDRESS ||
-    '0x610E94F7CDcBbb03a8D0872496D29B9c459b889c') as Address, //
+    '0x610E94F7CDcBbb03a8D0872496D29B9c459b889c') as Address,
   CLAIM_TOPICS_REGISTRY: (process.env.NEXT_PUBLIC_CLAIM_TOPICS_REGISTRY_ADDRESS ||
-    '0x8088D1664983E2F7BF0c714F15F85b23293D559B') as Address, //
+    '0x8088D1664983E2F7BF0c714F15F85b23293D559B') as Address,
   IDENTITY_IMPLEMENTATION: (process.env.NEXT_PUBLIC_IDENTITY_IMPLEMENTATION_ADDRESS ||
-    '0xBEF4aA1bBd233aA22D397381D3308ED9be157C8E') as Address, //
+    '0xBEF4aA1bBd233aA22D397381D3308ED9be157C8E') as Address,
+  CLEARING_SERVICE: (process.env.NEXT_PUBLIC_CLEARING_SERVICE_ADDRESS ||
+    '0x25315dB376C7625D65507167550898186e97a2B8') as Address,
+  ACCOUNT_BOOK_FACTORY: (process.env.NEXT_PUBLIC_ACCOUNT_BOOK_FACTORY_ADDRESS ||
+    '0x2204FE7DBF384883B2DaF43381225B21899C4562') as Address,
 } as const;
 
 export const ABIS = {
@@ -140,6 +144,19 @@ export const ABIS = {
     // Info: (20260210 - Tzuhan) 連結的合規與身分 (與 NTD 共用)
     'function identityRegistry() external view returns (address)',
     'function compliance() external view returns (address)',
+  ]),
+  //Info: (20260223 - Tzuhan) --- 雙向借貸清算大腦 ---
+  CLEARING_SERVICE: parseAbi([
+    'function settlementTransfer(address from, address to, uint256 amount) external',
+    'event SettlementTransferExecuted(address indexed from, address indexed to, uint256 amount)',
+    'event DebtGenerated(address indexed account, uint256 amount)',
+    'event DebtOffset(address indexed account, uint256 amount)',
+  ]),
+
+  //Info: (20260223 - Tzuhan) --- 雙向記帳本工廠 ---
+  ACCOUNT_BOOK_FACTORY: parseAbi([
+    'function createAccountBook(address _companyScw, string memory _projectName, uint8 _decimals) external',
+    'event AccountBookCreated(address indexed companyScw, address creditToken, address debtToken, address clearingService, address identityRegistry)',
   ]),
 };
 

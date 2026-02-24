@@ -26,9 +26,9 @@ export const CONTRACT_ADDRESSES = {
   IDENTITY_IMPLEMENTATION: (process.env.NEXT_PUBLIC_IDENTITY_IMPLEMENTATION_ADDRESS ||
     '0xBEF4aA1bBd233aA22D397381D3308ED9be157C8E') as Address,
   CLEARING_SERVICE: (process.env.NEXT_PUBLIC_CLEARING_SERVICE_ADDRESS ||
-    '0x25315dB376C7625D65507167550898186e97a2B8') as Address,
+    '0xb0be7dd2e324A6dB1559845f0aAA10cf2A101bd1') as Address,
   ACCOUNT_BOOK_FACTORY: (process.env.NEXT_PUBLIC_ACCOUNT_BOOK_FACTORY_ADDRESS ||
-    '0x2204FE7DBF384883B2DaF43381225B21899C4562') as Address,
+    '0x8350Ec10f26f65f8A8CB657102672F4D0a641d8e') as Address,
 } as const;
 
 export const ABIS = {
@@ -148,9 +148,11 @@ export const ABIS = {
   //Info: (20260223 - Tzuhan) --- 雙向借貸清算大腦 ---
   CLEARING_SERVICE: parseAbi([
     'function settlementTransfer(address from, address to, uint256 amount) external',
+    'function mintAndOffset(address to, uint256 amount) external',
     'event SettlementTransferExecuted(address indexed from, address indexed to, uint256 amount)',
     'event DebtGenerated(address indexed account, uint256 amount)',
     'event DebtOffset(address indexed account, uint256 amount)',
+    'event ClearingMinted(address indexed to, uint256 amount)',
   ]),
 
   //Info: (20260223 - Tzuhan) --- 雙向記帳本工廠 ---

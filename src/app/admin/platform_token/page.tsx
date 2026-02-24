@@ -3,6 +3,7 @@
 import AdminDashboardOverview from '@/components/admin/dashboard_overview';
 import AdminUserManagement from '@/components/admin/user_management';
 import PlatformTokenUserList from '@/components/admin/platform_token_user_list';
+import DebtTokenUserList from '@/components/admin/debt_token_user_list';
 
 export default function PlatformTokenPage() {
     return (
@@ -17,6 +18,10 @@ export default function PlatformTokenPage() {
             <AdminUserManagement />
 
             <PlatformTokenUserList />
+
+            <hr className="border-slate-800" />
+
+            <DebtTokenUserList />
         </div>
     );
 }

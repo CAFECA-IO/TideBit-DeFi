@@ -403,6 +403,12 @@ export async function getUserPortfolio(userAddress: string) {
         address: CONTRACT_ADDRESSES.NTD_TOKEN,
         isSystem: true,
       },
+      {
+        name: 'Platform Debt Token',
+        symbol: 'DEBT',
+        address: CONTRACT_ADDRESSES.DEBIT_TOKEN,
+        isSystem: true,
+      },
     ];
 
     // Info: (20260128 - Tzuhan) Company Tokens
@@ -639,5 +645,115 @@ export async function getPlatformTokenUsers(
     console.error('Error fetching platform token users:', error);
     throw new Error('Failed to fetch platform token users');
   }
+}
+
+export async function getDebtTokenUsers(
+  page: number = 1,
+  limit: number = 20
+) {
+  try {
+    const skip = (page - 1) * limit;
+
+    // Info: (20260224 - Tzuhan) 1. Fetch Users from Database
+    const dbUsers = await prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+      },
+    });
+
+    // Info: (20260224 - Tzuhan) 2. Fetch On-Chain DEBT Details for these users
+    const usersWithDetails = await Promise.all(
+      dbUsers.map(async (user) => {
+        try {
+          const formattedAddress = getAddress(user.address);
+
+          const [idResult, verifiedResult, balanceResult, frozenResult, isFrozenResult] = await Promise.all([
+            publicClient.readContract({
+              address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
+              abi: ABIS.IDENTITY_REGISTRY,
+              functionName: 'identity',
+              args: [formattedAddress],
+            }),
+            publicClient.readContract({
+              address: CONTRACT_ADDRESSES.IDENTITY_REGISTRY,
+              abi: ABIS.IDENTITY_REGISTRY,
+              functionName: 'isVerified',
+              args: [formattedAddress],
+            }),
+            publicClient.readContract({
+              address: CONTRACT_ADDRESSES.DEBIT_TOKEN,
+              abi: ABIS.NTD_TOKEN,
+              functionName: 'balanceOf',
+              args: [formattedAddress],
+            }),
+            publicClient.readContract({
+              address: CONTRACT_ADDRESSES.DEBIT_TOKEN,
+              abi: ABIS.NTD_TOKEN,
+              functionName: 'getFrozenTokens',
+              args: [formattedAddress],
+            }),
+            publicClient.readContract({
+              address: CONTRACT_ADDRESSES.DEBIT_TOKEN,
+              abi: ABIS.NTD_TOKEN,
+              functionName: 'isFrozen',
+              args: [formattedAddress],
+            }),
+          ]);
+
+          let identityAddress: string | null = null;
+          if (idResult && idResult !== '0x0000000000000000000000000000000000000000') {
+            identityAddress = idResult;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            address: formattedAddress,
+            isVerified: verifiedResult,
+            identityAddress,
+            balance: balanceResult.toString(),
+            frozen: frozenResult.toString(),
+            isWalletFrozen: isFrozenResult,
+          };
+        } catch (e) {
+          console.warn(`Failed to fetch DEBT details for ${user.address}`, e);
+          return null;
+        }
+      })
+    );
+
+    // Info: (20260224 - Tzuhan) For debt management, we only care about users who actually have a DEBT balance
+    const filteredUsers = usersWithDetails.filter((u): u is NonNullable<typeof u> =>
+      u !== null && BigInt(u.balance) > BigInt(0)
+    );
+
+    return {
+      users: filteredUsers,
+      total: filteredUsers.length,
+      page,
+      totalPages: Math.ceil(filteredUsers.length / limit) || 1,
+    };
+  } catch (error) {
+    console.error('Error fetching debt token users:', error);
+    throw new Error('Failed to fetch debt token users');
+  }
+}
+
+
+/**
+ * Info: (20260224 - Tzuhan)
+ * Fetch the platform's main address securely from env
+ */
+export async function getPlatformAddress() {
+  const address = process.env.ISUNCOIN_ADDRESS;
+  if (!address) {
+    throw new Error('ISUNCOIN_ADDRESS is not defined in environment variables');
+  }
+  return address;
 }
 

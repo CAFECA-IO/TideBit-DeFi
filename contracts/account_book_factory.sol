@@ -19,22 +19,22 @@ contract AccountBookHelper {
         external
         returns (address identityRegistry, address identityStorage, address compliance)
     {
-        // 1. 部署 Storage
+        // Info: (20260223 - Tzuhan) 1. 部署 Storage
         IdentityRegistryStorage storageContract = new IdentityRegistryStorage();
         storageContract.init();
 
-        // 2. 部署 Registry
+        // Info: (20260223 - Tzuhan) 2. 部署 Registry
         IdentityRegistry registryContract = new IdentityRegistry();
         registryContract.init(trustedIssuersRegistry, claimTopicsRegistry, address(storageContract));
 
-        // 3. 綁定關係 (此時 Helper 還是 Owner，所以呼叫成功)
+        // Info: (20260223 - Tzuhan) 3. 綁定關係 (此時 Helper 還是 Owner，所以呼叫成功)
         storageContract.bindIdentityRegistry(address(registryContract));
 
-        // 4. 權限設定完畢，將所有權全部交還給 Factory
+        // Info: (20260223 - Tzuhan) 4. 權限設定完畢，將所有權全部交還給 Factory
         storageContract.transferOwnership(msg.sender);
         registryContract.transferOwnership(msg.sender);
 
-        // 5. 部署 Compliance
+        // Info: (20260223 - Tzuhan) 5. 部署 Compliance
         ModularCompliance complianceContract = new ModularCompliance();
         complianceContract.init();
         complianceContract.transferOwnership(msg.sender);
@@ -44,7 +44,7 @@ contract AccountBookHelper {
 }
 
 // ==========================================
-// 🏭 瘦身後的 Factory 合約
+// Info: (20260223 - Tzuhan) Factory 合約
 // ==========================================
 contract AccountBookFactory {
     address public immutable trustedIssuersRegistry;

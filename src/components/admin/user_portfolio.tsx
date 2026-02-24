@@ -100,17 +100,24 @@ export default function UserPortfolio({ initialAddress = '', enableSearch = true
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <div>
-                            <div className="font-medium text-white">{token.tokenSymbol}</div>
-                            <div className="text-xs text-slate-500">{token.tokenName}</div>
+                            <div className={`font-medium ${token.tokenSymbol === 'DEBT' ? 'text-red-400' : 'text-white'}`}>
+                              {token.tokenSymbol}
+                            </div>
+                            <div className={`text-xs ${token.tokenSymbol === 'DEBT' ? 'text-red-500/70' : 'text-slate-500'}`}>
+                              {token.tokenName}
+                            </div>
                           </div>
                           {token.isSystemToken && (
-                            <span className="ml-2 rounded-full bg-blue-900/50 px-2 py-0.5 text-xs text-blue-400">
+                            <span className={`ml-2 rounded-full px-2 py-0.5 text-xs ${token.tokenSymbol === 'DEBT'
+                                ? 'bg-red-900/40 text-red-400'
+                                : 'bg-blue-900/50 text-blue-400'
+                              }`}>
                               System
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-white">
+                      <td className={`whitespace-nowrap px-6 py-4 text-right text-sm ${token.tokenSymbol === 'DEBT' ? 'font-bold text-red-400' : 'text-white'}`}>
                         {formatUnits(BigInt(token.balance), 18)}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">

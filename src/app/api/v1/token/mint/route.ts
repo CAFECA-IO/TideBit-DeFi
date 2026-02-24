@@ -5,6 +5,7 @@ import { ApiCode } from '@/lib/utils/status';
 import { parseAbi, parseUnits, type Address } from 'viem';
 import { walletClient, account } from '@/lib/viem';
 import { publicClient } from '@/lib/viem_public';
+import { CONTRACT_ADDRESSES } from '@/config/contracts';
 
 // Info: (20260120 - Tzuhan) --- Zod 驗證 Schema ---
 const mintSchema = z.object({
@@ -67,15 +68,20 @@ export async function POST(req: NextRequest) {
       return jsonFail(ApiCode.FORBIDDEN, '代幣合約目前處於暫停狀態 (Paused)，無法鑄造');
     }
 
-    // Info: (20260120 - Tzuhan) 5. 發送鑄造交易
+    // Info: (20260120 - Tzuhan) 5. 發送鑄造交易 (改由 ClearingService 處理自動抵債)
     // Info: (20260127 - Tzuhan) 使用 Relayer (Agent) 的私鑰簽署並發送
+    // Info: (20260224 - Tzuhan) 使用 ClearingService 進行 Mint 並觸發抵債
+    const CLEARING_SERVICE_ABI = parseAbi([
+      'function mintAndOffset(address to, uint256 amount) external'
+    ]);
+    const clearingServiceAddress = CONTRACT_ADDRESSES.CLEARING_SERVICE
+
     const txHash = await walletClient.writeContract({
-      address: tokenAddr,
-      abi: TOKEN_ABI,
-      functionName: 'mint',
+      address: clearingServiceAddress,
+      abi: CLEARING_SERVICE_ABI,
+      functionName: 'mintAndOffset',
       args: [targetAddr, mintAmount],
-      // Info: (20260120 - Tzuhan) 若遇到節點同步問題，可考慮加上 gas 參數跳過模擬，但在 mint 場景通常較少見
-      gas: BigInt(200000),
+      gas: BigInt(300000), // Info: (20260224 - Tzuhan) 增加 gas limit 因為會有自動抵銷的邏輯
     });
 
     console.log(`[Mint API] 交易已發送: ${txHash}`);

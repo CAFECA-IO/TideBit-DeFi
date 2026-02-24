@@ -2,6 +2,7 @@
 
 import AdminUserInfo from '@/components/admin/admin_user_info';
 import MyAssetOverview from '@/components/admin/my_asset_overview';
+import PlatformAssetOverview from '@/components/admin/platform_asset_overview';
 import { useRouter } from 'next/navigation';
 
 export default function AdminConsolePage() {
@@ -29,7 +30,13 @@ export default function AdminConsolePage() {
       <AdminUserInfo />
 
       {/* Info: (20260128 - Tzuhan) My Assets (Portfolio View for Admin) */}
+      <h2 className="text-xl font-bold text-white">Admin Personal Assets</h2>
       <MyAssetOverview />
+
+      <hr className="border-slate-800" />
+
+      {/* Info: (20260224 - Tzuhan) Platform Official Treasury */}
+      <PlatformAssetOverview />
     </div>
   );
 }

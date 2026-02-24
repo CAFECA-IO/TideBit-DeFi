@@ -44,3 +44,29 @@ export async function adminSettlementTransfer(to: string, amount: number) {
     return { success: false, message: `清算失敗: ${(error as Error).message}` };
   }
 }
+
+/**
+ * Info: (20260224 - Tzuhan) 
+ * 由後端 Admin 錢包發起平台幣鑄造並自動抵銷 (Mint and Offset)
+ * @param to 接收方地址
+ * @param amount 鑄造金額 (NTD)
+ */
+export async function adminSettlementMint(to: string, amount: number) {
+  try {
+    const validTo = getAddress(to);
+    const amountBigInt = BigInt(amount) * BigInt(10) ** BigInt(18);
+
+    const tx = await wallet.writeContract({
+      address: CONTRACT_ADDRESSES.CLEARING_SERVICE,
+      abi: ABIS.CLEARING_SERVICE,
+      functionName: 'mintAndOffset',
+      args: [validTo, amountBigInt],
+    });
+
+    await client.waitForTransactionReceipt({ hash: tx });
+    return { success: true, message: `平台幣鑄造並自動抵銷成功！TX: ${tx}` };
+  } catch (error) {
+    console.error('鑄造抵銷失敗:', error);
+    return { success: false, message: `鑄造抵銷失敗: ${(error as Error).message}` };
+  }
+}

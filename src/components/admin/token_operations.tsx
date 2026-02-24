@@ -8,7 +8,7 @@ import { publicClient } from '@/lib/viem_public';
 import { Button } from '@/components/common/button';
 import ConfirmModal from '@/components/common/confirm_modal';
 import { mintToAddress, burn, freeze, unfreeze, registerUser, forcedTransfer } from '@/services/token.service';
-import { adminSettlementTransfer } from '@/services/clearing.service';
+import { adminSettlementTransfer, adminSettlementMint } from '@/services/clearing.service';
 import { buildTransferUserOp } from '@/lib/utils/user_op_builder';
 import { fido2ClientService, sendUserOpToBundler } from '@/lib/auth/fido2_client';
 import { encodeWebAuthnSignature, hexToBase64Url } from '@/lib/auth/crypto_utils';
@@ -17,12 +17,14 @@ type TabType = 'BALANCE' | 'MINT' | 'BURN' | 'FREEZE' | 'UNFREEZE' | 'TRANSFER' 
 // Info: (20260223 - Tzuhan) 1. 定義嚴謹的事件參數型別
 type TransferArgs = { from?: string; to?: string; amount?: bigint };
 type DebtArgs = { account?: string; amount?: bigint };
+type MintArgs = { to?: string; amount?: bigint };
 
 // Info: (20260223 - Tzuhan) 2. 定義可辨識聯合型別 (Discriminated Union)，徹底消滅 any
-type HistoryLog = 
+type HistoryLog =
     | { type: 'TRANSFER'; name: string; data: TransferArgs; block: number; txHash: string }
     | { type: 'DEBT_GEN'; name: string; data: DebtArgs; block: number; txHash: string }
-    | { type: 'DEBT_OFFSET'; name: string; data: DebtArgs; block: number; txHash: string };
+    | { type: 'DEBT_OFFSET'; name: string; data: DebtArgs; block: number; txHash: string }
+    | { type: 'MINT'; name: string; data: MintArgs; block: number; txHash: string };
 
 interface ITokenOperationsProps {
     initialTargetAddress?: string;
@@ -47,7 +49,7 @@ export default function TokenOperations({
     const [balance, setBalance] = useState<string | null>(null);
     const [frozenBalance, setFrozenBalance] = useState<string | null>(null);
     const [debtBalance, setDebtBalance] = useState<string | null>(null);
-    
+
     // Info: (20260223 - Tzuhan) 用於儲存歷史紀錄的 State
     const [historyLogs, setHistoryLogs] = useState<HistoryLog[]>([]);
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -76,9 +78,16 @@ export default function TokenOperations({
             let res;
             if (action === 'MINT') {
                 if (!targetAddress || !amount) return;
-                res = await mintToAddress(tokenAddress, targetAddress, Number(amount));
 
-                if (!res.success && res.message.includes('Identity')) {
+                // Info: (20260224 - Tzuhan) 分流: 若為平台幣 NTD_TOKEN，則走 ClearingService 自動抵銷機制
+                const isNTDToken = tokenAddress.toLowerCase() === CONTRACT_ADDRESSES.NTD_TOKEN.toLowerCase();
+                const mintFunc = () => isNTDToken
+                    ? adminSettlementMint(targetAddress, Number(amount))
+                    : mintToAddress(tokenAddress, targetAddress, Number(amount));
+
+                res = await mintFunc();
+
+                if (!res?.success && res?.message?.includes('Identity')) {
                     setIsLoading(false);
                     showAlert('Identity Required', '鑄造失敗，該用戶可能尚未註冊 Identity。是否嘗試立即註冊該用戶？', async () => {
                         setIsLoading(true);
@@ -87,15 +96,15 @@ export default function TokenOperations({
 
                         if (regResult.success) {
                             setStatusMessage('Identity Registered. Retrying Mint...');
-                            const retryResult = await mintToAddress(tokenAddress, targetAddress, Number(amount));
-                            if (retryResult.success) {
+                            const retryResult = await mintFunc();
+                            if (retryResult?.success) {
                                 setStatusMessage(`Success: ${retryResult.message}`);
                                 showAlert('Success', '操作成功！\n' + retryResult.message, () => { });
                                 setAmount('');
                                 checkBalance();
                             } else {
-                                setStatusMessage(`Retry Failed: ${retryResult.message}`);
-                                showAlert('Error', '重試失敗: ' + retryResult.message, () => { });
+                                setStatusMessage(`Retry Failed: ${retryResult?.message}`);
+                                showAlert('Error', '重試失敗: ' + retryResult?.message, () => { });
                             }
                         } else {
                             setStatusMessage(`Registration Failed: ${regResult.message}`);
@@ -229,28 +238,40 @@ export default function TokenOperations({
                 event: parseAbiItem('event DebtOffset(address indexed account, uint256 amount)'),
                 fromBlock: 'earliest'
             });
+            const mintLogs = await publicClient.getLogs({
+                address: CONTRACT_ADDRESSES.CLEARING_SERVICE,
+                event: parseAbiItem('event ClearingMinted(address indexed to, uint256 amount)'),
+                fromBlock: 'earliest'
+            });
 
             const combinedLogs: HistoryLog[] = [
-                ...transferLogs.map(l => ({ 
-                    type: 'TRANSFER' as const, 
-                    name: '清算轉帳', 
-                    data: l.args as TransferArgs, 
-                    block: Number(l.blockNumber), 
-                    txHash: l.transactionHash 
+                ...transferLogs.map(l => ({
+                    type: 'TRANSFER' as const,
+                    name: '清算轉帳',
+                    data: l.args as TransferArgs,
+                    block: Number(l.blockNumber),
+                    txHash: l.transactionHash
                 })),
-                ...debtGenLogs.map(l => ({ 
-                    type: 'DEBT_GEN' as const, 
-                    name: '產生負債', 
-                    data: l.args as DebtArgs, 
-                    block: Number(l.blockNumber), 
-                    txHash: l.transactionHash 
+                ...debtGenLogs.map(l => ({
+                    type: 'DEBT_GEN' as const,
+                    name: '產生負債',
+                    data: l.args as DebtArgs,
+                    block: Number(l.blockNumber),
+                    txHash: l.transactionHash
                 })),
-                ...debtOffsetLogs.map(l => ({ 
-                    type: 'DEBT_OFFSET' as const, 
-                    name: '自動沖銷', 
-                    data: l.args as DebtArgs, 
-                    block: Number(l.blockNumber), 
-                    txHash: l.transactionHash 
+                ...debtOffsetLogs.map(l => ({
+                    type: 'DEBT_OFFSET' as const,
+                    name: '自動沖銷',
+                    data: l.args as DebtArgs,
+                    block: Number(l.blockNumber),
+                    txHash: l.transactionHash
+                })),
+                ...mintLogs.map(l => ({
+                    type: 'MINT' as const,
+                    name: '平台發行',
+                    data: l.args as MintArgs,
+                    block: Number(l.blockNumber),
+                    txHash: l.transactionHash
                 })),
             ].sort((a, b) => b.block - a.block);
 
@@ -266,7 +287,7 @@ export default function TokenOperations({
         if (activeTab === 'HISTORY') {
             fetchClearingHistory();
         }
-     
+
     }, [activeTab]);
 
     const inputClass = "w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-indigo-500 outline-none";
@@ -274,16 +295,16 @@ export default function TokenOperations({
     return (
         <div className="space-y-6">
             <ConfirmModal isOpen={modalConfig.isOpen} title={modalConfig.title} message={modalConfig.message} onConfirm={modalConfig.onConfirm} onCancel={closeModal} />
-            
+
             <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
                 {(['BALANCE', 'MINT', 'BURN', 'FREEZE', 'TRANSFER', 'USER_TRANSFER', 'SETTLEMENT', 'HISTORY'] as const).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => { setActiveTab(tab); setTxResult(null); }}
                         className={`rounded-t-lg px-4 py-2 text-sm font-medium transition-colors ${activeTab === tab
-                            ? (tab === 'SETTLEMENT' ? 'border-b-2 border-pink-500 bg-slate-800 text-pink-400' 
-                              : tab === 'HISTORY' ? 'border-b-2 border-yellow-500 bg-slate-800 text-yellow-400'
-                              : 'border-b-2 border-blue-500 bg-slate-800 text-blue-400')
+                            ? (tab === 'SETTLEMENT' ? 'border-b-2 border-pink-500 bg-slate-800 text-pink-400'
+                                : tab === 'HISTORY' ? 'border-b-2 border-yellow-500 bg-slate-800 text-yellow-400'
+                                    : 'border-b-2 border-blue-500 bg-slate-800 text-blue-400')
                             : 'text-slate-500 hover:text-slate-300'
                             }`}
                     >
@@ -407,8 +428,8 @@ export default function TokenOperations({
                         <h3 className="font-bold text-pink-400">Settlement Transfer (透支清算測試)</h3>
                         <div className="rounded border border-pink-900/30 bg-pink-900/10 p-3">
                             <p className="text-xs leading-relaxed text-pink-500">
-                                測試情境說明：此轉帳將從 <b>後端 Admin 錢包</b> 發送 NTD 平台幣至目標地址。<br/>
-                                1. 若 Admin 餘額不足，差額將自動轉化為 Admin 的 <b>DEBT (負債)</b>，收款方仍會收到全額。<br/>
+                                測試情境說明：此轉帳將從 <b>後端 Admin 錢包</b> 發送 NTD 平台幣至目標地址。<br />
+                                1. 若 Admin 餘額不足，差額將自動轉化為 Admin 的 <b>DEBT (負債)</b>，收款方仍會收到全額。<br />
                                 2. 若收款方身上背有負債，系統將自動優先扣款 <b>(淨額結算)</b>。
                             </p>
                         </div>
@@ -436,11 +457,11 @@ export default function TokenOperations({
                                     {historyLogs.map((log, index) => (
                                         <li key={`${log.txHash}-${index}`} className="p-4 transition-colors hover:bg-slate-800">
                                             <div className="mb-2 flex items-start justify-between">
-                                                <span className={`rounded border px-2 py-0.5 text-xs font-bold ${
-                                                    log.type === 'TRANSFER' ? 'border-blue-800 bg-blue-900/30 text-blue-400' :
-                                                    log.type === 'DEBT_GEN' ? 'border-red-800 bg-red-900/30 text-red-400' :
-                                                    'border-green-800 bg-green-900/30 text-green-400'
-                                                }`}>
+                                                <span className={`rounded border px-2 py-0.5 text-xs font-bold ${log.type === 'TRANSFER' ? 'border-blue-800 bg-blue-900/30 text-blue-400' :
+                                                        log.type === 'MINT' ? 'border-indigo-800 bg-indigo-900/30 text-indigo-400' :
+                                                            log.type === 'DEBT_GEN' ? 'border-red-800 bg-red-900/30 text-red-400' :
+                                                                'border-green-800 bg-green-900/30 text-green-400'
+                                                    }`}>
                                                     {log.name}
                                                 </span>
                                                 <span className="font-mono text-xs text-slate-500">Block: {log.block}</span>
@@ -457,6 +478,12 @@ export default function TokenOperations({
                                                     <>
                                                         <p><span className="text-slate-500">Account:</span> {log.data.account}</p>
                                                         <p><span className="text-slate-500">Amount:</span><span className="font-bold text-white">{formatUnits(log.data.amount || BigInt(0), 18)} DEBT</span></p>
+                                                    </>
+                                                )}
+                                                {log.type === 'MINT' && (
+                                                    <>
+                                                        <p><span className="text-slate-500">To:</span> {log.data.to}</p>
+                                                        <p><span className="text-slate-500">Amount:</span> <span className="font-bold text-white">{formatUnits(log.data.amount || BigInt(0), 18)} NTD</span></p>
                                                     </>
                                                 )}
                                             </div>

@@ -31,6 +31,7 @@ const config: HardhatUserConfig = {
                 enabled: true,
                 runs: 200,
               },
+              viaIR: true,
               evmVersion: 'london', // Info: (20260113 - Tzuhan) T-REX 當時的標準 EVM
             },
           },

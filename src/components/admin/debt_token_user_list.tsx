@@ -55,7 +55,7 @@ export default function DebtTokenUserList() {
     const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
-            // Info: (20260224) Using the new debt service function
+            // Info: (20260224 - Tzuhan) Using the new debt service function
             const data = await getDebtTokenUsers(page, 10);
             setUsers(data.users);
             setTotalPages(data.totalPages);
@@ -184,7 +184,7 @@ export default function DebtTokenUserList() {
                 </table>
             </div>
 
-            {/* Pagination */}
+            {/* Info: (20260224 - Tzuhan) Pagination */}
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
                 <div className="flex gap-2">
